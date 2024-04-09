@@ -42,7 +42,7 @@
     font-size:24px;
     margin-left: 20px;
   }
-  .itemMenu{
+  .itemMenufalse{
     font-size: 1.25rem;
     margin-bottom: 3px;
     width:250px;
@@ -52,23 +52,13 @@
       font-size:24px;
       font-family:Nunito;
       font-weight: bold;
-      transition: background-size 0.3s;
       
   }
-  .itemMenu:hover {
+  .itemMenufalse:hover {
     background-color: lightblue;
     background-size: 120%;
     width: 250px;
   }
-  .itemMenu2{
-    font-size: 1.25rem;
-    margin-bottom: 3px;
-    width:250px;
-    line-height: 3;
-      color: white;
-      vertical-align:text-top;
-      font-size:24px;
-      font-family:Nunito;
-      font-weight: bold;
-      background-color: #DFE7FA;
+  .itemMenuactive {
+    background-color: violet;
   }

@@ -9,7 +9,7 @@ export const router = createBrowserRouter([
         path: '/',
         children:[
             {
-                 path: 'admin',
+                 path: '/', 
                  children: [
                     {
                        path: 'registroAmbiente',
@@ -33,3 +33,5 @@ export const router = createBrowserRouter([
         ]
     }
 ]);
+
+

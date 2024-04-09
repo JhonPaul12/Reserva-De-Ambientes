@@ -15,7 +15,7 @@ export const SlideBar = () => {
             <li key={ option.path }>
               <Link to={{ pathname: option.path}}
               style={{ textDecoration: 'none', color: 'inherit' }}>
-                <button className='itemMenu'>{/*{`itemMenu ${pathname.includes(option.path) && 'itemMenu2'}`}>*/}
+                <button className={`itemMenu${!(option.path).includes(option.path) && 'active'}`}>
               <span style={{ marginRight: '20px' }}>{option.icon}</span>
               {option.name}
                 </button>
