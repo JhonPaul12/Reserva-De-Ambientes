@@ -4,7 +4,7 @@ export const SlideBar = () => {
 
   return (
     <div className="menu-lateral">
-        <h3>RESERVA <br /> DE <br />AULAS</h3>
+        <h3>RESERVA <br /> DE <br />AMBIENTE</h3>
         <ul>
           <li><button type="button" >INICIO</button></li>
           <li><button type="button" >SOLICITUDES</button></li>
@@ -14,4 +14,3 @@ export const SlideBar = () => {
       </div>
   )
 }
-export default SlideBar;

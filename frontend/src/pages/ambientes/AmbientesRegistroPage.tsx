@@ -1,7 +1,6 @@
 import React from 'react'
 import './AmbientesRegistroPage.css';
-import SlideBar from '../../components/ui/SlideBar.tsx';
-import Form from '../../components/ui/Form.tsx';
+import { SlideBar, Form } from '../../components/index.ts';
 export const AmbientesRegistroPage = () => {
   return (
     <div className='pag'>
@@ -13,4 +12,3 @@ export const AmbientesRegistroPage = () => {
     </div>
   )
 }
-export default AmbientesRegistroPage;
