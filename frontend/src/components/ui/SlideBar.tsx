@@ -1,16 +1,29 @@
 import React from 'react'
 import './SlideBar.css';
-export const SlideBar = () => {
-
+import { slideBarAdmin } from '../../lib/constants.tsx';
+import {Link, useLocation } from "react-router-dom"
+export const SlideBar = () => { 
+  useLocation();
   return (
-    <div className="menu-lateral">
-        <h3>RESERVA <br /> DE <br />AMBIENTE</h3>
+    <aside className="menu-lateral">
+        <div>
+        <h3>RESERVA <br /> DE <br />AMBIENTES</h3>
+        </div>
         <ul>
-          <li><button type="button" >INICIO</button></li>
-          <li><button type="button" >SOLICITUDES</button></li>
-          <li><button type="button" >DOCENTES</button></li>
-          <li><button type="button" >AMBIENTES</button></li>
+         {
+          slideBarAdmin.map(option => (
+            <li key={ option.path }>
+              <Link to={{ pathname: option.path}}
+              style={{ textDecoration: 'none', color: 'inherit' }}>
+                <button className='itemMenu'>{/*{`itemMenu ${pathname.includes(option.path) && 'itemMenu2'}`}>*/}
+              <span style={{ marginRight: '20px' }}>{option.icon}</span>
+              {option.name}
+                </button>
+              </Link>
+            </li>
+          ))
+         }
         </ul>
-      </div>
+      </aside>
   )
 }
