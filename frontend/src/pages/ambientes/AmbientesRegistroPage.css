@@ -12,8 +12,9 @@
     font-weight: bold;
     }
     .formReg{
-        display: block;
-        
+       display: flex;
+       flex-direction: column;
+       align-items: center; 
     }
     .pag{
         display: flex;

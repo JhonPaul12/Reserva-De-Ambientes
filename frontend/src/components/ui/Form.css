@@ -1,3 +1,8 @@
+.contenedor{
+  width: calc(100% - 100px);
+  left: 300px;
+}
+
 form{
     display: flex;
     flex-wrap: wrap; 
@@ -11,6 +16,9 @@ form{
       width:300px;
       filter:drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
       border-radius:30px;
+      border: none;
+      margin-top: 20px;
+      margin-bottom: 20px;
     }
     
     select{
@@ -19,16 +27,10 @@ form{
       width:300px;
       filter:drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
       border-radius:30px;
-      margin-bottom: 50px;
-    }
-    button{
-    border-radius:50px;
-    filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
-    height: 60px;
-    width: 164px;
-    background-color:#2a2d7e;
-    color: white;
-    margin-top: 50px;
+      
+      margin-top: 20px;
+      margin-bottom: 20px;
+      border: none;
     }
   }
   .columna {
@@ -41,8 +43,38 @@ form{
     margin-left: 20px;
   }
   label{
-    margin-bottom: 20px;
     font-size:24px;
       font-family:Nunito;
       font-weight: bold;
+  }
+  .guardar{
+    border-radius:50px;
+    filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
+    height: 60px;
+    width: 164px;
+    background-color:#2a2d7e;
+    color: white;
+    margin-top: 50px;
+  }
+  .cancelar{
+    border-radius:50px;
+    filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
+    height: 60px;
+    width: 164px;
+    background-color:#DFE7FA;
+    color: #2a2d7e;
+    margin-top: 50px;
+    border-color: #2a2d7e;
+    ; 
+  }
+  .opcions{
+    margin-top: 100px;
+
+  }
+  .cuadrado{
+    height: 60px;
+    width: 60px;
+    background-color:#fbfbfb;
+    border-style: hidden;
+    border-radius:10px;
   }

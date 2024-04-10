@@ -5,7 +5,8 @@ import { Calendar } from 'react-bootstrap-icons'
 export const Form = () => {
   
   return (
-    <form>
+    <div className='contenedor'>
+     <form>
         <div className="columna">
         <label>Nombre*:</label>
         <input />
@@ -29,12 +30,20 @@ export const Form = () => {
           <option value="Laboratorio">Laboratorio</option>
         </select>
         <br />
-        <label>Horario*:   </label>
+        <label style={{ marginRight:'40px' } }>Horario*:   </label>
+        <button className='cuadrado'>
         <Calendar style={{ width: '50px', height: '50px' } }/>
+        </button>
+        
         <br />
-        <button type="button" >Guardar</button>
-        <button type="button" >Cancelar</button>
+        <div className='opcions'>
+        <button className="cancelar" >Cancelar</button>
+        <button className="guardar" >Guardar</button>
+        </div>
+        
         </div>
       </form>
+    </div>
+    
     )
 }
