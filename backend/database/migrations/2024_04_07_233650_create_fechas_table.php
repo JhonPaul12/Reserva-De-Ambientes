@@ -15,7 +15,7 @@ class CreateFechasTable extends Migration
     {
         Schema::create('fechas', function (Blueprint $table) {
             $table->id();
-            $table->strint('estado',15);
+            $table->string('estado',15);
             $table->date('fecha');
             $table->timestamps();
         });
