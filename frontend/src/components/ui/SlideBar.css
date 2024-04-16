@@ -55,9 +55,10 @@
       
   }
   .itemMenufalse:hover {
-    background-color: lightblue;
+    background-color: #DFE7FA;
     background-size: 120%;
     width: 250px;
+    color: #2a2d7e;
   }
   .itemMenuactive {
     background-color: violet;

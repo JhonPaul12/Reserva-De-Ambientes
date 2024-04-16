@@ -1,8 +1,8 @@
 import { toast } from "sonner";
 import { StateCreator, create } from "zustand";
 import { IAmbienteSimple } from '../../interfaces/ambientes/ambiente-simple';
-import { IAmbientesResponse } from "../../interfaces/ambientes/ambientes-response";
-import { reservasDB } from "../../api/reservasDB";
+/*import { IAmbientesResponse } from "../../interfaces/ambientes/ambientes-response";
+import { reservasDB } from "../../api/reservasDB.ts";*/
 import { isAxiosError } from "axios";
 
 
@@ -19,9 +19,9 @@ const storeApi : StateCreator<AmbienteState & Actions> = (set, get) =>({
 
     createAmbiente:  async ( nombre, capacidad, ubicacion, tipoAmbiente, horario, token ) => {
         try{
-            const { data } = await reservasDB.get<IAmbientesResponse>('/ambientes', {
+            /*const { data } = await reservasDB.get<IAmbientesResponse>('/ambientes', {*/
 
-            })
+            
             toast.success('Guardado con exito')
 
         } catch ( error ){
