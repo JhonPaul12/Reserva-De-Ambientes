@@ -82,7 +82,7 @@ if(nombre.value.trim()=== '' || capacidad.value.trim()=== '' ){
 
   const onInputChangeSave = (event) => {
     event.preventDefault();
-    if (inputName !== '' || inputCap !== '') {
+    if (inputName !== '' && inputCap !== '') {
       setInputSave(true);
       console.log('true');
     } else {
@@ -145,7 +145,7 @@ if(nombre.value.trim()=== '' || capacidad.value.trim()=== '' ){
           <option value="Laboratorio">Laboratorio</option>
         </select>
         <br />
-        <label style={{ marginRight:'40px' } }>Horario*:   </label>
+        <label style={{ marginRight:'40px' } }>Horario:   </label>
         <button 
             className='cuadrado'
             onClick={onInputChangeHora}
