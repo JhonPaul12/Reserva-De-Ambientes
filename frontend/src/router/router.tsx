@@ -2,6 +2,7 @@ import React from 'react';
 import { createBrowserRouter } from 'react-router-dom'
 import App from "../App";
 import { AmbientesRegistroPage, Bienvenida,  LoginPage } from '../pages/index.ts';
+import { CrearSolicitud } from '../pages/ambientes/CrearSolicitud.tsx';
 
 export const router = createBrowserRouter([
     {
@@ -14,7 +15,11 @@ export const router = createBrowserRouter([
                     {
                        path: 'registroAmbiente',
                        element: <AmbientesRegistroPage/>
-                    }
+                    },
+                    {
+                        path: 'crearsolicitud',
+                        element: <CrearSolicitud/>
+                     }
                  ]
             }, 
             {

@@ -5,6 +5,7 @@ import { Toaster } from 'sonner';
 export const AmbientesRegistroPage = () => {
   return (
     <div className='pag'>
+      <div className='formReg2'>
       <Toaster
         position='top-right'
         richColors
@@ -13,6 +14,7 @@ export const AmbientesRegistroPage = () => {
       />
 
       <SlideBar/>
+      </div>
       <div className='formReg'>
       <h2 className="titulo" >REGISTRO DE AMBIENTE</h2>
       <Form/>
