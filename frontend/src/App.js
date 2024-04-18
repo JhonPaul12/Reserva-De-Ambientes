@@ -4,10 +4,12 @@ import { Outlet } from "react-router-dom"
 import {SlideBar} from './components/index.ts'
 function App() {
   return (
+    <div style={{display: 'flex'}}>
     <main>
-      <Outlet/>
-      <SlideBar/>
+      <SlideBar />
     </main>
+    <Outlet />
+  </div>
   );
 }
 

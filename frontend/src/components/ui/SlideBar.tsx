@@ -14,10 +14,10 @@ export const SlideBar = () => {
           slideBarAdmin.map(option => (
             <li key={ option.path }>
               <Link to={{ pathname: option.path}}
-              style={{ textDecoration: 'none', color: 'inherit' }}>
+                style={{ textDecoration: 'none', color: 'inherit' }}>
                 <button className={`itemMenu${!(option.path).includes(option.path) && 'active'}`}>
-              <span style={{ marginRight: '20px' }}>{option.icon}</span>
-              {option.name}
+                <span style={{ marginRight: '20px' }}>{option.icon}</span>
+                {option.name}
                 </button>
               </Link>
             </li>

@@ -92,23 +92,27 @@ if(nombre.value.trim()=== '' || capacidad.value.trim()=== '' ){
 }
   return (
     <div className='contenedor'>
-     <form>
-        <div className="columna">
+     <form className='formregi'>
+        <div className="columnaR">
         <label>Nombre*:</label>
+        <br />
         <input 
             type='text'
+            className='registro'
             value={inputName}
             style={{
               textAlign: 'center', 
               fontSize: '16px', 
-              padding: '10px', 
+              padding: '10px'
             }}
             onChange={onInputChangeName}
           />
         <br />
         <label>Capacidad*:</label>
+        <br />
         <input 
             type='text'
+            className='registro'
             value={inputCap}
             style={{
               textAlign: 'center', 
@@ -120,8 +124,10 @@ if(nombre.value.trim()=== '' || capacidad.value.trim()=== '' ){
         <br />
         
         <label>Ubicación:</label>
+        <br />
         <textarea 
             value={inputUbi}
+            className='textAUbi'
             style={{
               fontSize: '16px', 
               padding: '20px', 
@@ -132,11 +138,12 @@ if(nombre.value.trim()=== '' || capacidad.value.trim()=== '' ){
         <br />
        
         </div>
-        <div className="columna">
+        <div className="columnaR">
         <label>Tipo:</label>
         <br />
         <select 
               value={inputType}
+              className='selectRegi'
             onChange={onInputChangeType}
           >
           <option value="">Seleccionar tipo</option>

@@ -10,6 +10,10 @@ export const slideBarAdmin = [
     {
         path: 'listaSolicitudes',
         name: "SOLICITUDES",
+        subOptions:{
+            path: 'aceptadas',
+            name: "ACEPTADAS",
+        },
         icon: <ListTask/>
     },
     {
