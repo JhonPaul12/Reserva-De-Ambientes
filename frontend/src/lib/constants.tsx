@@ -22,6 +22,11 @@ export const slideBarAdmin = [
         name: "AMBIENTES",
         icon: <Clipboard/>
     },
+    {
+        path: 'listaAmbientes',
+        name: "LISTA",
+        icon: <ListTask/>
+    }
 
 ]
 
