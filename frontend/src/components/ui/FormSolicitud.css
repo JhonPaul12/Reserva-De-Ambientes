@@ -110,4 +110,10 @@
     textarea::-webkit-scrollbar-track {
       background-color: transparent; 
     }
+    .more{
+      border-radius: 20px;
+      width: 100px;
+      background-color: #2a2d7e;
+      color: #ffffff;
+    }
   

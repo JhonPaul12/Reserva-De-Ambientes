@@ -8,7 +8,7 @@ export const FormSolicitud = () => {
     const [inputMotivo, setInputMotivo] = useState('');
     const [inputNEst, setInputNEst] = useState('');
     const [buttonSave, setInputSave] = useState(false);
-
+    const [mostrarSelect, setMostrarSelect] = useState(false);
 
 
     const onInputChangeMotivo = (event) => {
@@ -47,17 +47,28 @@ export const FormSolicitud = () => {
           console.log('l motivo y el nro de estudiantes son obligatorios');
         }
     }
+
+    const handleClick = (event) => {
+      event.preventDefault();
+      setMostrarSelect(!mostrarSelect);
+    }
+
+
   return (
     <div className='contenedor'>
     <form className='formSol'>
         <div className="columnaSol">
         <label>Docente:</label>
         <br />
-        <select 
-          className='selectSoli'
-          >
-
-          </select>
+        <span style={{marginRight:'50px'}}>Nombre del docente</span>
+        <button 
+          onClick={handleClick}
+          className='more'>Añadir docente</button>
+          {mostrarSelect && (
+            <select
+            className='selectSoli'>
+            </select>
+          )}
           <br />
           <label>Materia:</label>
           <br />
