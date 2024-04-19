@@ -34,7 +34,7 @@ export const SlideBar = () => {
                     {option.subOptions.map(subOption => (
                       <li key={subOption.path}>
                         <Link to={{ pathname: subOption.path }} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <button className={`itemMenu${(location.pathname).includes(subOption.path) && 'active'}`}>
+                        <button className={`itemSubMenu${(location.pathname).includes(subOption.path) && 'active'}`}>
                           {subOption.name}
                         </button>
                         </Link>

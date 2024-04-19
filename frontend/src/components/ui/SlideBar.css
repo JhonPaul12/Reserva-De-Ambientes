@@ -41,7 +41,50 @@
         border-style:hidden;
         outline:none;
   }
+  .itemSubMenufalse{
+    font-size: 1.25rem;
+    margin-bottom: 3px;
+    width:230px;
+    line-height: 3;
+      color: white;
+      vertical-align:text-top;
+      font-size:24px;
+      font-family:Nunito;
+      font-weight: bold;
+        background-color:#2a2d7e;
+        padding: 0;
+        margin: 0;
+        border-style: hidden;
+        text-align:left;
+        border-style:hidden;
+        outline:none;
+  }
+  .itemSubMenuactive{
+    background-color: #DFE7FA;
+    font-size: 1.25rem;
+    margin-bottom: 3px;
+    width:230px;
+    line-height: 3;
+      color: #2a2d7e;
+      vertical-align:text-top;
+      font-size:24px;
+      font-family:Nunito;
+      font-weight: bold;
+        padding: 0;
+        margin: 0;
+        border-style: hidden;
+        text-align:left;
+        border-style:hidden;
+        outline:none;
+  }
   .itemMenufalse:hover {
+    background-color: #DFE7FA;
+    background-size: 120%;
+    width: 250px;
+    color: #2a2d7e;
+
+  }
+  .itemSubMenufalse:hover {
     background-color: #DFE7FA;
     background-size: 120%;
     width: 250px;
@@ -70,4 +113,5 @@
     margin-top: 0px;
     padding: 0;
     list-style-type: none;
+    margin-left: 20px;
   }
