@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom'
 import App from "../App";
-import { AmbientesRegistroPage, Bienvenida,  LoginPage } from '../pages/index.ts';
-import { CrearSolicitud } from '../pages/ambientes/CrearSolicitud.tsx';
+import { AmbientesRegistroPage, Bienvenida,  LoginPage, ListaAceptadas } from '../pages/index.ts';
+import { CrearSolicitud } from '../pages/solicitud/CrearSolicitud.tsx';
 
 export const router = createBrowserRouter([
     {
@@ -19,6 +19,10 @@ export const router = createBrowserRouter([
                     {
                         path: 'crearsolicitud',
                         element: <CrearSolicitud/>
+                     },
+                     {
+                        path: 'listaaceptadas',
+                        element: <ListaAceptadas/>
                      }
                  ]
             }, 
