@@ -21,7 +21,7 @@ export const router = createBrowserRouter([
                         element: <CrearSolicitud/>
                      },
                      {
-                        path: 'listaaceptadas',
+                        path: 'listaSolicitudes/aceptadas',
                         element: <ListaAceptadas/>
                      }
                  ]

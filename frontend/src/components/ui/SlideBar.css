@@ -10,16 +10,13 @@
     padding: -1;
     margin: 0;
     padding: 0;
-    ul{
-      margin-top: 100px;
-      padding: 0;
-    
-      
-    list-style-type: none;
-  
-    }
   }
 
+  .principalBar{
+    margin-top: 100px;
+    padding: 0;
+    list-style-type: none;
+  }
   h3{
     line-height: 1;
     text-align: left;
@@ -53,8 +50,6 @@
   }
   .itemMenuactive {
     background-color: #DFE7FA;
-
-    
     font-size: 1.25rem;
     margin-bottom: 3px;
     width:250px;
@@ -70,4 +65,9 @@
         text-align:left;
         border-style:hidden;
         outline:none;
+  }
+  .subMenu{
+    margin-top: 0px;
+    padding: 0;
+    list-style-type: none;
   }
