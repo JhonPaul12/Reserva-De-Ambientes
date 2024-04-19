@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Fecha extends Model
+class Periodo extends Model
 {
     use HasFactory;
-
     protected $fillable=[
+        "id_ambiente",
+        "id_horario",
         "estado",
         "fecha"
     ];
@@ -21,4 +22,5 @@ class Fecha extends Model
     public function horario(){
         return $this->belongsTo(Horario::class);
     }
+
 }

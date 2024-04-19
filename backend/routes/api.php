@@ -2,18 +2,14 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AmbienteController;
+use App\Http\Controllers\ExcepcionController;
+use App\Http\Controllers\HorarioController;
+use App\Http\Controllers\ReglaController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::resource('/ambiente', AmbienteController::class);
+//Route::post('/ambientes/store', [AmbienteController::class, 'store']);
+//Route::get('/ambientes/index', [AmbienteController::class, 'index']);
+Route::resource('/regla',ReglaController::class);
+Route::resource('/horario',HorarioController::class);
+Route::resource('/excepcion',ExcepcionController::class);

@@ -15,7 +15,7 @@ class Horario extends Model
         "hora_fin"
     ];
 
-    public function fecha(){
-        return $this->hasMany(Fecha::class);
+    public function periodo(){
+        return $this->hasMany(Periodo::class);
     }
 }

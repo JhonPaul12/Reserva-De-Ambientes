@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAmbientesTable extends Migration
+class CreateReglaExcTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateAmbientesTable extends Migration
      */
     public function up()
     {
-        Schema::create('ambientes', function (Blueprint $table) {
+        Schema::create('regla_exc', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre',40);
-            $table->string('tipo',40);
-            $table->string('ubicacion',200);
-            $table->unsignedInteger('capacidad');
+            $table->unsignedBigInteger('regla_id');
+            $table->unsignedBigInteger('excepcion_id');
+            $table->foreign('regla_id')->references('id')->on('reglas');
+            $table->foreign('excepcion_id')->references('id')->on('excepcions');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateAmbientesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ambientes');
+        Schema::dropIfExists('regla_exc');
     }
 }
