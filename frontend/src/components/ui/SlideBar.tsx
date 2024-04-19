@@ -1,7 +1,8 @@
 import React from 'react'
 import './SlideBar.css';
 import { slideBarAdmin } from '../../lib/constants.tsx';
-import {Link, useLocation } from "react-router-dom"
+import {Link, useLocation } from 'react-router-dom'
+
 export const SlideBar = () => { 
   useLocation();
   return (

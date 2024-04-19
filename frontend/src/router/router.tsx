@@ -1,7 +1,8 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom'
 import App from "../App";
-import { AmbientesRegistroPage, Bienvenida,  LoginPage } from '../pages/index.ts';
+import { AmbientesRegistroPage, Bienvenida,  HorariosAmbiente,  LoginPage, MostrarDatosTabla } from '../pages/index.ts';
+
 
 export const router = createBrowserRouter([
     {
@@ -14,6 +15,14 @@ export const router = createBrowserRouter([
                     {
                        path: 'registroAmbiente',
                        element: <AmbientesRegistroPage/>
+                    },
+                    {
+                        path: 'listaAmbientes',
+                        element: <MostrarDatosTabla/>
+                    },
+                    {
+                        path: 'listaAmbientes/horarios',
+                        element: <HorariosAmbiente/>
                     }
                  ]
             }, 
