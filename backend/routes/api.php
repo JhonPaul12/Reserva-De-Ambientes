@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +14,8 @@ use App\Http\Controllers\UsuarioController;
 |
 */
 
-Route::get('/usuarios/index', [UsuarioController::class, 'index']);
+Route::get('/user/index', [UserController::class, 'index']);
 
-Route::post('/usuarios/store', [UsuarioController::class, 'store']);
+Route::post('/user/store', [UserController::class, 'store']);
+
+Route::get('/user/{id}', [UserController::class, 'show']);
