@@ -15,4 +15,9 @@ class Regla extends Model
         "fecha_inicial",
         "fecha_final"
     ];
+
+    public function regla_excs()
+    {
+        return $this->hasMany(Regla_exc::class);
+    }
 }
