@@ -60,6 +60,32 @@ class UserController extends Controller
         // Devuelve la información del usuario
         return response()->json($user, 200);
     }
+    
+    public function getDocentes()
+    {
+        // Obtiene todos los usuarios que tienen el rol "docente"
+        $docentes = User::whereHas('rols', function ($query) {
+            $query->where('nombre', 'docente');
+        })->get();
 
+        // Devuelve la lista de docentes
+        return response()->json($docentes, 200);
+    }
+    public function update(Request $request, $id)
+    {
+        // Encuentra el usuario por su ID
+        $user = User::find($id);
+    
+        // Actualiza los campos del usuario
+        $user->name = $request->input('name');
+        $user->apellidos = $request->input('apellidos');
+        $user->telefono = $request->input('telefono');
+        $user->codigo_sis = $request->input('codigo_sis');
+        $user->email = $request->input('email');
+        $user->save();
+    
+        // Devuelve una respuesta
+        return response()->json(['message' => 'Usuario actualizado correctamente'], 200);
+    }
 
 }

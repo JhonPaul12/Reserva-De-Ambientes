@@ -13,9 +13,16 @@ use App\Http\Controllers\UserController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+//lista de todos los usuario
+Route::get('/users/index', [UserController::class, 'index']);
+// guardar usuario
+Route::post('/users/store', [UserController::class, 'store']);
+//mostrar usuario por id
+Route::get('/users/{id}', [UserController::class, 'show']);
 
-Route::get('/user/index', [UserController::class, 'index']);
 
-Route::post('/user/store', [UserController::class, 'store']);
+//mostrar docentes
+Route::get('/users/docentes', [UserController::class, 'getDocentes']);
+// actualizar usuario
+Route::put('/users/{id}', [UserController::class, 'update']);
 
-Route::get('/user/{id}', [UserController::class, 'show']);
