@@ -14,11 +14,47 @@ class UserSeeder extends Seeder
     public function run()
     {
         User :: create([
-            'name' => 'andres',
-            'apellidos' => 'guzman',
+            'name' => 'Leticia',
+            'apellidos' => 'Blanco Coca',
             'telefono' => '12345678',
             'codigo_sis' => '1234567890', // '1234567890' => '1234567890
-            'email' => 'andres@gmail.com',
+            'email' => 'leticia@gmail.com',
+            'password' => bcrypt('12345678')
+
+        ]);
+        User :: create([
+            'name' => 'Vladimir Abel',
+            'apellidos' => 'Costas Jauregui',
+            'telefono' => '12345678',
+            'codigo_sis' => '1234567890', // '1234567890' => '1234567890
+            'email' => 'vladimir@gmail.com',
+            'password' => bcrypt('12345678')
+
+        ]);
+        User :: create([
+            'name' => 'Yony Richard',
+            'apellidos' => 'Montoya Burgos',
+            'telefono' => '12345678',
+            'codigo_sis' => '1234567890', // '1234567890' => '1234567890
+            'email' => 'yony@gmail.com',
+            'password' => bcrypt('12345678')
+
+        ]);
+        User :: create([
+            'name' => 'Corina',
+            'apellidos' => 'Flores Villarroel',
+            'telefono' => '12345678',
+            'codigo_sis' => '1234567890', // '1234567890' => '1234567890
+            'email' => 'corina@gmail.com',
+            'password' => bcrypt('12345678')
+
+        ]);
+        User :: create([
+            'name' => 'Tatiana',
+            'apellidos' => 'Aparicio Yuja',
+            'telefono' => '12345678',
+            'codigo_sis' => '1234567890', // '1234567890' => '1234567890
+            'email' => 'tatiana@gmail.com',
             'password' => bcrypt('12345678')
 
         ]);
