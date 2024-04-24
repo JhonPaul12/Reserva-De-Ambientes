@@ -19,8 +19,8 @@ class CreatePeriodosTable extends Migration
             $table->unsignedBigInteger('id_horario');
             $table->string('estado',15);
             $table->date('fecha');
-            $table->foreign('id_ambiente')->references('id')->on('ambientes');
-            $table->foreign('id_horario')->references('id')->on('horarios');
+            $table->foreign('id_ambiente')->references('id')->on('ambientes')->onDelete('cascade');
+            $table->foreign('id_horario')->references('id')->on('horarios')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -16,19 +16,24 @@ class AmbienteController extends Controller
         return response()->json($ambientes,200);
     }
 
-    public function store(Request $request)
-    {
-        $datos = $request->validate([
-        'nombre' => 'required|string|max:40',
-        'tipo' => 'required|string|max:40',
-        'ubicacion' => 'required|string|max:200',
-        'capacidad' => 'required|integer|min:1',
+    public function store(Request $request) {
+        $request->validate([
+            'nombre' => 'required|unique:ambientes|max:40',
+            'tipo' => 'required|max:40',
+            'ubicacion' => 'required|max:200',
+            'capacidad' => 'required|integer|min:0',
         ]);
 
-        $ambiente = Ambiente::firstOrCreate(['nombre' => $datos['nombre']], $datos);
+        $ambiente = new Ambiente();
+        $ambiente->nombre = $request->nombre;
+        $ambiente->tipo = $request->tipo;
+        $ambiente->ubicacion = $request->ubicacion;
+        $ambiente->capacidad = $request->capacidad;
 
-        return response()->json($ambiente, 201);
+        $ambiente->save();
+        return response()->json(['message' => 'Ambiente creado exitosamente'], 201);
     }
+
 
     public function show($id)
     {

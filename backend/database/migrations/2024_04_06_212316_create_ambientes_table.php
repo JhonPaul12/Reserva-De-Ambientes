@@ -15,7 +15,7 @@ class CreateAmbientesTable extends Migration
     {
         Schema::create('ambientes', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre',40);
+            $table->string('nombre',40)->unique();
             $table->string('tipo',40);
             $table->string('ubicacion',200);
             $table->unsignedInteger('capacidad');

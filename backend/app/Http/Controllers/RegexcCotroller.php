@@ -3,52 +3,50 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Regla;
-class ReglaController extends Controller
+use App\Models\Reg_exc;
+
+class RegexcCotroller extends Controller
 {
     public function index()
     {
-        $regla = Regla::all();
-        return response()->json($regla, 200);
+        $regex = Reg_exc::all();
+        return response()->json($regex, 200);
     }
-
 
     public function store(Request $request)
     {
         $datos = $request->validate([
-            'id_ambiente' =>'required',
-            'fecha_inicial' => 'required|date',
-            'fecha_final' => 'required|date',
+            'regla_id' =>'required',
+            'excepcion_id' =>'required',
+            'tipo' => 'required|date',
         ]);
-        $regla = new Regla($datos);
+        $regla = new Reg_exc($datos);
         $regla->save();
         return response()->json($regla,201);
     }
 
-
     public function show($id)
     {
-        $regla = Regla::find($id);
+        $regla = Reg_exc::find($id);
         return response()->json($regla,200);
     }
 
     public function update(Request $request, $id)
     {
-        $regla = Regla::find($id);
-        $regla->id_ambiente = $request->id_ambiente;
-        $regla->fecha_inicial = $request->fecha_inicial;
-        $regla->fecha_final = $request->fecha_final;
+        $regla = Reg_exc::find($id);
+        $regla->regla_id = $request->regla_id;
+        $regla->excepcion_id = $request->excepcion_id;
+        $regla->tipo = $request->tipo;
         $regla->save();
         return response()->json([
             'success'=>true,
             'data'=>$regla
         ],200);
-
     }
 
     public function destroy($id)
     {
-        $regla = Regla::find($id)->delete();
+        $regla = Reg_exc::find($id)->delete();
         return response()->json([
             'success'=>true,
             'data'=> $regla
