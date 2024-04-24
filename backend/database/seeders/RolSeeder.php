@@ -31,20 +31,20 @@ class RolSeeder extends Seeder
             'user_id' => 2
         ]);
         DB::table ('rol_user')->insert([
-            'rol_id' => 3,
-            'user_id' => 2
+            'rol_id' => 2,
+            'user_id' => 3
         ]);
         DB::table ('rol_user')->insert([
-            'rol_id' => 4,
-            'user_id' => 2
+            'rol_id' => 2,
+            'user_id' => 4
         ]);
         DB::table ('rol_user')->insert([
-            'rol_id' => 5,
-            'user_id' => 2
+            'rol_id' => 2,
+            'user_id' => 5
         ]);
         DB::table ('rol_user')->insert([
-            'rol_id' => 5,
-            'user_id' => 2
+            'rol_id' => 1,
+            'user_id' => 5
         ]);
     }
 }

@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             'name' => 'Leticia',
             'apellidos' => 'Blanco Coca',
             'telefono' => '12345678',
-            'codigo_sis' => '1234567890', // '1234567890' => '1234567890
+            'codigo_sis' => '202400535', // '1234567890' => '1234567890
             'email' => 'leticia@gmail.com',
             'password' => bcrypt('12345678')
 
@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
             'name' => 'Vladimir Abel',
             'apellidos' => 'Costas Jauregui',
             'telefono' => '12345678',
-            'codigo_sis' => '1234567890', // '1234567890' => '1234567890
+            'codigo_sis' => '202300535', // '1234567890' => '1234567890
             'email' => 'vladimir@gmail.com',
             'password' => bcrypt('12345678')
 
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
         User :: create([
             'name' => 'Yony Richard',
             'apellidos' => 'Montoya Burgos',
-            'telefono' => '12345678',
+            'telefono' => '202200535',
             'codigo_sis' => '1234567890', // '1234567890' => '1234567890
             'email' => 'yony@gmail.com',
             'password' => bcrypt('12345678')
@@ -44,7 +44,7 @@ class UserSeeder extends Seeder
             'name' => 'Corina',
             'apellidos' => 'Flores Villarroel',
             'telefono' => '12345678',
-            'codigo_sis' => '1234567890', // '1234567890' => '1234567890
+            'codigo_sis' => '202100535', // '1234567890' => '1234567890
             'email' => 'corina@gmail.com',
             'password' => bcrypt('12345678')
 
@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
             'name' => 'Tatiana',
             'apellidos' => 'Aparicio Yuja',
             'telefono' => '12345678',
-            'codigo_sis' => '1234567890', // '1234567890' => '1234567890
+            'codigo_sis' => '202000535', // '1234567890' => '1234567890
             'email' => 'tatiana@gmail.com',
             'password' => bcrypt('12345678')
 
