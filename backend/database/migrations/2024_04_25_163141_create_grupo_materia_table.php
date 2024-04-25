@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMateriaUserTable extends Migration
+class CreateGrupoMateriaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateMateriaUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('materia_user', function (Blueprint $table) {
+        Schema::create('grupo_materia', function (Blueprint $table) {
             $table->id();
-        
+            $table->foreignId('grupo_id')->constrained()->onDelete('cascade');
             $table->foreignId('materia_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-    
-
         });
     }
 
@@ -31,6 +28,6 @@ class CreateMateriaUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('materia_user');
+        Schema::dropIfExists('grupo_materia');
     }
 }

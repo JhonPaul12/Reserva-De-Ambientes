@@ -28,7 +28,7 @@ class UserController extends Controller
         ]);
 
         // Crea un nuevo rol
-        $rol = 2;
+        $rol = Rol::find(2);
 
         // Crea un nuevo usuario
         $user = new User();
@@ -68,7 +68,7 @@ class UserController extends Controller
     {
         // Obtiene todos los usuarios que tienen el rol "docente"
         $docentes = User::whereHas('rols', function ($query) {
-            $query->where('nombre', 'docente');
+            $query->where('nombre', 'Docente');
         })->get();
 
         // Devuelve la lista de docentes
@@ -89,6 +89,24 @@ class UserController extends Controller
     
         // Devuelve una respuesta
         return response()->json(['message' => 'Usuario actualizado correctamente'], 200);
+    }
+
+        
+    public function showMaterias($id)
+    {
+        // Encuentra el usuario por ID
+        $user = User::find($id);
+
+        // Si el usuario no existe, devuelve un error
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        // Obtiene las materias del usuario
+        $materias = $user->materias;
+
+        // Devuelve las materias
+        return response()->json($materias, 200);
     }
 
 }

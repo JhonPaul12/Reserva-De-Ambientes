@@ -17,8 +17,7 @@ use App\Http\Controllers\UserController;
 Route::get('/users/index', [UserController::class, 'index']);
 // guardar usuario
 Route::post('/users/store', [UserController::class, 'store']);
-//mostrar usuario por id
-Route::get('/users/{id}', [UserController::class, 'show']);
+
 
 
 //mostrar docentes
@@ -26,3 +25,8 @@ Route::get('/users/docentes', [UserController::class, 'getDocentes']);
 // actualizar usuario
 Route::put('/users/{id}', [UserController::class, 'update']);
 
+//mostrar usuario por id
+Route::get('/users/{id}', [UserController::class, 'show']);
+
+//mostrar materia user
+Route::get('/users/materias/{id}', [UserController::class, 'showMaterias']);

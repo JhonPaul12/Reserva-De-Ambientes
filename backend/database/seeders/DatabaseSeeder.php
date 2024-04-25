@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             RolSeeder::class,
             MateriaSeeder::class,
+            GrupoSeeder::class,
         ]);
     }
 }
