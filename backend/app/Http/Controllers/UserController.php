@@ -24,10 +24,11 @@ class UserController extends Controller
             'telefono' => 'required|string',
             'codigo_sis' => 'required|string|unique:users,codigo_sis',
             'email' => 'required|email|unique:users,email',
+            'materias' => 'required|array',
         ]);
 
         // Crea un nuevo rol
-        $rol = Rol::Create(['nombre' => 'docente', 'estado' => 'habilitado']);
+        $rol = Rol::find(2);
 
         // Crea un nuevo usuario
         $user = new User();
@@ -40,9 +41,11 @@ class UserController extends Controller
 
         // Crea un nuevo UsuarioRol
         $rol->users()->attach($user->id);
-        
+        // Asocia las materias al usuario
+        $materias = $request->input('materias');
+        $user->materias()->attach($materias);
         // Devuelve la respuesta
-        return response()->json(['message' => 'Usuario y rol creados correctamente'], 201);
+        return response()->json(['message' => 'Usuario, rol y materias creados correctamente'], 201);
     }
 
 
@@ -86,6 +89,24 @@ class UserController extends Controller
     
         // Devuelve una respuesta
         return response()->json(['message' => 'Usuario actualizado correctamente'], 200);
+    }
+
+        
+    public function showMaterias($id)
+    {
+        // Encuentra el usuario por ID
+        $user = User::find($id);
+
+        // Si el usuario no existe, devuelve un error
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        // Obtiene las materias del usuario
+        $materias = $user->materias;
+
+        // Devuelve las materias
+        return response()->json($materias, 200);
     }
 
 }
