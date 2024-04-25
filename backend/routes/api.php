@@ -21,12 +21,6 @@ use App\Http\Controllers\UserController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-//lista de todos los usuario
-Route::get('/users/index', [UserController::class, 'index']);
-// guardar usuario
-Route::post('/users/store', [UserController::class, 'store']);
-
-
 
 Route::resource('/ambiente', AmbienteController::class);
 Route::resource('/regla',ReglaController::class);

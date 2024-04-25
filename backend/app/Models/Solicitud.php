@@ -17,5 +17,9 @@ class Solicitud extends Model
         'numero_estudiantes'
     ];
     use HasFactory;
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'solicitud_user');
+    }
 
 }
