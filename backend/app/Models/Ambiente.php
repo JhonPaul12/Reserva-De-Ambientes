@@ -19,4 +19,9 @@ class Ambiente extends Model
     public function periodo(){
         return $this->hasMany(Periodo::class);
     }
+
+    public function regla()
+    {
+        return $this->hasOne(Regla::class);
+    }
 }

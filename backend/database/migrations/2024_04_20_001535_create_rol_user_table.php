@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReglaExcTable extends Migration
+class CreateRolUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateReglaExcTable extends Migration
      */
     public function up()
     {
-        Schema::create('regla_exc', function (Blueprint $table) {
+        Schema::create('rol_user', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('regla_id');
-            $table->unsignedBigInteger('excepcion_id');
-            $table->foreign('regla_id')->references('id')->on('reglas');
-            $table->foreign('excepcion_id')->references('id')->on('excepcions');
+            $table->unsignedBigInteger('rol_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateReglaExcTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('regla_exc');
+        Schema::dropIfExists('rol_user');
     }
 }
