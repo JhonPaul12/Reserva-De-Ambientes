@@ -17,4 +17,5 @@ class Solicitud extends Model
         'numero_estudiantes'
     ];
     use HasFactory;
+
 }

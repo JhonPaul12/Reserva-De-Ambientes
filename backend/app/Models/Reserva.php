@@ -17,5 +17,10 @@ class Reserva extends Model
     {
         return $this->belongsTo(Solicitud::class);
     }
+
+    public function periodos()
+    {
+        return $this->hasMany(Periodo::class);
+    }
     use HasFactory;
 }

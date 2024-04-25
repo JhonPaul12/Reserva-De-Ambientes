@@ -24,4 +24,8 @@ class Ambiente extends Model
     {
         return $this->hasOne(Regla::class);
     }
+
+    public function solicitud(){
+        return $this->hasMany(Solicitud::class);
+    }
 }
