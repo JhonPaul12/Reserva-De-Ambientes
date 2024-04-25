@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRolUserTable extends Migration
+class CreateGrupoMateriaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateRolUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('rol_user', function (Blueprint $table) {
+        Schema::create('grupo_materia', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('rol_id');
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('grupo_id')->constrained()->onDelete('cascade');
+            $table->foreignId('materia_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-     
         });
     }
 
@@ -29,6 +28,6 @@ class CreateRolUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rol_user');
+        Schema::dropIfExists('grupo_materia');
     }
 }

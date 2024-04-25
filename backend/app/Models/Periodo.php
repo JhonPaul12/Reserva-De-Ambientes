@@ -23,4 +23,9 @@ class Periodo extends Model
         return $this->belongsTo(Horario::class);
     }
 
+    public function reserva()
+    {
+        return $this->belongsTo(Reserva::class);
+    }
+
 }

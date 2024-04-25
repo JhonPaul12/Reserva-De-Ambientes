@@ -40,5 +40,13 @@ class User extends Authenticatable
     public function rols(): BelongsToMany
     {
         return $this->belongsToMany(Rol::class, 'rol_user');
+    }  
+    public function materias(): BelongsToMany
+    {
+        return $this->belongsToMany(Materia::class, 'materia_user');
+    }
+    public function solicitudes(): BelongsToMany
+    {
+        return $this->belongsToMany(Solicitud::class, 'solicitud_user');
     }
 }

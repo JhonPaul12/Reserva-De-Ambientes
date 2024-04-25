@@ -22,4 +22,9 @@ class Solicitud extends Model
         return $this->belongsTo(Ambiente::class);
     } 
     use HasFactory;
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'solicitud_user');
+    }
+
 }
