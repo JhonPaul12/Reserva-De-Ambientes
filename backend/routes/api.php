@@ -17,3 +17,4 @@ Route::resource('/reglaExc',RegexcCotroller::class);
 Route::resource('/periodo',PeriodoController::class);
 
 //Route::get('/obtener-regla/{idAmbiente}',[PeriodoController::class,'obtenerRegla']); //Funciona
+Route::delete('/eliminarPeriodosPorHorario', [PeriodoController::class, 'eliminarPeriodosPorHorario']);

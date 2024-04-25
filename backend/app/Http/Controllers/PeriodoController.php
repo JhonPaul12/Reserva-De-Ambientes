@@ -8,6 +8,7 @@ use App\Models\Regla;
 use App\Models\Ambiente;
 use App\Models\Horario;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PeriodoController extends Controller
@@ -109,5 +110,34 @@ public function crearPeriodosRegulares($idAmbiente, $idHorario, $estado, $fechaI
             'success'=>true,
             'data'=> $pe
         ],200);
+    }
+
+
+    public function eliminarPeriodosPorHorario(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_ambiente' => 'required|exists:ambientes,id',
+            'id_horario' => 'required|exists:horarios,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        $idAmbiente = $request->id_ambiente;
+        $idHorario = $request->id_horario;
+
+        try {
+
+            DB::table('periodos')
+                ->where('id_ambiente', $idAmbiente)
+                ->where('id_horario', $idHorario)
+                ->delete();
+
+
+            return response()->json(['message' => 'Los periodos se han eliminado correctamente'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al eliminar los periodos: ' . $e->getMessage()], 500);
+        }
     }
 }
