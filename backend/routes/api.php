@@ -9,7 +9,7 @@ use App\Http\Controllers\ReglaController;
 use App\Http\Controllers\ReglaExcController;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
-use App\Models\Reserva;
+
 
 Route::resource('/ambiente', AmbienteController::class);
 //Route::post('/ambientes/store', [AmbienteController::class, 'store']);
