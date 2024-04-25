@@ -22,6 +22,9 @@ class CreateSolicitudesTable extends Migration
             $table->String('estado');
             $table->integer('numero_estudiantes');
 
+            $table->foreignId('ambiente_id')
+                  ->constrained()
+                  ->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Solicitud;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class SolicitudController extends Controller
 {
@@ -16,7 +17,7 @@ class SolicitudController extends Controller
      */
     public function index()
     {
-        $solicitudes = Solicitud::all();
+        $solicitudes = Solicitud::with('ambiente')->get();
         
         return response() -> json([
             'solicitudes' => $solicitudes
@@ -37,7 +38,8 @@ class SolicitudController extends Controller
             'hora_inicio' => 'required',
             'hora_fin' => 'required',
             'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
-            'numero_estudiantes' => 'required'
+            'numero_estudiantes' => 'required',
+            'ambiente_id'=> 'required|exists:ambientes,id'
         ]);
 
         if($validador->fails()){
@@ -55,8 +57,11 @@ class SolicitudController extends Controller
             'hora_inicio' => $request->hora_inicio,
             'hora_fin' => $request->hora_fin,
             'estado' => $request->estado,
-            'numero_estudiantes' => $request->numero_estudiantes
+            'numero_estudiantes' => $request->numero_estudiantes,
+            'ambiente_id' =>$request->input('ambiente_id')
         ]);
+        
+        $solicitud->load('ambiente');
         
         if(!$solicitud){
             $data = [
@@ -81,7 +86,7 @@ class SolicitudController extends Controller
      */
     public function show($id)
     {
-        $solicitud = Solicitud::find($id);
+        $solicitud = Solicitud::with('ambiente')->findOrFail($id);
 
         if(!$solicitud){
             $data = [
@@ -122,7 +127,8 @@ class SolicitudController extends Controller
             'hora_inicio' => 'required',
             'hora_fin' => 'required',
             'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
-            'numero_estudiantes' => 'required'
+            'numero_estudiantes' => 'required',
+            'ambiente_id' => 'required|exists:ambiente'
         ]);
 
         if($validador->fails()){
@@ -139,6 +145,7 @@ class SolicitudController extends Controller
         $solicitud->hora_fin = $request->hora_fin;
         $solicitud->estado = $request->estado;
         $solicitud->numero_estudiantes = $request->numero_estudiantes;
+        $solicitud->ambiente_id = $request->ambiente_id;
 
         $solicitud->save();
 
@@ -159,7 +166,7 @@ class SolicitudController extends Controller
      */
     public function destroy($id)
     {
-        $solicitud = Solicitud::find($id);
+        $solicitud = Solicitud::findOrFail($id);
 
         if(!$solicitud){
            $data = [

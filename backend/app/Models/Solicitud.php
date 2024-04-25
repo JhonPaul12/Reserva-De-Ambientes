@@ -14,7 +14,12 @@ class Solicitud extends Model
         'hora_inicio',
         'hora_fin',
         'estado',
-        'numero_estudiantes'
+        'numero_estudiantes',
+        'ambiente_id'
     ];
+
+    public function ambiente(){
+        return $this->belongsTo(Ambiente::class);
+    } 
     use HasFactory;
 }
