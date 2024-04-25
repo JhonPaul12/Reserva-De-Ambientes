@@ -16,11 +16,19 @@ class RolSeeder extends Seeder
     {
        Rol::create([
             'nombre' => 'Administrador',
-            'estado' => 'habilitado',
+            'estado' => 'Habilitado',
         ]);
         Rol::create([
             'nombre' => 'Docente',
-            'estado' => 'habilitado'
+            'estado' => 'Habilitado'
+        ]); 
+        Rol::create([
+            'nombre' => 'Administrador',
+            'estado' => 'Desabilitado',
+        ]);
+        Rol::create([
+            'nombre' => 'Docente',
+            'estado' => 'Desabilitado'
         ]); 
         DB::table ('rol_user')->insert([
             'rol_id' => 1,

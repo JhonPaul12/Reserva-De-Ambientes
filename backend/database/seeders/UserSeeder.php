@@ -58,5 +58,13 @@ class UserSeeder extends Seeder
             'password' => bcrypt('12345678')
 
         ]);
+        User :: create([
+            'name' => 'juan',
+            'apellidos' => 'perez',
+            'telefono' => '12345638',
+            'codigo_sis' => '1234567893', // '1234567890' => '1234567890
+            'email' => 'juan@gmail.com',
+            'password' => bcrypt('12345678')
+        ]);
     }
 }
