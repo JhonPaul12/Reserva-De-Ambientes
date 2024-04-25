@@ -28,6 +28,15 @@ Route::resource('/horario',HorarioController::class);
 Route::resource('/excepcion',ExcepcionController::class);
 Route::resource('/reglaExc',RegexcCotroller::class);
 Route::resource('/periodo',PeriodoController::class);
+//ambiente
+Route::get('/ambiente',[AmbienteController::class,'index']);
+Route::get('/ambiente/{id}',[AmbienteController::class,'show']);
+Route::post('/ambiente',[AmbienteController::class,'store']);
+Route::put('/ambiente/{id}',[AmbienteController::class,'update']);
+Route::get('/solicitud/{id}',[AmbienteController::class,'destroy']);
+
+
+
 
 
 //solicitudes
