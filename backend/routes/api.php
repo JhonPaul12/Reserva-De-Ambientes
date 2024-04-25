@@ -11,16 +11,7 @@ use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+
 //lista de todos los usuario
 Route::get('/users/index', [UserController::class, 'index']);
 // guardar usuario
@@ -34,6 +25,15 @@ Route::resource('/horario',HorarioController::class);
 Route::resource('/excepcion',ExcepcionController::class);
 Route::resource('/reglaExc',RegexcCotroller::class);
 Route::resource('/periodo',PeriodoController::class);
+//ambiente
+Route::get('/ambiente',[AmbienteController::class,'index']);
+Route::get('/ambiente/{id}',[AmbienteController::class,'show']);
+Route::post('/ambiente',[AmbienteController::class,'store']);
+Route::put('/ambiente/{id}',[AmbienteController::class,'update']);
+Route::get('/solicitud/{id}',[AmbienteController::class,'destroy']);
+
+
+
 
 
 //solicitudes
