@@ -24,4 +24,6 @@ class Ambiente extends Model
     {
         return $this->hasOne(Regla::class);
     }
+
+    
 }
