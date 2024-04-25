@@ -45,4 +45,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Materia::class, 'materia_user');
     }
+    public function solicitudes(): BelongsToMany
+    {
+        return $this->belongsToMany(Solicitud::class, 'solicitud_user');
+    }
 }

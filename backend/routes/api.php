@@ -11,13 +11,16 @@ use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
-
-//lista de todos los usuario
-Route::get('/users/index', [UserController::class, 'index']);
-// guardar usuario
-Route::post('/users/store', [UserController::class, 'store']);
-
-
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
 
 Route::resource('/ambiente', AmbienteController::class);
 Route::resource('/regla',ReglaController::class);
