@@ -16,6 +16,6 @@ class Excepcion extends Model
 
     public function regla_excs()
     {
-        return $this->hasMany(Regla_exc::class);
+        return $this->hasMany(Reg_exc::class);
     }
 }

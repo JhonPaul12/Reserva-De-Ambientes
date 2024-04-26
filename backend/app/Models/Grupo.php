@@ -9,8 +9,8 @@ class Grupo extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    public function materias(): BelongsToMany
+    public function materias()
     {
-        return $this->belongsToMany(Materia::class, 'grupo_materia');
+        return $this->belongsTo('materias');
     }
 }

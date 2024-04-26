@@ -13,12 +13,13 @@ class Materia extends Model
     ];
     protected $guarded = [];
     
-    public function users(): BelongsToMany
+    
+    public function grupos()
     {
-        return $this->belongsToMany(User::class, 'materia_user');
+        return $this->hasMany('grupos');
     }
-    public function grupos():BelongsToMany
+    public function user(): BelongsToMany
     {
-        return $this->belongsToMany(Grupo::class, 'grupo_materia');
+        return $this->belongsTo('users');
     }
 }

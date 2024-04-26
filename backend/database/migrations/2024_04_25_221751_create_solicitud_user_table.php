@@ -15,8 +15,9 @@ class CreateSolicitudUserTable extends Migration
     {
         Schema::create('solicitud_user', function (Blueprint $table) {
             $table->id();
+          
+            $table->foreignId('solicitude_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('solicitud_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

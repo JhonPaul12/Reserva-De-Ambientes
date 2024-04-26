@@ -16,6 +16,8 @@ class CreateMateriasTable extends Migration
         Schema::create('materias', function (Blueprint $table) {
             $table->id();
             $table  ->string('nombre_materia')-> nonullable()->unique(); 
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+    
             $table->timestamps();
         });
     }

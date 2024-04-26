@@ -20,7 +20,7 @@ class Solicitud extends Model
 
     public function ambiente(){
         return $this->belongsTo(Ambiente::class);
-    } 
+    }
     use HasFactory;
     public function users()
     {
