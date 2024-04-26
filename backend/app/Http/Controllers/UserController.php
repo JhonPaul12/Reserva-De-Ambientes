@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Rol;
+use App\Models\Materia;
 class UserController extends Controller
 {
     
@@ -107,6 +108,38 @@ class UserController extends Controller
 
         // Devuelve las materias
         return response()->json($materias, 200);
+    }
+
+
+        
+    public function getGruposDeMateriaDeDocente($docente_id, $materia_id)
+    {
+        // Encuentra el docente por su ID
+        $docente = User::find($docente_id);
+
+        // Si el docente no existe, devuelve un error
+        if (!$docente) {
+            return response()->json(['message' => 'Docente no encontrado'], 404);
+        }
+
+        // Encuentra la materia por su ID
+        $materia = Materia::find($materia_id);
+
+        // Si la materia no existe, devuelve un error
+        if (!$materia) {
+            return response()->json(['message' => 'Materia no encontrada'], 404);
+        }
+
+        // Si la materia no pertenece al docente, devuelve un error
+        if ($materia->user_id != $docente->id) {
+            return response()->json(['message' => 'La materia no pertenece al docente'], 400);
+        }
+
+        // Obtiene los grupos de la materia
+        $grupos = $materia->grupos;
+
+        // Devuelve los grupos
+        return response()->json($grupos, 200);
     }
 
 }

@@ -16,6 +16,8 @@ class CreateGruposTable extends Migration
         Schema::create('grupos', function (Blueprint $table) {
             $table->id();
             $table->integer('grupo');
+            $table->foreignId('materia_id')->constrained()->onDelete('cascade');
+   
             $table->timestamps();
         });
     }

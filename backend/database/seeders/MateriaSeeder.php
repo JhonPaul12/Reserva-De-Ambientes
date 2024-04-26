@@ -15,61 +15,68 @@ class MateriaSeeder extends Seeder
     public function run()
     {
         Materia::create([
-            'nombre_materia' => 'Introduccion A La Programacion'	
+            'nombre_materia' => 'Introduccion A La Programacion',
+            'user_id' => 1	
         ]);
         Materia::create([
-            'nombre_materia' => 'Programacion'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Redes'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Base De Datos I'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Base De Datos II'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Sistemas Operativos'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Taller De Ingenieria De Software'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Taller de Base de Datos'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Algoritmos Avanzados'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Programacion Web'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Redes Avanzadas'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Teoria De Grafos'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Inteligencia Artificial'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Inteligencia Artificial II'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Sistemas de Informacion'
-        ]);
-        Materia::create([
-            'nombre_materia' => 'Sistemas de Informacion II'
-        ]);
-
-        DB::table ('materia_user')->insert([
-            'materia_id' => 2,
-            'user_id' => 1
-        ]);
-        DB::table ('materia_user')->insert([
-            'materia_id' => 2,
+            'nombre_materia' => 'Programacion',
             'user_id' => 2
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Redes',
+            'user_id' => 2
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Base De Datos I',
+            'user_id' => 3
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Base De Datos II',
+            'user_id' => 3
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Sistemas Operativos',
+            'user_id' => 4
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Taller De Ingenieria De Software',
+            'user_id' => 4
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Taller de Base de Datos',
+            'user_id' => 5
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Algoritmos Avanzados',
+            'user_id' => 2
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Programacion Web',
+            'user_id' => 3
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Redes Avanzadas',
+            'user_id' => 4
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Teoria De Grafos',
+            'user_id' => 5
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Inteligencia Artificial',
+            'user_id' => 2
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Inteligencia Artificial II',
+            'user_id' => 3
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Sistemas de Informacion',
+            'user_id' => 4
+        ]);
+        Materia::create([
+            'nombre_materia' => 'Sistemas de Informacion II',
+            'user_id' => 5
         ]);
     }
 }
