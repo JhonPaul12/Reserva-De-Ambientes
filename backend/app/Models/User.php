@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'apellidos', 'telefono', 'codigo_sis', 'email', 'password',
     ];
 
     /**
@@ -37,4 +37,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function rols(): BelongsToMany
+    {
+        return $this->belongsToMany(Rol::class, 'rol_user');
+    }  
+    public function materias(): BelongsToMany
+    {
+        return $this->belongsToMany(Materia::class, 'materia_user');
+    }
+    public function solicitudes(): BelongsToMany
+    {
+        return $this->belongsToMany(Solicitud::class, 'solicitud_user');
+    }
 }

@@ -13,8 +13,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-       $this->call([
-        HorarioSeeder::class
-       ]);
+        $this->call([
+
+            UserSeeder::class,
+            RolSeeder::class,
+            MateriaSeeder::class,
+            GrupoSeeder::class,
+            HorarioSeeder::class,
+        ]);
     }
 }
