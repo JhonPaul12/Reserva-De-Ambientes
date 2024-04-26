@@ -90,3 +90,5 @@ Route::put('/usuario/{id}', [UserController::class, 'update']);
 Route::get('/usuario/{id}', [UserController::class, 'show']);
 //mostrar materia user
 Route::get('/usuario/materias/{id}', [UserController::class, 'showMaterias']);
+//mostrar grupos de materia de docente
+Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGruposDeMateriaDeDocente']);

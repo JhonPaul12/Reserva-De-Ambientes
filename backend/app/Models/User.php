@@ -41,12 +41,13 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Rol::class, 'rol_user');
     }  
-    public function materias(): BelongsToMany
-    {
-        return $this->belongsToMany(Materia::class, 'materia_user');
-    }
+   
     public function solicitudes(): BelongsToMany
     {
         return $this->belongsToMany(Solicitud::class, 'solicitud_user');
+    }
+    public function materias()
+    {
+        return $this->hasMany('materias');
     }
 }
