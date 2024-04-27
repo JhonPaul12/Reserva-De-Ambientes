@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             MateriaSeeder::class,
             GrupoSeeder::class,
             HorarioSeeder::class,
+            AmbienteSeeder::class,
+            SolicitudSeeders::class
         ]);
     }
 }
