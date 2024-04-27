@@ -44,6 +44,7 @@ Route::get('/periodo/{id}',[PeriodoController::class,'show']);
 Route::post('/periodo',[PeriodoController::class,'store']);
 Route::put('/periodo/{id}',[PeriodoController::class,'update']);
 Route::get('/periodo/{id}',[PeriodoController::class,'destroy']);
+Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorario']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);

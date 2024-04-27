@@ -53,7 +53,7 @@ class PeriodoController extends Controller
     $est = $request->estado;
     $ini = $regla->fecha_inicial;
     $end = $regla->fecha_final;
-    if($est==='regular'){
+    if($est==='libre'){
         $this->crearPeriodosRegulares($request->id_ambiente,$request->id_horario, $est,$ini,$end);
     }
 
