@@ -43,7 +43,7 @@ class RolSeeder extends Seeder
             'user_id' => 3
         ]);
         DB::table ('rol_user')->insert([
-            'rol_id' => 2,
+            'rol_id' => 4,
             'user_id' => 4
         ]);
         DB::table ('rol_user')->insert([
@@ -54,5 +54,6 @@ class RolSeeder extends Seeder
             'rol_id' => 1,
             'user_id' => 5
         ]);
+
     }
 }
