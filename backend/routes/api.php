@@ -24,19 +24,21 @@ Route::get('/regla',[ReglaController::class,'index']);
 Route::get('/regla/{id}',[ReglaController::class,'show']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
-Route::get('/regla/{id}',[ReglaController::class,'destroy']);
+Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
 //horario
 Route::get('/horario',[HorarioController::class,'index']);
 Route::get('/horario/{id}',[HorarioController::class,'show']);
+Route::get('/buscarHorario',[HorarioController::class,'buscarHorario']);
 Route::post('/horario',[HorarioController::class,'store']);
 Route::put('/horario/{id}',[HorarioController::class,'update']);
-Route::get('/horario/{id}',[HorarioController::class,'destroy']);
+Route::delete('/horario/{id}',[HorarioController::class,'destroy']);
+
 //ambiente
 Route::get('/ambiente',[AmbienteController::class,'index']);
 Route::get('/ambiente/{id}',[AmbienteController::class,'show']);
 Route::post('/ambiente',[AmbienteController::class,'store']);
 Route::put('/ambiente/{id}',[AmbienteController::class,'update']);
-Route::get('/solicitud/{id}',[AmbienteController::class,'destroy']);
+Route::delete('/solicitud/{id}',[AmbienteController::class,'destroy']);
 
 //periodo
 Route::get('/periodo',[PeriodoController::class,'index']);
@@ -50,19 +52,19 @@ Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
 Route::post('/excepcion',[ExcepcionController::class,'store']);
 Route::put('/excepcion/{id}',[ExcepcionController::class,'update']);
-Route::get('/excepcion/{id}',[ExcepcionController::class,'destroy']);
+Route::delete('/excepcion/{id}',[ExcepcionController::class,'destroy']);
 //regla
 Route::get('/regla',[ReglaController::class,'index']);
 Route::get('/regla/{id}',[ReglaController::class,'show']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
-Route::get('/regla/{id}',[ReglaController::class,'destroy']);
+Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
 //regExc
 Route::get('/regexc',[RegexcCotroller::class,'index']);
 Route::get('/regexc/{id}',[RegexcCotroller::class,'show']);
 Route::post('/regexc',[RegexcCotroller::class,'store']);
 Route::put('/regexc/{id}',[RegexcCotroller::class,'update']);
-Route::get('/regexc/{id}',[RegexcCotroller::class,'destroy']);
+Route::delete('/regexc/{id}',[RegexcCotroller::class,'destroy']);
 
 //solicitudes
 Route::get('/solicitud',[SolicitudController::class,'index']);
