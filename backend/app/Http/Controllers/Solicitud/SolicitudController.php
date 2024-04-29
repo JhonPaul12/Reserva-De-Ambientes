@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Solicitud;
 
 use App\Http\Controllers\Controller;
 use App\Models\Solicitud;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Expr\FuncCall;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class SolicitudController extends Controller
@@ -185,4 +187,24 @@ class SolicitudController extends Controller
 
        return response()->json($data,200);
     }
+
+    public function showDocentes($id){
+    
+        // Encuentra el usuario por ID
+        $user = User::find($id);
+        
+        // Si el usuario no existe, devuelve un error
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        // Obtiene las materias del usuario
+        $solicitudes = $user->solicitudes;
+
+        // Devuelve las materias
+        return response()->json([
+            "docente"=>$solicitudes
+        ],200);
+    }
+
 }

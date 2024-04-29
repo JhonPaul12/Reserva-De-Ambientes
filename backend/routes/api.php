@@ -72,6 +72,7 @@ Route::get('/solicitud/{id}',[SolicitudController::class,'show']);
 Route::post('/solicitud',[SolicitudController::class,'store']);
 Route::put('/solicitud/{id}',[SolicitudController::class,'update']);
 Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
+Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
 
 //reserva
 Route::get('/reserva', [ReservaController::class, 'index']);
