@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Solicitud;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Solicitud\SolicitudRequest;
+use App\Http\Resources\Solicitud\SolicitudCollection;
+use App\Http\Resources\Solicitud\SolicitudResource;
 use App\Models\Solicitud;
 use App\Models\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\FuncCall;
@@ -19,11 +23,8 @@ class SolicitudController extends Controller
      */
     public function index()
     {
-        $solicitudes = Solicitud::with('ambiente')->get();
-        
-        return response() -> json([
-            'solicitudes' => $solicitudes
-        ],200);
+        $solicitudes = Solicitud::all();
+        return ['solicitudes' => SolicitudResource::collection($solicitudes)];
     }
 
     /**
@@ -32,52 +33,16 @@ class SolicitudController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SolicitudRequest $request)
     {
-        $validador = Validator::make($request->all(),[
-            'motivo' => 'required|max:250',
-            'fecha_solicitud' => 'required',
-            'hora_inicio' => 'required',
-            'hora_fin' => 'required',
-            'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
-            'numero_estudiantes' => 'required',
-            'ambiente_id'=> 'required|exists:ambientes,id'
+        $solicitud = $request -> validated();
+
+        $solicitud = Solicitud::create($solicitud);
+
+        return response()->json([
+            'message' => 'se guardo con exito',
+            'solicitud' => $solicitud
         ]);
-
-        if($validador->fails()){
-            $data = [
-                'message' => 'Error en la validacion de datos',
-                'erros' => $validador->errors(),
-                'status' => 400
-            ];
-            return response()->json($data,400);
-        }
-
-        $solicitud = Solicitud::create([
-            'motivo' => $request->motivo,
-            'fecha_solicitud' => $request->fecha_solicitud,
-            'hora_inicio' => $request->hora_inicio,
-            'hora_fin' => $request->hora_fin,
-            'estado' => $request->estado,
-            'numero_estudiantes' => $request->numero_estudiantes,
-            'ambiente_id' =>$request->input('ambiente_id')
-        ]);
-        
-        $solicitud->load('ambiente');
-        
-        if(!$solicitud){
-            $data = [
-                'message' => 'Error al crear una solicitud',
-                'status' => 500
-            ];
-            return response()->json($data,500);
-        }
-        $data = [
-            'solicitud' => $solicitud,
-            'status' => 201
-        ];
-
-        return response()->json($data,201);
     }
 
     /**
@@ -88,22 +53,8 @@ class SolicitudController extends Controller
      */
     public function show($id)
     {
-        $solicitud = Solicitud::with('ambiente')->findOrFail($id);
-
-        if(!$solicitud){
-            $data = [
-                'message' => 'Solicitud no encontrada',
-                'status' => 404
-            ];
-            return response()->json($data,404);
-        }
-
-        $data = [
-            'solicitud' => $solicitud,
-            'status' => 200
-        ];
-
-        return response()->json($data,200);
+        $solicitud = Solicitud::find($id);
+        return ['solicitud' => new SolicitudResource($solicitud)];
     }
 
     /**
@@ -113,51 +64,18 @@ class SolicitudController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(SolicitudRequest $request, $id)
     {
-        $solicitud = Solicitud::find($id);
-        if(!$solicitud){
-            $data = [
-                'message' => 'Solicitud no encontrada',
-                'status' => 404 
-            ];
-        }
+        $solicitud = Solicitud::findOrFail($id);
 
-        $validador = Validator::make($request->all(),[
-            'motivo' => 'required|max:250',
-            'fecha_solicitud' => 'required',
-            'hora_inicio' => 'required',
-            'hora_fin' => 'required',
-            'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
-            'numero_estudiantes' => 'required',
-            'ambiente_id' => 'required|exists:ambiente'
+        $validatedData = $request->validated();
+
+        $solicitud->update($validatedData);
+
+        return response()->json([
+            'message' => 'La solicitud se actualizó con éxito',
+            'solicitud' => new SolicitudResource($solicitud)
         ]);
-
-        if($validador->fails()){
-            $data = [
-                'message' => 'Error en la validacion de datos',
-                'errors' => $validador->errors(),
-                'status' => 400
-            ];
-        }
-
-        $solicitud->motivo = $request->motivo;
-        $solicitud->fecha_solicitud = $request->fecha_solicitud;
-        $solicitud->hora_inicio = $request->hora_inicio;
-        $solicitud->hora_fin = $request->hora_fin;
-        $solicitud->estado = $request->estado;
-        $solicitud->numero_estudiantes = $request->numero_estudiantes;
-        $solicitud->ambiente_id = $request->ambiente_id;
-
-        $solicitud->save();
-
-        $data = [
-            'message' => 'Solicitud actualizado',
-            'solicitud' => $solicitud, 
-            'status' => 200
-        ];
-
-        return response()->json($data,200);
     }
 
     /**
@@ -170,41 +88,41 @@ class SolicitudController extends Controller
     {
         $solicitud = Solicitud::findOrFail($id);
 
-        if(!$solicitud){
-           $data = [
-               'message' => 'Solicitud no encontrada',
-               'status' => 404
-           ];
-           return response()->json($data,404);
-       }
+        $solicitud->delete();
 
-       $solicitud->delete();
-       
-       $data = [
-           'message' => 'Solicitud eliminada',
-           'status' => 200
-       ];
-
-       return response()->json($data,200);
+        return response()->json([
+            'message' => 'La solicitud se eliminó con éxito'
+        ]);
     }
 
-    public function showDocentes($id){
-    
-        // Encuentra el usuario por ID
-        $user = User::find($id);
-        
-        // Si el usuario no existe, devuelve un error
-        if (!$user) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
+
+
+    public function postDocente(Request $request){
+        //'name', 'apellidos', 'telefono', 'codigo_sis', 'email', 'password',
+        $usuario = new User();
+        $usuario->name      = $request->name;          
+        $usuario->apellido  = $request->apellido;
+        $usuario->telefono  = $request->telefono;
+        $usuario->codigo_sis= $request->codigo_sis;
+        $usuario->email     = $request->email;
+        $usuario->password  = $request->password;
+        $usuario->solicitud_user = $request->solicitud_user;
+
+        $usuario->save();
+
+        $arr = [];
+        $solicitudes = $request->solicitudes;
+
+
+        foreach($solicitudes as $solicitud){
+
+            $arr[] = [
+                
+            ];
         }
 
-        // Obtiene las materias del usuario
-        $solicitudes = $user->solicitudes;
 
-        // Devuelve las materias
-        return response()->json([
-            "docente"=>$solicitudes
-        ],200);
+        return $usuario;
     }
 
 }
