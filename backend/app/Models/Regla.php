@@ -9,7 +9,7 @@ class Regla extends Model
 {
     use HasFactory;
     protected $fillable=[
-        "id_ambiente",
+        "ambiente_id",
         "fecha_inicial",
         "fecha_final"
     ];

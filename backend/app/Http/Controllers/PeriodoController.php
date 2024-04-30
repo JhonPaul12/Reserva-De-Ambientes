@@ -140,4 +140,11 @@ public function crearPeriodosRegulares($idAmbiente, $idHorario, $estado, $fechaI
             return response()->json(['error' => 'Error al eliminar los periodos: ' . $e->getMessage()], 500);
         }
     }
+
+    public function showEstado($id)
+    {
+        $p = Periodo::find($id);
+        $estado=$p->estado;
+        return response()->json($estado,200);
+    }
 }

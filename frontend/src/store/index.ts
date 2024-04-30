@@ -1,1 +1,0 @@
-export { useAmbienteStore } from './ambientes/ambientes.store.ts'
