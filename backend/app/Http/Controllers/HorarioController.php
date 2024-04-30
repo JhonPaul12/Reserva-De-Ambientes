@@ -57,4 +57,25 @@ class HorarioController extends Controller
             'data'=> $horario
         ],200);
     }
+
+    public function buscarHorario(Request $request){
+        $dia = $request->dia;
+        $horaInicio = $request->hora_inicio;
+        $horaFin = $request->hora_fin;
+
+        // Buscar el horario con los mismos datos
+        $horario = Horario::where('dia', $dia)
+            ->where('hora_inicio', $horaInicio)
+            ->where('hora_fin', $horaFin)
+            ->first();
+
+        // Verificar si se encontró un horario con los mismos datos
+        if ($horario) {
+            return response()->json(['id_horario' => $horario->id], 200);
+        } else {
+            return response()->json(['message' => 'No se encontró un horario con los mismos datos'], 404);
+        }
+    }
+
+
 }

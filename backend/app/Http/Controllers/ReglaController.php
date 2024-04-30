@@ -16,7 +16,7 @@ class ReglaController extends Controller
     public function store(Request $request)
     {
         $datos = $request->validate([
-            'id_ambiente' =>'required',
+            'ambiente_id' =>'required',
             'fecha_inicial' => 'required|date',
             'fecha_final' => 'required|date',
         ]);
@@ -35,7 +35,7 @@ class ReglaController extends Controller
     public function update(Request $request, $id)
     {
         $regla = Regla::find($id);
-        $regla->id_ambiente = $request->id_ambiente;
+        $regla->ambiente_id = $request->ambiente_id;
         $regla->fecha_inicial = $request->fecha_inicial;
         $regla->fecha_final = $request->fecha_final;
         $regla->save();
