@@ -22,4 +22,7 @@ class Materia extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function solicitud(){
+        return $this->hasMany(Solicitud::class);
+    }
 }
