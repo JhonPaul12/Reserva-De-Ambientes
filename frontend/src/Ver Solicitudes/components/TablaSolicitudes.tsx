@@ -17,6 +17,7 @@ export const TablaSolicitudes = ({ solicitudes }: Props) => {
   console.log(solicitudes);
   return (
     <div className=" contenedor-table ">
+      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>SOLICITUDES</label>
       <section className="mx-6 my-4  ">
         <Table
           className="custom-table"

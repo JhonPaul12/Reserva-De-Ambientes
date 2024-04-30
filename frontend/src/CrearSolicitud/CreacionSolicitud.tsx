@@ -8,7 +8,6 @@ export const CreacionSolicitud = () => {
         position="top-right"
         richColors
         closeButton
-        style={{ position: "absolute" }}
       />
       <FormSolicitud />
     </div>

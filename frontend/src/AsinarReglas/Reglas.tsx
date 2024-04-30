@@ -1,24 +1,31 @@
 import { Calendario } from "./components/Calendario";
-import MenuCheckBox from "./components/MenuCheckBox";
-import { ListaDocentes } from "./components/ListaDocentes";
+import { MenuCheckBox } from "./components/MenuCheckBox";
+import { ListaAmbientes } from "./components/ListaAmbientes";
+
 import { useState } from "react";
-import "./reglas.css"; // Importa el archivo CSS
+import "./reglas.css";
+
 import { Button } from "@nextui-org/react";
 import { Dayjs } from "dayjs";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
 
+import { useReglaStore } from "./store/Reglas.store";
+
 export const Reglas = () => {
-  const [selectedDocente, setSelectedDocente] = useState("");
+  const crearRegla = useReglaStore((state) => state.crearRegla);
+  const [selectedAmbiente, setSelectedAmbiente] = useState("");
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [selectedDateFinal, setSelectedDateFinal] = useState<Dayjs | null>(
     null
   );
 
+  //Ambientes
   const handleSelectChange = (selectedValue: string) => {
-    setSelectedDocente(selectedValue);
+    setSelectedAmbiente(selectedValue);
   };
 
+  //Fechas
   const handleDateChange = (newValue: Dayjs | null) => {
     setSelectedDate(newValue);
   };
@@ -26,12 +33,10 @@ export const Reglas = () => {
     setSelectedDateFinal(newValue);
   };
 
-  const handleButtonClick = () => {
-    if (selectedDocente === "") {
-      console.error("Selecciona un docente");
-      toast.error("Selecciona un docente");
+  const handleButtonClick = async () => {
+    if (selectedAmbiente === "") {
+      toast.error("Selecciona un Ambiente");
     } else if (!selectedDate || !selectedDateFinal) {
-      console.error("Por favor, selecciona la fecha inicial y la final");
       toast.error("Por favor, selecciona la fecha inicial y la final");
     } else {
       const selectedDay = selectedDate?.date();
@@ -40,26 +45,32 @@ export const Reglas = () => {
       const selectedDayFinal = selectedDateFinal?.date();
       const selectedMonthFinal = selectedDateFinal?.month() + 1;
       const selectedYearFinal = selectedDateFinal?.year();
-      console.log(selectedDay, selectedMonth, selectedYear);
-      console.log(selectedDayFinal, selectedMonthFinal, selectedYearFinal);
+      //console.log(selectedDay, selectedMonth, selectedYear);
+      //console.log(selectedDayFinal, selectedMonthFinal, selectedYearFinal);
       if (selectedDay <= selectedDayFinal) {
         if (selectedMonth <= selectedMonthFinal) {
           if (selectedYear <= selectedYearFinal) {
-            console.log("Registro exitoso");
             toast.success("Registro exitoso");
+            await crearRegla(
+              parseInt(selectedAmbiente),
+              selectedDate?.format("YYYY-MM-DD"),
+              selectedDateFinal?.format("YYYY-MM-DD")
+            );
           } else {
-            console.log("La fecha inicial es mayor a la fecha final");
             toast.error("La fecha inicial es mayor a la fecha final");
           }
         } else {
-          console.log("La fecha inicial es mayor a la fecha final");
           toast.error("La fecha inicial es mayor a la fecha final");
         }
       } else {
-        console.log("La fecha inicial es mayor a la fecha final");
         toast.error("La fecha inicial es mayor a la fecha final");
       }
     }
+  };
+
+  const handleCheckboxChange = (checkedCheckboxes: string[]) => {
+    // Utiliza los checkboxes marcados como necesites
+    console.log("Checkboxes marcados desde reglas:", checkedCheckboxes);
   };
 
   return (
@@ -78,7 +89,7 @@ export const Reglas = () => {
           <p className="text-2xl font-bold text-center justify-center mt-5 mx-5">
             Seleccionar Ambiente
           </p>
-          <ListaDocentes onSelectChange={handleSelectChange} />
+          <ListaAmbientes onSelectChange={handleSelectChange} />
           <p className="text-2xl font-bold mt-5 mx-8">Fecha Inicial</p>
           <Calendario
             selectedDate={selectedDate}
@@ -91,7 +102,7 @@ export const Reglas = () => {
           />
         </div>
 
-        <MenuCheckBox />
+        <MenuCheckBox onCheckboxChange={handleCheckboxChange} />
       </div>
       <Button className="bg-primary" onClick={handleButtonClick}>
         Registrar

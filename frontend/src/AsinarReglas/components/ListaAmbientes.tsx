@@ -5,11 +5,11 @@ interface Option {
   nombre: string;
 }
 
-interface ListaDocentesProps {
+interface ListaAmbientesProps {
   onSelectChange: (selectedValue: string) => void;
 }
 
-export const ListaDocentes: React.FC<ListaDocentesProps> = ({
+export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
   onSelectChange,
 }) => {
   const [options, setOptions] = useState<Option[]>([]);
@@ -29,7 +29,7 @@ export const ListaDocentes: React.FC<ListaDocentesProps> = ({
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = event.target.value;
     setSelectedOption(selectedValue);
-    onSelectChange(selectedValue); // Aquí se pasa el valor seleccionado al otro componente
+    onSelectChange(selectedValue);
   };
 
   return (
@@ -43,7 +43,7 @@ export const ListaDocentes: React.FC<ListaDocentesProps> = ({
           Selecciona una opción
         </option>
         {options.map((option) => (
-          <option key={option.id} value={option.nombre}>
+          <option key={option.id} value={option.id}>
             {option.nombre}
           </option>
         ))}
