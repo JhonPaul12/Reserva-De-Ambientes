@@ -15,9 +15,19 @@ class Solicitud extends Model
         'hora_fin',
         'estado',
         'numero_estudiantes',
+        'id_materia',
+        'id_grupo',
         'ambiente_id'
     ];
+    public function materia()
+    {
+        return $this->belongsTo(Materia::class);
+    }
 
+    public function grupo()
+    {
+        return $this->belongsTo(Grupo::class);
+    }
     public function ambiente(){
         return $this->belongsTo(Ambiente::class);
     }

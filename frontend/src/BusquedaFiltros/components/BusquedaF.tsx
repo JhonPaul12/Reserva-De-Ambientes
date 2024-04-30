@@ -1,74 +1,107 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import "./estilosBusq.css";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
+import axios from "axios";
+import { Ambiente,Periodo,Horario } from "../../BusquedaFiltros/interfaces/Ambiente"; 
 
-interface Ambiente {
-  id: number;
-  nombre: string;
-  capacidad: number;
-  tipo: string;
-  ubicacion: string;
-}
+
 export const BusquedaF = () => {
-  const [ambientes, setAmbientes] = useState<Ambiente[]>([]);
+  const [datos, setDatos] = useState<any[]>([]);
   const [busquedaNombre, setBusquedaNombre] = useState<string>("");
-  const [busquedaCapacidad, setBusquedaCapacidad] = useState<number | null>(
-    null
-  );
+  const [busquedaCapacidad, setBusquedaCapacidad] = useState<number | null>(null);
   const [busquedaTipo, setBusquedaTipo] = useState<string>("");
+  const [busquedaHora, setBusquedaHora] = useState<string>("");
 
   useEffect(() => {
-    getAmbientes();
-  }, []);
+    obtenerDatos();
+  }, [busquedaNombre, busquedaCapacidad, busquedaTipo, busquedaHora]);
 
-  const getAmbientes = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
-    setAmbientes(respuesta.data);
+  const obtenerDatos = async () => {
+    try {
+      const periodosRespuesta = await axios.get(`http://127.0.0.1:8000/api/periodo/`);
+      const periodos: Periodo[] = periodosRespuesta.data;
+
+      const ambientesRespuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
+      const ambientes: Ambiente[] = ambientesRespuesta.data;
+
+      const horariosRespuesta = await axios.get(`http://127.0.0.1:8000/api/horario/`);
+      const horarios: Horario[] = horariosRespuesta.data;
+
+      const datosFiltrados = periodos.filter(periodo => periodo.estado === "libre")
+        .map(periodo => {
+          const ambiente = ambientes.find(a => a.id === periodo.id_ambiente);
+          const horario = horarios.find(h => h.id === periodo.id_horario);
+
+          return {
+            aula: ambiente ? ambiente.nombre : "",
+            tipo: ambiente ? ambiente.tipo : "",
+            hora_inicio: horario ? horario.hora_inicio : "",
+            capacidad: ambiente ? ambiente.capacidad : 0,
+            ubicacion: ambiente ? ambiente.ubicacion : "",
+            fecha: formatoFecha(periodo.fecha),
+          };
+        });
+
+      const datosFiltradosBusqueda = datosFiltrados.filter((dato) => {
+        let nombreMatch = true;
+        let capacidadMatch = true;
+        let tipoMatch = true;
+        let horaMatch = true;
+
+        if (busquedaNombre) nombreMatch = dato.aula.toLowerCase().includes(busquedaNombre.toLowerCase());
+
+        if (busquedaCapacidad !== null)   capacidadMatch = dato.capacidad === busquedaCapacidad;
+
+        if (busquedaTipo)   tipoMatch = dato.tipo.toLowerCase() === busquedaTipo.toLowerCase();
+
+        if (busquedaHora) {
+          horaMatch = dato.hora_inicio.toLowerCase().includes(busquedaHora.toLowerCase());
+        }
+
+        return nombreMatch && capacidadMatch && tipoMatch && horaMatch;
+      });
+
+      setDatos(datosFiltradosBusqueda);
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+    }
   };
 
-  const handleBusquedaNombreChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleBusquedaNombreChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBusquedaNombre(event.target.value);
   };
 
-  const handleBusquedaCapacidadChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleBusquedaCapacidadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const capacidad = parseInt(event.target.value);
     setBusquedaCapacidad(isNaN(capacidad) ? null : capacidad);
   };
 
-  const handleBusquedaTipoChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleBusquedaTipoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setBusquedaTipo(event.target.value);
   };
 
-  const filteredAmbientes = ambientes.filter((ambiente) => {
-    let nombreMatch = true;
-    let capacidadMatch = true;
-    let tipoMatch = true;
+  const handleBusquedaHoraChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBusquedaHora(event.target.value);
+  };
 
-    if (busquedaNombre) {
-      nombreMatch = ambiente.nombre
-        .toLowerCase()
-        .includes(busquedaNombre.toLowerCase());
-    }
-
-    if (busquedaCapacidad !== null) {
-      capacidadMatch = ambiente.capacidad === busquedaCapacidad;
-    }
-
-    if (busquedaTipo) {
-      tipoMatch = ambiente.tipo === busquedaTipo;
-    }
-
-    return nombreMatch && capacidadMatch && tipoMatch;
-  });
+  const formatoFecha = (fecha: string) => {
+    const fechaObj = new Date(fecha);
+    const dia = fechaObj.getDate();
+    const mes = fechaObj.getMonth() + 1;
+    const ano = fechaObj.getFullYear();
+    return `${dia}/${mes}/${ano}`;
+  };
 
   return (
-    <div className="contenedor">
+    <div className="contenedor-table">
+      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>BUSQUEDA POR FILTROS</label>
       <div className="p-5">
         <input
           type="text"
@@ -79,7 +112,7 @@ export const BusquedaF = () => {
         />
         <input
           type="number"
-          placeholder="CAPCIDAD"
+          placeholder="CAPACIDAD"
           value={busquedaCapacidad === null ? "" : busquedaCapacidad}
           onChange={handleBusquedaCapacidadChange}
           className="input"
@@ -91,34 +124,44 @@ export const BusquedaF = () => {
         >
           <option value="">Seleccione tipo...</option>
           <option value="Laboratorio">Laboratorio</option>
-          <option value="Aula de clases">Aula de clases</option>
+          <option value="Aula">Aula</option>
           <option value="Multifuncional">Multifuncional</option>
         </select>
+        <input
+          type="text"
+          placeholder="HORA DE INICIO"
+          value={busquedaHora}
+          onChange={handleBusquedaHoraChange}
+          className="input"
+        />
       </div>
-      <table className="tabla">
-        <thead>
-          <tr className="trr">
-            <th className="thh">Id</th>
-            <th className="thh">Aula</th>
-            <th className="thh">Capacidad</th>
-            <th className="thh">Tipo</th>
-            <th className="thh">Ubicacion</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAmbientes.map((ambiente) => {
-            return (
-              <tr className="trr" key={ambiente.id}>
-                <td className="tdd">{ambiente.id}</td>
-                <td className="tdd">{ambiente.nombre}</td>
-                <td className="tdd">{ambiente.capacidad}</td>
-                <td className="tdd">{ambiente.tipo}</td>
-                <td className="tdd">{ambiente.ubicacion}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <section className="mx-6 my-4">
+        <Table
+          className="custom-table"
+          aria-label="Tabla de datos"
+        >
+          <TableHeader>
+            <TableColumn className="text-center text-3xl bg-slate-300" >Aula</TableColumn>
+            <TableColumn className="text-center text-3xl bg-slate-300">Tipo de aula</TableColumn> 
+            <TableColumn className="text-center text-3xl bg-slate-300">Hora de inicio</TableColumn>
+            <TableColumn className="text-center text-3xl bg-slate-300">Capacidad</TableColumn>
+            <TableColumn className="text-center text-3xl bg-slate-300">Ubicación</TableColumn>
+            <TableColumn className="text-center text-3xl bg-slate-300">Fecha</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {datos.map((dato, index) => (
+              <TableRow key={index}>
+                <TableCell className="text-base text-black">{dato.aula}</TableCell>
+                <TableCell className="text-base text-black">{dato.tipo}</TableCell> 
+                <TableCell className="text-base text-black">{dato.hora_inicio}</TableCell>
+                <TableCell className="text-base text-black">{dato.capacidad}</TableCell>
+                <TableCell className="text-base text-black">{dato.ubicacion}</TableCell>
+                <TableCell className="text-base text-black">{dato.fecha}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </section>
     </div>
   );
 };

@@ -55,12 +55,12 @@ class PeriodoController extends Controller
     $end = $regla->fecha_final;
     if($est==='libre'){
         $this->crearPeriodosRegulares($request->id_ambiente,$request->id_horario, $est,$ini,$end);
+        return response()->json(['message' => 'Periodos creados exitosamente'], 201);
+    }else{
+        $periodo = new Periodo($validator->validated());
+        $periodo->save();
+        return response()->json(['message' => 'El período se ha creado exitosamente'], 201);
     }
-
-    $periodo = new Periodo($validator->validated());
-    $periodo->save();
-
-    return response()->json(['message' => 'El período se ha creado exitosamente'], 201);
 }
 
 public function crearPeriodosRegulares($idAmbiente, $idHorario, $estado, $fechaInicioRegla, $fechaFinRegla)
@@ -140,4 +140,36 @@ public function crearPeriodosRegulares($idAmbiente, $idHorario, $estado, $fechaI
             return response()->json(['error' => 'Error al eliminar los periodos: ' . $e->getMessage()], 500);
         }
     }
+
+    public function showEstado($id)
+    {
+        $p = Periodo::find($id);
+        $estado=$p->estado;
+        return response()->json($estado,200);
+    }
+
+    public function showHora(Request $request)
+{
+    $idAmbiente = $request->input('id_ambiente');
+    $horaInicio = $request->input('hora_inicio');
+    $horaFin = $request->input('hora_fin');
+    $fecha = $request->input('fecha');
+
+    $periodos = Periodo::where('id_ambiente', $idAmbiente)
+        ->whereDate('fecha', $fecha)
+        ->get();
+
+        foreach ($periodos as $periodo) {
+            $horario = Horario::find($periodo->id_horario);
+            if ($horario) {
+                $horarioInicio = $horario->hora_inicio;
+                $horarioFin = $horario->hora_fin;
+                if ($horarioInicio == $horaInicio && $horarioFin == $horaFin) {
+                    return response()->json($periodo->estado, 200);
+                }
+            }
+        }
+        return response()->json('No se encontró un horario con la misma hora de inicio y fin', 404);
+}
+
 }

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./ejemplo.css";
 
-const MenuCheckBox = () => {
+export const MenuCheckBox = ({ onCheckboxChange }) => {
   const [data, setData] = useState([
     {
       id: 1,
@@ -193,7 +193,11 @@ const MenuCheckBox = () => {
     return checkedBoxes;
   };
 
-  console.log("Checkboxes Marcados:", getCheckedCheckboxes());
+  useEffect(() => {
+    const checkedCheckboxes = getCheckedCheckboxes();
+    onCheckboxChange(checkedCheckboxes);
+  }, [data, onCheckboxChange]);
+
   return (
     <div className="contenedor">
       <style>
@@ -285,7 +289,7 @@ const MenuCheckBox = () => {
           ))}
         </tbody>
       </table>
-      <div>
+      {/* <div>
         <h2>Checkboxes Marcados:</h2>
         <ul>
           {getCheckedCheckboxes().map((item, index) => (
@@ -294,7 +298,7 @@ const MenuCheckBox = () => {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 };

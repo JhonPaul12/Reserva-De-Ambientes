@@ -15,6 +15,7 @@ interface Props {
 export const TablaAmbientes = ({ ambientes }: Props) => {
   return (
     <div className=" contenedor-table ">
+      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>LISTA DE AMBIENTES</label>
       <section className="mx-6 my-4  ">
         <Table
           className="custom-table"

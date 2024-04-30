@@ -45,8 +45,11 @@ Route::get('/periodo',[PeriodoController::class,'index']);
 Route::get('/periodo/{id}',[PeriodoController::class,'show']);
 Route::post('/periodo',[PeriodoController::class,'store']);
 Route::put('/periodo/{id}',[PeriodoController::class,'update']);
-Route::get('/periodo/{id}',[PeriodoController::class,'destroy']);
+Route::delete('/periodo/{id}',[PeriodoController::class,'destroy']);
+//Route::get('/periodo/{id}',[PeriodoController::class,'show']);
 Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorario']);
+Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
+Route::get('/verDispo',[PeriodoController::class,'showHora']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
@@ -73,7 +76,7 @@ Route::post('/solicitud',[SolicitudController::class,'store']);
 Route::put('/solicitud/{id}',[SolicitudController::class,'update']);
 Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
-
+Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
 //reserva
 Route::get('/reserva', [ReservaController::class, 'index']);
 Route::post('/reserva', [ReservaController::class, 'store']);

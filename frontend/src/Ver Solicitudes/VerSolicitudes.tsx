@@ -16,7 +16,7 @@ export const VerSolicitudes = () => {
   }, [solicitudes, getSolicitudes]);
 
   return (
-    <div className="text-negro w-full">
+    <div className="text-negro mt-10 sm:mx-auto sm:w-full">
       <TablaSolicitudes solicitudes={solicitudes} />
     </div>
   );
