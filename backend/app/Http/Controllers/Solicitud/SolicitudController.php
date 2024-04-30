@@ -98,7 +98,7 @@ class SolicitudController extends Controller
 
 
     public function postDocente(Request $request){
-        //'name', 'apellidos', 'telefono', 'codigo_sis', 'email', 'password',
+       
         $usuario = new User();
         $usuario->name      = $request->name;          
         $usuario->apellido  = $request->apellido;
