@@ -49,6 +49,7 @@ Route::delete('/periodo/{id}',[PeriodoController::class,'destroy']);
 //Route::get('/periodo/{id}',[PeriodoController::class,'show']);
 Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorario']);
 Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
+Route::get('/verDispo',[PeriodoController::class,'showHora']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
