@@ -70,7 +70,7 @@ export const FormSolicitud = () => {
     const [inputMateria, setInputMateria] = useState('1');
     const [inputMotivo, setInputMotivo] = useState('');
     const [inputNEst, setInputNEst] = useState('');
-    const [inputGrupo, setInputGrupo] = useState('1');
+    const [inputGrupo, setInputGrupo] = useState('');
     const [inputAmbiente, setInputAmbiente] = useState('1');
     const [inputFecha, setInputFecha] = useState('');
     const [inputHIni, setInputHIni] = useState('06:45');
@@ -269,7 +269,17 @@ export const FormSolicitud = () => {
 */
             console.log(listdocentes)
             await createSolicitud( inputMotivo, inputFecha, inputHIni, inputHFin, 'Pendiente', parseInt(inputNEst),parseInt(inputMateria),parseInt(inputGrupo), parseInt(inputAmbiente),listdocentes);
-            }else{
+            setInputMateria('1')
+            setInputMotivo('');
+            setInputNEst('');
+            setInputGrupo('');
+            setInputAmbiente('1');
+            setInputFecha('');
+            setInputHIni('06:45');
+            setInputHFin('07:30');
+          
+          
+          }else{
               toast.error("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
             }
           }else{
@@ -291,7 +301,7 @@ export const FormSolicitud = () => {
         <div className="columnaR">
         <label className='text-ms text-gray-900'>Docente:</label>
         <br />
-        <span style={{marginRight:'50px'}} className='text-ms text-gray-900'>{usuario.name}</span>
+        <span style={{marginRight:'50px'}} className='text-ms text-gray-900'>{usuario.name} {usuario.apellidos}</span>
         <button
         type="button"
         className="flex justify-center rounded-md bg-azul p-5 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -308,7 +318,7 @@ export const FormSolicitud = () => {
         >
           {sortedOptions.map((docente) => (
             <option key={docente.id} value={docente.id}>
-              {docente.name}
+              {docente.name} {docente.apellidos}
             </option>
           ))}
         </select>
