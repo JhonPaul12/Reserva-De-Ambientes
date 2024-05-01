@@ -7,6 +7,7 @@ import { ISimpleDocente } from '../interfaces/simple-docente';
 import { ISimpleMateria } from "../interfaces/simple-materia";
 import { ISimpleGrupo } from "../interfaces/simple-grupo";
 import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes";
+import { addMinutes, parse, format } from 'date-fns';
 
 export const FormSolicitud = () => {
 
@@ -69,7 +70,7 @@ export const FormSolicitud = () => {
     const [inputMateria, setInputMateria] = useState('1');
     const [inputMotivo, setInputMotivo] = useState('');
     const [inputNEst, setInputNEst] = useState('');
-    const [inputGrupo, setInputGrupo] = useState('');
+    const [inputGrupo, setInputGrupo] = useState('1');
     const [inputAmbiente, setInputAmbiente] = useState('1');
     const [inputFecha, setInputFecha] = useState('');
     const [inputHIni, setInputHIni] = useState('06:45');
@@ -125,8 +126,10 @@ export const FormSolicitud = () => {
       getUsuario(id);
       getDocentes();
       getMaterias(id);
+      getGrupos(2,id);
       getAmbientes();
       anadir(`${id}`);
+      
     }, []);
   
     const getDocentes = async () => {
@@ -221,6 +224,37 @@ export const FormSolicitud = () => {
           console.log(fin);
           // Comparar los horarios
           if (inicio <= fin) {
+            const horaInicio = parse(inputHIni, 'H:mm', new Date());
+            const horaFin = parse(inputHFin, 'H:mm', new Date());
+
+            
+            let horaActual = addMinutes(horaInicio, 45);
+
+            do {
+              const horasIntermedias= format(horaActual, 'H:mm');
+              console.log('--------------------------------------');
+              console.log(format(horaInicio, 'H:mm:ss'));
+              console.log(typeof format(horaInicio, 'H:mm'));
+              console.log(horasIntermedias);
+              console.log(typeof horasIntermedias);
+              console.log('--------------------------------------');
+              const dataToSend = {
+                id_ambiente: parseInt(inputAmbiente),
+                hora_inicio: format(horaInicio, 'H:mm:ss'),
+                hora_fin: `${horasIntermedias}:00`,
+                fecha: inputFecha,
+              };
+              console.log(dataToSend);
+              const response = await axios.post<{ message: string }>('http://127.0.0.1:8000/api/verDispo', dataToSend);
+              const responseData = response.data;
+              console.log(typeof response);
+              console.log(response);
+              console.log(typeof responseData);
+              console.log(responseData);
+              if(responseData.message.includes('Reservado')) return toast.error(`El rango ${horaInicio}a${horasIntermedias} esta reservado`);
+              horaActual = addMinutes(horaActual, 45);
+            } while (horaActual <= horaFin);
+
             console.log(listdocentes)
             await createSolicitud( inputMotivo, inputFecha, inputHIni, inputHFin, 'Pendiente', parseInt(inputNEst),parseInt(inputMateria),parseInt(inputGrupo), parseInt(inputAmbiente),listdocentes);
            
