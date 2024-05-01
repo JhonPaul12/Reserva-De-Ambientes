@@ -12,6 +12,8 @@ import { ModificarSolicitud } from "../ModificarSolicitud/ModificarSolicitud";
 import { VerSolicitudes } from "../Ver Solicitudes/VerSolicitudes";
 import { CancelarSol } from "../CancelarSolicitud";
 import { TodasSolicitudes } from "../Solicitudes";
+import { SolicitudesRechazadas } from "../VisuSoliRech/SolicitudesRechazadas";
+import { SolicitudesPendientes } from "../VisuPendiEnt/SolicitudesPendientes";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +44,14 @@ export const router = createBrowserRouter([
           {
             path: "solicitudes-aceptadas",
             element: <SolicitudesAceptadas/>,
+          },
+          {
+            path: "solicitudes-rechazadas",
+            element: <SolicitudesRechazadas/>,
+          },
+          {
+            path: "solicitudes-pendientes",
+            element: <SolicitudesPendientes/>,
           },
         ],
       },

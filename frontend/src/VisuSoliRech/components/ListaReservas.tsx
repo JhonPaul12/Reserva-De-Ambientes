@@ -19,24 +19,26 @@ export const ListaReservas = () => {
   
 
   const fetchSolicitud = async () => {
-    try {
-      getSolicitudes(); // Obtener las solicitudes actualizadas
-      const datosFiltrados = solicitudes.filter(solicitud => solicitud.estado === "Aceptado");
-      setDatos(datosFiltrados); 
-    } catch (error) {
-      console.error("Error al obtener los datos:", error);
-    }
+      try {
+    console.log(solicitudes.length);
+    await getSolicitudes();
+    const datosFiltrados = solicitudes.filter(solicitud => solicitud.estado === "Rechazado")
+    setDatos(datosFiltrados); 
+  } catch (error) {
+    console.error("Error al obtener los datos:", error);
+  }
   };
-  
+
   
   useEffect(() => {
     fetchSolicitud();
-  }, []); // Se ejecuta solo una vez al montar el componente
+    console.log(solicitudes);
+  }, []);
   
   
   return (
     <div className=" contenedor-table ">
-      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>SOLICITUDES ACEPTADAS</label>
+      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>SOLICITUDES RECHAZADAS</label>
       <section className="mx-6 my-4  ">
         <Table
           className="custom-table"

@@ -21,6 +21,10 @@ export const sideMenuOptions = [
         path: "solicitudes-rechazadas",
         name: "Solicitudes Rechazadas",
       },
+      {
+        path: "solicitudes-pendientes",
+        name: "Solicitudes Pendientes",
+      },
     ],
   },
   {

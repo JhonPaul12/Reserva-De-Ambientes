@@ -21,13 +21,12 @@ export const ListaReservas = () => {
   const fetchSolicitud = async () => {
     try {
       getSolicitudes(); // Obtener las solicitudes actualizadas
-      const datosFiltrados = solicitudes.filter(solicitud => solicitud.estado === "Aceptado");
+      const datosFiltrados = solicitudes.filter(solicitud => solicitud.estado === "Pendiente");
       setDatos(datosFiltrados); 
     } catch (error) {
       console.error("Error al obtener los datos:", error);
     }
   };
-  
   
   useEffect(() => {
     fetchSolicitud();
@@ -36,7 +35,7 @@ export const ListaReservas = () => {
   
   return (
     <div className=" contenedor-table ">
-      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>SOLICITUDES ACEPTADAS</label>
+      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>SOLICITUDES PENDIENTES</label>
       <section className="mx-6 my-4  ">
         <Table
           className="custom-table"
