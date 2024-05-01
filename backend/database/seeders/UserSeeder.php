@@ -13,6 +13,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        //id 1
         User :: create([
             'name' => 'LETICIA',
             'apellidos' => 'BLANCO COCA',
@@ -22,6 +23,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('12345678')
 
         ]);
+        //id 2	
         User :: create([
             'name' => 'VLADIMIR ABEL',
             'apellidos' => 'COSTAS JAUREGUI',
@@ -31,6 +33,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('12345678')
 
         ]);
+        //id 3
         User :: create([
             'name' => 'YONY RICHAARD',
             'apellidos' => 'MONTOYA BURGOS',
@@ -40,6 +43,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('12345678')
 
         ]);
+        //id 4
         User :: create([
             'name' => 'CORINA',
             'apellidos' => 'FLORES VILLARROEL',
@@ -49,6 +53,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('12345678')
 
         ]);
+        //id 5
         User :: create([
             'name' => 'TATIANA',
             'apellidos' => 'APARICIO YUJA',
@@ -58,6 +63,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('12345678')
 
         ]);
+        //id 6
         User :: create([
             'name' => 'CARLA',
             'apellidos' => 'SALAZAR SERRUDO',
@@ -66,6 +72,7 @@ class UserSeeder extends Seeder
             'email' => 'salazar@gmail.com',
             'password' => bcrypt('12345678')
         ]);
+        //id 7
         User :: create([
             'name' => 'HERNAN',
             'apellidos' => 'USTARIZ VARGAS',
@@ -74,6 +81,7 @@ class UserSeeder extends Seeder
             'email' => 'ustariz@gmail.com',
             'password' => bcrypt('12345678')
         ]);
+        //id 8
         User :: create([
             'name' => 'HENRY FRANK',
             'apellidos' => 'VILLARROEL TAPIA',
@@ -82,6 +90,7 @@ class UserSeeder extends Seeder
             'email' => 'villaroel@gmail.com',
             'password' => bcrypt('12345678')
         ]);
+        //id 9
         User :: create([
             'name' => 'VICTOR HUGO',
             'apellidos' => 'MONTAÑO QUIROGA',
@@ -90,6 +99,7 @@ class UserSeeder extends Seeder
             'email' => 'montaño@gmail.com',
             'password' => bcrypt('12345678')
         ]);
+        //id 10
         User :: create([
             'name' => 'ROSEMARY',
             'apellidos' => 'TORRICO BASCOPE',
@@ -98,6 +108,7 @@ class UserSeeder extends Seeder
             'email' => 'torrico@gmail.com',
             'password' => bcrypt('12345678')
         ]);
+        //id 11
         User :: create([
             'name' => 'HELDER OCTAVIO',
             'apellidos' => 'FERNANDEZ GUZMAN',
@@ -106,6 +117,7 @@ class UserSeeder extends Seeder
             'email' => 'fernandezg@gmail.com',
             'password' => bcrypt('12345678')
         ]);
+        //id 12
         User :: create([
             'name' => 'SAMUEL',
             'apellidos' => 'ACHA PEREZ',
@@ -114,6 +126,7 @@ class UserSeeder extends Seeder
             'email' => 'achag@gmail.com',
             'password' => bcrypt('12345678')
         ]);
+        //id 13
         User :: create([
             'name' => 'LUIS ROBERTO',
             'apellidos' => 'AGREDA CORRALES',
@@ -122,6 +135,7 @@ class UserSeeder extends Seeder
             'email' => 'agreda@gmail.com',
             'password' => bcrypt('12345678')
         ]);
+        //id 14
         User :: create([
             'name' => 'INDIRA',
             'apellidos' => 'CAMACHO DEL CASTILLO',
@@ -130,7 +144,9 @@ class UserSeeder extends Seeder
             'email' => 'camacho@gmail.com',
             'password' => bcrypt('12345678')
         ]);
+        //id 15
         
+
         User :: create([
             'name' => 'CARLOS B.',
             'apellidos' => 'MANZUR SORIA',
@@ -139,14 +155,6 @@ class UserSeeder extends Seeder
             'email' => 'manzur@gmail.com',
             'password' => bcrypt('12345678')
         ]);
-        
-        User :: create([
-            'name' => 'CARLOS B.',
-            'apellidos' => 'MANZUR SORIA',
-            'telefono' => '6' . rand(1000000, 9999999),
-            'codigo_sis' => '202000635', // '1234567890' => '1234567890
-            'email' => 'manzur@gmail.com',
-            'password' => bcrypt('12345678')
-        ]);
+      
     }
 }
