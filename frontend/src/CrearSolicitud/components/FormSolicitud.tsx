@@ -98,9 +98,19 @@ export const FormSolicitud = () => {
     };
     const handleDateChange = (date) => {
     console.log(date);
+    
     const fecha = `${date.year.toString()}-${date.month.toString()}-${date.day.toString()}`;
+    const fechaActual = new Date();
+
+    const fechaSeleccionada = new Date(fecha);
+    if (fechaSeleccionada > fechaActual) {
       setInputFecha(fecha);
     console.log(inputFecha);
+    } else {
+      toast.error("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
+      console.log("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
+      setInputFecha(fecha);
+    }
   };
 
     const handleClick = async() => {
@@ -222,9 +232,11 @@ export const FormSolicitud = () => {
           const fin = new Date(`2000-01-01T${inputHFin}`);
           console.log(inicio);
           console.log(fin);
-          // Comparar los horarios
-          if (inicio <= fin) {
-            const horaInicio = parse(inputHIni, 'H:mm', new Date());
+          const fechaActual = new Date();
+          const fechaSeleccionada = new Date(inputFecha);
+          if (inicio <= fin ) {
+            if(fechaSeleccionada > fechaActual){
+ /*           const horaInicio = parse(inputHIni, 'H:mm', new Date());
             const horaFin = parse(inputHFin, 'H:mm', new Date());
 
             
@@ -254,10 +266,12 @@ export const FormSolicitud = () => {
               if(responseData.message.includes('Reservado')) return toast.error(`El rango ${horaInicio}a${horasIntermedias} esta reservado`);
               horaActual = addMinutes(horaActual, 45);
             } while (horaActual <= horaFin);
-
+*/
             console.log(listdocentes)
             await createSolicitud( inputMotivo, inputFecha, inputHIni, inputHFin, 'Pendiente', parseInt(inputNEst),parseInt(inputMateria),parseInt(inputGrupo), parseInt(inputAmbiente),listdocentes);
-           
+            }else{
+              toast.error("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
+            }
           }else{
             toast.error("El horario de inicio es mayor al final, introduzca un rango correcto");
           }
@@ -336,6 +350,7 @@ export const FormSolicitud = () => {
               padding: "20px",
             }}
             onChange={onInputChangeNEst}
+            min="0"
           />
           <br />
           <label className='text-ms text-gray-900'>Grupo:</label>
@@ -369,6 +384,7 @@ export const FormSolicitud = () => {
             <label className='text-ms text-gray-900'>Fecha de reserva:</label>
             <br />
             <DatePicker
+            className="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               aria-label="Selecciona una fecha"
               onChange={handleDateChange}
             />
