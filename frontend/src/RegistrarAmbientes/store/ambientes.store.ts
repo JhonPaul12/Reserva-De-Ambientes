@@ -31,9 +31,7 @@ const storeApi: StateCreator<AmbienteState & Actions> = () => ({
       toast.success("Guardado", { description: data.message });
     } catch (error) {
       if (isAxiosError(error)) {
-        toast.error("Ocurrio un error", {
-          description: error.response?.data.message,
-        });
+        toast.error("El ambiente ya existe");
       }
     }
   },
