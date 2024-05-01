@@ -267,5 +267,30 @@ class SolicitudController extends Controller
             "docente"=>$solicitudes
         ],200);
     }
+    
+    public function showAllDocentes($nombreDocente){
+        $users = User::where('name', $nombreDocente)
+                    ->with(['solicitudes' => function($query) {
+                        $query->with('ambiente');
+                    }])
+                    ->get();
+        if ($users->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron usuarios con ese nombre'], 404);
+        }
+        $todasLasSolicitudes = [];
+        foreach ($users as $user) {
+            $datosDocente = [
+                'id' => $user->id,
+                'nombre' => $user->name,
+                'apellido' => $user->apellidos, 
+            ];
+            foreach ($user->solicitudes as $solicitud) {
+                $solicitudConDocente = $solicitud->toArray();
+                $solicitudConDocente['docente'] = $datosDocente;
+                $todasLasSolicitudes[] = $solicitudConDocente;
+            }
+        }
+        return response()->json($todasLasSolicitudes, 200);
+    }
 
 }

@@ -99,3 +99,6 @@ Route::get('/usuario/{id}', [UserController::class, 'show']);
 Route::get('/usuario/materias/{id}', [UserController::class, 'showMaterias']);
 //mostrar grupos de materia de docente
 Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGruposDeMateriaDeDocente']);
+
+
+Route::get('/showAllDocentes/{nombre}', [SolicitudController::class, 'showAllDocentes']);

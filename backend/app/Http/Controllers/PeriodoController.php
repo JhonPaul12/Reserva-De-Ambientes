@@ -55,12 +55,12 @@ class PeriodoController extends Controller
     $end = $regla->fecha_final;
     if($est==='libre'){
         $this->crearPeriodosRegulares($request->id_ambiente,$request->id_horario, $est,$ini,$end);
+        return response()->json(['message' => 'Periodos creados exitosamente'], 201);
+    }else{
+        $periodo = new Periodo($validator->validated());
+        $periodo->save();
+        return response()->json(['message' => 'El período se ha creado exitosamente'], 201);
     }
-
-    $periodo = new Periodo($validator->validated());
-    $periodo->save();
-
-    return response()->json(['message' => 'El período se ha creado exitosamente'], 201);
 }
 
 public function crearPeriodosRegulares($idAmbiente, $idHorario, $estado, $fechaInicioRegla, $fechaFinRegla)
