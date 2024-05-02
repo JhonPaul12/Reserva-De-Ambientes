@@ -14,16 +14,8 @@ export const sideMenuOptions = [
     icon: <LuLayers />,
     subMenuOptions: [
       {
-        path: "solicitudes-aceptadas",
-        name: "Solicitudes Aceptadas",
-      },
-      {
-        path: "solicitudes-rechazadas",
-        name: "Solicitudes Rechazadas",
-      },
-      {
-        path: "solicitudes-pendientes",
-        name: "Solicitudes Pendientes",
+        path: "filtro-por-estado",
+        name: "Filtrar por estado",
       },
     ],
   },
