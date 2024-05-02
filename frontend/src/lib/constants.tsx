@@ -86,10 +86,10 @@ export const sideMenuOptionsUser = [
         path: "solicitudes",
         name: "Solicitudes",
       },
-      {
-        path: "lista-solicitudes",
-        name: "Ver Solicitudes",
-      },
+      // {
+      //   path: "lista-solicitudes",
+      //   name: "Ver Solicitudes",
+      // },
       {
         path: "modificar-solicitud",
         name: "Modificar Solicitud",
@@ -107,7 +107,7 @@ export const sideMenuOptionsUser = [
   {
     path: "historial",
     name: "Historial",
-    submenu: true,
+    submenu: false,
     icon: <BsBuildingsFill />,
     subMenuOptions: [
       {
@@ -127,7 +127,7 @@ export const sideMenuOptionsUser = [
   {
     path: "notificaciones",
     name: "Notificaciones",
-    submenu: true,
+    submenu: false,
     icon: <BsBuildingsFill />,
     subMenuOptions: [
       {
