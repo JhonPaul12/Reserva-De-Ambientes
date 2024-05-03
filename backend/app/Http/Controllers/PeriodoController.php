@@ -20,68 +20,66 @@ class PeriodoController extends Controller
     }
 
     public function store(Request $request)
-{
+    {
+        $validator = Validator::make($request->all(), [
+            'id_ambiente' => 'required',
+            'id_horario' => 'required',
+            'estado' => 'required',
+            'fecha' => 'required|date',
+        ]);
 
-    $validator = Validator::make($request->all(), [
-        'id_ambiente' => 'required',
-        'id_horario' => 'required',
-        'estado' => 'required',
-        'fecha' => 'required|date',
-    ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
 
-    if ($validator->fails()) {
-        return response()->json(['error' => $validator->errors()], 400);
+        $ambiente = Ambiente::find($request->id_ambiente);
+
+        if (!$ambiente) {
+            return response()->json(['error' => 'No se encontró el ambiente asociado al período'], 404);
+        }
+
+        $regla = $ambiente->regla;
+
+        if (!$regla) {
+            return response()->json(['error' => 'No se encontró regla asociada al ambiente del período'], 404);
+        }
+
+        $fechaPeriodo = Carbon::parse($request->fecha);
+        if ($fechaPeriodo < $regla->fecha_inicial || $fechaPeriodo > $regla->fecha_final) {
+            return response()->json(['error' => 'La fecha del período está fuera del rango de la regla'], 400);
+        }
+
+        $est = $request->estado;
+        $ini = $regla->fecha_inicial;
+        $end = $regla->fecha_final;
+        if ($est === 'libre') {
+            $this->crearPeriodosRegulares($request->id_ambiente, $request->id_horario, $request->fecha, $est, $end);
+            return response()->json(['message' => 'Periodos creados exitosamente'], 201);
+        } else {
+            $periodo = new Periodo($validator->validated());
+            $periodo->save();
+            return response()->json(['message' => 'El período se ha creado exitosamente'], 201);
+        }
     }
 
-    $ambiente = Ambiente::find($request->id_ambiente);
+    public function crearPeriodosRegulares($idAmbiente, $idHorario, $fecha, $estado, $fechaFinRegla)
+    {
+        $fechaActual = Carbon::parse($fecha);
+        $fechaFin = Carbon::parse($fechaFinRegla);
 
-    if (!$ambiente) {
-        return response()->json(['error' => 'No se encontró el ambiente asociado al período'], 404);
+        $datosComunes = [
+            'id_ambiente' => $idAmbiente,
+            'id_horario' => $idHorario,
+            'estado' => $estado,
+        ];
+
+        while ($fechaActual <= $fechaFin) {
+            $datosPeriodo = array_merge($datosComunes, ['fecha' => $fechaActual->toDateString()]);
+            Periodo::create($datosPeriodo);
+            $fechaActual->addWeek();
+        }
     }
 
-    $regla = $ambiente->regla;
-
-    if (!$regla) {
-        return response()->json(['error' => 'No se encontró regla asociada al ambiente del período'], 404);
-    }
-
-    $fechaPeriodo = Carbon::parse($request->fecha);
-    if ($fechaPeriodo < $regla->fecha_inicial || $fechaPeriodo > $regla->fecha_final) {
-        return response()->json(['error' => 'La fecha del período está fuera del rango de la regla'], 400);
-    }
-
-    $est = $request->estado;
-    $ini = $regla->fecha_inicial;
-    $end = $regla->fecha_final;
-    if($est==='libre'){
-        $this->crearPeriodosRegulares($request->id_ambiente,$request->id_horario, $est,$ini,$end);
-        return response()->json(['message' => 'Periodos creados exitosamente'], 201);
-    }else{
-        $periodo = new Periodo($validator->validated());
-        $periodo->save();
-        return response()->json(['message' => 'El período se ha creado exitosamente'], 201);
-    }
-}
-
-public function crearPeriodosRegulares($idAmbiente, $idHorario, $estado, $fechaInicioRegla, $fechaFinRegla)
-{
-
-    $fechaInicio = Carbon::parse($fechaInicioRegla);
-    $fechaFin = Carbon::parse($fechaFinRegla);
-
-
-    $datosComunes = [
-        'id_ambiente' => $idAmbiente,
-        'id_horario' => $idHorario,
-        'estado' => $estado,
-    ];
-
-    while ($fechaInicio <= $fechaFin) {
-        $datosPeriodo = array_merge($datosComunes, ['fecha' => $fechaInicio->toDateString()]);
-        Periodo::create($datosPeriodo);
-        $fechaInicio->addWeek();
-    }
-}
 
     public function show($id)
     {
