@@ -112,6 +112,10 @@ export const Reglas = () => {
               const responses = await Promise.all(promises);
 
               console.log("Respuestas del servidor:", responses);
+              // setSelectedAmbiente("");
+              // setSelectedDate(null);
+              // setSelectedDateFinal(null);
+              // setCheckedCheckboxes([]);
               //toast.success("Periodos creados exitosamente");
             } catch (error) {
               console.error("Error al crear periodos:", error);
