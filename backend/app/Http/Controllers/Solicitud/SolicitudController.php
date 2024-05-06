@@ -44,6 +44,67 @@ class SolicitudController extends Controller
             'solicitud' => $solicitud
         ]);
     }
+    public function guardar(Request $request)
+    {
+        $validador = Validator::make($request->all(),[
+            'motivo' => 'required|max:250',
+            'fecha_solicitud' => 'required',
+            'hora_inicio' => 'required',
+            'hora_fin' => 'required',
+            'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
+            'numero_estudiantes' => 'required',
+            'ambiente_id'=> 'required|exists:ambientes,id',
+            'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
+            'docentes.*' => 'exists:users,id' ,// Asegúrate de que cada ID de docente existe en la tabla de usuarios
+            'id_materia' => 'required|exists:materias,id',
+            'id_grupo' => 'required|exists:grupos,id'
+        ]);
+
+        if($validador->fails()){
+            $data = [
+                'message' => 'Error en la validacion de datos',
+                'erros' => $validador->errors(),
+                'status' => 400
+            ];
+            return response()->json($data,400);
+        }
+
+        $solicitud = Solicitud::create([
+            'motivo' => $request->motivo,
+            'fecha_solicitud' => $request->fecha_solicitud,
+            'hora_inicio' => $request->hora_inicio,
+            'hora_fin' => $request->hora_fin,
+            'estado' => $request->estado,
+            'numero_estudiantes' => $request->numero_estudiantes,
+            'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
+            'id_grupo' => $request->id_grupo, // Utiliza directamente $request->grupo_id en lugar de $request->input('grupo_id')
+            'ambiente_id' =>$request->ambiente_id // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
+        ]);
+        
+        $solicitud->load('ambiente');
+       
+        
+          // Asocia los docentes con la solicitud
+        $docentes = $request->input('docentes');
+        $solicitud->users()->attach($docentes);
+        if(!$solicitud){
+            $data = [
+                'message' => 'Error al crear una solicitud',
+                'status' => 500
+            ];
+            return response()->json($data,500);
+        }
+        $data = [
+            'solicitud' => $solicitud,
+            'status' => 201
+        ];
+
+        return response()->json($data,201);
+    }
+
+
+
+
 
     /**
      * Display the specified resource.
@@ -123,6 +184,31 @@ class SolicitudController extends Controller
 
 
         return $usuario;
+    }
+    
+    public function showAllDocentes($nombreDocente){
+        $users = User::where('name', $nombreDocente)
+                    ->with(['solicitudes' => function($query) {
+                        $query->with('ambiente');
+                    }])
+                    ->get();
+        if ($users->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron usuarios con ese nombre'], 404);
+        }
+        $todasLasSolicitudes = [];
+        foreach ($users as $user) {
+            $datosDocente = [
+                'id' => $user->id,
+                'nombre' => $user->name,
+                'apellido' => $user->apellidos, 
+            ];
+            foreach ($user->solicitudes as $solicitud) {
+                $solicitudConDocente = $solicitud->toArray();
+                $solicitudConDocente['docente'] = $datosDocente;
+                $todasLasSolicitudes[] = $solicitudConDocente;
+            }
+        }
+        return response()->json($todasLasSolicitudes, 200);
     }
 
 }

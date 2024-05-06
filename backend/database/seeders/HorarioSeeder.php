@@ -14,7 +14,7 @@ class HorarioSeeder extends Seeder
 
         foreach ($diasLaborables as $dia) {
             $horaInicio = Carbon::createFromTime(6, 45);
-            $horaFin = Carbon::createFromTime(21, 45);
+            $horaFin = Carbon::createFromTime(21, 00);
 
             while ($horaInicio <= $horaFin) {
                 Horario::create([

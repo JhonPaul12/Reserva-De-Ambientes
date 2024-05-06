@@ -48,6 +48,6 @@ class User extends Authenticatable
     }
     public function materias()
     {
-        return $this->hasMany('materias');
+        return $this->hasMany(Materia::class );
     }
 }

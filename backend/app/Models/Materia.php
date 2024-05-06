@@ -16,10 +16,13 @@ class Materia extends Model
     
     public function grupos()
     {
-        return $this->hasMany('grupos');
+        return $this->hasMany(Grupo::class);
     }
     public function user(): BelongsToMany
     {
-        return $this->belongsTo('users');
+        return $this->belongsTo(User::class);
+    }
+    public function solicitud(){
+        return $this->hasMany(Solicitud::class);
     }
 }
