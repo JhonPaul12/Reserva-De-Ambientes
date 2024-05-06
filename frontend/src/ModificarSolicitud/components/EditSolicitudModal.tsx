@@ -16,6 +16,52 @@ export interface Materia {
   nombre_materia: string;
   user_id: number;
 }
+
+const horasInicio = [
+  "06:45",
+  "07:30",
+  "08:15",
+  "09:00",
+  "09:45",
+  "10:30",
+  "11:15",
+  "12:00",
+  "12:45",
+  "13:30",
+  "14:15",
+  "15:00",
+  "15:45",
+  "16:30",
+  "17:15",
+  "18:00",
+  "18:45",
+  "19:30",
+  "20:15",
+  "21:00",
+];
+
+const horasFin = [
+  "07:30",
+  "08:15",
+  "09:00",
+  "09:45",
+  "10:30",
+  "11:15",
+  "12:00",
+  "12:45",
+  "13:30",
+  "14:15",
+  "15:00",
+  "15:45",
+  "16:30",
+  "17:15",
+  "18:00",
+  "18:45",
+  "19:30",
+  "20:15",
+  "21:00",
+  "21:45",
+];
 export const EditSolicitudModal = ({ solicitud }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [materias, setMaterias] = useState<Materia[]>([]);
@@ -25,6 +71,7 @@ export const EditSolicitudModal = ({ solicitud }) => {
   const [ambientes, setAmbientes] = useState([]);
   const [selectedAmbiente, setSelectedAmbiente] = useState();
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  const [selectedHoraInicio, setSelectedHoraInicio] = useState();
   useEffect(() => {
     getMaterias();
     getAmbientes();
@@ -32,6 +79,7 @@ export const EditSolicitudModal = ({ solicitud }) => {
     setSelectedGrupo(solicitud.id_grupo.toString());
     setSelectedAmbiente(solicitud.ambiente_id.toString());
     setSelectedDate(solicitud.fecha_solicitud ? dayjs(solicitud.fecha) : null);
+    setSelectedHoraInicio(solicitud.hora_inicio);
   }, []);
 
   const getMaterias = async () => {
@@ -85,20 +133,27 @@ export const EditSolicitudModal = ({ solicitud }) => {
     console.log("Materia seleccionada:", selectedMateria);
     console.log("Grupo seleccionado:", selectedGrupo);
     console.log("Ambiente seleccionado:", selectedAmbiente);
+    console.log(solicitud.hora_inicio);
   };
   const handleDateChange = (newValue: Dayjs | null) => {
     setSelectedDate(newValue);
+  };
+
+  const handleHoraInicioChange = (event) => {
+    setSelectedHoraInicio(event.target.value);
   };
   return (
     <>
       <Button className="bg-primary text-center text-white" onPress={onOpen}>
         Editar Solicitud
       </Button>
+
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         isDismissable={false}
         isKeyboardDismissDisabled={true}
+        scrollBehavior="outside"
       >
         <ModalContent>
           {(onClose) => (
@@ -108,7 +163,7 @@ export const EditSolicitudModal = ({ solicitud }) => {
               </ModalHeader>
               <ModalBody>
                 {/* Sector de docentes */}
-                <p>Docente: {solicitud.docente.nombre}</p>
+                <p> Docente: {solicitud.docente.nombre}</p>
                 {/* Sector de Materias */}
                 <p>Materia: </p>
                 <select
@@ -123,8 +178,10 @@ export const EditSolicitudModal = ({ solicitud }) => {
                   ))}
                 </select>
                 {/* Sector de Motivo */}
+                <p>Motivo: </p>
                 <Input label="Motivo" placeholder={solicitud.motivo}></Input>
                 {/* Sector de Estudiantes */}
+                <p>Numero de Estudiantes: </p>
                 <Input
                   type="number"
                   label="Numero de Estudiantes"
@@ -158,10 +215,24 @@ export const EditSolicitudModal = ({ solicitud }) => {
                   ))}
                 </select>
                 {/* Sector del calendario */}
+                <p> Fecha de Solicitud: </p>
                 <Calendario
                   selectedDate={selectedDate}
                   onDateChange={handleDateChange}
                 />
+                {/* Sector de Hora Inicio y Hora fin */}
+                <p>Hora de inicio: </p>
+                <select
+                  value={selectedHoraInicio}
+                  onChange={handleHoraInicioChange}
+                  className="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {horasInicio.map((hora, index) => (
+                    <option key={index} value={hora}>
+                      {hora}
+                    </option>
+                  ))}
+                </select>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

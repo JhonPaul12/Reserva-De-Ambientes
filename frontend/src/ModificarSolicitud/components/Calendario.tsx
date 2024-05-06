@@ -16,7 +16,7 @@ export function Calendario({ selectedDate, onDateChange }: CalendarioProps) {
   };
 
   return (
-    <div className="mt-5">
+    <div className="">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={["DatePicker"]}>
           <DatePicker value={selectedDate} onChange={handleChange} />
