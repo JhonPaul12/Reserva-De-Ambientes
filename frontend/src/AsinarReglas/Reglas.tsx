@@ -20,7 +20,9 @@ export const Reglas = () => {
   const [selectedDateFinal, setSelectedDateFinal] = useState<Dayjs | null>(
     null
   );
-  const [checkedCheckboxes, setCheckedCheckboxes] = useState<string[]>([]);
+  const [checkedCheckboxes, setCheckedCheckboxes] = useState<
+    { id: number; name: string; day: string }[]
+  >([]);
 
   //Ambientes
   const handleSelectChange = (selectedValue: string) => {
@@ -35,7 +37,7 @@ export const Reglas = () => {
     setSelectedDateFinal(newValue);
   };
 
-  const calcularIdHorario = (id, day) => {
+  const calcularIdHorario = (id: number, day: string) => {
     let idAdjustment = 0;
     switch (day) {
       case "Lunes":
@@ -59,7 +61,7 @@ export const Reglas = () => {
       default:
         idAdjustment = 0;
     }
-    return parseInt(id) + idAdjustment;
+    return id + idAdjustment;
   };
 
   const handleButtonClick = async () => {
@@ -143,9 +145,8 @@ export const Reglas = () => {
     }
   };
 
-  const obtenerFecha = (day, startDate, endDate) => {
-    // Obtener el día de la semana seleccionado
-    const daysOfWeek = {
+  const obtenerFecha = (day: string, startDate: Dayjs, endDate: Dayjs) => {
+    const daysOfWeek: { [key: string]: number } = {
       Domingo: 0,
       Lunes: 1,
       Martes: 2,
@@ -175,7 +176,9 @@ export const Reglas = () => {
     return null;
   };
 
-  const handleCheckboxChange = (checkedCheckboxes: string[]) => {
+  const handleCheckboxChange = (
+    checkedCheckboxes: { id: number; name: string; day: string }[]
+  ) => {
     setCheckedCheckboxes(checkedCheckboxes);
   };
 
@@ -209,7 +212,10 @@ export const Reglas = () => {
         </div>
 
         <MenuCheckBox onCheckboxChange={handleCheckboxChange} />
-        <Button className="bg-primary text-4xl" onClick={handleButtonClick}>
+        <Button
+          className="bg-primary text-2xl text-white mx-10"
+          onClick={handleButtonClick}
+        >
           Registrar
         </Button>
       </div>

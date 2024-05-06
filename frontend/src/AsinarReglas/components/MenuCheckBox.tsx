@@ -1,7 +1,25 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./ejemplo.css";
 
-export const MenuCheckBox = ({ onCheckboxChange }) => {
+type Item = {
+  id: number;
+  name: string;
+  lunes: boolean;
+  martes: boolean;
+  miercoles: boolean;
+  jueves: boolean;
+  viernes: boolean;
+  sabado: boolean;
+  [key: string]: number | string | boolean; // Index signature allowing any string key with these types
+};
+
+type MenuCheckBoxProps = {
+  onCheckboxChange: (
+    checkedCheckboxes: { id: number; name: string; day: string }[]
+  ) => void;
+};
+
+export const MenuCheckBox = ({ onCheckboxChange }: MenuCheckBoxProps) => {
   const [data, setData] = useState([
     {
       id: 1,
@@ -219,7 +237,7 @@ export const MenuCheckBox = ({ onCheckboxChange }) => {
     });
   };
 
-  const getCheckedCheckboxes = () => {
+  const getCheckedCheckboxes = useCallback(() => {
     const checkedBoxes: { id: number; name: string; day: string }[] = [];
     data.forEach((item) => {
       if (item.lunes)
@@ -236,12 +254,30 @@ export const MenuCheckBox = ({ onCheckboxChange }) => {
         checkedBoxes.push({ id: item.id, name: item.name, day: "Sábado" });
     });
     return checkedBoxes;
-  };
+  }, [data]);
 
   useEffect(() => {
     const checkedCheckboxes = getCheckedCheckboxes();
     onCheckboxChange(checkedCheckboxes);
-  }, [data, onCheckboxChange]);
+  }, [data, onCheckboxChange, getCheckedCheckboxes]);
+
+  useEffect(() => {
+    const checkedCheckboxes = getCheckedCheckboxes();
+    onCheckboxChange(checkedCheckboxes);
+  }, [data, onCheckboxChange, getCheckedCheckboxes]);
+
+  const handleSelectAll = (day: string) => {
+    const newData = data.map((item: Item) => ({
+      ...item,
+      [day]: !item[day],
+    }));
+    if (!newData[0][day]) {
+      newData.forEach((item) => {
+        item[day] = false;
+      });
+    }
+    setData(newData);
+  };
 
   return (
     <div className="contenedor">
@@ -276,6 +312,46 @@ export const MenuCheckBox = ({ onCheckboxChange }) => {
           </tr>
         </thead>
         <tbody className="tbody">
+          {/* Fila para seleccionar todos */}
+          <tr>
+            <td>Seleccionar todo</td>
+            <td>
+              <input
+                type="checkbox"
+                onChange={() => handleSelectAll("lunes")}
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                onChange={() => handleSelectAll("martes")}
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                onChange={() => handleSelectAll("miercoles")}
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                onChange={() => handleSelectAll("jueves")}
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                onChange={() => handleSelectAll("viernes")}
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                onChange={() => handleSelectAll("sabado")}
+              />
+            </td>
+          </tr>
           {data.map((item) => (
             <tr key={item.id}>
               <td>{item.name}</td>

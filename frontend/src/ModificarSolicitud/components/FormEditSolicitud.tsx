@@ -10,35 +10,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { EditSolicitudModal } from "./EditSolicitudModal";
-
-export interface Solicitud {
-  id: number;
-  motivo: string;
-  fecha_solicitud: string;
-  hora_inicio: string;
-  hora_fin: string;
-  estado: string;
-  numero_estudiantes: number;
-  ambiente_id: number;
-  created_at: string;
-  updated_at: string;
-  pivot: {
-    user_id: number;
-    solicitud_id: number;
-  };
-  ambiente: {
-    id: number;
-    nombre: string;
-    tipo: string;
-    ubicacion: string;
-    capacidad: number;
-  };
-  docente: {
-    id: number;
-    nombre: string;
-    apellido: string;
-  };
-}
+import { Solicitud } from "../interface/solicitud";
 
 export const FormEditSolicitud = () => {
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
@@ -56,18 +28,6 @@ export const FormEditSolicitud = () => {
     );
     setSolicitudes(solicitudesPendientes);
   };
-
-  // const handleCancelarSolicitud = async (solicitudId: number) => {
-  //   try {
-  //     await axios.delete(`http://127.0.0.1:8000/api/solicitud/${solicitudId}`);
-  //     const nuevasSolicitudes = solicitudes.filter(
-  //       (solicitud) => solicitud.id !== solicitudId
-  //     );
-  //     setSolicitudes(nuevasSolicitudes);
-  //   } catch (error) {
-  //     console.error("Error al cancelar la solicitud:", error);
-  //   }
-  // };
 
   return (
     <div className="contenedor-table justify-center text-center">
@@ -127,7 +87,7 @@ export const FormEditSolicitud = () => {
                   {solicitud.estado}
                 </TableCell>
                 <TableCell className="text-base text-black">
-                  <EditSolicitudModal />
+                  <EditSolicitudModal solicitud={solicitud} />
                 </TableCell>
               </TableRow>
             ))}
