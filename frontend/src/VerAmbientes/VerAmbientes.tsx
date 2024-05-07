@@ -19,6 +19,7 @@ export const VerAmbientes = () => {
     fetchAmbientes();
   }, [ambientes, getAmbientes]);
 
+
   // Funciones para manejar cambios en los filtros
   const handleFiltroNombreChange = (
     event: React.ChangeEvent<HTMLInputElement>

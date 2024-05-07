@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from 'sonner';
-import { DatePicker } from "@nextui-org/react";
+import { Button, DatePicker, Input, Select, SelectItem } from "@nextui-org/react";
 import { useSolicitudStore } from "../store/solicitud.store";
 import axios from "axios";
 import { ISimpleDocente } from '../interfaces/simple-docente';
@@ -57,7 +57,26 @@ export const FormSolicitud = () => {
       "21:00",
       "21:45"
     ];
-    
+    const motivosReserva = [
+      "Clase",
+      "Taller",
+      "Conferencia",
+      'Examen',
+      'Actividad extracurricular',
+      'Presentación',
+      'Seminario',
+      'Ensayo',
+      'Sesión de tutoría',
+      'Prueba práctica',
+      'Simposio',
+      'Debate',
+      'Jornada de capacitación',
+      'Reunión de equipo',
+      'Laboratorio práctico',
+      'Trabajo en grupo',
+      'Sesión de estudio',
+      'Sesión informativa'
+    ];
     const instanciaInicial: ISimpleDocente = {
       id: 0, // Pon el valor que necesites aquí
       name: '',
@@ -195,8 +214,8 @@ export const FormSolicitud = () => {
 
 
 
-    const onInputChangeMotivo = async(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const inputValue = e.target as HTMLTextAreaElement;
+    const onInputChangeMotivo = async(e: React.ChangeEvent<HTMLSelectElement>) => {
+        const inputValue = e.target as HTMLSelectElement;
         if (inputValue.value.length <30) {
           setInputMotivo(inputValue.value);
         } else {
@@ -310,51 +329,56 @@ export const FormSolicitud = () => {
           Añadir docente
         </button>
         {selects.map((select) => (
-        <select
+        <Select
           key={select.id}
           value={select.value}
           onChange={(event) => handleSelectChange(event, select.id)}
-          className="mt-5 h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lm"
-        >
+          className="w-full"
+            aria-label="Selecciona una docente"
+            >
           {sortedOptions.map((docente) => (
-            <option key={docente.id} value={docente.id}>
+            <SelectItem key={docente.id} value={docente.id}>
               {docente.name} {docente.apellidos}
-            </option>
+            </SelectItem>
           ))}
-        </select>
+        </Select>
       ))}
           <br />
           <label className="text-ms text-gray-900">Materia:</label>
           <br />
-          <select 
+          <Select 
             value={inputMateria}
-            className='h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lm  '
+            className="w-full"
+            aria-label="Selecciona una materia"
             onChange={onInputChangeMateria}
           >
             {materias.map((materia) => (
-            <option key={materia.id} value={materia.id}>
+            <SelectItem key={materia.id} value={materia.id}>
               {materia.nombre_materia}
-            </option>
+            </SelectItem>
           ))}
-          </select>
+          </Select>
           <br />
           <label className="text-ms text-gray-900">Motivo:</label>
           <br />
-          <textarea
+          <Select
             value={inputMotivo}
-            className="h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lm  "
-            style={{
-              fontSize: "16px",
-              padding: "20px",
-            }}
+            className="w-full"
+            aria-label="Selecciona una motivo"
             onChange={onInputChangeMotivo}
-          />
+          >
+              {motivosReserva.map((motivo, index) => (
+                <SelectItem  key={index} value={motivo}>
+                  {motivo}
+                </SelectItem >
+              ))}
+            </Select>
           <br />
           <label className="text-ms text-gray-900">Nro Est:</label>
-          <input
+          <Input 
             type="number"
             value={inputNEst}
-            className="h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lm  "
+            className="w-full"
             style={{
               fontSize: "10px",
               padding: "20px",
@@ -364,72 +388,80 @@ export const FormSolicitud = () => {
           />
           <br />
           <label className='text-ms text-gray-900'>Grupo:</label>
-          <select 
+          <Select 
             value={inputGrupo}
             onChange={onInputChangeGrupo}
-            className='h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lm  '
+            className="w-full"
+            aria-label="Selecciona una grupo"
           >
             {grupos.map((grupo) => (
-            <option key={grupo.id} value={grupo.id}>
+            <SelectItem key={grupo.id} value={grupo.id}>
               {grupo.grupo}
-            </option>
+            </SelectItem>
           ))}
-          </select>
+          </Select>
             <label className='text-ms text-gray-900'>Ambiente:</label>
             <br />
-            <select 
+            <Select 
             value={inputAmbiente}
             onChange={onInputChangeAmbiente}
-            className='h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lm  '
-
+            className="w-full"
+            aria-label="Selecciona una ambiente"
             >
               {ambientes.map((ambiente) => (
-            <option key={ambiente.id} value={ambiente.id}>
+            <SelectItem key={ambiente.id} value={ambiente.id}>
               {ambiente.nombre}
-            </option>
+            </SelectItem>
           ))}
 
-            </select>
+            </Select>
             <br />
             <label className='text-ms text-gray-900'>Fecha de reserva:</label>
             <br />
             <DatePicker
-            className="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="p-2 border w-full border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               aria-label="Selecciona una fecha"
               onChange={handleDateChange}
             />
             <br />
             <label className='text-ms text-gray-900'>Horario de inicio:</label>
             <br />
-            <select 
+            <Select 
             value={inputHIni}
             onChange={onInputChangeHIni}
-            className='h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lm  '
+            className="w-full"
+            aria-label="6:45"
+            placeholder="6:45"
             >
              {horasInicio.map((inputHIni, index) => (
-          <option key={index} value={inputHIni}>{inputHIni}</option>
+          <SelectItem key={index} value={inputHIni}>{inputHIni}</SelectItem>
         ))}
-            </select>
+            </Select>
             <br />
             <label className='text-ms text-gray-900'> Horario de fin:</label>
             <br />
-            <select 
+            <Select 
             value={inputHFin}
             onChange={onInputChangeHFin}
-            className='h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lm  '
-
+            className="w-full"
+            aria-label="7:30"
+            placeholder="7:30"
             >
             {horasFin.map((inputHFin, index) => (
-          <option key={index} value={inputHFin}>{inputHFin}</option>
+          <SelectItem key={index} value={inputHFin}>{inputHFin}</SelectItem>
         ))}
-            </select>
+            </Select>
             <br />
-            <div className='opcions'>
-        <button 
-        className="mt-10 flex w-full justify-center rounded-md bg-azul p-5  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" >Cancelar</button>
-        <button 
+            <div className='flex gap-5 items-center'>
+        <Button  
+        size="lg"
+        className="w-full  mb-10"
+        color="primary" >Cancelar</Button>
+        <Button  
            onClick={onInputChangeSave}
-          className="mt-2 mb-5 flex w-full justify-center rounded-md bg-azul p-5 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Enviar</button>
+           size="lg"
+           className="w-full mb-10"
+           color="primary"> Enviar </Button>
         </div>
         </div>
       </form>
