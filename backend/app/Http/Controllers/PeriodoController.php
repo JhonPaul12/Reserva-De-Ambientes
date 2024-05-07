@@ -44,8 +44,10 @@ class PeriodoController extends Controller
             return response()->json(['error' => 'No se encontró regla asociada al ambiente del período'], 404);
         }
 
+        //$regla->fecha_final->copy()->addDay();
+        $finish = Carbon::parse($regla->fecha_final);
         $fechaPeriodo = Carbon::parse($request->fecha);
-        if ($fechaPeriodo < $regla->fecha_inicial || $fechaPeriodo > $regla->fecha_final) {
+        if ($fechaPeriodo < $regla->fecha_inicial || $fechaPeriodo > $finish) {
             return response()->json(['error' => 'La fecha del período está fuera del rango de la regla'], 400);
         }
 
@@ -61,6 +63,7 @@ class PeriodoController extends Controller
             return response()->json(['message' => 'El período se ha creado exitosamente'], 201);
         }
     }
+
 
     public function crearPeriodosRegulares($idAmbiente, $idHorario, $fecha, $estado, $fechaFinRegla)
     {
