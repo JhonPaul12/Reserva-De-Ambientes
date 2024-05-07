@@ -14,16 +14,26 @@ class ReglaController extends Controller
 
 
     public function store(Request $request)
-    {
-        $datos = $request->validate([
-            'ambiente_id' =>'required',
-            'fecha_inicial' => 'required|date',
-            'fecha_final' => 'required|date',
-        ]);
-        $regla = new Regla($datos);
-        $regla->save();
-        return response()->json($regla,201);
+{
+    $datos = $request->validate([
+        'ambiente_id' =>'required|unique:reglas',
+        'fecha_inicial' => 'required|date',
+        'fecha_final' => 'required|date',
+    ]);
+
+    // Verificar si ya existe una regla para el mismo ambiente
+    $reglaExistente = Regla::where('ambiente_id', $datos['ambiente_id'])->exists();
+
+    if ($reglaExistente) {
+        return response()->json(['error' => 'Ya existe una regla para este ambiente'], 400);
     }
+
+    // Si no hay regla existente, crear una nueva regla
+    $regla = new Regla($datos);
+    $regla->save();
+
+    return response()->json($regla, 201);
+}
 
 
     public function show($id)
