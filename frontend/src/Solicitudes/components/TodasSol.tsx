@@ -20,7 +20,7 @@ export const TodasSol = () => {
     }, []);
   
     const getSolicitudes = async () => {
-      const respuesta = await axios.get(`http://127.0.0.1:8000/api/showAllDocentes/Leticia`);
+      const respuesta = await axios.get(`http://127.0.0.1:8000/api/showAllDocentes/Vladimir Abel`);
       setSolicitudes(respuesta.data)
       console.log(respuesta.data)
     }
@@ -38,10 +38,13 @@ export const TodasSol = () => {
               Docente
             </TableColumn>
             <TableColumn className="text-center text-3xl bg-slate-300">
-              Hora Inicio
+              Materia
             </TableColumn>
             <TableColumn className="text-center text-3xl bg-slate-300">
-              Hora Final
+              H. Inicio
+            </TableColumn>
+            <TableColumn className="text-center text-3xl bg-slate-300">
+              H. Final
             </TableColumn>
             <TableColumn className="text-center text-3xl bg-slate-300">
               Fecha
@@ -61,6 +64,9 @@ export const TodasSol = () => {
                 </TableCell>
                 <TableCell className="text-base text-black">
                   {solicitud.docente.nombre+" "+solicitud.docente.apellido}
+                </TableCell>
+                <TableCell className="text-base text-black">
+                  {solicitud.materia.nombre_materia}
                 </TableCell>
                 <TableCell className="text-base text-black">
                   {solicitud.hora_inicio}

@@ -271,7 +271,7 @@ class SolicitudController extends Controller
     public function showAllDocentes($nombreDocente){
         $users = User::where('name', $nombreDocente)
                     ->with(['solicitudes' => function($query) {
-                        $query->with('ambiente');
+                        $query->with(['materia', 'ambiente']);
                     }])
                     ->get();
         if ($users->isEmpty()) {
@@ -279,18 +279,48 @@ class SolicitudController extends Controller
         }
         $todasLasSolicitudes = [];
         foreach ($users as $user) {
-            $datosDocente = [
-                'id' => $user->id,
-                'nombre' => $user->name,
-                'apellido' => $user->apellidos, 
-            ];
             foreach ($user->solicitudes as $solicitud) {
                 $solicitudConDocente = $solicitud->toArray();
-                $solicitudConDocente['docente'] = $datosDocente;
+                $solicitudConDocente['docente'] = [
+                    'id' => $user->id,
+                    'nombre' => $user->name,
+                    'apellido' => $user->apellidos, 
+                ];
                 $todasLasSolicitudes[] = $solicitudConDocente;
             }
         }
         return response()->json($todasLasSolicitudes, 200);
     }
-
+    public function AllDocentes(){
+        // Obtiene todos los usuarios/docentes con sus solicitudes y la información del ambiente asociado
+        $users = User::with(['solicitudes' => function($query) {
+            $query->with(['materia', 'ambiente']);
+        }])->get();
+        
+        // Si no se encuentran usuarios/docentes, devuelve un mensaje de error
+        if ($users->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron usuarios/docentes'], 404);
+        }
+    
+        // Array para almacenar todas las solicitudes de todos los docentes con información adicional del docente
+        $todasLasSolicitudes = [];
+    
+        // Itera sobre cada usuario/docente
+        foreach ($users as $user) {
+            // Itera sobre las solicitudes del docente actual y agrega información adicional del docente a cada solicitud
+            foreach ($user->solicitudes as $solicitud) {
+                $solicitudConDocente = $solicitud->toArray();
+                $solicitudConDocente['docente'] = [
+                    'id' => $user->id,
+                    'nombre' => $user->name,
+                    'apellido' => $user->apellidos, 
+                ];
+                $todasLasSolicitudes[] = $solicitudConDocente;
+            }
+        }
+    
+        // Devuelve la lista de todas las solicitudes de todos los docentes con información adicional del docente
+        return response()->json($todasLasSolicitudes, 200);
+    }
+    
 }
