@@ -1,3 +1,4 @@
+import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes";
 
 export interface ISimpleSolicitud {
     id: number;
@@ -7,5 +8,6 @@ export interface ISimpleSolicitud {
     hora_fin: string;
     estado: string;
     numero_estudiantes: number;
-    ambiente_id: number;
+    ambiente: ISimpleAmbiente;
+    id_materia: number;
   }

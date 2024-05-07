@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
             element: <VerAmbientes />,
           },
           {
-            path: "filtrar-por-estado",
+            path: "filtro-por-estado",
             element: <SolicitudesAceptadas/>,
           },
         ],

@@ -6,32 +6,31 @@
     padding: 5px;
     margin: 1%;
   }
-  
-  .contenedor{
+  .contenedor-table {
     width: 100%;
-    padding-top: 50px;
-    padding-left: 50px;
+    justify-content: center;
+    max-width: 100%; /* Limita el ancho máximo al 100% del ancho de la pantalla */
+    max-height: 100vh; /* Limita la altura máxima al 100% de la altura de la ventana */
+    overflow-x: auto; /* Agrega desplazamiento horizontal si el contenido es demasiado ancho */
+    overflow-y: auto; /* Agrega desplazamiento vertical si el contenido es demasiado largo */
   }
-
+  
+  .next-table {
+    border: none !important;
+  }
+  
+  .next-table-header,
+  .next-table-body,
+  .next-table-row,
+  .next-table-cell {
+    border: none !important;
+  }
   
   .custom-table {
-    width: 100%;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Añade una sombra suave */
+    border-collapse: collapse;
   }
-  .thh,.tdd {
-    color: black;
-    border: none; 
-  }
-  
-  .thh {
-    background-color: #ffffff;
-    color: rgb(0, 0, 0);
-    width: 200px;
-  }
-  
-  .trr {
-    background-color: #ffffff;
+  .custom-table th,
+  .custom-table td {
+    border: none;
   }
   

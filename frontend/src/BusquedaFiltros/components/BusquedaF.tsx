@@ -37,6 +37,7 @@ export const BusquedaF = () => {
       const datosFiltrados = periodos.filter(periodo => periodo.estado === "libre")
         .map(periodo => {
           const ambiente = ambientes.find(a => a.id === periodo.id_ambiente);
+          console.log(ambiente);
           const horario = horarios.find(h => h.id === periodo.id_horario);
 
           return {
