@@ -34,6 +34,7 @@ const storeApi: StateCreator<ReglaState & Actions> = () => ({
         }
         //toast.error(error.response?.data.message);
       }
+      throw error;
     }
   },
 });

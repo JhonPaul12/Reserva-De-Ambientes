@@ -1,25 +1,29 @@
 import { useCallback, useEffect, useState } from "react";
 import "./ejemplo.css";
 
-type Item = {
-  id: number;
-  name: string;
-  lunes: boolean;
-  martes: boolean;
-  miercoles: boolean;
-  jueves: boolean;
-  viernes: boolean;
-  sabado: boolean;
-  [key: string]: number | string | boolean; // Index signature allowing any string key with these types
-};
+// type Item = {
+//   id: number;
+//   name: string;
+//   lunes: boolean;
+//   martes: boolean;
+//   miercoles: boolean;
+//   jueves: boolean;
+//   viernes: boolean;
+//   sabado: boolean;
+//   [key: string]: number | string | boolean; // Index signature allowing any string key with these types
+// };
 
 type MenuCheckBoxProps = {
   onCheckboxChange: (
     checkedCheckboxes: { id: number; name: string; day: string }[]
   ) => void;
+  reset: boolean;
 };
 
-export const MenuCheckBox = ({ onCheckboxChange }: MenuCheckBoxProps) => {
+export const MenuCheckBox = ({
+  onCheckboxChange,
+  reset,
+}: MenuCheckBoxProps) => {
   const [data, setData] = useState([
     {
       id: 1,
@@ -259,32 +263,50 @@ export const MenuCheckBox = ({ onCheckboxChange }: MenuCheckBoxProps) => {
   useEffect(() => {
     const checkedCheckboxes = getCheckedCheckboxes();
     onCheckboxChange(checkedCheckboxes);
-  }, [data, onCheckboxChange, getCheckedCheckboxes]);
+    if (reset) {
+      handleResetSelectAll();
+    }
+  }, [data, onCheckboxChange, getCheckedCheckboxes, reset]);
 
-  useEffect(() => {
-    const checkedCheckboxes = getCheckedCheckboxes();
-    onCheckboxChange(checkedCheckboxes);
-  }, [data, onCheckboxChange, getCheckedCheckboxes]);
+  // useEffect(() => {
+  //   const checkedCheckboxes = getCheckedCheckboxes();
+  //   onCheckboxChange(checkedCheckboxes);
+  // }, [data, onCheckboxChange, getCheckedCheckboxes]);
 
   const handleSelectAll = (day: string) => {
-    if (day === "sabado") {
-      const newData = data.map((item: Item) => ({
-        ...item,
-        [day]: item.id <= 7 ? !item[day] : item[day], // Marcar solo los elementos con ID del 1 al 7
-      }));
-      setData(newData);
-    } else {
-      const newData = data.map((item: Item) => ({
-        ...item,
-        [day]: !item[day],
-      }));
-      if (!newData[0][day]) {
-        newData.forEach((item) => {
-          item[day] = false;
-        });
+    setData((prevData) => {
+      if (day === "sabado") {
+        const newData = prevData.map((item) => ({
+          ...item,
+          [day]: item.id <= 7 ? !item[day] : item[day], // Marcar solo los elementos con ID del 1 al 7
+        }));
+        return newData;
+      } else {
+        const allChecked = prevData.every(
+          (item) => item[day as keyof typeof item]
+        );
+
+        const newData = prevData.map((item) => ({
+          ...item,
+          [day]: !allChecked,
+        }));
+        return newData;
       }
-      setData(newData);
-    }
+    });
+  };
+
+  const handleResetSelectAll = () => {
+    setData((prevData) =>
+      prevData.map((item) => ({
+        ...item,
+        lunes: false,
+        martes: false,
+        miercoles: false,
+        jueves: false,
+        viernes: false,
+        sabado: false,
+      }))
+    );
   };
 
   return (
@@ -324,10 +346,12 @@ export const MenuCheckBox = ({ onCheckboxChange }: MenuCheckBoxProps) => {
           <tr>
             <td>Seleccionar todo</td>
             <td>
-              <input
-                type="checkbox"
-                onChange={() => handleSelectAll("lunes")}
-              />
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => handleSelectAll("lunes")}
+              >
+                Lunes
+              </button>
             </td>
             <td>
               <input

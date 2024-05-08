@@ -2,7 +2,7 @@ import { Calendario } from "./components/Calendario";
 import { MenuCheckBox } from "./components/MenuCheckBox";
 import { ListaAmbientes } from "./components/ListaAmbientes";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./reglas.css";
 
 import { Button } from "@nextui-org/react";
@@ -23,7 +23,17 @@ export const Reglas = () => {
   const [checkedCheckboxes, setCheckedCheckboxes] = useState<
     { id: number; name: string; day: string }[]
   >([]);
+  const [resetCheckboxes, setResetCheckboxes] = useState(false);
 
+  useEffect(() => {
+    if (resetCheckboxes) {
+      setResetCheckboxes(false);
+    }
+  }, [resetCheckboxes]);
+
+  const handleResetCheckboxes = () => {
+    setResetCheckboxes(true);
+  };
   //Ambientes
   const handleSelectChange = (selectedValue: string) => {
     setSelectedAmbiente(selectedValue);
@@ -87,34 +97,29 @@ export const Reglas = () => {
               selectedDateFinal?.format("YYYY-MM-DD")
             );
 
-            try {
-              // Mapear sobre los periodos y crear un array con los datos de cada periodo
-              const periodosData = checkedCheckboxes.map((checkbox) => ({
-                id_ambiente: parseInt(selectedAmbiente),
-                id_horario: calcularIdHorario(checkbox.id, checkbox.day),
-                estado: "libre",
-                fecha: obtenerFecha(
-                  checkbox.day,
-                  selectedDate,
-                  selectedDateFinal
-                ),
-              }));
+            // Mostrar mensaje de éxito solo si la creación de la regla es exitosa
+            const periodosData = checkedCheckboxes.map((checkbox) => ({
+              id_ambiente: parseInt(selectedAmbiente),
+              id_horario: calcularIdHorario(checkbox.id, checkbox.day),
+              estado: "libre",
+              fecha: obtenerFecha(
+                checkbox.day,
+                selectedDate,
+                selectedDateFinal
+              ),
+            }));
 
-              // Realizar la solicitud POST al servidor con todos los periodos
-              const response = await axios.post(
-                "http://127.0.0.1:8000/api/periodos", // Endpoint de la API
-                { periodos: periodosData } // Enviar un array de periodos al servidor
-              );
-              toast.success("Guardado", { description: response.data.message });
-              // console.log("Respuesta del servidor:", response.data);
+            const response = await axios.post(
+              "http://127.0.0.1:8000/api/periodos",
+              { periodos: periodosData }
+            );
+            toast.success("Guardado", { description: response.data.message });
 
-              setSelectedDate(null);
-              setSelectedDateFinal(null);
-              setCheckedCheckboxes([]);
-              setSelectedAmbiente("");
-            } catch (error) {
-              console.error("Error al crear periodos:", error);
-            }
+            setSelectedDate(null);
+            setSelectedDateFinal(null);
+            setCheckedCheckboxes([]);
+            handleResetCheckboxes();
+
             //Este Sirve
             // try {
             //   const promises = checkedCheckboxes.map(async (checkbox) => {
@@ -236,7 +241,11 @@ export const Reglas = () => {
           />
         </div>
 
-        <MenuCheckBox onCheckboxChange={handleCheckboxChange} />
+        <MenuCheckBox
+          onCheckboxChange={handleCheckboxChange}
+          reset={resetCheckboxes}
+        />
+        <Button onClick={handleResetCheckboxes}>Limpiar Checkboxes</Button>
         <Button
           className="bg-primary text-2xl text-white mx-10"
           onClick={handleButtonClick}
