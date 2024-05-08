@@ -71,15 +71,35 @@ export const EditSolicitudModal = ({ solicitud }) => {
   const [ambientes, setAmbientes] = useState([]);
   const [selectedAmbiente, setSelectedAmbiente] = useState();
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-  const [selectedHoraInicio, setSelectedHoraInicio] = useState();
+  const [selectedHoraInicio, setSelectedHoraInicio] = useState<string>("");
+  const [selectedHoraFin, setSelectedHoraFin] = useState<string>("");
   useEffect(() => {
     getMaterias();
     getAmbientes();
     setSelectedMateria(solicitud.id_materia.toString());
     setSelectedGrupo(solicitud.id_grupo.toString());
     setSelectedAmbiente(solicitud.ambiente_id.toString());
-    setSelectedDate(solicitud.fecha_solicitud ? dayjs(solicitud.fecha) : null);
-    setSelectedHoraInicio(solicitud.hora_inicio);
+    setSelectedDate(
+      solicitud.fecha_solicitud ? dayjs(solicitud.fecha_solicitud) : null
+    );
+    // Buscar el índice de la hora de inicio de la solicitud en el arreglo horasInicio
+    const indiceHoraInicio = horasInicio.findIndex(
+      (hora) => hora === solicitud.hora_inicio.slice(0, -3)
+    );
+    if (indiceHoraInicio !== -1) {
+      setSelectedHoraInicio(horasInicio[indiceHoraInicio]);
+    } else {
+      setSelectedHoraInicio(horasInicio[0]);
+    }
+
+    const indiceHoraFinal = horasFin.findIndex(
+      (hora) => hora === solicitud.hora_fin.slice(0, -3)
+    );
+    if (indiceHoraFinal !== -1) {
+      setSelectedHoraFin(horasFin[indiceHoraFinal]);
+    } else {
+      setSelectedHoraFin(horasFin[0]);
+    }
   }, []);
 
   const getMaterias = async () => {
@@ -109,7 +129,7 @@ export const EditSolicitudModal = ({ solicitud }) => {
       .then((response) => response.json())
       .then((data) => {
         setGrupos(data);
-        console.log(data);
+        //console.log(data);
       });
   };
 
@@ -133,7 +153,6 @@ export const EditSolicitudModal = ({ solicitud }) => {
     console.log("Materia seleccionada:", selectedMateria);
     console.log("Grupo seleccionado:", selectedGrupo);
     console.log("Ambiente seleccionado:", selectedAmbiente);
-    console.log(solicitud.hora_inicio);
   };
   const handleDateChange = (newValue: Dayjs | null) => {
     setSelectedDate(newValue);
@@ -141,6 +160,9 @@ export const EditSolicitudModal = ({ solicitud }) => {
 
   const handleHoraInicioChange = (event) => {
     setSelectedHoraInicio(event.target.value);
+  };
+  const handleHoraFinChange = (event) => {
+    setSelectedHoraFin(event.target.value);
   };
   return (
     <>
@@ -220,7 +242,7 @@ export const EditSolicitudModal = ({ solicitud }) => {
                   selectedDate={selectedDate}
                   onDateChange={handleDateChange}
                 />
-                {/* Sector de Hora Inicio y Hora fin */}
+                {/* Sector de Hora Inicio */}
                 <p>Hora de inicio: </p>
                 <select
                   value={selectedHoraInicio}
@@ -228,6 +250,19 @@ export const EditSolicitudModal = ({ solicitud }) => {
                   className="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
                   {horasInicio.map((hora, index) => (
+                    <option key={index} value={hora}>
+                      {hora}
+                    </option>
+                  ))}
+                </select>
+                {/* Sector de Hora Fin */}
+                <p>Hora fin: </p>
+                <select
+                  value={selectedHoraFin}
+                  onChange={handleHoraFinChange}
+                  className="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {horasFin.map((hora, index) => (
                     <option key={index} value={hora}>
                       {hora}
                     </option>

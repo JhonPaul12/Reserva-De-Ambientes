@@ -267,16 +267,24 @@ export const MenuCheckBox = ({ onCheckboxChange }: MenuCheckBoxProps) => {
   }, [data, onCheckboxChange, getCheckedCheckboxes]);
 
   const handleSelectAll = (day: string) => {
-    const newData = data.map((item: Item) => ({
-      ...item,
-      [day]: !item[day],
-    }));
-    if (!newData[0][day]) {
-      newData.forEach((item) => {
-        item[day] = false;
-      });
+    if (day === "sabado") {
+      const newData = data.map((item: Item) => ({
+        ...item,
+        [day]: item.id <= 7 ? !item[day] : item[day], // Marcar solo los elementos con ID del 1 al 7
+      }));
+      setData(newData);
+    } else {
+      const newData = data.map((item: Item) => ({
+        ...item,
+        [day]: !item[day],
+      }));
+      if (!newData[0][day]) {
+        newData.forEach((item) => {
+          item[day] = false;
+        });
+      }
+      setData(newData);
     }
-    setData(newData);
   };
 
   return (

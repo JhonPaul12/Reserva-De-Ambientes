@@ -10,7 +10,7 @@ use App\Models\Horario;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Log;
 class PeriodoController extends Controller
 {
     public function index()
@@ -45,6 +45,9 @@ class PeriodoController extends Controller
         }
 
         $fechaPeriodo = Carbon::parse($request->fecha);
+        Log::info('Fecha del período:', ['fecha' => $fechaPeriodo]);
+        Log::info('Fecha inicial de la regla:', ['fecha_inicial' => $regla->fecha_inicial]);
+        Log::info('Fecha final de la regla:', ['fecha_final' => $regla->fecha_final]);
         if ($fechaPeriodo < $regla->fecha_inicial || $fechaPeriodo > $regla->fecha_final) {
             return response()->json(['error' => 'La fecha del período está fuera del rango de la regla'], 400);
         }
@@ -72,7 +75,7 @@ class PeriodoController extends Controller
             'id_horario' => $idHorario,
             'estado' => $estado,
         ];
-
+        
         while ($fechaActual <= $fechaFin) {
             $datosPeriodo = array_merge($datosComunes, ['fecha' => $fechaActual->toDateString()]);
             Periodo::create($datosPeriodo);
@@ -169,5 +172,4 @@ class PeriodoController extends Controller
         }
         return response()->json('No se encontró un horario con la misma hora de inicio y fin', 404);
 }
-
 }

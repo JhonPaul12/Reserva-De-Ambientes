@@ -81,48 +81,73 @@ export const Reglas = () => {
       if (selectedDay <= selectedDayFinal) {
         if (selectedMonth <= selectedMonthFinal) {
           if (selectedYear <= selectedYearFinal) {
-            toast.success("Registro exitoso");
             await crearRegla(
               parseInt(selectedAmbiente),
               selectedDate?.format("YYYY-MM-DD"),
               selectedDateFinal?.format("YYYY-MM-DD")
             );
 
-            //Creando periodos
             try {
-              const promises = checkedCheckboxes.map(async (checkbox) => {
-                console.log(
-                  obtenerFecha(checkbox.day, selectedDate, selectedDateFinal)
-                );
-                const response = await axios.post(
-                  "http://127.0.0.1:8000/api/periodo",
-                  {
-                    id_ambiente: parseInt(selectedAmbiente),
-                    id_horario: calcularIdHorario(checkbox.id, checkbox.day),
-                    estado: "libre",
-                    fecha: obtenerFecha(
-                      checkbox.day,
-                      selectedDate,
-                      selectedDateFinal
-                    ),
-                  }
-                );
+              // Mapear sobre los periodos y crear un array con los datos de cada periodo
+              const periodosData = checkedCheckboxes.map((checkbox) => ({
+                id_ambiente: parseInt(selectedAmbiente),
+                id_horario: calcularIdHorario(checkbox.id, checkbox.day),
+                estado: "libre",
+                fecha: obtenerFecha(
+                  checkbox.day,
+                  selectedDate,
+                  selectedDateFinal
+                ),
+              }));
 
-                return response.data;
-              });
+              // Realizar la solicitud POST al servidor con todos los periodos
+              const response = await axios.post(
+                "http://127.0.0.1:8000/api/periodos", // Endpoint de la API
+                { periodos: periodosData } // Enviar un array de periodos al servidor
+              );
+              toast.success("Guardado", { description: response.data.message });
+              // console.log("Respuesta del servidor:", response.data);
 
-              const responses = await Promise.all(promises);
-
-              console.log("Respuestas del servidor:", responses);
-              // setSelectedAmbiente("");
-              // setSelectedDate(null);
-              // setSelectedDateFinal(null);
-              // setCheckedCheckboxes([]);
-              //toast.success("Periodos creados exitosamente");
+              setSelectedDate(null);
+              setSelectedDateFinal(null);
+              setCheckedCheckboxes([]);
+              setSelectedAmbiente("");
             } catch (error) {
               console.error("Error al crear periodos:", error);
-              toast.error("Error al crear periodos");
             }
+            //Este Sirve
+            // try {
+            //   const promises = checkedCheckboxes.map(async (checkbox) => {
+            //     console.log(
+            //       obtenerFecha(checkbox.day, selectedDate, selectedDateFinal)
+            //     );
+            //     const response = await axios.post(
+            //       "http://127.0.0.1:8000/api/periodo",
+            //       {
+            //         id_ambiente: parseInt(selectedAmbiente),
+            //         id_horario: calcularIdHorario(checkbox.id, checkbox.day),
+            //         estado: "libre",
+            //         fecha: obtenerFecha(
+            //           checkbox.day,
+            //           selectedDate,
+            //           selectedDateFinal
+            //         ),
+            //       }
+            //     );
+
+            //     return response.data;
+            //   });
+
+            //   const responses = await Promise.all(promises);
+
+            //   console.log("Respuestas del servidor:", responses);
+            //   // setSelectedAmbiente("");
+            //   // setSelectedDate(null);
+            //   // setSelectedDateFinal(null);
+            //   // setCheckedCheckboxes([]);
+            // } catch (error) {
+            //   console.error("Error al crear periodos:", error);
+            // }
 
             // const periodos = checkedCheckboxes.map((checkbox) => ({
             //   id_ambiente: parseInt(selectedAmbiente),
