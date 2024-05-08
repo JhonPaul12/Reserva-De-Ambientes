@@ -114,7 +114,7 @@ export const Reglas = () => {
               { periodos: periodosData }
             );
             toast.success("Guardado", { description: response.data.message });
-
+            setSelectedAmbiente("");
             setSelectedDate(null);
             setSelectedDateFinal(null);
             setCheckedCheckboxes([]);
@@ -245,7 +245,7 @@ export const Reglas = () => {
           onCheckboxChange={handleCheckboxChange}
           reset={resetCheckboxes}
         />
-        <Button onClick={handleResetCheckboxes}>Limpiar Checkboxes</Button>
+        {/* <Button onClick={handleResetCheckboxes}>Limpiar Checkboxes</Button> */}
         <Button
           className="bg-primary text-2xl text-white mx-10"
           onClick={handleButtonClick}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import "./ejemplo.css";
+import { FaCheckSquare } from "react-icons/fa";
 
 // type Item = {
 //   id: number;
@@ -350,38 +351,48 @@ export const MenuCheckBox = ({
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={() => handleSelectAll("lunes")}
               >
-                Lunes
+                <FaCheckSquare />
               </button>
             </td>
             <td>
-              <input
-                type="checkbox"
-                onChange={() => handleSelectAll("martes")}
-              />
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => handleSelectAll("martes")}
+              >
+                <FaCheckSquare />
+              </button>
             </td>
             <td>
-              <input
-                type="checkbox"
-                onChange={() => handleSelectAll("miercoles")}
-              />
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => handleSelectAll("miercoles")}
+              >
+                <FaCheckSquare />
+              </button>
             </td>
             <td>
-              <input
-                type="checkbox"
-                onChange={() => handleSelectAll("jueves")}
-              />
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => handleSelectAll("jueves")}
+              >
+                <FaCheckSquare />
+              </button>
             </td>
             <td>
-              <input
-                type="checkbox"
-                onChange={() => handleSelectAll("viernes")}
-              />
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => handleSelectAll("viernes")}
+              >
+                <FaCheckSquare />
+              </button>
             </td>
             <td>
-              <input
-                type="checkbox"
-                onChange={() => handleSelectAll("sabado")}
-              />
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => handleSelectAll("sabado")}
+              >
+                <FaCheckSquare />
+              </button>
             </td>
           </tr>
           {data.map((item) => (
