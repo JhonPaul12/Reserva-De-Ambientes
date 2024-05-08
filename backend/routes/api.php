@@ -11,7 +11,7 @@ use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
-
+use App\Models\Periodo;
 
 /*Route::resource('/ambiente', AmbienteController::class);
 Route::resource('/regla',ReglaController::class);
@@ -105,4 +105,4 @@ Route::get('/showAllDocentes/{nombre}', [SolicitudController::class, 'showAllDoc
 
 Route::get('/AllDocentes', [SolicitudController::class, 'AllDocentes']);
 
-
+Route::get('/allPeriodos', [PeriodoController::class, 'allPeriodos']);

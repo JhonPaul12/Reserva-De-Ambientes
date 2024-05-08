@@ -17,7 +17,7 @@ class Ambiente extends Model
     //protected $guarded=[];
 
     public function periodo(){
-        return $this->hasMany(Periodo::class);
+        return $this->hasMany(Periodo::class,'id_ambiente');
     }
 
     public function regla()
