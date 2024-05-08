@@ -12,7 +12,11 @@ export interface Solicitud {
     pivot: {
         user_id: number,
         solicitud_id: number
-    }
+    },
+    materia: {
+      id: number,
+      nombre_materia: string,
+    },
     ambiente: {
       id: number,
       nombre: string,
