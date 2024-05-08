@@ -16,7 +16,7 @@ class PeriodoController extends Controller
     public function index()
     {
         $periodo = Periodo::all();
-        return response()->json($periodo,200);
+        return response()->json($periodo, 200);
     }
 
     public function store(Request $request)
@@ -87,7 +87,7 @@ class PeriodoController extends Controller
     public function show($id)
     {
         $p = Periodo::find($id);
-        return response()->json($p,200);
+        return response()->json($p, 200);
     }
 
     public function update(Request $request, $id)
@@ -99,18 +99,18 @@ class PeriodoController extends Controller
         $pe->fecha = $request->fecha;
         $pe->save();
         return response()->json([
-            'success'=>true,
-            'data'=>$pe
-        ],200);
+            'success' => true,
+            'data' => $pe
+        ], 200);
     }
 
     public function destroy($id)
     {
         $pe = Periodo::find($id)->delete();
         return response()->json([
-            'success'=>true,
-            'data'=> $pe
-        ],200);
+            'success' => true,
+            'data' => $pe
+        ], 200);
     }
 
 
@@ -145,20 +145,20 @@ class PeriodoController extends Controller
     public function showEstado($id)
     {
         $p = Periodo::find($id);
-        $estado=$p->estado;
-        return response()->json($estado,200);
+        $estado = $p->estado;
+        return response()->json($estado, 200);
     }
 
     public function showHora(Request $request)
-{
-    $idAmbiente = $request->input('id_ambiente');
-    $horaInicio = $request->input('hora_inicio');
-    $horaFin = $request->input('hora_fin');
-    $fecha = $request->input('fecha');
+    {
+        $idAmbiente = $request->input('id_ambiente');
+        $horaInicio = $request->input('hora_inicio');
+        $horaFin = $request->input('hora_fin');
+        $fecha = $request->input('fecha');
 
-    $periodos = Periodo::where('id_ambiente', $idAmbiente)
-        ->whereDate('fecha', $fecha)
-        ->get();
+        $periodos = Periodo::where('id_ambiente', $idAmbiente)
+            ->whereDate('fecha', $fecha)
+            ->get();
 
         foreach ($periodos as $periodo) {
             $horario = Horario::find($periodo->id_horario);
@@ -171,8 +171,8 @@ class PeriodoController extends Controller
             }
         }
         return response()->json('No se encontró un horario con la misma hora de inicio y fin', 404);
-}
-public function stores(Request $request)
+    }
+    public function stores(Request $request)
 {
     // Validar la solicitud
     $validator = Validator::make($request->all(), [
@@ -257,5 +257,12 @@ public function stores(Request $request)
 
     return response()->json($response, 201);
 }
-
+    public function allPeriodos()
+    {
+        $periodos = Periodo::with(['ambiente', 'horario'])->get();
+        if ($periodos->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron periodos'], 404);
+        }
+        return response()->json($periodos, 200);
+    }
 }
