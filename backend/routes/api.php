@@ -103,6 +103,4 @@ Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGr
 
 Route::get('/showAllDocentes/{nombre}', [SolicitudController::class, 'showAllDocentes']);
 
-Route::get('/AllDocentes', [SolicitudController::class, 'AllDocentes']);
-
-
+Route::post('/periodos',[PeriodoController::class,'stores']);

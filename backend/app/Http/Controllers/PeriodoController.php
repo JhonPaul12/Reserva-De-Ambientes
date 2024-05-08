@@ -172,4 +172,90 @@ class PeriodoController extends Controller
         }
         return response()->json('No se encontró un horario con la misma hora de inicio y fin', 404);
 }
+public function stores(Request $request)
+{
+    // Validar la solicitud
+    $validator = Validator::make($request->all(), [
+        'periodos.*.id_ambiente' => 'required',
+        'periodos.*.id_horario' => 'required',
+        'periodos.*.estado' => 'required',
+        'periodos.*.fecha' => 'required|date',
+    ]);
+
+    // Si la validación falla, retornar los errores
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 400);
+    }
+
+    // Array para almacenar períodos creados
+    $periodosCreados = [];
+
+    // Array para almacenar errores
+    $errores = [];
+
+    // Recorrer cada periodo enviado en la solicitud
+    foreach ($request->input('periodos') as $periodoData) {
+        $ambiente = Ambiente::find($periodoData['id_ambiente']);
+
+        // Verificar si el ambiente existe
+        if (!$ambiente) {
+            $errores[] = ['id_ambiente' => $periodoData['id_ambiente'], 'error' => 'No se encontró el ambiente asociado al período'];
+            continue;
+        }
+
+        // Obtener la regla asociada al ambiente
+        $regla = $ambiente->regla;
+
+        // Verificar si la regla existe
+        if (!$regla) {
+            $errores[] = ['id_ambiente' => $periodoData['id_ambiente'], 'error' => 'No se encontró regla asociada al ambiente del período'];
+            continue;
+        }
+
+        // Verificar si la fecha del período está dentro del rango de la regla
+        $fechaPeriodo = Carbon::parse($periodoData['fecha']);
+        $fechaFin = Carbon::parse($regla->fecha_final);
+        if ($fechaPeriodo < $regla->fecha_inicial || $fechaPeriodo > $fechaFin) {
+            // Agregar el período al array de errores
+            $errores[] = [
+                'id_ambiente' => $periodoData['id_ambiente'],
+                'fecha' => $periodoData['fecha'],
+                'error' => 'La fecha del período está fuera del rango de la regla'
+            ];
+            continue;
+        }
+
+        // Crear los periodos regulares si el estado es 'libre', de lo contrario, guardar el periodo
+        $estado = $periodoData['estado'];
+        $idAmbiente = $periodoData['id_ambiente'];
+        $idHorario = $periodoData['id_horario'];
+        $fecha = $periodoData['fecha'];
+
+        if ($estado === 'libre') {
+            $this->crearPeriodosRegulares($idAmbiente, $idHorario, $fecha, $estado, $regla->fecha_final);
+        } else {
+            $periodo = new Periodo($periodoData);
+            $periodo->save();
+            // Agregar el período al array de períodos creados
+            $periodosCreados[] = $periodo;
+        }
+    }
+
+    // Construir la respuesta
+    $response = [];
+    if (!empty($periodosCreados)) {
+        $response['periodos_creados'] = $periodosCreados;
+    }
+    if (!empty($errores)) {
+        $response['errores'] = $errores;
+    }
+
+    // Si no hay errores, retornar un mensaje de éxito
+    if (empty($errores)) {
+        $response['message'] = 'Periodos creados exitosamente';
+    }
+
+    return response()->json($response, 201);
+}
+
 }
