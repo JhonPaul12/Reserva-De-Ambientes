@@ -1,12 +1,14 @@
 
-import { useSolicitudStore } from "../store/solicitud.store";
+
 import { useEffect, useState } from "react";
 import { TablaSolicitudes } from "./SolicitudesListadas";
+import { useSolicitudStore } from "../store/solicitud.store";
 
 export const ListaReservas = () => {
   const solicitudes = useSolicitudStore((state) => state.solicitudes);
   const getSolicitudes = useSolicitudStore((state) => state.getSolicitudes);
-
+/*
+const [solicitudes, setSolicitudes] = useState<ISimpleSolicitud[]>([]);*/
   const [estado, setEstado] = useState('');
 
 

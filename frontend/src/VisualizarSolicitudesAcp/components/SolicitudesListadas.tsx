@@ -25,7 +25,7 @@ import { ISimpleSolicitud } from "../interfaces/simple-solicitud";
                 Id
               </TableColumn>
               <TableColumn className="text-center text-3xl bg-slate-300">
-                Materia
+                Docente
               </TableColumn>
               <TableColumn className="text-center text-3xl bg-slate-300">
                 Hora inicio
@@ -41,7 +41,7 @@ import { ISimpleSolicitud } from "../interfaces/simple-solicitud";
               {solicitudes.map((solicitud) => (
                 <TableRow key={solicitud.id}>
                   <TableCell className="text-gray-900 text-base">{solicitud.id}</TableCell>
-                  <TableCell className="text-gray-900 text-base">{solicitud.id_materia}</TableCell>
+                  <TableCell className="text-gray-900 text-base">{solicitud.id}</TableCell>
                   <TableCell className="text-gray-900 text-base">
                     {solicitud.hora_inicio}
                   </TableCell>
