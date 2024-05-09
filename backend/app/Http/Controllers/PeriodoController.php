@@ -75,7 +75,7 @@ class PeriodoController extends Controller
             'id_horario' => $idHorario,
             'estado' => $estado,
         ];
-        
+
         while ($fechaActual <= $fechaFin) {
             $datosPeriodo = array_merge($datosComunes, ['fecha' => $fechaActual->toDateString()]);
             Periodo::create($datosPeriodo);
@@ -265,4 +265,32 @@ class PeriodoController extends Controller
         }
         return response()->json($periodos, 200);
     }
+
+    //recibir una fecha y un ambiente y listar los periodos libres, suceptibles a reserva.
+    public function listarPeriodosLibresParaReserva(Request $request){
+        $validator = Validator::make($request->all(), [
+             'id_ambiente' => 'required|exists:ambientes,id',
+             'fecha' => 'required|date',
+         ]);
+         if ($validator->fails()) {
+              return response()->json(['error' => $validator->errors()], 400);
+             }
+
+        $idAmbiente = $request->input('id_ambiente');
+        $fecha = $request->input('fecha');
+
+        try {
+             $periodos = Periodo::where('id_ambiente', $idAmbiente)
+                                 ->whereDate('fecha', $fecha)
+                                  ->get();
+
+             $periodosLibres = $periodos->filter(function ($periodo) {
+             return $periodo->estado === 'libre';
+             });
+
+             return response()->json($periodosLibres, 200);
+         } catch (\Exception $e) {
+             return response()->json(['error' => 'Error al buscar períodos libres: ' . $e->getMessage()], 500);
+            }
+        }
 }
