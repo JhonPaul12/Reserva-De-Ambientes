@@ -80,62 +80,146 @@ class SolicitudController extends Controller
         return response()->json($data,201);
     }
     public function guardar(Request $request)
-    {
-        $validador = Validator::make($request->all(),[
-            'motivo' => 'required|max:250',
-            'fecha_solicitud' => 'required',
-            'hora_inicio' => 'required',
-            'hora_fin' => 'required',
-            'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
-            'numero_estudiantes' => 'required',
-            'ambiente_id'=> 'required|exists:ambientes,id',
-            'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
-            'docentes.*' => 'exists:users,id' ,// Asegúrate de que cada ID de docente existe en la tabla de usuarios
-            'id_materia' => 'required|exists:materias,id',
-            'id_grupo' => 'required|exists:grupos,id'
-        ]);
+{
+    $validador = Validator::make($request->all(), [
+        'motivo' => 'required|max:250',
+        'fecha_solicitud' => 'required',
+        'hora_inicio' => 'required',
+        'hora_fin' => 'required',
+        'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
+        'numero_estudiantes' => 'required',
+        'ambiente_id'=> 'required|exists:ambientes,id|unique:solicitudes,ambiente_id', // Agrega la validación de unicidad
+        'docentes' => 'required|array',
+        'docentes.*' => 'exists:users,id',
+        'id_materia' => 'required|exists:materias,id',
+        'id_grupo' => 'required|exists:grupos,id'
+    ]);
 
-        if($validador->fails()){
-            $data = [
-                'message' => 'Error en la validacion de datos',
-                'erros' => $validador->errors(),
-                'status' => 400
-            ];
-            return response()->json($data,400);
-        }
-
-        $solicitud = Solicitud::create([
-            'motivo' => $request->motivo,
-            'fecha_solicitud' => $request->fecha_solicitud,
-            'hora_inicio' => $request->hora_inicio,
-            'hora_fin' => $request->hora_fin,
-            'estado' => $request->estado,
-            'numero_estudiantes' => $request->numero_estudiantes,
-            'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
-            'id_grupo' => $request->id_grupo, // Utiliza directamente $request->grupo_id en lugar de $request->input('grupo_id')
-            'ambiente_id' =>$request->ambiente_id // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
-        ]);
-        
-        $solicitud->load('ambiente');
-       
-        
-          // Asocia los docentes con la solicitud
-        $docentes = $request->input('docentes');
-        $solicitud->users()->attach($docentes);
-        if(!$solicitud){
-            $data = [
-                'message' => 'Error al crear una solicitud',
-                'status' => 500
-            ];
-            return response()->json($data,500);
-        }
+    $ambienteExistente = Solicitud::where('ambiente_id', $request->ambiente_id)->exists();
+    if ($ambienteExistente) {
         $data = [
-            'solicitud' => $solicitud,
-            'status' => 201
+            'message' => 'El ambiente ya está asociado a otra solicitud',
+            'status' => 400
         ];
-
-        return response()->json($data,201);
+        return response()->json($data, 400);
     }
+
+    if ($validador->fails()) {
+        $data = [
+            'message' => 'Error en la validación de datos',
+            'errors' => $validador->errors(),
+            'status' => 400
+        ];
+        return response()->json($data, 400);
+    }
+
+    
+
+    $solicitud = Solicitud::create([
+        'motivo' => $request->motivo,
+        'fecha_solicitud' => $request->fecha_solicitud,
+        'hora_inicio' => $request->hora_inicio,
+        'hora_fin' => $request->hora_fin,
+        'estado' => $request->estado,
+        'numero_estudiantes' => $request->numero_estudiantes,
+        'id_materia' => $request->id_materia,
+        'id_grupo' => $request->id_grupo,
+        'ambiente_id' =>$request->ambiente_id
+    ]);
+
+    $solicitud->load('ambiente');
+    
+    // Asocia los docentes con la solicitud
+    $docentes = $request->input('docentes');
+    $solicitud->users()->attach($docentes);
+    
+    if (!$solicitud) {
+        $data = [
+            'message' => 'Error al crear una solicitud',
+            'status' => 500
+        ];
+        return response()->json($data, 500);
+    }
+    
+    $data = [
+        'solicitud' => $solicitud,
+        'status' => 201
+    ];
+
+    return response()->json($data, 201);
+}
+
+public function editar(Request $request, $id)
+{
+    $validador = Validator::make($request->all(), [
+        'motivo' => 'required|max:250',
+        'fecha_solicitud' => 'required',
+        'hora_inicio' => 'required',
+        'hora_fin' => 'required',
+        'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
+        'numero_estudiantes' => 'required',
+        'ambiente_id'=> 'required|exists:ambientes,id|unique:solicitudes,ambiente_id,' . $id, // Agrega la validación de unicidad, excluyendo el ID actual
+        'docentes' => 'required|array',
+        'docentes.*' => 'exists:users,id',
+        'id_materia' => 'required|exists:materias,id',
+        'id_grupo' => 'required|exists:grupos,id'
+    ]);
+
+    if ($validador->fails()) {
+        $errors = $validador->errors();
+
+        // Agregar mensajes de error adicionales para campos faltantes o datos incompletos
+        $missingFields = [];
+        foreach (['motivo', 'fecha_solicitud', 'hora_inicio', 'hora_fin', 'estado', 'numero_estudiantes', 'ambiente_id', 'docentes', 'id_materia', 'id_grupo'] as $field) {
+            if ($errors->has($field)) {
+                $missingFields[] = $field;
+            }
+        }
+
+        $data = [
+            'message' => 'Error en la validación de datos',
+            'errors' => $validador->errors(),
+            'missing_fields' => $missingFields, // Agregar los campos faltantes al mensaje de error
+            'status' => 400
+        ];
+        return response()->json($data, 400);
+    }
+
+    $solicitud = Solicitud::findOrFail($id);
+    if (!$solicitud) {
+        $data = [
+            'message' => 'No se encontró la solicitud con el ID proporcionado',
+            'status' => 404
+        ];
+        return response()->json($data, 404);
+    }
+
+    $solicitud->update([
+        'motivo' => $request->motivo,
+        'fecha_solicitud' => $request->fecha_solicitud,
+        'hora_inicio' => $request->hora_inicio,
+        'hora_fin' => $request->hora_fin,
+        'estado' => $request->estado,
+        'numero_estudiantes' => $request->numero_estudiantes,
+        'id_materia' => $request->id_materia,
+        'id_grupo' => $request->id_grupo,
+        'ambiente_id' => $request->ambiente_id
+    ]);
+
+    $solicitud->load('ambiente');
+    
+    // Actualiza la asociación de los docentes con la solicitud
+    $docentes = $request->input('docentes');
+    $solicitud->users()->sync($docentes);
+    
+    $data = [
+        'solicitud' => $solicitud,
+        'status' => 200
+    ];
+
+    return response()->json($data, 200);
+}
+
 
 
 
