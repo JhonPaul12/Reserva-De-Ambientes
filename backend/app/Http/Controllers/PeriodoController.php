@@ -268,7 +268,7 @@ class PeriodoController extends Controller
 
     //recibir una fecha y un ambiente y listar los periodos libres, suceptibles a reserva.
     public function listarPeriodosLibresParaReserva(Request $request)
-    {
+{
     $validator = Validator::make($request->all(), [
         'id_ambiente' => 'required|exists:ambientes,id',
         'fecha' => 'required|date',
@@ -281,33 +281,37 @@ class PeriodoController extends Controller
     $fecha = $request->input('fecha');
 
     try {
-        // Buscar el primer período libre para el ambiente y la fecha específicos
-        $periodoLibre = Periodo::with('horario') // Cargar la relación 'horario'
+        // Buscar todos los períodos libres para el ambiente y la fecha específicos
+        $periodosLibres = Periodo::with('horario') // Cargar la relación 'horario'
                             ->where('id_ambiente', $idAmbiente)
                             ->where('fecha', $fecha)
                             ->where('estado', 'libre')
-                            ->first();
+                            ->get();
 
-        if (!$periodoLibre) {
+        if ($periodosLibres->isEmpty()) {
             return response()->json(['error' => 'No se encontraron períodos libres para reserva'], 404);
         }
 
-        // Construir el arreglo de respuesta con los datos del período y el horario asociado
-        $response = [
-            'id' => $periodoLibre->id,
-            'id_ambiente' => $periodoLibre->id_ambiente,
-            'id_horario'=>$periodoLibre->id_horario,
-            'hora_inicio' => $periodoLibre->horario->hora_inicio,
-            'hora_fin' => $periodoLibre->horario->hora_fin,
-            'estado' => $periodoLibre->estado,
-            'fecha' => $periodoLibre->fecha,
-            'created_at' => $periodoLibre->created_at,
-            'updated_at' => $periodoLibre->updated_at,
-        ];
+        // Construir un arreglo de respuesta para cada período libre
+        $response = [];
+        foreach ($periodosLibres as $periodo) {
+            $response[] = [
+                'id' => $periodo->id,
+                'id_ambiente' => $periodo->id_ambiente,
+                'id_horario' => $periodo->id_horario,
+                'hora_inicio' => $periodo->horario->hora_inicio,
+                'hora_fin' => $periodo->horario->hora_fin,
+                'estado' => $periodo->estado,
+                'fecha' => $periodo->fecha,
+                'created_at' => $periodo->created_at,
+                'updated_at' => $periodo->updated_at,
+            ];
+        }
 
         return response()->json($response, 200);
-        } catch (\Exception $e) {
-               return response()->json(['error' => 'Error al buscar períodos libres para reserva: ' . $e->getMessage()], 500);
-             }
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al buscar períodos libres para reserva: ' . $e->getMessage()], 500);
     }
+}
+
 }
