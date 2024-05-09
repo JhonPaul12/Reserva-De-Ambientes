@@ -26,6 +26,18 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
     }));
   };
 
+  // const toggleSubmenu = (index: number) => {
+  //   // Cierra todos los submenús abiertos
+  //   const newSubmenuStates = { ...submenuStates };
+  //   Object.keys(newSubmenuStates).forEach((key) => {
+  //     newSubmenuStates[parseInt(key)] = false;
+  //   });
+
+  //   // Abre el submenú correspondiente al índice proporcionado
+  //   newSubmenuStates[index] = !submenuStates[index];
+
+  //   setSubmenuStates(newSubmenuStates);
+  // };
   return (
     <div className="flex text-blanco  ">
       <div className="bg-azul ">

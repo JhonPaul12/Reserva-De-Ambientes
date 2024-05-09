@@ -10,13 +10,13 @@ use App\Models\Horario;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Log;
 class PeriodoController extends Controller
 {
     public function index()
     {
         $periodo = Periodo::all();
-        return response()->json($periodo,200);
+        return response()->json($periodo, 200);
     }
 
     public function store(Request $request)
@@ -87,7 +87,7 @@ class PeriodoController extends Controller
     public function show($id)
     {
         $p = Periodo::find($id);
-        return response()->json($p,200);
+        return response()->json($p, 200);
     }
 
     public function update(Request $request, $id)
@@ -99,18 +99,18 @@ class PeriodoController extends Controller
         $pe->fecha = $request->fecha;
         $pe->save();
         return response()->json([
-            'success'=>true,
-            'data'=>$pe
-        ],200);
+            'success' => true,
+            'data' => $pe
+        ], 200);
     }
 
     public function destroy($id)
     {
         $pe = Periodo::find($id)->delete();
         return response()->json([
-            'success'=>true,
-            'data'=> $pe
-        ],200);
+            'success' => true,
+            'data' => $pe
+        ], 200);
     }
 
 
@@ -145,20 +145,20 @@ class PeriodoController extends Controller
     public function showEstado($id)
     {
         $p = Periodo::find($id);
-        $estado=$p->estado;
-        return response()->json($estado,200);
+        $estado = $p->estado;
+        return response()->json($estado, 200);
     }
 
     public function showHora(Request $request)
-{
-    $idAmbiente = $request->input('id_ambiente');
-    $horaInicio = $request->input('hora_inicio');
-    $horaFin = $request->input('hora_fin');
-    $fecha = $request->input('fecha');
+    {
+        $idAmbiente = $request->input('id_ambiente');
+        $horaInicio = $request->input('hora_inicio');
+        $horaFin = $request->input('hora_fin');
+        $fecha = $request->input('fecha');
 
-    $periodos = Periodo::where('id_ambiente', $idAmbiente)
-        ->whereDate('fecha', $fecha)
-        ->get();
+        $periodos = Periodo::where('id_ambiente', $idAmbiente)
+            ->whereDate('fecha', $fecha)
+            ->get();
 
         foreach ($periodos as $periodo) {
             $horario = Horario::find($periodo->id_horario);
@@ -171,6 +171,126 @@ class PeriodoController extends Controller
             }
         }
         return response()->json('No se encontró un horario con la misma hora de inicio y fin', 404);
-}
+    }
+    public function stores(Request $request)
+{
+    // Validar la solicitud
+    $validator = Validator::make($request->all(), [
+        'periodos.*.id_ambiente' => 'required',
+        'periodos.*.id_horario' => 'required',
+        'periodos.*.estado' => 'required',
+        'periodos.*.fecha' => 'required|date',
+    ]);
 
+    // Si la validación falla, retornar los errores
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 400);
+    }
+
+    // Array para almacenar períodos creados
+    $periodosCreados = [];
+
+    // Array para almacenar errores
+    $errores = [];
+
+    // Recorrer cada periodo enviado en la solicitud
+    foreach ($request->input('periodos') as $periodoData) {
+        $ambiente = Ambiente::find($periodoData['id_ambiente']);
+
+        // Verificar si el ambiente existe
+        if (!$ambiente) {
+            $errores[] = ['id_ambiente' => $periodoData['id_ambiente'], 'error' => 'No se encontró el ambiente asociado al período'];
+            continue;
+        }
+
+        // Obtener la regla asociada al ambiente
+        $regla = $ambiente->regla;
+
+        // Verificar si la regla existe
+        if (!$regla) {
+            $errores[] = ['id_ambiente' => $periodoData['id_ambiente'], 'error' => 'No se encontró regla asociada al ambiente del período'];
+            continue;
+        }
+
+        // Verificar si la fecha del período está dentro del rango de la regla
+        $fechaPeriodo = Carbon::parse($periodoData['fecha']);
+        $fechaFin = Carbon::parse($regla->fecha_final);
+        if ($fechaPeriodo < $regla->fecha_inicial || $fechaPeriodo > $fechaFin) {
+            // Agregar el período al array de errores
+            $errores[] = [
+                'id_ambiente' => $periodoData['id_ambiente'],
+                'fecha' => $periodoData['fecha'],
+                'error' => 'La fecha del período está fuera del rango de la regla'
+            ];
+            continue;
+        }
+
+        // Crear los periodos regulares si el estado es 'libre', de lo contrario, guardar el periodo
+        $estado = $periodoData['estado'];
+        $idAmbiente = $periodoData['id_ambiente'];
+        $idHorario = $periodoData['id_horario'];
+        $fecha = $periodoData['fecha'];
+
+        if ($estado === 'libre') {
+            $this->crearPeriodosRegulares($idAmbiente, $idHorario, $fecha, $estado, $regla->fecha_final);
+        } else {
+            $periodo = new Periodo($periodoData);
+            $periodo->save();
+            // Agregar el período al array de períodos creados
+            $periodosCreados[] = $periodo;
+        }
+    }
+
+    // Construir la respuesta
+    $response = [];
+    if (!empty($periodosCreados)) {
+        $response['periodos_creados'] = $periodosCreados;
+    }
+    if (!empty($errores)) {
+        $response['errores'] = $errores;
+    }
+
+    // Si no hay errores, retornar un mensaje de éxito
+    if (empty($errores)) {
+        $response['message'] = 'Periodos creados exitosamente';
+    }
+
+    return response()->json($response, 201);
+}
+    public function allPeriodos()
+    {
+        $periodos = Periodo::with(['ambiente', 'horario'])->get();
+        if ($periodos->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron periodos'], 404);
+        }
+        return response()->json($periodos, 200);
+    }
+
+    //recibir una fecha y un ambiente y listar los periodos libres, suceptibles a reserva.
+    public function listarPeriodosLibresParaReserva(Request $request){
+        $validator = Validator::make($request->all(), [
+             'id_ambiente' => 'required|exists:ambientes,id',
+             'fecha' => 'required|date',
+         ]);
+         if ($validator->fails()) {
+              return response()->json(['error' => $validator->errors()], 400);
+             }
+
+        $idAmbiente = $request->input('id_ambiente');
+        $fecha = $request->input('fecha');
+
+        try {
+             $periodos = Periodo::where('id_ambiente', $idAmbiente)
+                                 ->whereDate('fecha', $fecha)
+                                  ->get();
+
+             $periodosLibres = $periodos->filter(function ($periodo) {
+             return $periodo->estado === 'libre';
+             });
+
+             return response()->json($periodosLibres, 200);
+         } catch (\Exception $e) {
+             return response()->json(['error' => 'Error al buscar períodos libres: ' . $e->getMessage()], 500);
+            }
+        }
 }

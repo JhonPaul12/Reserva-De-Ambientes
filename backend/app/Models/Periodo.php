@@ -16,11 +16,11 @@ class Periodo extends Model
     ];
 
     public function ambiente(){
-        return $this->belongsTo(Ambiente::class);
+        return $this->belongsTo(Ambiente::class,'id_ambiente');
     }
 
     public function horario(){
-        return $this->belongsTo(Horario::class);
+        return $this->belongsTo(Horario::class,'id_horario');
     }
 
     public function reserva()
