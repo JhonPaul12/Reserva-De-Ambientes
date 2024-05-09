@@ -2,7 +2,7 @@ import { StateCreator, create } from "zustand";
 import { reservasDB } from "../api";
 import { ISimpleSolicitud } from "../interfaces/simple-solicitud";
 import { toast } from "sonner";
-import { isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import { ISolicitudesResponse } from "../interfaces/solicitudes-response";
 
 interface SolicitudState {
@@ -37,6 +37,13 @@ const storeApi: StateCreator<SolicitudState & Actions> = (set) => ({
       console.log(error);
     }
   },
+  /*
+   getSolicitudes:async () => {
+    const respuesta = await axios.get(`http://127.0.0.1:8000/api/AllDocentes/`);
+    set(() => ({
+      solicitudes: respuesta.data,
+  }));
+  },*/
   createSolicitud: async (
     motivo,
     fecha_solicitud,
