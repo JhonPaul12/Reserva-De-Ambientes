@@ -27,5 +27,8 @@ class Periodo extends Model
     {
         return $this->belongsTo(Reserva::class);
     }
-
+    public function solicitudes()
+    {
+        return $this->belongsToMany(Solicitud::class,'periodo_solicitud');
+    }
 }
