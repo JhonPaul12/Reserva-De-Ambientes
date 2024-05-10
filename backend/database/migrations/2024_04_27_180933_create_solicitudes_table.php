@@ -17,8 +17,6 @@ class CreateSolicitudesTable extends Migration
             $table->id();
             $table->string('motivo');
             $table->date('fecha_solicitud');
-            $table->time('hora_inicio');
-            $table->time('hora_fin');
             $table->String('estado')->default('Pendiente');
             $table->integer('numero_estudiantes');
             $table->unsignedBigInteger('id_materia');
