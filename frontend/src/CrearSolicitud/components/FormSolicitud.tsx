@@ -7,57 +7,11 @@ import { ISimpleDocente } from '../interfaces/simple-docente';
 import { ISimpleMateria } from "../interfaces/simple-materia";
 import { ISimpleGrupo } from "../interfaces/simple-grupo";
 import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes";
-import { addMinutes, parse, format } from 'date-fns';
 import React from "react";
+import { ISimplePeriodo } from "../interfaces/simple-periodo";
 
 export const FormSolicitud = () => {
 
-    // Constantes de horas de inicio y fin
-    const horasInicio = [
-      "06:45",
-      "07:30",
-      "08:15",
-      "09:00",
-      "09:45",
-      "10:30",
-      "11:15",
-      "12:00",
-      "12:45",
-      "13:30",
-      "14:15",
-      "15:00",
-      "15:45",
-      "16:30",
-      "17:15",
-      "18:00",
-      "18:45",
-      "19:30",
-      "20:15",
-      "21:00"
-    ];
-    
-    const horasFin = [
-      "07:30",
-      "08:15",
-      "09:00",
-      "09:45",
-      "10:30",
-      "11:15",
-      "12:00",
-      "12:45",
-      "13:30",
-      "14:15",
-      "15:00",
-      "15:45",
-      "16:30",
-      "17:15",
-      "18:00",
-      "18:45",
-      "19:30",
-      "20:15",
-      "21:00",
-      "21:45"
-    ];
     const motivosReserva = [
       "Clase",
       "Taller",
@@ -87,15 +41,15 @@ export const FormSolicitud = () => {
       email: '',
       email_verified_at: null
     };
-    const [inputMateria, setInputMateria] = useState('1');
+    const [inputMateria, setInputMateria] = useState('');
     const [inputMotivo, setInputMotivo] = useState('');
     const [inputNEst, setInputNEst] = useState('');
     const [inputGrupo, setInputGrupo] = useState('');
-    const [inputAmbiente, setInputAmbiente] = useState('1');
+    const [inputAmbiente, setInputAmbiente] = useState('');
     const [inputFecha, setInputFecha] = useState('');
     /*const [inputHIni, setInputHIni] = useState('06:45');*/
-    const [inputHIni, setInputHIni] = useState(['']);
-    const [inputHFin, setInputHFin] = useState('07:30');
+    const [inputHIni, setInputHIni] = useState<ISimplePeriodo[]>([]);
+    const [inputHFin, setInputHFin] = useState([]);
     const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
     const [materias, setMaterias] = useState<ISimpleMateria[]>([]);
     const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
@@ -113,9 +67,12 @@ export const FormSolicitud = () => {
     const sortedOptions = [...docentes].sort((a, b) => (a.name).localeCompare(b.name));
 
     const anadir = async(id: string) => {
-      setListDocentes([...listdocentes, id]);
-      
-      console.log(listdocentes)
+      if (!listdocentes.includes(id)) {
+        setListDocentes([...listdocentes, id]);
+        console.log('ID añadido:', id);
+      } else {
+        toast.error('El docente ya está presente en la lista:', id);
+      }
     };
     const handleDateChange = (date) => {
     console.log(date);
@@ -126,8 +83,9 @@ export const FormSolicitud = () => {
     const fechaSeleccionada = new Date(fecha);
     if (fechaSeleccionada > fechaActual) {
       setInputFecha(fecha);
-      getRangos();
+      console.log(fecha);
       console.log(inputFecha);
+      getRangos(fecha);
     } else {
       toast.error("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
       console.log("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
@@ -146,12 +104,17 @@ export const FormSolicitud = () => {
   
     const handleSelectChange = async(event: React.ChangeEvent<HTMLSelectElement>, selectId) => {
       const { value } = event.target as HTMLSelectElement;
-      setSelects((prevSelects) =>
-        prevSelects.map((select) => (select.id === selectId ? { ...select, value } : select))
-      );
+      
       
       console.log(selectId)
-      anadir(value);
+      if (!listdocentes.includes(value)) {
+        setSelects((prevSelects) =>
+          prevSelects.map((select) => (select.id === selectId ? { ...select, value } : select))
+        );
+        anadir(value);
+      } else {
+        toast.error('El docente ya está presente en la lista:', value);
+      }
       console.log(value)
     };
 
@@ -163,7 +126,7 @@ export const FormSolicitud = () => {
       getUsuario(id);
       getDocentes();
       getMaterias(id);
-      getGrupos(2,id);
+      getGrupos(3,id);
       getAmbientes();
       anadir(`${id}`);
       
@@ -192,23 +155,23 @@ export const FormSolicitud = () => {
       setUsuario(respuesta.data);
       console.log(usuario);
     };
-    const getRangos = async () => {
+    const getRangos = async (fecha: string) => {
       const dataToSend = {
         id_ambiente: inputAmbiente,
-        fecha: inputFecha
+        fecha: fecha
       };
-      const respuesta = await axios.post('http://127.0.0.1:8000/api/disposicion', dataToSend);
+      console.log(dataToSend);
+      const respuesta = await axios.post<ISimplePeriodo[]>('http://127.0.0.1:8000/api/disposicion/', dataToSend);
       const responseData = respuesta.data;
-      console.log(responseData);
       const rangosHorario: string[] = [];
       responseData.forEach(objeto => {
         const { hora_inicio, hora_fin } = objeto;
-        
         const rangoHorario = `${hora_inicio} - ${hora_fin}`;
         rangosHorario.push(rangoHorario);
       });
-      setInputHIni(rangosHorario);
-      console.log(rangosHorario);
+
+      setInputHIni(responseData);
+      console.log(responseData);
     };
 
 
@@ -222,30 +185,24 @@ export const FormSolicitud = () => {
     const onInputChangeGrupo = async(e: React.ChangeEvent<HTMLSelectElement>) => {
       const inputValue = e.target as HTMLSelectElement;
       setInputGrupo(inputValue.value);
+      console.log(inputValue.value)
     }
     const onInputChangeAmbiente =async(e: React.ChangeEvent<HTMLSelectElement>) => {
       const {value} = e.target as HTMLSelectElement;
       setInputAmbiente(value);
+      getRangos(inputFecha);
     }
 
     const [values, setValues] = React.useState<Selection>(new Set([]));
 
     const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      console.log(e.target.value);
+      const valores = e.target.value;
+      const arrayNumeros = valores.split(',').map(numero => numero.trim());
+      setInputHFin(arrayNumeros);
       setValues(new Set(e.target.value.split(",")));
+      console.log(values);
     };
-
-    const onInputChangeHIni =async(e: React.ChangeEvent<HTMLSelectElement>) => {
-      const inputValue = e.target as HTMLSelectElement;
-      setInputHIni(inputValue.value);
-      console.log(inputHIni);
-    }
-    const onInputChangeHFin = async(e: React.ChangeEvent<HTMLSelectElement>) => {
-      const inputValue = e.target as HTMLSelectElement;
-      setInputHFin(inputValue.value);
-      console.log(inputHFin);
-    }
-
-
 
     const onInputChangeMotivo = async(e: React.ChangeEvent<HTMLSelectElement>) => {
         const inputValue = e.target as HTMLSelectElement;
@@ -277,72 +234,34 @@ export const FormSolicitud = () => {
       const onInputChangeSave = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
     
-        if (inputMotivo !== '' && inputNEst !== '' && inputFecha!== ''  && inputMateria!== '' && inputGrupo!== '' && inputAmbiente!== '') {
-          console.log(inputHIni);
-          console.log(inputFecha);
-          const inicio = new Date(`2000-01-01T${inputHIni}`);
-          const fin = new Date(`2000-01-01T${inputHFin}`);
-          console.log(inicio);
-          console.log(fin);
+        if (inputMotivo !== '' && inputNEst !== '' && inputFecha!== ''  && inputMateria!== '' && inputGrupo!== '' && inputAmbiente!== '' && inputHFin!== '') {
+          
           const fechaActual = new Date();
           const fechaSeleccionada = new Date(inputFecha);
-          if (inicio <= fin ) {
+          
             if(fechaSeleccionada > fechaActual){
- /*           const horaInicio = parse(inputHIni, 'H:mm', new Date());
-            const horaFin = parse(inputHFin, 'H:mm', new Date());
-
-            
-            let horaActual = addMinutes(horaInicio, 45);
-
-            do {
-              const horasIntermedias= format(horaActual, 'H:mm');
-              console.log('--------------------------------------');
-              console.log(format(horaInicio, 'H:mm:ss'));
-              console.log(typeof format(horaInicio, 'H:mm'));
-              console.log(horasIntermedias);
-              console.log(typeof horasIntermedias);
-              console.log('--------------------------------------');
-              const dataToSend = {
-                id_ambiente: parseInt(inputAmbiente),
-                hora_inicio: format(horaInicio, 'H:mm:ss'),
-                hora_fin: `${horasIntermedias}:00`,
-                fecha: inputFecha,
-              };
-              console.log(dataToSend);
-              const response = await axios.post<{ message: string }>('http://127.0.0.1:8000/api/verDispo', dataToSend);
-              const responseData = response.data;
-              console.log(typeof response);
-              console.log(response);
-              console.log(typeof responseData);
-              console.log(responseData);
-              if(responseData.message.includes('Reservado')) return toast.error(`El rango ${horaInicio}a${horasIntermedias} esta reservado`);
-              horaActual = addMinutes(horaActual, 45);
-            } while (horaActual <= horaFin);
-*/
             console.log(listdocentes)
-            await createSolicitud( inputMotivo, inputFecha, inputHIni, inputHFin, 'Pendiente', parseInt(inputNEst),parseInt(inputMateria),parseInt(inputGrupo), parseInt(inputAmbiente),listdocentes);
+            await createSolicitud( inputMotivo, inputFecha,'Pendiente', parseInt(inputNEst),parseInt(inputMateria),parseInt(inputGrupo), parseInt(inputAmbiente),listdocentes,inputHFin);
             setInputMateria('1')
             setInputMotivo('');
             setInputNEst('');
             setInputGrupo('');
             setInputAmbiente('1');
             setInputFecha('');
-            setInputHIni('06:45');
-            setInputHFin('07:30');
-          
-          
           }else{
               toast.error("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
             }
-          }else{
-            toast.error("El horario de inicio es mayor al final, introduzca un rango correcto");
-          }
+         
         } else {
     
           toast.error('Todos los campos son obligatorios');
           console.log('Todos los campos son obligatorios');
         }
     }
+    const options = inputHIni.map((inputHIn) => ({
+      label: `${inputHIn.hora_inicio.slice(0, -3)} - ${inputHIn.hora_fin.slice(0, -3)}`,
+      value: inputHIn.id,
+    }));
 
   return (
     <div>
@@ -366,7 +285,7 @@ export const FormSolicitud = () => {
           key={select.id}
           value={select.value}
           onChange={(event) => handleSelectChange(event, select.id)}
-          className="mt-2 w-full"
+          className="mt-2 w-full text-gray-900"
             aria-label="Selecciona una docente"
             placeholder="Seleccione una opcion..."
             >
@@ -427,13 +346,13 @@ export const FormSolicitud = () => {
           <Select 
             value={inputGrupo}
             onChange={onInputChangeGrupo}
-            className="w-full"
+            className="w-full text-gray-900"
             aria-label="Selecciona una grupo"
             placeholder="Seleccione una opcion..."
           >
-            {grupos.map((grupo) => (
-            <SelectItem key={grupo.id} value={grupo.id}>
-              {grupo.grupo}
+            {grupos.map((grup) => (
+            <SelectItem key={grup.id} value={grup.id}>
+              {grup.grupo}
             </SelectItem>
           ))}
           </Select>
@@ -480,12 +399,12 @@ export const FormSolicitud = () => {
               selectionMode="multiple"
               placeholder="Seleccione periodo..."
               selectedKeys={values}
-              className="mt-2 mb-5 max-w-xs"
+              className="mt-2 mb-5 w-full"
               onChange={handleSelectionChange}
             >
-              {inputHIni.map((inputHIn) => (
-                <SelectItem key={inputHIn} value={inputHIn}>
-                  {inputHIn}
+              {options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
                 </SelectItem>
               ))}
             </Select>
