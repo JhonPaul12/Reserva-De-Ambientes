@@ -80,29 +80,66 @@ class SolicitudController extends Controller
         return response()->json($data,201);
     }
     public function guardar(Request $request)
-{
-    $validador = Validator::make($request->all(), [
-        'motivo' => 'required|max:250',
-        'fecha_solicitud' => 'required',
-        'hora_inicio' => 'required',
-        'hora_fin' => 'required',
-        'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
-        'numero_estudiantes' => 'required',
-        'ambiente_id'=> 'required|exists:ambientes,id|unique:solicitudes,ambiente_id', // Agrega la validación de unicidad
-        'docentes' => 'required|array',
-        'docentes.*' => 'exists:users,id',
-        'id_materia' => 'required|exists:materias,id',
-        'id_grupo' => 'required|exists:grupos,id'
-    ]);
+    {
+        $validador = Validator::make($request->all(),[
+            'motivo' => 'required|max:250',
+            'fecha_solicitud' => 'required',
+            'periodos' => 'required|array', // Asegúrate de que 'periodos' es un array
+            'periodos.*' => 'exists:periodos,id' ,// Asegúrate de que cada ID de periodo existe en la tabla de periodos
+            'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
+            'numero_estudiantes' => 'required',
+            'ambiente_id'=> 'required|exists:ambientes,id',
+            'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
+            'docentes.*' => 'exists:users,id' ,// Asegúrate de que cada ID de docente existe en la tabla de usuarios
+            'id_materia' => 'required|exists:materias,id',
+            'id_grupo' => 'required|exists:grupos,id'
+        ]);
 
-    $ambienteExistente = Solicitud::where('ambiente_id', $request->ambiente_id)->exists();
-    if ($ambienteExistente) {
+        if($validador->fails()){
+            $data = [
+                'message' => 'Error en la validacion de datos',
+                'erros' => $validador->errors(),
+                'status' => 400
+            ];
+            return response()->json($data,400);
+        }
+
+        $solicitud = Solicitud::create([
+            'motivo' => $request->motivo,
+            'fecha_solicitud' => $request->fecha_solicitud,
+            'estado' => $request->estado,
+            'numero_estudiantes' => $request->numero_estudiantes,
+            'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
+            'id_grupo' => $request->id_grupo, // Utiliza directamente $request->grupo_id en lugar de $request->input('grupo_id')
+            'ambiente_id' =>$request->ambiente_id // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
+        ]);
+        
+        $solicitud->load('ambiente');
+       
+        
+          // Asocia los docentes con la solicitud
+        $docentes = $request->input('docentes');
+        $solicitud->users()->attach($docentes);
+
+        
+        // Asocia los periodos con la solicitud
+        $periodos = $request->input('periodos');
+        $solicitud->periodos()->attach($periodos);
+
+
+        if(!$solicitud){
+            $data = [
+                'message' => 'Error al crear una solicitud',
+                'status' => 500
+            ];
+            return response()->json($data,500);
+        }
         $data = [
             'message' => 'El ambiente ya está asociado a otra solicitud',
             'status' => 400
         ];
         return response()->json($data, 400);
-    }
+
 
     if ($validador->fails()) {
         $data = [
