@@ -10,90 +10,49 @@ import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes"
 import React from "react";
 import { ISimplePeriodo } from "../interfaces/simple-periodo";
 
-export const FormSolicitud = () => {
 
-    const motivosReserva = [
-      "Clase",
-      "Taller",
-      "Conferencia",
-      'Examen',
-      'Actividad extracurricular',
-      'Presentación',
-      'Seminario',
-      'Ensayo',
-      'Sesión de tutoría',
-      'Prueba práctica',
-      'Simposio',
-      'Debate',
-      'Jornada de capacitación',
-      'Reunión de equipo',
-      'Laboratorio práctico',
-      'Trabajo en grupo',
-      'Sesión de estudio',
-      'Sesión informativa'
-    ];
+export const FormOrdenado = () => {
+
+    useEffect(() => {
+        const id = 2;
+        getUsuario(id);
+        getDocentes();
+        getMaterias(id);
+        getAmbientes();
+        anadir(`${id}`);
+        
+      }, []);
+
+    //DOCENTES
     const instanciaInicial: ISimpleDocente = {
-      id: 0, // Pon el valor que necesites aquí
-      name: '',
-      apellidos: '',
-      telefono: '',
-      codigo_sis: '',
-      email: '',
-      email_verified_at: null
-    };
-    const [inputMateria, setInputMateria] = useState('');
-    const [inputMotivo, setInputMotivo] = useState('');
-    const [inputNEst, setInputNEst] = useState('');
-    const [inputGrupo, setInputGrupo] = useState('');
-    const [inputAmbiente, setInputAmbiente] = useState('');
-    const [inputFecha, setInputFecha] = useState('');
-    /*const [inputHIni, setInputHIni] = useState('06:45');*/
-    const [inputHIni, setInputHIni] = useState<ISimplePeriodo[]>([]);
-    const [inputHFin, setInputHFin] = useState([]);
-    const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
-    const [materias, setMaterias] = useState<ISimpleMateria[]>([]);
-    const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
-    const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
+        id: 0, // Pon el valor que necesites aquí
+        name: '',
+        apellidos: '',
+        telefono: '',
+        codigo_sis: '',
+        email: '',
+        email_verified_at: null
+      };
     const [usuario, setUsuario] = useState(instanciaInicial);
+    const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
     const [selects, setSelects] = useState([]);
     const [listdocentes, setListDocentes] = useState([]);
 
-
-    const createSolicitud = useSolicitudStore( state => state.createSolicitud);
-
-
-
-
-    const sortedOptions = [...docentes].sort((a, b) => (a.name).localeCompare(b.name));
-
-    const anadir = async(id: string) => {
-      if (!listdocentes.includes(id)) {
-        setListDocentes([...listdocentes, id]);
-        console.log('ID añadido:', id);
-      } else {
-        toast.error('El docente ya está presente en la lista:', id);
-      }
-    };
-    const handleDateChange = (date) => {
-    console.log(date);
     
-    const fecha = `${date.year.toString()}-${date.month.toString()}-${date.day.toString()}`;
-    const fechaActual = new Date();
+    const getUsuario = async (id: number) => {
+        const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/${id}`);
+        console.log(respuesta.data);
+        setUsuario(respuesta.data);
+        console.log(usuario);
+      };
+    const getDocentes = async () => {
+        const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
+        setDocentes(respuesta.data);
+      };
 
-    const fechaSeleccionada = new Date(fecha);
-    if (fechaSeleccionada > fechaActual) {
-      setInputFecha(fecha);
-      console.log(fecha);
-      console.log(inputFecha);
-      getRangos(fecha);
-    } else {
-      toast.error("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
-      console.log("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
-      setInputFecha(fecha);
-    }
-  };
+    const docentesOrdenAlfabetico = [...docentes].sort((a, b) => (a.name).localeCompare(b.name));
 
-    const handleClick = async() => {
+    const botonAnadirClick = async() => {
         const limiteSelects = 5; 
         if (selects.length < limiteSelects) {
           setSelects((prevSelects) => [...prevSelects, { id: prevSelects.length, value: '' }]);
@@ -101,108 +60,76 @@ export const FormSolicitud = () => {
           toast.error('Se ha alcanzado el límite de docentes');
         }
     };
-  
+
     const handleSelectChange = async(event: React.ChangeEvent<HTMLSelectElement>, selectId) => {
-      const { value } = event.target as HTMLSelectElement;
-      
-      
-      console.log(selectId)
-      if (!listdocentes.includes(value)) {
-        setSelects((prevSelects) =>
-          prevSelects.map((select) => (select.id === selectId ? { ...select, value } : select))
-        );
-        anadir(value);
-      } else {
-        toast.error('El docente ya está presente en la lista:', value);
-      }
-      console.log(value)
-    };
-
-
-  
-
-    useEffect(() => {
-      const id = 2;
-      getUsuario(id);
-      getDocentes();
-      getMaterias(id);
-      getGrupos(3,id);
-      getAmbientes();
-      anadir(`${id}`);
-      
-    }, []);
-  
-    const getDocentes = async () => {
-      const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
-      setDocentes(respuesta.data);
-    };
-    const getMaterias = async (id: number) => {
-      const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/materias/${id}/`);
-      setMaterias(respuesta.data);
-    };
-    const getGrupos = async (materia_id:number, docente_id: number) => {
-      const respuesta = await axios.get(`http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`);
-      setGrupos(respuesta.data);
-    };
-    const getAmbientes = async () => {
-      const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
-      setAmbientes(respuesta.data);
-      console.log(inputFecha);
-    };
-    const getUsuario = async (id: number) => {
-      const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/${id}`);
-      console.log(respuesta.data);
-      setUsuario(respuesta.data);
-      console.log(usuario);
-    };
-    const getRangos = async (fecha: string) => {
-      const dataToSend = {
-        id_ambiente: inputAmbiente,
-        fecha: fecha
+        const { value } = event.target as HTMLSelectElement;
+        
+        
+        console.log(selectId)
+        if (!listdocentes.includes(value)) {
+          setSelects((prevSelects) =>
+            prevSelects.map((select) => (select.id === selectId ? { ...select, value } : select))
+          );
+          anadir(value);
+        } else {
+          toast.error('El docente ya está presente en la lista:', value);
+        }
+        console.log(value)
       };
-      console.log(dataToSend);
-      const respuesta = await axios.post<ISimplePeriodo[]>('http://127.0.0.1:8000/api/disposicion/', dataToSend);
-      const responseData = respuesta.data;
-      const rangosHorario: string[] = [];
-      responseData.forEach(objeto => {
-        const { hora_inicio, hora_fin } = objeto;
-        const rangoHorario = `${hora_inicio} - ${hora_fin}`;
-        rangosHorario.push(rangoHorario);
-      });
 
-      setInputHIni(responseData);
-      console.log(responseData);
-    };
+      const anadir = async(id: string) => {
+        if (!listdocentes.includes(id)) {
+          setListDocentes([...listdocentes, id]);
+          console.log('ID añadido:', id);
+        } else {
+          toast.error('El docente ya está presente en la lista:', id);
+        }
+      };
+
+      
+
+    //MATERIA
+
+const [inputMateria, setInputMateria] = useState('');
+const [materias, setMaterias] = useState<ISimpleMateria[]>([]);
+
+const getMaterias = async (id: number) => {
+    const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/materias/${id}/`);
+    setMaterias(respuesta.data);
+  };
+
+  const onInputChangeMateria = async(e: React.ChangeEvent<HTMLSelectElement>) => {
+    const {value} = e.target as HTMLSelectElement;
+    console.log(value)
+    setInputMateria(value);
+    getGrupos(parseInt(value), 2)
+  }
 
 
+  //MOTIVO
 
-    const onInputChangeMateria = async(e: React.ChangeEvent<HTMLSelectElement>) => {
-      const {value} = e.target as HTMLSelectElement;
-      console.log(value)
-      setInputMateria(value);
-      getGrupos(parseInt(value), 2)
-    }
-    const onInputChangeGrupo = async(e: React.ChangeEvent<HTMLSelectElement>) => {
-      const inputValue = e.target as HTMLSelectElement;
-      setInputGrupo(inputValue.value);
-      console.log(inputValue.value)
-    }
-    const onInputChangeAmbiente =async(e: React.ChangeEvent<HTMLSelectElement>) => {
-      const {value} = e.target as HTMLSelectElement;
-      setInputAmbiente(value);
-      getRangos(inputFecha);
-    }
+  const motivosReserva = [
+    "Clase",
+    "Taller",
+    "Conferencia",
+    'Examen',
+    'Actividad extracurricular',
+    'Presentación',
+    'Seminario',
+    'Ensayo',
+    'Sesión de tutoría',
+    'Prueba práctica',
+    'Simposio',
+    'Debate',
+    'Jornada de capacitación',
+    'Reunión de equipo',
+    'Laboratorio práctico',
+    'Trabajo en grupo',
+    'Sesión de estudio',
+    'Sesión informativa'
+  ];
 
-    const [values, setValues] = React.useState<Selection>(new Set([]));
-
-    const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      console.log(e.target.value);
-      const valores = e.target.value;
-      const arrayNumeros = valores.split(',').map(numero => numero.trim());
-      setInputHFin(arrayNumeros);
-      setValues(new Set(e.target.value.split(",")));
-      console.log(values);
-    };
+  const [inputMotivo, setInputMotivo] = useState('');
 
     const onInputChangeMotivo = async(e: React.ChangeEvent<HTMLSelectElement>) => {
         const inputValue = e.target as HTMLSelectElement;
@@ -213,6 +140,11 @@ export const FormSolicitud = () => {
           console.log("El motivo debe tener como maximo 150 caracteres");
         }
       }
+
+      //NUMERO DE ESTUDIANTES
+
+      const [inputNEst, setInputNEst] = useState('');
+
       const onInputChangeNEst = async(e: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target as HTMLInputElement;
         if (inputValue.value.length <6) {
@@ -230,6 +162,109 @@ export const FormSolicitud = () => {
         }
       }
 
+
+     //GRUPO
+     
+     const [inputGrupo, setInputGrupo] = useState('');
+     const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
+
+     const getGrupos = async (materia_id:number, docente_id: number) => {
+        const respuesta = await axios.get(`http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`);
+        setGrupos(respuesta.data);
+      };
+
+      const onInputChangeGrupo = async(e: React.ChangeEvent<HTMLSelectElement>) => {
+        const inputValue = e.target as HTMLSelectElement;
+        setInputGrupo(inputValue.value);
+        console.log(inputValue.value)
+      }
+
+
+      //AMBIENTE
+
+      const [inputAmbiente, setInputAmbiente] = useState('');
+      const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
+
+      const getAmbientes = async () => {
+        const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
+        setAmbientes(respuesta.data);
+        console.log(inputFecha);
+      };
+
+      const onInputChangeAmbiente =async(e: React.ChangeEvent<HTMLSelectElement>) => {
+        const {value} = e.target as HTMLSelectElement;
+        setInputAmbiente(value);
+        getRangos(inputFecha);
+      }
+
+      //FECHA
+
+      const [inputFecha, setInputFecha] = useState('');
+
+      const handleDateChange = (date) => {
+        console.log(date);
+        
+        const fecha = `${date.year.toString()}-${date.month.toString()}-${date.day.toString()}`;
+        const fechaActual = new Date();
+    
+        const fechaSeleccionada = new Date(fecha);
+        if (fechaSeleccionada > fechaActual) {
+          setInputFecha(fecha);
+          console.log(fecha);
+          console.log(inputFecha);
+          getRangos(fecha);
+        } else {
+          toast.error("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
+          console.log("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
+          setInputFecha(fecha);
+        }
+      };
+
+
+      //PERIODO
+
+    const [inputHIni, setInputHIni] = useState<ISimplePeriodo[]>([]);
+    const [inputHFin, setInputHFin] = useState([]);
+    const [values, setValues] = React.useState<Selection>(new Set([]));
+
+    const options = inputHIni.map((inputHIn) => ({
+        label: `${inputHIn.hora_inicio.slice(0, -3)} - ${inputHIn.hora_fin.slice(0, -3)}`,
+        value: inputHIn.id,
+      }));
+
+
+    const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      console.log(e.target.value);
+      const valores = e.target.value;
+      const arrayNumeros = valores.split(',').map(numero => numero.trim());
+      setInputHFin(arrayNumeros);
+      setValues(new Set(e.target.value.split(",")));
+      console.log(values);
+    };
+
+    const getRangos = async (fecha: string) => {
+        const dataToSend = {
+          id_ambiente: inputAmbiente,
+          fecha: fecha
+        };
+        console.log(dataToSend);
+        const respuesta = await axios.post<ISimplePeriodo[]>('http://127.0.0.1:8000/api/disposicion/', dataToSend);
+        const responseData = respuesta.data;
+        const rangosHorario: string[] = [];
+        responseData.forEach(objeto => {
+          const { hora_inicio, hora_fin } = objeto;
+          const rangoHorario = `${hora_inicio} - ${hora_fin}`;
+          rangosHorario.push(rangoHorario);
+        });
+  
+        setInputHIni(responseData);
+        console.log(responseData);
+      };
+
+
+      //ENVIAR
+
+      const createSolicitud = useSolicitudStore( state => state.createSolicitud);
 
       const onInputChangeSave = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -258,25 +293,24 @@ export const FormSolicitud = () => {
           console.log('Todos los campos son obligatorios');
         }
     }
-    const options = inputHIni.map((inputHIn) => ({
-      label: `${inputHIn.hora_inicio.slice(0, -3)} - ${inputHIn.hora_fin.slice(0, -3)}`,
-      value: inputHIn.id,
-    }));
+return (
 
-  return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900">
         CREAR SOLICITUD
       </label>
       <form className="mt-5 space-y-6">
         <div className="columnaR">
+
+            {/*DOCENTES */}
+
         <label className='text-ms text-gray-900'>Docente:</label>
         <br />
         <span style={{marginRight:'50px'}} className='text-ms text-gray-900'>{usuario.name} {usuario.apellidos}</span>
         <button
         type="button"
         className="flex justify-center rounded-md bg-azul p-5 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        onClick={handleClick}
+        onClick={botonAnadirClick}
         >
           Añadir docente
         </button>
@@ -289,7 +323,7 @@ export const FormSolicitud = () => {
             aria-label="Selecciona una docente"
             placeholder="Seleccione una opcion..."
             >
-          {sortedOptions.map((docente) => (
+          {docentesOrdenAlfabetico.map((docente) => (
             <SelectItem key={docente.id} value={docente.id}>
               {docente.name} {docente.apellidos}
             </SelectItem>
@@ -297,6 +331,9 @@ export const FormSolicitud = () => {
         </Select>
       ))}
           <br />
+
+          {/*MATERIA */}
+
           <label className="text-ms text-gray-900">Materia:</label>
           <br />
           <Select 
@@ -313,6 +350,9 @@ export const FormSolicitud = () => {
           ))}
           </Select>
           <br />
+
+          {/*MOTIVO */}
+
           <label className="text-ms text-gray-900">Motivo:</label>
           <br />
           <Select
@@ -329,6 +369,9 @@ export const FormSolicitud = () => {
               ))}
             </Select>
           <br />
+
+          {/*NUMERO DE ESTUDIANTES */}
+
           <label className="text-ms text-gray-900">Nro Est:</label>
           <Input 
             type="number"
@@ -342,6 +385,9 @@ export const FormSolicitud = () => {
             min="0"
           />
           <br />
+
+          {/*GRUPO */}
+
           <label className='text-ms text-gray-900'>Grupo:</label>
           <Select 
             value={inputGrupo}
@@ -356,7 +402,11 @@ export const FormSolicitud = () => {
             </SelectItem>
           ))}
           </Select>
-            <label className='text-ms text-gray-900'>Ambiente:</label>
+          <br />
+
+          {/*AMBIENTE */}
+
+          <label className='text-ms text-gray-900'>Ambiente:</label>
             <br />
             <Select 
             value={inputAmbiente}
@@ -373,6 +423,9 @@ export const FormSolicitud = () => {
 
             </Select>
             <br />
+
+            {/*FECHA */}
+
             <label className='text-ms text-gray-900'>Fecha de reserva:</label>
             <br />
             <DatePicker
@@ -383,17 +436,9 @@ export const FormSolicitud = () => {
             <br />
             <label className='text-ms text-gray-900'>Horario de inicio:</label>
             <br />
-            {/*<Select 
-            value={inputHIni}
-            onChange={onInputChangeHIni}
-            className="w-full"
-            aria-label="6:45"
-            placeholder="Seleccione una opcion..."
-            >
-             {horasInicio.map((inputHIni, index) => (
-          <SelectItem key={index} value={inputHIni}>{inputHIni}</SelectItem>
-        ))}
-      </Select>*/}
+
+            {/*PERIODO */}
+
             <Select
               label="Periodos de reserva"
               selectionMode="multiple"
@@ -409,33 +454,22 @@ export const FormSolicitud = () => {
               ))}
             </Select>
             <br />
-          {/*  <label className='text-ms text-gray-900'> Horario de fin:</label>
-            <br />
-            <Select 
-            value={inputHFin}
-            onChange={onInputChangeHFin}
-            className="w-full"
-            aria-label="7:30"
-            placeholder="Seleccione una opcion..."
-            >
-            {horasFin.map((inputHFin, index) => (
-          <SelectItem key={index} value={inputHFin}>{inputHFin}</SelectItem>
-        ))}
-            </Select>
-            <br />*/}
+
+            {/*BOTONES */}
+
             <div className='flex gap-5 items-center'>
-        <Button  
-        size="lg"
-        className="w-full  mb-10"
-        color="primary" >Cancelar</Button>
-        <Button  
-           onClick={onInputChangeSave}
-           size="lg"
-           className="w-full mb-10"
-           color="primary"> Enviar </Button>
+            <Button  
+            size="lg"
+            className="w-full  mb-10"
+            color="primary" >Cancelar</Button>
+            <Button  
+            onClick={onInputChangeSave}
+            size="lg"
+            className="w-full mb-10"
+            color="primary"> Enviar </Button>
+            </div>
+            </div>
+        </form>
         </div>
-        </div>
-      </form>
-    </div>
-  );
+    );
 };
