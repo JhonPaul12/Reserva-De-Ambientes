@@ -1,5 +1,5 @@
 import { Toaster } from "sonner";
-import { FormSolicitud } from "./components/FormSolicitud";
+import { FormOrdenado } from "./components/FormOrdenado";
 
 export const CreacionSolicitud = () => {
   return (
@@ -9,7 +9,7 @@ export const CreacionSolicitud = () => {
         richColors
         closeButton
       />
-      <FormSolicitud />
+      <FormOrdenado />
     </div>
   );
 };
