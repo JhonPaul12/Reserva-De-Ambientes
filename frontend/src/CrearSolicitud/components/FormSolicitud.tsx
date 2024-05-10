@@ -8,6 +8,7 @@ import { ISimpleMateria } from "../interfaces/simple-materia";
 import { ISimpleGrupo } from "../interfaces/simple-grupo";
 import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes";
 import { addMinutes, parse, format } from 'date-fns';
+import React from "react";
 
 export const FormSolicitud = () => {
 
@@ -92,7 +93,8 @@ export const FormSolicitud = () => {
     const [inputGrupo, setInputGrupo] = useState('');
     const [inputAmbiente, setInputAmbiente] = useState('1');
     const [inputFecha, setInputFecha] = useState('');
-    const [inputHIni, setInputHIni] = useState('06:45');
+    /*const [inputHIni, setInputHIni] = useState('06:45');*/
+    const [inputHIni, setInputHIni] = useState(['']);
     const [inputHFin, setInputHFin] = useState('07:30');
     const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
     const [materias, setMaterias] = useState<ISimpleMateria[]>([]);
@@ -124,7 +126,8 @@ export const FormSolicitud = () => {
     const fechaSeleccionada = new Date(fecha);
     if (fechaSeleccionada > fechaActual) {
       setInputFecha(fecha);
-    console.log(inputFecha);
+      getRangos();
+      console.log(inputFecha);
     } else {
       toast.error("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
       console.log("La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy.");
@@ -133,7 +136,12 @@ export const FormSolicitud = () => {
   };
 
     const handleClick = async() => {
-      setSelects((prevSelects) => [...prevSelects, { id: prevSelects.length, value: '' }]);
+        const limiteSelects = 5; 
+        if (selects.length < limiteSelects) {
+          setSelects((prevSelects) => [...prevSelects, { id: prevSelects.length, value: '' }]);
+        } else {
+          toast.error('Se ha alcanzado el límite de docentes');
+        }
     };
   
     const handleSelectChange = async(event: React.ChangeEvent<HTMLSelectElement>, selectId) => {
@@ -184,6 +192,30 @@ export const FormSolicitud = () => {
       setUsuario(respuesta.data);
       console.log(usuario);
     };
+    const getRangos = async () => {
+      const dataToSend = {
+        id_ambiente: inputAmbiente,
+        fecha: inputFecha
+      };
+
+      const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSend) // Aquí dataToSend sería tu objeto JSON
+      };
+      const response = await fetch('http://127.0.0.1:8000/api/disposicion', requestOptions);
+      const responseData = await response.json();
+      console.log(responseData);
+      const rangosHorario: string[] = [];
+      responseData.forEach(objeto => {
+        const { hora_inicio, hora_fin } = objeto;
+        
+        const rangoHorario = `${hora_inicio} - ${hora_fin}`;
+        rangosHorario.push(rangoHorario);
+      });
+      setInputHIni(rangosHorario);
+      console.log(rangosHorario);
+    };
 
 
 
@@ -201,6 +233,13 @@ export const FormSolicitud = () => {
       const {value} = e.target as HTMLSelectElement;
       setInputAmbiente(value);
     }
+
+    const [values, setValues] = React.useState<Selection>(new Set([]));
+
+    const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setValues(new Set(e.target.value.split(",")));
+    };
+
     const onInputChangeHIni =async(e: React.ChangeEvent<HTMLSelectElement>) => {
       const inputValue = e.target as HTMLSelectElement;
       setInputHIni(inputValue.value);
@@ -244,7 +283,7 @@ export const FormSolicitud = () => {
       const onInputChangeSave = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
     
-        if (inputMotivo !== '' && inputNEst !== '' && inputFecha!== '' && inputHIni!== '' && inputHFin!== '' && inputMateria!== '' && inputGrupo!== '' && inputAmbiente!== '') {
+        if (inputMotivo !== '' && inputNEst !== '' && inputFecha!== ''  && inputMateria!== '' && inputGrupo!== '' && inputAmbiente!== '') {
           console.log(inputHIni);
           console.log(inputFecha);
           const inicio = new Date(`2000-01-01T${inputHIni}`);
@@ -333,8 +372,9 @@ export const FormSolicitud = () => {
           key={select.id}
           value={select.value}
           onChange={(event) => handleSelectChange(event, select.id)}
-          className="w-full"
+          className="mt-2 w-full"
             aria-label="Selecciona una docente"
+            placeholder="Seleccione una opcion..."
             >
           {sortedOptions.map((docente) => (
             <SelectItem key={docente.id} value={docente.id}>
@@ -350,6 +390,7 @@ export const FormSolicitud = () => {
             value={inputMateria}
             className="w-full"
             aria-label="Selecciona una materia"
+            placeholder="Seleccione una opcion..."
             onChange={onInputChangeMateria}
           >
             {materias.map((materia) => (
@@ -365,6 +406,7 @@ export const FormSolicitud = () => {
             value={inputMotivo}
             className="w-full"
             aria-label="Selecciona una motivo"
+            placeholder="Seleccione una opcion..."
             onChange={onInputChangeMotivo}
           >
               {motivosReserva.map((motivo, index) => (
@@ -393,6 +435,7 @@ export const FormSolicitud = () => {
             onChange={onInputChangeGrupo}
             className="w-full"
             aria-label="Selecciona una grupo"
+            placeholder="Seleccione una opcion..."
           >
             {grupos.map((grupo) => (
             <SelectItem key={grupo.id} value={grupo.id}>
@@ -407,6 +450,7 @@ export const FormSolicitud = () => {
             onChange={onInputChangeAmbiente}
             className="w-full"
             aria-label="Selecciona una ambiente"
+            placeholder="Seleccione una opcion..."
             >
               {ambientes.map((ambiente) => (
             <SelectItem key={ambiente.id} value={ambiente.id}>
@@ -426,32 +470,46 @@ export const FormSolicitud = () => {
             <br />
             <label className='text-ms text-gray-900'>Horario de inicio:</label>
             <br />
-            <Select 
+            {/*<Select 
             value={inputHIni}
             onChange={onInputChangeHIni}
             className="w-full"
             aria-label="6:45"
-            placeholder="6:45"
+            placeholder="Seleccione una opcion..."
             >
              {horasInicio.map((inputHIni, index) => (
           <SelectItem key={index} value={inputHIni}>{inputHIni}</SelectItem>
         ))}
+      </Select>*/}
+            <Select
+              label="Periodos de reserva"
+              selectionMode="multiple"
+              placeholder="Seleccione periodo..."
+              selectedKeys={values}
+              className="mt-2 mb-5 max-w-xs"
+              onChange={handleSelectionChange}
+            >
+              {inputHIni.map((inputHIn) => (
+                <SelectItem key={inputHIn} value={inputHIn}>
+                  {inputHIn}
+                </SelectItem>
+              ))}
             </Select>
             <br />
-            <label className='text-ms text-gray-900'> Horario de fin:</label>
+          {/*  <label className='text-ms text-gray-900'> Horario de fin:</label>
             <br />
             <Select 
             value={inputHFin}
             onChange={onInputChangeHFin}
             className="w-full"
             aria-label="7:30"
-            placeholder="7:30"
+            placeholder="Seleccione una opcion..."
             >
             {horasFin.map((inputHFin, index) => (
           <SelectItem key={index} value={inputHFin}>{inputHFin}</SelectItem>
         ))}
             </Select>
-            <br />
+            <br />*/}
             <div className='flex gap-5 items-center'>
         <Button  
         size="lg"
