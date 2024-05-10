@@ -50,7 +50,7 @@ Route::delete('/periodo/{id}',[PeriodoController::class,'destroy']);
 Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorario']);
 Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
 Route::post('/verDispo',[PeriodoController::class,'showHora']);
-Route::get('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
+Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
