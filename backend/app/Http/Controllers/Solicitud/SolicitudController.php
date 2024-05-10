@@ -84,8 +84,8 @@ class SolicitudController extends Controller
         $validador = Validator::make($request->all(),[
             'motivo' => 'required|max:250',
             'fecha_solicitud' => 'required',
-            'hora_inicio' => 'required',
-            'hora_fin' => 'required',
+            'periodos' => 'required|array', // Asegúrate de que 'periodos' es un array
+            'periodos.*' => 'exists:periodos,id' ,// Asegúrate de que cada ID de periodo existe en la tabla de periodos
             'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
             'numero_estudiantes' => 'required',
             'ambiente_id'=> 'required|exists:ambientes,id',
@@ -107,8 +107,6 @@ class SolicitudController extends Controller
         $solicitud = Solicitud::create([
             'motivo' => $request->motivo,
             'fecha_solicitud' => $request->fecha_solicitud,
-            'hora_inicio' => $request->hora_inicio,
-            'hora_fin' => $request->hora_fin,
             'estado' => $request->estado,
             'numero_estudiantes' => $request->numero_estudiantes,
             'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
@@ -122,6 +120,13 @@ class SolicitudController extends Controller
           // Asocia los docentes con la solicitud
         $docentes = $request->input('docentes');
         $solicitud->users()->attach($docentes);
+
+        
+        // Asocia los periodos con la solicitud
+        $periodos = $request->input('periodos');
+        $solicitud->periodos()->attach($periodos);
+
+
         if(!$solicitud){
             $data = [
                 'message' => 'Error al crear una solicitud',
