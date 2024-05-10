@@ -197,14 +197,8 @@ export const FormSolicitud = () => {
         id_ambiente: inputAmbiente,
         fecha: inputFecha
       };
-
-      const requestOptions = {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToSend) // Aquí dataToSend sería tu objeto JSON
-      };
-      const response = await fetch('http://127.0.0.1:8000/api/disposicion', requestOptions);
-      const responseData = await response.json();
+      const respuesta = await axios.post('http://127.0.0.1:8000/api/disposicion', dataToSend);
+      const responseData = respuesta.data;
       console.log(responseData);
       const rangosHorario: string[] = [];
       responseData.forEach(objeto => {
