@@ -135,56 +135,13 @@ class SolicitudController extends Controller
             return response()->json($data,500);
         }
         $data = [
-            'message' => 'El ambiente ya está asociado a otra solicitud',
-            'status' => 400
+            'solicitud' => $solicitud,
+            'status' => 201
         ];
-        return response()->json($data, 400);
 
-
-    if ($validador->fails()) {
-        $data = [
-            'message' => 'Error en la validación de datos',
-            'errors' => $validador->errors(),
-            'status' => 400
-        ];
-        return response()->json($data, 400);
+        return response()->json($data,201);
     }
 
-    
-
-    $solicitud = Solicitud::create([
-        'motivo' => $request->motivo,
-        'fecha_solicitud' => $request->fecha_solicitud,
-        'hora_inicio' => $request->hora_inicio,
-        'hora_fin' => $request->hora_fin,
-        'estado' => $request->estado,
-        'numero_estudiantes' => $request->numero_estudiantes,
-        'id_materia' => $request->id_materia,
-        'id_grupo' => $request->id_grupo,
-        'ambiente_id' =>$request->ambiente_id
-    ]);
-
-    $solicitud->load('ambiente');
-    
-    // Asocia los docentes con la solicitud
-    $docentes = $request->input('docentes');
-    $solicitud->users()->attach($docentes);
-    
-    if (!$solicitud) {
-        $data = [
-            'message' => 'Error al crear una solicitud',
-            'status' => 500
-        ];
-        return response()->json($data, 500);
-    }
-    
-    $data = [
-        'solicitud' => $solicitud,
-        'status' => 201
-    ];
-
-    return response()->json($data, 201);
-}
 
 public function editar(Request $request, $id)
 {
