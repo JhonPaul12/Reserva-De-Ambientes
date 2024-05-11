@@ -63,7 +63,7 @@ interface SolicitudState {
 
         });
   
-        toast.success("Enviado", { description: data.message });
+        toast.success("Su reserva fue creada exitosamente", { description: data.message });
       } catch (error) {
         if (isAxiosError(error)) {
           toast.error("Ocurrio un error", {
