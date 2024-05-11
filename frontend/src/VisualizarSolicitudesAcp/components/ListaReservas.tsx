@@ -1,81 +1,57 @@
-import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-  } from "@nextui-org/react";
-import { useSolicitudStore } from "../store/solicitud.store";
 import { useEffect, useState } from "react";
-import { ISimpleSolicitud } from "../interfaces/simple-solicitud";
+import { TablaSolicitudes } from "./SolicitudesListadas";
+import { useSolicitudStore } from "../store/solicitud.store";
 
 export const ListaReservas = () => {
-  const [datos, setDatos] = useState<ISimpleSolicitud[]>([]);
   const solicitudes = useSolicitudStore((state) => state.solicitudes);
   const getSolicitudes = useSolicitudStore((state) => state.getSolicitudes);
+  /*
+const [solicitudes, setSolicitudes] = useState<ISimpleSolicitud[]>([]);*/
+  const [estado, setEstado] = useState("");
 
-
-  
-
-  const fetchSolicitud = async () => {
-    try {
-      getSolicitudes(); // Obtener las solicitudes actualizadas
-      const datosFiltrados = solicitudes.filter(solicitud => solicitud.estado === "Aceptado");
-      setDatos(datosFiltrados); 
-    } catch (error) {
-      console.error("Error al obtener los datos:", error);
-    }
-  };
-  
-  
   useEffect(() => {
-    fetchSolicitud();
-  }, []); // Se ejecuta solo una vez al montar el componente
-  
-  
+    const fetchSolicitudes = async () => {
+      if (solicitudes.length === 0) await getSolicitudes();
+    };
+
+    fetchSolicitudes();
+  }, [solicitudes, getSolicitudes]);
+
+  const onInputChangeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const inputValue = e.target as HTMLSelectElement;
+    setEstado(inputValue.value);
+  };
+
+  const solicitudesFiltrados = solicitudes.filter((solicitud) => {
+    console.log(estado);
+    const estadoMatch = solicitud.estado.includes(estado);
+    return estadoMatch;
+  });
+
   return (
     <div className=" contenedor-table ">
-      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>SOLICITUDES ACEPTADAS</label>
-      <section className="mx-6 my-4  ">
-        <Table
-          className="custom-table"
-          aria-label="Example table with client side sorting"
-        >
-          <TableHeader>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Id
-            </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-            Motivo
-            </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-            Hora Inicio
-            </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-            Hora Fin
-            </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-            Estado
-            </TableColumn>
-          </TableHeader>
-          <TableBody>
-            {datos.map((solicitud) => (
-              <TableRow key={solicitud.id}>
-                <TableCell className=" text-base text-black">{solicitud.id}</TableCell>
-                <TableCell className=" text-base text-black ">{solicitud.motivo}</TableCell>
-                <TableCell className=" text-base text-black">
-                  {solicitud.hora_inicio}
-                </TableCell>
-                <TableCell className=" text-base text-black">
-                  {solicitud.hora_fin}
-                </TableCell>
-                <TableCell className="text-base text-black">{solicitud.estado}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </section>
+      <label className="ml-10 text-3xl font-bold text-center text-gray-900">
+        FILTRO DE SOLICITUDES POR ESTADO{" "}
+      </label>
+      <div className="flex flex-row  justify-center items-center my-10">
+        <div className="mb-4 mx-4 ">
+          <label className="ml-10 text-1xl font-bold text-center text-gray-900">
+            Estado:
+          </label>
+          <select
+            id="estado"
+            value={estado}
+            onChange={onInputChangeFilter}
+            className="mt-3 text-gray-900 block w-full rounded-md border border-black shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 "
+          >
+            <option value="">Seleccione tipo...</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Aceptado">Aceptado</option>
+            <option value="Rechazado">Rechazado</option>
+          </select>
+        </div>
+      </div>
+      <TablaSolicitudes solicitudes={solicitudesFiltrados} />
     </div>
-  )
-}
+  );
+};

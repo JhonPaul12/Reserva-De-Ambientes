@@ -15,31 +15,35 @@ class GrupoSeeder extends Seeder
      */
     public function run()
     {
-        
+        //intro - lety
         Grupo::create([
             'grupo' =>1,
-            'materia_id' => 1
-        ]);
-        Grupo::create([
-            'grupo' => 1,
             'materia_id' => 2
         ]);
-        Grupo::create([
-            'grupo' =>1,
-            'materia_id' => 3
-        ]);
+        //elemento-rosmary
         Grupo::create([
             'grupo' => 1,
-            'materia_id' => 4
+            'materia_id' => 7
         ]);
+        //arqui-acha
         Grupo::create([
-            'grupo' =>2,
-            'materia_id' => 1
+            'grupo' =>1,
+            'materia_id' => 11
         ]);
+        //programacion-rosemary
+        Grupo::create([
+            'grupo' => 1,
+            'materia_id' => 12
+        ]);
+        //
+
+
+
+
         Grupo::create([
             'grupo' => 2,
-            'materia_id' => 3
+            'materia_id' => 1
         ]);
-       
+        
     }
 }
