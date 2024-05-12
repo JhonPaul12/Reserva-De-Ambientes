@@ -44,6 +44,7 @@ class SolicitudController extends Controller
             'solicitud' => $solicitud
         ]);
     }
+
     public function guardar(Request $request)
     {
         $validador = Validator::make($request->all(),[
@@ -127,16 +128,14 @@ class SolicitudController extends Controller
      */
     public function update(SolicitudRequest $request, $id)
     {
+       
         $solicitud = Solicitud::findOrFail($id);
-
         $validatedData = $request->validated();
-
         $solicitud->update($validatedData);
-
         return response()->json([
-            'message' => 'La solicitud se actualizó con éxito',
-            'solicitud' => new SolicitudResource($solicitud)
-        ]);
+        'message' => 'La solicitud se actualizó con éxito',
+        'solicitud' => new SolicitudResource($solicitud)
+    ]);
     }
 
     /**
@@ -210,5 +209,43 @@ class SolicitudController extends Controller
         }
         return response()->json($todasLasSolicitudes, 200);
     }
+
+
+    public function mostrarGuardado(){ 
+    $solicitudes = Solicitud::with('ambiente', 'users')->get();
+
+    $response = [];
+
+    foreach ($solicitudes as $solicitud) {
+        $docentes = [];
+        foreach ($solicitud->users as $docente) {
+            $docentes[] = [
+                'id' => $docente->id,
+                'nombre' => $docente->name,
+                'apellido' => $docente->apellido,
+                // Puedes incluir más campos del docente si es necesario
+            ];
+        }
+
+        $response[] = [
+            'id' => $solicitud->id,
+            'motivo' => $solicitud->motivo,
+            'fecha_solicitud' => $solicitud->fecha_solicitud,
+            'hora_inicio' => $solicitud->hora_inicio,
+            'hora_fin' => $solicitud->hora_fin,
+            'estado' => $solicitud->estado,
+            'numero_estudiantes' => $solicitud->numero_estudiantes,
+            'ambiente' => [
+                'id' => $solicitud->ambiente->id,
+                'nombre' => $solicitud->ambiente->nombre,
+                // Puedes incluir más campos del ambiente si es necesario
+            ],
+            'docentes' => $docentes,
+            // Puedes incluir más campos de la solicitud si es necesario
+        ];
+    }
+
+    return response()->json($response, 200);
+}
 
 }

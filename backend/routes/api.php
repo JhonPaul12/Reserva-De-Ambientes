@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AmbienteController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ExcepcionController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\PeriodoController;
@@ -11,7 +12,7 @@ use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
-
+use Illuminate\Routing\Router;
 
 /*Route::resource('/ambiente', AmbienteController::class);
 Route::resource('/regla',ReglaController::class);
@@ -76,6 +77,7 @@ Route::post('/solicitud',[SolicitudController::class,'store']);
 Route::put('/solicitud/{id}',[SolicitudController::class,'update']);
 Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
+Route::get('/solicitud/guardar',[SolicitudController::class,'mostrarGuardado']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
 //reserva
 Route::get('/reserva', [ReservaController::class, 'index']);
@@ -102,3 +104,7 @@ Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGr
 
 
 Route::get('/showAllDocentes/{nombre}', [SolicitudController::class, 'showAllDocentes']);
+
+
+//autenticacion
+Route::post('/auth/register',[AuthController::class, 'register']);
