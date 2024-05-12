@@ -19,9 +19,10 @@ class Solicitud extends Model
         'id_grupo',
         'ambiente_id'
     ];
+    
     public function materia()
     {
-        return $this->belongsTo(Materia::class);
+        return $this->belongsTo(Materia::class, 'id_materia');
     }
 
     public function grupo()
@@ -36,5 +37,9 @@ class Solicitud extends Model
     {
         return $this->belongsToMany(User::class, 'solicitud_user');
     }
+    public function periodos()
+{
+    return $this->belongsToMany(Periodo::class,'periodo_solicitud');
+}
 
 }

@@ -9,94 +9,34 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import axios from "axios";
-import { Ambiente,Periodo,Horario } from "../../BusquedaFiltros/interfaces/Ambiente"; 
-
+import { Periodo } from "../../BusquedaFiltros/interfaces/Ambiente";
 
 export const BusquedaF = () => {
-  const [datos, setDatos] = useState<any[]>([]);
-  const [busquedaNombre, setBusquedaNombre] = useState<string>("");
-  const [busquedaCapacidad, setBusquedaCapacidad] = useState<number | null>(null);
-  const [busquedaTipo, setBusquedaTipo] = useState<string>("");
-  const [busquedaHora, setBusquedaHora] = useState<string>("");
+  const [periodos, setPeriodo] = useState<Periodo[]>([]);
+  const [filtroAula, setFiltroAula] = useState<string>("");
+  const [filtroCapacidad, setFiltroCapacidad] = useState<number | null>(null);
+  const [filtroTipo, setFiltroTipo] = useState<string>("");
+  const [filtroHoraInicio, setFiltroHoraInicio] = useState<string>("");
 
   useEffect(() => {
-    obtenerDatos();
-  }, [busquedaNombre, busquedaCapacidad, busquedaTipo, busquedaHora]);
+    getPeriodos();
+  }, []);
 
-  const obtenerDatos = async () => {
-    try {
-      const periodosRespuesta = await axios.get(`http://127.0.0.1:8000/api/periodo/`);
-      const periodos: Periodo[] = periodosRespuesta.data;
-
-      const ambientesRespuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
-      const ambientes: Ambiente[] = ambientesRespuesta.data;
-
-      const horariosRespuesta = await axios.get(`http://127.0.0.1:8000/api/horario/`);
-      const horarios: Horario[] = horariosRespuesta.data;
-
-      const datosFiltrados = periodos.filter(periodo => periodo.estado === "libre")
-        .map(periodo => {
-          const ambiente = ambientes.find(a => a.id === periodo.id_ambiente);
-          const horario = horarios.find(h => h.id === periodo.id_horario);
-
-          return {
-            aula: ambiente ? ambiente.nombre : "",
-            tipo: ambiente ? ambiente.tipo : "",
-            hora_inicio: horario ? horario.hora_inicio : "",
-            capacidad: ambiente ? ambiente.capacidad : 0,
-            ubicacion: ambiente ? ambiente.ubicacion : "",
-            fecha: formatoFecha(periodo.fecha),
-          };
-        });
-
-      const datosFiltradosBusqueda = datosFiltrados.filter((dato) => {
-        let nombreMatch = true;
-        let capacidadMatch = true;
-        let tipoMatch = true;
-        let horaMatch = true;
-
-        if (busquedaNombre) nombreMatch = dato.aula.toLowerCase().includes(busquedaNombre.toLowerCase());
-
-        if (busquedaCapacidad !== null)   capacidadMatch = dato.capacidad === busquedaCapacidad;
-
-        if (busquedaTipo)   tipoMatch = dato.tipo.toLowerCase() === busquedaTipo.toLowerCase();
-
-        if (busquedaHora) {
-          horaMatch = dato.hora_inicio.toLowerCase().includes(busquedaHora.toLowerCase());
-        }
-
-        return nombreMatch && capacidadMatch && tipoMatch && horaMatch;
-      });
-
-      setDatos(datosFiltradosBusqueda);
-    } catch (error) {
-      console.error("Error al obtener los datos:", error);
-    }
+  const getPeriodos = async () => {
+    const respuesta = await axios.get<Periodo[]>(`http://127.0.0.1:8000/api/allPeriodos`);
+    const Libres = respuesta.data.filter((solicitud) => solicitud.estado === 'libre');
+    setPeriodo(Libres);
   };
 
-  const handleBusquedaNombreChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBusquedaNombre(event.target.value);
-  };
-
-  const handleBusquedaCapacidadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const capacidad = parseInt(event.target.value);
-    setBusquedaCapacidad(isNaN(capacidad) ? null : capacidad);
-  };
-
-  const handleBusquedaTipoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setBusquedaTipo(event.target.value);
-  };
-
-  const handleBusquedaHoraChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBusquedaHora(event.target.value);
-  };
-
-  const formatoFecha = (fecha: string) => {
-    const fechaObj = new Date(fecha);
-    const dia = fechaObj.getDate();
-    const mes = fechaObj.getMonth() + 1;
-    const ano = fechaObj.getFullYear();
-    return `${dia}/${mes}/${ano}`;
+  const filtrarPeriodos = () => {
+    return periodos.filter(periodo => {
+      return (
+        (filtroAula === "" || periodo.ambiente.nombre.includes(filtroAula)) &&
+        (filtroCapacidad === null || periodo.ambiente.capacidad >= filtroCapacidad) &&
+        (filtroTipo === "" || periodo.ambiente.tipo === filtroTipo) &&
+        (filtroHoraInicio === "" || periodo.horario.hora_inicio.includes(filtroHoraInicio))
+      );
+    });
   };
 
   return (
@@ -106,21 +46,21 @@ export const BusquedaF = () => {
         <input
           type="text"
           placeholder="AULA"
-          value={busquedaNombre}
-          onChange={handleBusquedaNombreChange}
           className="input"
+          value={filtroAula}
+          onChange={(e) => setFiltroAula(e.target.value)}
         />
         <input
           type="number"
           placeholder="CAPACIDAD"
-          value={busquedaCapacidad === null ? "" : busquedaCapacidad}
-          onChange={handleBusquedaCapacidadChange}
           className="input"
+          value={filtroCapacidad || ""}
+          onChange={(e) => setFiltroCapacidad(parseInt(e.target.value))}
         />
         <select
-          value={busquedaTipo}
-          onChange={handleBusquedaTipoChange}
           className="input"
+          value={filtroTipo}
+          onChange={(e) => setFiltroTipo(e.target.value)}
         >
           <option value="">Seleccione tipo...</option>
           <option value="Laboratorio">Laboratorio</option>
@@ -130,9 +70,9 @@ export const BusquedaF = () => {
         <input
           type="text"
           placeholder="HORA DE INICIO"
-          value={busquedaHora}
-          onChange={handleBusquedaHoraChange}
           className="input"
+          value={filtroHoraInicio}
+          onChange={(e) => setFiltroHoraInicio(e.target.value)}
         />
       </div>
       <section className="mx-6 my-4">
@@ -142,21 +82,21 @@ export const BusquedaF = () => {
         >
           <TableHeader>
             <TableColumn className="text-center text-3xl bg-slate-300" >Aula</TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">Tipo de aula</TableColumn> 
+            <TableColumn className="text-center text-3xl bg-slate-300">Tipo de aula</TableColumn>
             <TableColumn className="text-center text-3xl bg-slate-300">Hora de inicio</TableColumn>
             <TableColumn className="text-center text-3xl bg-slate-300">Capacidad</TableColumn>
             <TableColumn className="text-center text-3xl bg-slate-300">Ubicación</TableColumn>
             <TableColumn className="text-center text-3xl bg-slate-300">Fecha</TableColumn>
           </TableHeader>
           <TableBody>
-            {datos.map((dato, index) => (
-              <TableRow key={index}>
-                <TableCell className="text-base text-black">{dato.aula}</TableCell>
-                <TableCell className="text-base text-black">{dato.tipo}</TableCell> 
-                <TableCell className="text-base text-black">{dato.hora_inicio}</TableCell>
-                <TableCell className="text-base text-black">{dato.capacidad}</TableCell>
-                <TableCell className="text-base text-black">{dato.ubicacion}</TableCell>
-                <TableCell className="text-base text-black">{dato.fecha}</TableCell>
+            {filtrarPeriodos().map((periodo) => (
+              <TableRow key={periodo.id}>
+                <TableCell className="text-base text-black">{periodo.ambiente.nombre}</TableCell>
+                <TableCell className="text-base text-black">{periodo.ambiente.tipo}</TableCell>
+                <TableCell className="text-base text-black">{periodo.horario.hora_inicio}</TableCell>
+                <TableCell className="text-base text-black">{periodo.ambiente.capacidad}</TableCell>
+                <TableCell className="text-base text-black">{periodo.ambiente.ubicacion}</TableCell>
+                <TableCell className="text-base text-black">{periodo.fecha}</TableCell>
               </TableRow>
             ))}
           </TableBody>

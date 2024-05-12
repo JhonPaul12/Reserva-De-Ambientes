@@ -12,7 +12,7 @@ use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
-use Illuminate\Routing\Router;
+use App\Models\Periodo;
 
 /*Route::resource('/ambiente', AmbienteController::class);
 Route::resource('/regla',ReglaController::class);
@@ -51,6 +51,7 @@ Route::delete('/periodo/{id}',[PeriodoController::class,'destroy']);
 Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorario']);
 Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
 Route::post('/verDispo',[PeriodoController::class,'showHora']);
+Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
@@ -105,6 +106,9 @@ Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGr
 
 Route::get('/showAllDocentes/{nombre}', [SolicitudController::class, 'showAllDocentes']);
 
+Route::get('/AllDocentes', [SolicitudController::class, 'AllDocentes']);
 
-//autenticacion
-Route::post('/auth/register',[AuthController::class, 'register']);
+Route::post('/periodos',[PeriodoController::class,'stores']);
+Route::get('/allPeriodos', [PeriodoController::class, 'allPeriodos']);
+
+Route::put('/solicitud/editar/{id}', [SolicitudController::class, 'editar']);

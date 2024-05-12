@@ -1,11 +1,37 @@
 import {useState} from 'react';
 import { toast } from 'sonner';
 import { useAmbienteStore } from '../store/ambientes.store';
+import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 
 
 export const FormRA = () => {
 
-
+  const ubicaciones = [
+    "DEPARTAMENTO DE BIOLOGIA",
+    "DEPARTAMENTO DE QUÍMICA",
+    "DEPARTAMENTO DE FÍSICA",
+    "BIBLIOTECA FCYT",
+    "DEPARTAMENTO INDUSTRIAL",
+    "EDIFICIO CAD-CAM",
+    "BLOQUE CENTRAL EDIFICIO DECANATURA",
+    "EDIFICIO ACADÉMICO 2 PLANTA BAJA",
+    "EDIFICIO ACADÉMICO 2 PRIMER PISO",
+    "EDIFICIO ACADÉMICO 2 SEGUNDO PISO",
+    "EDIFICIO ACADÉMICO 2 TERCER PISO",
+    "EDIFICIO DE LABORATORIOS BÁSICOS-PLANTA BAJA",
+    "EDIFICIO DE LABORATORIOS BÁSICOS-PRIMER PISO",
+    "EDIFICIO DE LABORATORIOS BÁSICOS-SEGUNDO PISO",
+    "EDIFICIO DE LABORATORIOS BÁSICOS-TERCER PISO",
+    "EDIFICIO DE LABORATORIOS BÁSICOS-CUARTO PISO",
+    "BLOQUE TRENCITO",
+    "AULAS INFLAB",
+    "EDIFICIO MEMI",
+    "EDIFICIO ELEKTRO PRIMER PISO",
+    "EDIFICIO ELEKTRO SEGUNDO PISO",
+    "EDIFICIO ELEKTRO TERCER PISO",
+    "EDIFICIO ELEKTRO PLANTA BAJA"
+  ];
+  
   const [inputName, setInputName] = useState('');
   const [inputCap, setInputCap] = useState('');
   const [inputUbi, setInputUbi] = useState('');
@@ -39,10 +65,12 @@ export const FormRA = () => {
           console.log("La capacidad debe tener más de 5 caracteres numericos");
         }
       }
-  const onInputChangeUbi = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const inputValue = e.target as HTMLTextAreaElement;
+  const onInputChangeUbi = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const inputValue = e.target as HTMLSelectElement;
   if (inputValue.value.length <= 150) {
+    console.log(inputValue.value);
         setInputUbi(inputValue.value);
+
     } else {
       toast.error('La ubicacion del ambiente debe tener como maximo 150 caracteres');
       console.log("La ubicacion del ambiente debe tener como maximo 150 caracteres");
@@ -86,10 +114,10 @@ const onInputChangeCancel = () => {
         <div className="columnaR">
         <label className='text-ms text-gray-900'>Nombre*:</label>
         <br />
-        <input 
+        <Input 
             type='text'
             name='nombre'
-            className='h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-lm  '
+            className='w-full'
             value={inputName}
             style={{
               textAlign: 'center', 
@@ -101,10 +129,10 @@ const onInputChangeCancel = () => {
         <br />
         <label className='text-ms text-gray-900'>Capacidad*:</label>
         <br />
-        <input 
+        <Input 
             type="number"
             name='capacidad'
-            className='h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm'
+            className='w-full'
             value={inputCap}
             style={{
               textAlign: 'center', 
@@ -116,44 +144,44 @@ const onInputChangeCancel = () => {
           />
         <br />
         
-        <label className='text-ms text-gray-900'>Ubicación:</label>
+        <label className='text-ms text-gray-900'>Ubicación*:</label>
         <br />
-        <textarea 
+        <Select
             value={inputUbi}
-            name='ubicacion'
-            className='h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm'
-            style={{
-              fontSize: '16px', 
-              padding: '20px', 
-    
-            }}
+            className="w-full"
+            aria-label="Selecciona una motivo"
             onChange={onInputChangeUbi}
-          />
+          >
+              {ubicaciones.map((ubi) => (
+                <SelectItem  key={ubi} value={ubi}>
+                  {ubi}
+                </SelectItem >
+              ))}
+            </Select>
         <br />
-        <label className='text-ms text-gray-900'>Tipo:</label>
+        <label className='text-ms text-gray-900'>Tipo*:</label>
         <br />
-        <select 
+        <Select 
               value={inputType}
+              className='w-full'
               name='tipoAmbiente'
-              className='h-full w-full rounded-md border-3 bg-gray-300 py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
-              <option>USD</option>
-              <option>CAD</option>'
             onChange={onInputChangeType}
           >
-          <option value="">Seleccionar tipo</option>
-          <option value="Multifuncional">Multifuncional</option>
-          <option value="Aula">Aula</option>
-          <option value="Laboratorio">Laboratorio</option>
-        </select>
+          <SelectItem key={1} value="Multifuncional">Multifuncional</SelectItem>
+          <SelectItem key={2} value="Aula">Aula</SelectItem>
+          <SelectItem key={3} value="Laboratorio">Laboratorio</SelectItem>
+        </Select>
         
         <br />
-        <div className='opcions'>
-        <button 
+        <div className='flex gap-5 items-center'>
+        <Button 
         onClick={onInputChangeCancel}
-        className="mt-10 flex w-full justify-center rounded-md bg-azul p-5  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" >Cancelar</button>
-        <button 
+        color='primary'
+        className="w-full mb-10" >Cancelar</Button>
+        <Button 
            onClick={onInputChangeSave}
-          className="mt-2 flex w-full justify-center rounded-md bg-azul p-5 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Guardar</button>
+           color='primary'
+           className="w-full mb-10">Guardar</Button>
         </div>
         
         </div>

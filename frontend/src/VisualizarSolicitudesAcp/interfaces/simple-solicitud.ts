@@ -1,4 +1,8 @@
 
+import { ISimpleMateria } from "../../CrearSolicitud/interfaces/simple-materia";
+import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes";
+import { ISimpleDocente } from "./simple-deocente";
+
 export interface ISimpleSolicitud {
     id: number;
     motivo: string;
@@ -7,5 +11,8 @@ export interface ISimpleSolicitud {
     hora_fin: string;
     estado: string;
     numero_estudiantes: number;
-    ambiente_id: number;
+    ambiente: ISimpleAmbiente;
+    id_materia: number;
+    materia: ISimpleMateria;
+    docente: ISimpleDocente;
   }

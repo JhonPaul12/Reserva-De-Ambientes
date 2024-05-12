@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMateriasTable extends Migration
+class CreatePeriodoSolicitudTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateMateriasTable extends Migration
      */
     public function up()
     {
-        Schema::create('materias', function (Blueprint $table) {
+        Schema::create('periodo_solicitud', function (Blueprint $table) {
             $table->id();
-            $table  ->string('nombre_materia')-> nonullable(); 
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-    
+            $table->foreignId('solicitud_id')->references('id')->on('solicitudes')->onDelete('cascade');
+            $table->foreignId('periodo_id')->references('id')->on('periodos')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateMateriasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('materias');
+        Schema::dropIfExists('periodo_solicitud');
     }
 }

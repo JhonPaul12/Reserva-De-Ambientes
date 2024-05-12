@@ -41,7 +41,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "filtrar-por-estado",
-            element: <SolicitudesAceptadas/>,
+            element: <SolicitudesAceptadas />,
           },
         ],
       },
@@ -57,7 +57,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "visualizar-ambientes",
-            element: <BusquedaFil/>,
+            element: <BusquedaFil />,
           },
           {
             path: "modificar-solicitud",

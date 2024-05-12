@@ -14,7 +14,7 @@ export const sideMenuOptions = [
     icon: <LuLayers />,
     subMenuOptions: [
       {
-        path: "filtro-por-estado",
+        path: "filtrar-por-estado",
         name: "Filtrar por estado",
       },
     ],

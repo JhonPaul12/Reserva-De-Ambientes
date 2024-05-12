@@ -2,7 +2,7 @@ import { Calendario } from "./components/Calendario";
 import { MenuCheckBox } from "./components/MenuCheckBox";
 import { ListaAmbientes } from "./components/ListaAmbientes";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./reglas.css";
 
 import { Button } from "@nextui-org/react";
@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 import { toast } from "sonner";
 
 import { useReglaStore } from "./store/Reglas.store";
+import axios from "axios";
 
 export const Reglas = () => {
   const crearRegla = useReglaStore((state) => state.crearRegla);
@@ -19,7 +20,20 @@ export const Reglas = () => {
   const [selectedDateFinal, setSelectedDateFinal] = useState<Dayjs | null>(
     null
   );
+  const [checkedCheckboxes, setCheckedCheckboxes] = useState<
+    { id: number; name: string; day: string }[]
+  >([]);
+  const [resetCheckboxes, setResetCheckboxes] = useState(false);
 
+  useEffect(() => {
+    if (resetCheckboxes) {
+      setResetCheckboxes(false);
+    }
+  }, [resetCheckboxes]);
+
+  const handleResetCheckboxes = () => {
+    setResetCheckboxes(true);
+  };
   //Ambientes
   const handleSelectChange = (selectedValue: string) => {
     setSelectedAmbiente(selectedValue);
@@ -31,6 +45,33 @@ export const Reglas = () => {
   };
   const handleDateChangeFinal = (newValue: Dayjs | null) => {
     setSelectedDateFinal(newValue);
+  };
+
+  const calcularIdHorario = (id: number, day: string) => {
+    let idAdjustment = 0;
+    switch (day) {
+      case "Lunes":
+        idAdjustment = 0;
+        break;
+      case "Martes":
+        idAdjustment = 20;
+        break;
+      case "Miércoles":
+        idAdjustment = 40;
+        break;
+      case "Jueves":
+        idAdjustment = 60;
+        break;
+      case "Viernes":
+        idAdjustment = 80;
+        break;
+      case "Sábado":
+        idAdjustment = 100;
+        break;
+      default:
+        idAdjustment = 0;
+    }
+    return id + idAdjustment;
   };
 
   const handleButtonClick = async () => {
@@ -50,12 +91,78 @@ export const Reglas = () => {
       if (selectedDay <= selectedDayFinal) {
         if (selectedMonth <= selectedMonthFinal) {
           if (selectedYear <= selectedYearFinal) {
-            toast.success("Registro exitoso");
             await crearRegla(
               parseInt(selectedAmbiente),
               selectedDate?.format("YYYY-MM-DD"),
               selectedDateFinal?.format("YYYY-MM-DD")
             );
+
+            // Mostrar mensaje de éxito solo si la creación de la regla es exitosa
+            const periodosData = checkedCheckboxes.map((checkbox) => ({
+              id_ambiente: parseInt(selectedAmbiente),
+              id_horario: calcularIdHorario(checkbox.id, checkbox.day),
+              estado: "libre",
+              fecha: obtenerFecha(
+                checkbox.day,
+                selectedDate,
+                selectedDateFinal
+              ),
+            }));
+
+            const response = await axios.post(
+              "http://127.0.0.1:8000/api/periodos",
+              { periodos: periodosData }
+            );
+            toast.success("Guardado", { description: response.data.message });
+            setSelectedAmbiente("");
+            setSelectedDate(null);
+            setSelectedDateFinal(null);
+            setCheckedCheckboxes([]);
+            handleResetCheckboxes();
+
+            //Este Sirve
+            // try {
+            //   const promises = checkedCheckboxes.map(async (checkbox) => {
+            //     console.log(
+            //       obtenerFecha(checkbox.day, selectedDate, selectedDateFinal)
+            //     );
+            //     const response = await axios.post(
+            //       "http://127.0.0.1:8000/api/periodo",
+            //       {
+            //         id_ambiente: parseInt(selectedAmbiente),
+            //         id_horario: calcularIdHorario(checkbox.id, checkbox.day),
+            //         estado: "libre",
+            //         fecha: obtenerFecha(
+            //           checkbox.day,
+            //           selectedDate,
+            //           selectedDateFinal
+            //         ),
+            //       }
+            //     );
+
+            //     return response.data;
+            //   });
+
+            //   const responses = await Promise.all(promises);
+
+            //   console.log("Respuestas del servidor:", responses);
+            //   // setSelectedAmbiente("");
+            //   // setSelectedDate(null);
+            //   // setSelectedDateFinal(null);
+            //   // setCheckedCheckboxes([]);
+            // } catch (error) {
+            //   console.error("Error al crear periodos:", error);
+            // }
+
+            // const periodos = checkedCheckboxes.map((checkbox) => ({
+            //   id_ambiente: parseInt(selectedAmbiente),
+            //   id_horario: calcularIdHorario(checkbox.id, checkbox.day),
+            //   estado: "libre",
+            //   fecha: selectedDate?.format("YYYY-MM-DD") || "",
+            // }));
+
+            // console.log("Periodos a crear:", periodos);
+            // console.log(checkedCheckboxes);
           } else {
             toast.error("La fecha inicial es mayor a la fecha final");
           }
@@ -68,9 +175,41 @@ export const Reglas = () => {
     }
   };
 
-  const handleCheckboxChange = (checkedCheckboxes: string[]) => {
-    // Utiliza los checkboxes marcados como necesites
-    console.log("Checkboxes marcados desde reglas:", checkedCheckboxes);
+  const obtenerFecha = (day: string, startDate: Dayjs, endDate: Dayjs) => {
+    const daysOfWeek: { [key: string]: number } = {
+      Domingo: 0,
+      Lunes: 1,
+      Martes: 2,
+      Miércoles: 3,
+      Jueves: 4,
+      Viernes: 5,
+      Sábado: 6,
+    };
+    const dayIndex = daysOfWeek[day];
+
+    // Convertir la fecha inicial y final a objetos de fecha nativos de JavaScript
+    const startJSDate = new Date(startDate.format());
+    const endJSDate = new Date(endDate.format());
+
+    // Iterar sobre las fechas dentro del rango
+    const currentDate = new Date(startJSDate);
+    while (currentDate <= endJSDate) {
+      // Verificar si el día de la semana coincide
+      if (currentDate.getDay() === dayIndex) {
+        return currentDate.toISOString().slice(0, 10);
+      }
+      // Avanzar a la siguiente fecha
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Si no se encuentra ninguna fecha válida, devolver null
+    return null;
+  };
+
+  const handleCheckboxChange = (
+    checkedCheckboxes: { id: number; name: string; day: string }[]
+  ) => {
+    setCheckedCheckboxes(checkedCheckboxes);
   };
 
   return (
@@ -102,8 +241,15 @@ export const Reglas = () => {
           />
         </div>
 
-        <MenuCheckBox onCheckboxChange={handleCheckboxChange} />
-        <Button className="bg-primary" onClick={handleButtonClick}>
+        <MenuCheckBox
+          onCheckboxChange={handleCheckboxChange}
+          reset={resetCheckboxes}
+        />
+        {/* <Button onClick={handleResetCheckboxes}>Limpiar Checkboxes</Button> */}
+        <Button
+          className="bg-primary text-2xl text-white mx-10"
+          onClick={handleButtonClick}
+        >
           Registrar
         </Button>
       </div>
