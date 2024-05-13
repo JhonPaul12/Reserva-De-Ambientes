@@ -106,12 +106,21 @@ class PeriodoController extends Controller
 
     public function destroy($id)
     {
-        $pe = Periodo::find($id)->delete();
-        return response()->json([
-            'success' => true,
-            'data' => $pe
-        ], 200);
+        $periodosEliminados = Periodo::where('id_ambiente', $id)->delete();
+        
+        if ($periodosEliminados) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Los periodos asociados al ambiente se han eliminado correctamente.'
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron periodos asociados al ambiente para eliminar.'
+            ], 404);
+        }
     }
+
 
 
     public function eliminarPeriodosPorHorario(Request $request)

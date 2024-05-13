@@ -16,8 +16,8 @@ class AmbienteSeeder extends Seeder
     {
         Ambiente::create([
             'nombre' => '690A',
-            'tipo' => 'aula regular',
-            'ubicacion' => 'cerca de la biblioteca',
+            'tipo' => 'Aula',
+            'ubicacion' => 'Edificio Central',
             'capacidad' => 140,
             'created_at' => now(),
             'updated_at' => now(),
@@ -25,7 +25,7 @@ class AmbienteSeeder extends Seeder
 
         Ambiente::create([
             'nombre' => 'Sala de juntas',
-            'tipo' => 'Oficina',
+            'tipo' => 'Multifuncional',
             'ubicacion' => 'Piso 7',
             'capacidad' => 10,
             'created_at' => now(),
@@ -33,9 +33,9 @@ class AmbienteSeeder extends Seeder
         ]);
 
         Ambiente::create([
-            'nombre' => 'Auditorio principal',
-            'tipo' => 'Auditorio',
-            'ubicacion' => 'Piso 2',
+            'nombre' => 'Laboratorio 1',
+            'tipo' => 'Laboratorio',
+            'ubicacion' => 'Memi',
             'capacidad' => 300,
             'created_at' => now(),
             'updated_at' => now(),

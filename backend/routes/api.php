@@ -38,7 +38,7 @@ Route::get('/ambiente',[AmbienteController::class,'index']);
 Route::get('/ambiente/{id}',[AmbienteController::class,'show']);
 Route::post('/ambiente',[AmbienteController::class,'store']);
 Route::put('/ambiente/{id}',[AmbienteController::class,'update']);
-Route::delete('/solicitud/{id}',[AmbienteController::class,'destroy']);
+Route::delete('/ambiente/{id}',[AmbienteController::class,'destroy']);
 
 //periodo
 Route::get('/periodo',[PeriodoController::class,'index']);
