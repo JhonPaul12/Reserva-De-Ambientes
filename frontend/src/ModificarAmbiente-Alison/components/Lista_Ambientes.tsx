@@ -5,11 +5,13 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Button,
 } from "@nextui-org/react";
 
 import { useAmbienteStore } from "../store/Ambientes.store";
 import { useEffect } from "react";
+import { EditPeriodosModal } from "./EditPeriodosModal";
+import { EditAmbienteModal } from "./EditAmbienteModal";
+import { DeleteAmbienteModal } from "./DeleteAmbieteModal";
 
 export const Lista_Ambientes = () => {
   const ambientes = useAmbienteStore((state) => state.ambientes);
@@ -24,39 +26,36 @@ export const Lista_Ambientes = () => {
   }, [getAmbientes]);
 
   return (
-    <div>
-      <label className="ml-10 text-3xl font-bold text-center text-gray-900">
+    <div className="text-center">
+      <label className="ml-10 text-4xl font-bold text-gray-900">
         LISTA DE AMBIENTES
       </label>
-      <section className="mx-6 my-4  ">
+      <section style={{ margin: "5% 15%" }}>
         <Table
           className="custom-table"
           aria-label="Example table with dynamic content"
         >
           <TableHeader>
             <TableColumn className="text-center text-3xl bg-slate-300">
-              Nombre
+              Ambiente
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Tipo
+            <TableColumn className="text-center mx-10 text-3xl bg-slate-300">
+              Periodos
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Capacidad
-            </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
+            <TableColumn className=" text-center text-3xl bg-slate-300">
               Acciones
             </TableColumn>
           </TableHeader>
           <TableBody>
             {ambientes.map((ambiente) => (
               <TableRow key={ambiente.id}>
-                <TableCell className=" text-base">{ambiente.nombre}</TableCell>
-                <TableCell className="text-base">{ambiente.tipo}</TableCell>
+                <TableCell className=" text-xl">{ambiente.nombre}</TableCell>
                 <TableCell className=" text-base">
-                  {ambiente.capacidad}
+                  <EditPeriodosModal />
                 </TableCell>
                 <TableCell>
-                  <Button>Editar</Button>
+                  <EditAmbienteModal />
+                  <DeleteAmbienteModal />
                 </TableCell>
               </TableRow>
             ))}
