@@ -335,7 +335,7 @@ public function updateEstado(Request $request)
     }
 
     try {
-        $periodo = Periodo::findOrFail($request->id_ambiente);
+        $periodo = Periodo::findOrFail($request->id);
 
         $periodo->estado = $request->estado;
         $periodo->save();
