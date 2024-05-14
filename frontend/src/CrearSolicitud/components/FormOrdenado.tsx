@@ -23,9 +23,9 @@ export const FormOrdenado = () => {
     getDocentes();
     getMaterias(id);
     getAmbientes();
-    if (listdocentes.length === 0) {
+    /*if (listdocentes.length === 0) {
       setListDocentes([`${id}`]);
-    }
+    }*/
   }, []);
 
   //DOCENTES
@@ -40,6 +40,31 @@ export const FormOrdenado = () => {
   };
   const [usuario, setUsuario] = useState(instanciaInicial);
   const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
+  const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(new Set([]));
+
+  const getUsuario = async (id: number) => {
+    const respuesta = await axios.get(
+      `http://127.0.0.1:8000/api/usuario/${id}`
+    );
+    console.log(respuesta.data);
+    setUsuario(respuesta.data);
+    console.log(usuario);
+  };
+
+  const docentesOrdenAlfabetico = [...docentes].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+  const getDocentes = async () => {
+    const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
+    setDocentes(respuesta.data);
+  };
+  
+  const handleSelectionChangeDocentes = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setValuesDocentes(new Set(e.target.value.split(",")));
+  };
+  
+
+  /*
   const [selects, setSelects] = useState([]);
   const [listdocentes, setListDocentes] = useState([]);
 
@@ -115,7 +140,7 @@ export const FormOrdenado = () => {
     } else {
       toast.error("El docente ya está presente en la lista:", id);
     }
-  };
+  };*/
 
   //MATERIA
 
@@ -401,7 +426,22 @@ export const FormOrdenado = () => {
           >
             {usuario.name} {usuario.apellidos}
           </span>
-          <button
+          
+              <Select
+            label="Favorite Animal"
+            selectionMode="multiple"
+            placeholder="Select an animal"
+            selectedKeys={valuesDocentes}
+            className="max-w-xs"
+            onChange={handleSelectionChangeDocentes}
+          >
+            {docentesOrdenAlfabetico.map((animal) => (
+              <SelectItem key={animal.name} value={animal.name}>
+                {animal.name}
+              </SelectItem>
+            ))}
+          </Select>
+          {/*<button
             type="button"
             className="flex justify-center rounded-md bg-azul p-5 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             onClick={botonAnadirClick}
@@ -423,7 +463,7 @@ export const FormOrdenado = () => {
                 </SelectItem>
               ))}
             </Select>
-          ))}
+          ))}*/}
           <br />
 
           {/*MATERIA */}
