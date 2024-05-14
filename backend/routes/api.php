@@ -38,7 +38,7 @@ Route::get('/ambiente',[AmbienteController::class,'index']);
 Route::get('/ambiente/{id}',[AmbienteController::class,'show']);
 Route::post('/ambiente',[AmbienteController::class,'store']);
 Route::put('/ambiente/{id}',[AmbienteController::class,'update']);
-Route::delete('/solicitud/{id}',[AmbienteController::class,'destroy']);
+Route::delete('/ambiente/{id}',[AmbienteController::class,'destroy']);
 
 //periodo
 Route::get('/periodo',[PeriodoController::class,'index']);
@@ -51,6 +51,7 @@ Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorar
 Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
 Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
+Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);

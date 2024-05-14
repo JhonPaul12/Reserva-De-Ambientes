@@ -12,6 +12,7 @@ import { ModificarSolicitud } from "../ModificarSolicitud/ModificarSolicitud";
 import { VerSolicitudes } from "../Ver Solicitudes/VerSolicitudes";
 import { CancelarSol } from "../CancelarSolicitud";
 import { TodasSolicitudes } from "../Solicitudes";
+import { ModificarAmbiente } from "../ModificarAmbiente-Alison/ModificarAmbiente";
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
           {
             path: "ambientes-registrados",
             element: <VerAmbientes />,
+          },
+          {
+            path: "editar-ambientes",
+            element: <ModificarAmbiente />,
           },
           {
             path: "filtrar-por-estado",
