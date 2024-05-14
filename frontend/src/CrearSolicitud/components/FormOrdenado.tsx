@@ -23,9 +23,9 @@ export const FormOrdenado = () => {
     getDocentes();
     getMaterias(id);
     getAmbientes();
-    /*if (listdocentes.length === 0) {
-      setListDocentes([`${id}`]);
-    }*/
+    if (listOficial.length === 0) {
+      setListOficial([`${id}`]);
+    }
   }, []);
 
   //DOCENTES
@@ -41,6 +41,8 @@ export const FormOrdenado = () => {
   const [usuario, setUsuario] = useState(instanciaInicial);
   const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
   const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(new Set([]));
+  const [listOficial, setListOficial] = useState([]);
+  const [listdocentes, setListDocentes] = useState([]);
 
   const getUsuario = async (id: number) => {
     const respuesta = await axios.get(
@@ -60,9 +62,19 @@ export const FormOrdenado = () => {
   };
   
   const handleSelectionChangeDocentes = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const valores = e.target.value;
+    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+    console.log(arrayNumeros);
+    setListDocentes(arrayNumeros);
+    console.log(listOficial);
+    console.log(listdocentes);
     setValuesDocentes(new Set(e.target.value.split(",")));
   };
-  
+
+  const optionsDocentes = docentesOrdenAlfabetico.map((docente) => ({
+    label: `${docente.name} ${docente.apellidos}`,
+    value: docente.id,
+  }));
 
   /*
   const [selects, setSelects] = useState([]);
@@ -257,9 +269,10 @@ export const FormOrdenado = () => {
     console.log(inputHIni);
     console.log(value);
     setInputAmbiente(value);
-    if(inputHIni.length!= 0) {
+    if(inputHIni.length!= 0 || inputFecha !='') {
       setInputHIni([]);
       console.log('pasa');
+      console.log(inputFecha);
       getRangos(value,inputFecha);
     }
     //Deveriamos verificar si la fecha no esta vacia
@@ -358,7 +371,8 @@ export const FormOrdenado = () => {
   //ENVIAR
 
   const createSolicitud = useSolicitudStore((state) => state.createSolicitud);
-
+  
+  const [oficial,setOficial] = useState([]);
   const onInputChangeSave = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -383,24 +397,39 @@ export const FormOrdenado = () => {
       const fechaSeleccionada = new Date(inputFecha);
     
       if (fechaSeleccionada > fechaActual) {
+        console.log(listOficial.concat(listdocentes));
+        console.log(listOficial);
         console.log(listdocentes);
-        await createSolicitud(
-          inputMotivo,
-          inputFecha,
-          "Pendiente",
-          parseInt(inputNEst),
-          parseInt(inputMateria),
-          parseInt(inputGrupo),
-          parseInt(inputAmbiente),
-          listdocentes,
-          inputHFin
-        );
-        setInputMateria("1");
-        setInputMotivo("");
-        setInputNEst("");
-        setInputGrupo("");
-        setInputAmbiente("1");
-        setInputFecha("");
+        console.log(listdocentes.length);
+        if(listdocentes.length === 0 || listdocentes[0] === '' ){
+          await createSolicitud(
+            inputMotivo,
+            inputFecha,
+            "Pendiente",
+            parseInt(inputNEst),
+            parseInt(inputMateria),
+            parseInt(inputGrupo),
+            parseInt(inputAmbiente),
+            listOficial,
+            inputHFin
+          );
+        }else{
+          await createSolicitud(
+            inputMotivo,
+            inputFecha,
+            "Pendiente",
+            parseInt(inputNEst),
+            parseInt(inputMateria),
+            parseInt(inputGrupo),
+            parseInt(inputAmbiente),
+            listOficial.concat(listdocentes),
+            inputHFin
+          );
+        }
+        setTimeout(() => {
+          window.location.reload();
+      }, 2000);
+        
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -428,16 +457,16 @@ export const FormOrdenado = () => {
           </span>
           
               <Select
-            label="Favorite Animal"
+            label="Docentes asociados a la reserva"
             selectionMode="multiple"
-            placeholder="Select an animal"
+            placeholder="Seleccione docente"
             selectedKeys={valuesDocentes}
-            className="max-w-xs"
+            className="mb-5 mt-5 w-full"
             onChange={handleSelectionChangeDocentes}
           >
-            {docentesOrdenAlfabetico.map((animal) => (
-              <SelectItem key={animal.name} value={animal.name}>
-                {animal.name}
+            {optionsDocentes.map((docente) => (
+              <SelectItem key={docente.value} value={docente.label}>
+                {docente.label}
               </SelectItem>
             ))}
           </Select>
