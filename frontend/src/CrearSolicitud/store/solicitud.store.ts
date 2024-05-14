@@ -66,11 +66,10 @@ interface SolicitudState {
         
         for (const periodo of periodos) {
         const dataToSend = {
-          id_periodo: periodo,
+          id: periodo,
           estado: 'Reservado',
         };
         const { data } = await reservasDB.put<{ message: string }>("/updateEstado", dataToSend);
-        toast.success("Periodo", { description: data.message });
       }
   
         toast.success("Su reserva fue creada exitosamente", { description: data.message });

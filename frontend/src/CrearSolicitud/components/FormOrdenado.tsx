@@ -295,7 +295,13 @@ export const FormOrdenado = () => {
       setInputFecha(fecha);
       console.log(fecha);
       console.log(inputFecha);
-      await getRangos(inputAmbiente,fecha);
+      
+      if(inputAmbiente==='') {
+        toast.error('Seleccione un ambiente') 
+        return;
+      }else{
+        await getRangos(inputAmbiente,fecha);
+      }
     } else {
       toast.error(
         "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -333,6 +339,7 @@ export const FormOrdenado = () => {
   const getRangos = async (id:string, fecha: string) => {
     try {
       if (inputFecha!='' || fecha!='') {
+        
         const dataToSend = {
           id_ambiente: id,
           fecha: fecha,
@@ -366,6 +373,7 @@ export const FormOrdenado = () => {
   };
   const verificar = async()=>{
     if(inputFecha==='') toast.error('Seleccione una fecha')
+    if(inputAmbiente==='')toast.error('Seleccione un ambiente')
   }
 
   //ENVIAR
