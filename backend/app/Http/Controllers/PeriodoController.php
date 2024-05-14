@@ -326,7 +326,7 @@ class PeriodoController extends Controller
 public function updateEstado(Request $request)
 {
     $validator = Validator::make($request->all(), [
-        'id_ambiente' => 'required|exists:periodos,id',
+        'id' => 'required|exists:periodos,id',
         'estado' => 'required',
     ]);
 
