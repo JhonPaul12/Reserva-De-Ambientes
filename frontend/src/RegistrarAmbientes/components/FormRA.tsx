@@ -68,7 +68,9 @@ export const FormRA = () => {
   const onInputChangeUbi = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target as HTMLSelectElement;
   if (inputValue.value.length <= 150) {
+    console.log(inputValue.value);
         setInputUbi(inputValue.value);
+
     } else {
       toast.error('La ubicacion del ambiente debe tener como maximo 150 caracteres');
       console.log("La ubicacion del ambiente debe tener como maximo 150 caracteres");
@@ -150,8 +152,8 @@ const onInputChangeCancel = () => {
             aria-label="Selecciona una motivo"
             onChange={onInputChangeUbi}
           >
-              {ubicaciones.map((ubi, index) => (
-                <SelectItem  key={index} value={ubi}>
+              {ubicaciones.map((ubi) => (
+                <SelectItem  key={ubi} value={ubi}>
                   {ubi}
                 </SelectItem >
               ))}
@@ -165,10 +167,9 @@ const onInputChangeCancel = () => {
               name='tipoAmbiente'
             onChange={onInputChangeType}
           >
-          <SelectItem key={1} value="">Seleccionar tipo</SelectItem>
-          <SelectItem key={2} value="Multifuncional">Multifuncional</SelectItem>
-          <SelectItem key={3} value="Aula">Aula</SelectItem>
-          <SelectItem key={4} value="Laboratorio">Laboratorio</SelectItem>
+          <SelectItem key={1} value="Multifuncional">Multifuncional</SelectItem>
+          <SelectItem key={2} value="Aula">Aula</SelectItem>
+          <SelectItem key={3} value="Laboratorio">Laboratorio</SelectItem>
         </Select>
         
         <br />

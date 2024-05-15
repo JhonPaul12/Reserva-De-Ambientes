@@ -14,8 +14,16 @@ export const sideMenuOptions = [
     icon: <LuLayers />,
     subMenuOptions: [
       {
-        path: "filtro-por-estado",
+        path: "filtrar-por-estado",
         name: "Filtrar por estado",
+      },
+      {
+        path: "reservas",
+        name: "Reservas",
+      },
+      {
+        path: "cancelar-reservas",
+        name: "Cancelar Reservas",
       },
     ],
   },
@@ -46,16 +54,20 @@ export const sideMenuOptions = [
     icon: <BsBuildingsFill />,
     subMenuOptions: [
       {
-        path: "ambientes-registrados",
-        name: "Ambientes Registrados",
-      },
-      {
         path: "registrar-ambiente",
         name: "Registrar Ambientes",
       },
       {
         path: "asignar-reglas",
         name: "Asignar reglas ",
+      },
+      {
+        path: "ambientes-registrados",
+        name: "Ambientes Registrados",
+      },
+      {
+        path: "editar-ambientes",
+        name: "Editar Ambientes ",
       },
     ],
   },

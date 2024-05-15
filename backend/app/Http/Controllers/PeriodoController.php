@@ -106,12 +106,21 @@ class PeriodoController extends Controller
 
     public function destroy($id)
     {
-        $pe = Periodo::find($id)->delete();
-        return response()->json([
-            'success' => true,
-            'data' => $pe
-        ], 200);
+        $periodosEliminados = Periodo::where('id_ambiente', $id)->delete();
+
+        if ($periodosEliminados) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Los periodos asociados al ambiente se han eliminado correctamente.'
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron periodos asociados al ambiente para eliminar.'
+            ], 404);
+        }
     }
+
 
 
     public function eliminarPeriodosPorHorario(Request $request)
@@ -313,5 +322,32 @@ class PeriodoController extends Controller
         return response()->json(['error' => 'Error al buscar períodos libres para reserva: ' . $e->getMessage()], 500);
     }
 }
+
+public function updateEstado(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'id' => 'required|exists:periodos,id',
+        'estado' => 'required',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 400);
+    }
+
+    try {
+        $periodo = Periodo::findOrFail($request->id);
+
+        $periodo->estado = $request->estado;
+        $periodo->save();
+
+        return response()->json([
+            'success' => true,
+            'data' => $periodo
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al actualizar el estado del período: ' . $e->getMessage()], 500);
+    }
+}
+
 
 }

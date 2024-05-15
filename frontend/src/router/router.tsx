@@ -12,6 +12,9 @@ import { ModificarSolicitud } from "../ModificarSolicitud/ModificarSolicitud";
 import { VerSolicitudes } from "../Ver Solicitudes/VerSolicitudes";
 import { CancelarSol } from "../CancelarSolicitud";
 import { TodasSolicitudes } from "../Solicitudes";
+import { ReservasAdmin } from "../ReservasAdmin";
+import { CancelarReservasAdmin } from "../CancelarReservasAdmin";
+import { ModificarAmbiente } from "../ModificarAmbiente-Alison/ModificarAmbiente";
 
 export const router = createBrowserRouter([
   {
@@ -40,8 +43,20 @@ export const router = createBrowserRouter([
             element: <VerAmbientes />,
           },
           {
-            path: "filtro-por-estado",
-            element: <SolicitudesAceptadas/>,
+            path: "editar-ambientes",
+            element: <ModificarAmbiente />,
+          },
+          {
+            path: "filtrar-por-estado",
+            element: <SolicitudesAceptadas />,
+          },
+          {
+            path: "reservas",
+            element: <ReservasAdmin />,
+          },
+          {
+            path: "cancelar-reservas",
+            element: <CancelarReservasAdmin />,
           },
         ],
       },
@@ -57,7 +72,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "visualizar-ambientes",
-            element: <BusquedaFil/>,
+            element: <BusquedaFil />,
           },
           {
             path: "modificar-solicitud",

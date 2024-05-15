@@ -14,19 +14,19 @@ interface SolicitudState {
     createSolicitud: (
     motivo: string,
     fecha: string,
-    hora_inicio: string,
-    hora_fin: string,
     estado: string,
     numero_estudiantes: number,
     id_materia:number, 
     id_grupo:number, 
     ambiente_id:number,
     docentes:number[],
+    periodos:number[]
     ) => Promise<void>;
   }
   
   const storeApi: StateCreator<SolicitudState & Actions> = (set) => ({
     solicitudes: [],
+
   
     getSolicitudes: async () => {
       try {
@@ -40,32 +40,39 @@ interface SolicitudState {
         console.log(error);
       }
     },
-    createSolicitud: async (motivo,fecha_solicitud,hora_inicio, hora_fin, estado, numero_estudiantes,id_materia, id_grupo, ambiente_id, docentes) => {
+    createSolicitud: async (motivo,fecha_solicitud, estado, numero_estudiantes,id_materia, id_grupo, ambiente_id, docentes, periodos) => {
       try {
         console.log(typeof motivo);
         console.log( motivo);
         console.log(typeof fecha_solicitud);
         console.log(fecha_solicitud);
-        console.log(typeof hora_inicio);
-        console.log( hora_inicio);
         console.log(typeof docentes);
         console.log( docentes);
+        console.log(typeof periodos);
+        console.log( periodos);
 
         const { data } = await reservasDB.post<{ message: string }>("/solicitud/guardar", {
           motivo,
           fecha_solicitud,
-          hora_inicio,
-          hora_fin,
           estado,
           numero_estudiantes,
           id_materia, 
           id_grupo, 
           ambiente_id,
-          docentes
+          docentes,
+          periodos
 
         });
+        
+        for (const periodo of periodos) {
+        const dataToSend = {
+          id: periodo,
+          estado: 'Reservado',
+        };
+        const { data } = await reservasDB.put<{ message: string }>("/updateEstado", dataToSend);
+      }
   
-        toast.success("Enviado", { description: data.message });
+        toast.success("Su reserva fue creada exitosamente", { description: data.message });
       } catch (error) {
         if (isAxiosError(error)) {
           toast.error("Ocurrio un error", {
