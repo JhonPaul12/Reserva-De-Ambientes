@@ -386,14 +386,14 @@ export const FormOrdenado = () => {
   ) => {
     e.preventDefault();
 
-    if (inputMotivo === "") {
-      toast.error("El campo Motivo es obligatorio");
+    if (inputMateria === "") {
+      toast.error("El campo Materia es obligatorio");
     } else if (inputNEst === "") {
       toast.error("El campo Número de estudiantes es obligatorio");
     } else if (inputFecha === "") {
       toast.error("El campo Fecha es obligatorio");
-    } else if (inputMateria === "") {
-      toast.error("El campo Materia es obligatorio");
+    } else if (inputMotivo === "") {
+      toast.error("El campo Motivo es obligatorio");
     } else if (inputGrupo === "") {
       toast.error("El campo Grupo es obligatorio");
     } else if (inputAmbiente === "") {
