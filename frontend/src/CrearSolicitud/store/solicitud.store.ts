@@ -26,6 +26,7 @@ interface SolicitudState {
   
   const storeApi: StateCreator<SolicitudState & Actions> = (set) => ({
     solicitudes: [],
+
   
     getSolicitudes: async () => {
       try {
@@ -62,8 +63,16 @@ interface SolicitudState {
           periodos
 
         });
+        
+        for (const periodo of periodos) {
+        const dataToSend = {
+          id: periodo,
+          estado: 'Reservado',
+        };
+        const { data } = await reservasDB.put<{ message: string }>("/updateEstado", dataToSend);
+      }
   
-        toast.success("Enviado", { description: data.message });
+        toast.success("Su reserva fue creada exitosamente", { description: data.message });
       } catch (error) {
         if (isAxiosError(error)) {
           toast.error("Ocurrio un error", {

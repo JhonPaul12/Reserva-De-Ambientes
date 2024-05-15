@@ -54,16 +54,20 @@ export const sideMenuOptions = [
     icon: <BsBuildingsFill />,
     subMenuOptions: [
       {
-        path: "ambientes-registrados",
-        name: "Ambientes Registrados",
-      },
-      {
         path: "registrar-ambiente",
         name: "Registrar Ambientes",
       },
       {
         path: "asignar-reglas",
         name: "Asignar reglas ",
+      },
+      {
+        path: "ambientes-registrados",
+        name: "Ambientes Registrados",
+      },
+      {
+        path: "editar-ambientes",
+        name: "Editar Ambientes ",
       },
     ],
   },

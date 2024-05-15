@@ -11,6 +11,7 @@ use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificacionController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
 
@@ -39,7 +40,7 @@ Route::get('/ambiente',[AmbienteController::class,'index']);
 Route::get('/ambiente/{id}',[AmbienteController::class,'show']);
 Route::post('/ambiente',[AmbienteController::class,'store']);
 Route::put('/ambiente/{id}',[AmbienteController::class,'update']);
-Route::delete('/solicitud/{id}',[AmbienteController::class,'destroy']);
+Route::delete('/ambiente/{id}',[AmbienteController::class,'destroy']);
 
 //periodo
 Route::get('/periodo',[PeriodoController::class,'index']);
@@ -52,6 +53,7 @@ Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorar
 Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
 Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
+Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
@@ -79,6 +81,12 @@ Route::put('/solicitud/{id}',[SolicitudController::class,'update']);
 Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
+
+//NOTIFICACIONES(NUEVO)
+Route::get('/notificacion',[NotificacionController::class,'index']);
+Route::post('/notificacion',[NotificacionController::class,'store']);
+Route::get('/notificacion/{id}',[NotificacionController::class,'show']);
+Route::delete('/notificacion/{id}',[NotificacionController::class,'destroy']);
 //reserva
 Route::get('/reserva', [ReservaController::class, 'index']);
 Route::post('/reserva', [ReservaController::class, 'store']);

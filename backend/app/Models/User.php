@@ -40,8 +40,8 @@ class User extends Authenticatable
     public function rols(): BelongsToMany
     {
         return $this->belongsToMany(Rol::class, 'rol_user');
-    }  
-   
+    }
+
     public function solicitudes(): BelongsToMany
     {
         return $this->belongsToMany(Solicitud::class, 'solicitud_user');
@@ -49,5 +49,10 @@ class User extends Authenticatable
     public function materias()
     {
         return $this->hasMany(Materia::class );
+    }
+
+    public function notificaciones()
+    {
+        return $this->hasMany(Notificacion::class);
     }
 }
