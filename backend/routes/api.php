@@ -12,6 +12,7 @@ use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
 use App\Models\Periodo;
+use App\Models\Solicitud;
 
 /*Route::resource('/ambiente', AmbienteController::class);
 Route::resource('/regla',ReglaController::class);
@@ -110,3 +111,6 @@ Route::post('/periodos',[PeriodoController::class,'stores']);
 Route::get('/allPeriodos', [PeriodoController::class, 'allPeriodos']);
 
 Route::put('/solicitud/editar/{id}', [SolicitudController::class, 'editar']);
+
+Route::post('/cambiarEstadoUser/{id}',[SolicitudController::class,'cambiarEstadoUser']);
+Route::post('/cambiarEstadoAdmin/{id}',[SolicitudController::class,'cambiarEstadoAdmin']);

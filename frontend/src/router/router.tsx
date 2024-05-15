@@ -12,6 +12,8 @@ import { ModificarSolicitud } from "../ModificarSolicitud/ModificarSolicitud";
 import { VerSolicitudes } from "../Ver Solicitudes/VerSolicitudes";
 import { CancelarSol } from "../CancelarSolicitud";
 import { TodasSolicitudes } from "../Solicitudes";
+import { ReservasAdmin } from "../ReservasAdmin";
+import { CancelarReservasAdmin } from "../CancelarReservasAdmin";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +44,14 @@ export const router = createBrowserRouter([
           {
             path: "filtrar-por-estado",
             element: <SolicitudesAceptadas />,
+          },
+          {
+            path: "reservas",
+            element: <ReservasAdmin />,
+          },
+          {
+            path: "cancelar-reservas",
+            element: <CancelarReservasAdmin />,
           },
         ],
       },

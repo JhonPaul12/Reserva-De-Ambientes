@@ -42,13 +42,11 @@ export const BusquedaF = () => {
     return periodos.filter((periodo) => {
       return (
         (filtroAula === "" || periodo.ambiente.nombre.includes(filtroAula)) &&
-        ((filtroCapacidad === null && filtroCapacidad !== "") ||
-          filtroCapacidad === null ||
-          periodo.ambiente.capacidad >= filtroCapacidad) &&
+        (filtroCapacidad === null || periodo.ambiente.capacidad >= (filtroCapacidad || 0)) &&
         (filtroTipo === "" || periodo.ambiente.tipo === filtroTipo)
       );
     });
-  };
+  };  
 
   const handleAulaClick = (aula: string) => {
     const periodosAula = periodos.filter(

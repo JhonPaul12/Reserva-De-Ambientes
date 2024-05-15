@@ -17,6 +17,14 @@ export const sideMenuOptions = [
         path: "filtrar-por-estado",
         name: "Filtrar por estado",
       },
+      {
+        path: "reservas",
+        name: "Reservas",
+      },
+      {
+        path: "cancelar-reservas",
+        name: "Cancelar Reservas",
+      },
     ],
   },
   {
