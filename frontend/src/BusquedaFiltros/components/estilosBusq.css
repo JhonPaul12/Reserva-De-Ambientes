@@ -38,4 +38,16 @@
   .btn{
     width: 10%;
   }
+
+  .custom-modal {
+    max-height: 80%; 
+    max-width: 50%;
+  }
+  
+  .modal-table {
+    max-height: 80%; 
+    max-width: 100%;
+    overflow-y: auto; 
+  }
+  
   

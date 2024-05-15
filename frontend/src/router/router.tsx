@@ -12,6 +12,8 @@ import { ModificarSolicitud } from "../ModificarSolicitud/ModificarSolicitud";
 import { VerSolicitudes } from "../Ver Solicitudes/VerSolicitudes";
 import { CancelarSol } from "../CancelarSolicitud";
 import { TodasSolicitudes } from "../Solicitudes";
+import { ReservasAdmin } from "../ReservasAdmin";
+import { CancelarReservasAdmin } from "../CancelarReservasAdmin";
 import { ModificarAmbiente } from "../ModificarAmbiente-Alison/ModificarAmbiente";
 
 export const router = createBrowserRouter([
@@ -48,6 +50,14 @@ export const router = createBrowserRouter([
             path: "filtrar-por-estado",
             element: <SolicitudesAceptadas />,
           },
+          {
+            path: "reservas",
+            element: <ReservasAdmin />,
+          },
+          {
+            path: "cancelar-reservas",
+            element: <CancelarReservasAdmin />,
+          },
         ],
       },
       //Rutas Auth
@@ -57,27 +67,27 @@ export const router = createBrowserRouter([
         element: <UserLayout />,
         children: [
           {
-            path: "crear-solicitud",
+            path: "crear-reserva",
             element: <CreacionSolicitud />,
           },
           {
             path: "visualizar-ambientes",
             element: <BusquedaFil />,
           },
-          {
-            path: "modificar-solicitud",
-            element: <ModificarSolicitud />,
-          },
+          //{
+          //  path: "modificar-solicitud",
+          //  element: <ModificarSolicitud />,
+          //},
           {
             path: "lista-solicitudes",
             element: <VerSolicitudes />,
           },
           {
-            path: "cancelar-solicitud",
+            path: "cancelar-reserva",
             element: <CancelarSol />,
           },
           {
-            path: "solicitudes",
+            path: "reservas",
             element: <TodasSolicitudes />,
           },
         ],

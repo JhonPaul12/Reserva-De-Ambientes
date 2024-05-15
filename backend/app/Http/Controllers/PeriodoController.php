@@ -107,7 +107,7 @@ class PeriodoController extends Controller
     public function destroy($id)
     {
         $periodosEliminados = Periodo::where('id_ambiente', $id)->delete();
-        
+
         if ($periodosEliminados) {
             return response()->json([
                 'success' => true,
@@ -362,6 +362,32 @@ class PeriodoController extends Controller
         return response()->json($response, 200);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error al buscar períodos para el ambiente: ' . $e->getMessage()], 500);
+    }
+}
+
+public function updateEstado(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'id' => 'required|exists:periodos,id',
+        'estado' => 'required',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 400);
+    }
+
+    try {
+        $periodo = Periodo::findOrFail($request->id);
+
+        $periodo->estado = $request->estado;
+        $periodo->save();
+
+        return response()->json([
+            'success' => true,
+            'data' => $periodo
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al actualizar el estado del período: ' . $e->getMessage()], 500);
     }
 }
 

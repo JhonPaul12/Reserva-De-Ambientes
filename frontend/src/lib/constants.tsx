@@ -8,14 +8,22 @@ export const sideMenuOptions = [
     icon: <LuHome />,
   },
   {
-    path: "Solicitudes",
-    name: "Solicitudes",
+    path: "Reservas",
+    name: "Reservas",
     submenu: true,
     icon: <LuLayers />,
     subMenuOptions: [
+      //{
+      //  path: "filtrar-por-estado",
+      //  name: "Filtrar por estado",
+      //},
       {
-        path: "filtrar-por-estado",
-        name: "Filtrar por estado",
+        path: "reservas",
+        name: "Reservas",
+      },
+      {
+        path: "cancelar-reservas",
+        name: "Cancelar Reservas",
       },
     ],
   },
@@ -51,7 +59,7 @@ export const sideMenuOptions = [
       },
       {
         path: "asignar-reglas",
-        name: "Asignar reglas ",
+        name: "Asignar Reglas ",
       },
       {
         path: "ambientes-registrados",
@@ -77,30 +85,31 @@ export const sideMenuOptionsUser = [
     icon: <LuLayers />,
   },
   {
-    path: "solicitudes",
-    name: "Solicitudes",
+    path: "reservas",
+    name: "Reservas",
     submenu: true,
     icon: <LuUserCircle2 />,
     subMenuOptions: [
+      
       {
-        path: "solicitudes",
-        name: "Solicitudes",
+        path: "crear-reserva",
+        name: "Crear Reserva ",
+      },
+      {
+        path: "reservas",
+        name: "Reservas",
       },
       // {
       //   path: "lista-solicitudes",
       //   name: "Ver Solicitudes",
       // },
+      //{
+      //  path: "modificar-solicitud",
+       // name: "Modificar Solicitud",
+      //},
       {
-        path: "modificar-solicitud",
-        name: "Modificar Solicitud",
-      },
-      {
-        path: "cancelar-solicitud",
-        name: "Cancelar Solicitud",
-      },
-      {
-        path: "crear-solicitud",
-        name: "Crear Solicitud ",
+        path: "cancelar-reserva",
+        name: "Cancelar Reserva",
       },
     ],
   },

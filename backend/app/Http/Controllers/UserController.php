@@ -143,4 +143,22 @@ class UserController extends Controller
         return response()->json($grupos, 200);
     }
 
+
+    public function showSolicitudes($id)
+{
+    // Encuentra el usuario por ID
+    $user = User::find($id);
+
+    // Si el usuario no existe, devuelve un error
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    // Obtiene las solicitudes del usuario
+    $solicitudes = $user->solicitudes;
+
+    // Devuelve las solicitudes
+    return response()->json($solicitudes, 200);
+}
+
 }
