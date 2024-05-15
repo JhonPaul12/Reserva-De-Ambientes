@@ -12,12 +12,9 @@ import { ModificarSolicitud } from "../ModificarSolicitud/ModificarSolicitud";
 import { VerSolicitudes } from "../Ver Solicitudes/VerSolicitudes";
 import { CancelarSol } from "../CancelarSolicitud";
 import { TodasSolicitudes } from "../Solicitudes";
-<<<<<<< HEAD
 import { ReservasAdmin } from "../ReservasAdmin";
 import { CancelarReservasAdmin } from "../CancelarReservasAdmin";
-=======
 import { ModificarAmbiente } from "../ModificarAmbiente-Alison/ModificarAmbiente";
->>>>>>> 06b04e56bd26a64f69cf5176758df0f05a683bc5
 
 export const router = createBrowserRouter([
   {
