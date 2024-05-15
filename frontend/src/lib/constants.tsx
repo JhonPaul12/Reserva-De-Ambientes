@@ -12,12 +12,20 @@ export const sideMenuOptions = [
     name: "Reservas",
     submenu: true,
     icon: <LuLayers />,
-    //subMenuOptions: [
-     // {
-    //    path: "filtrar-por-estado",
-    //    name: "Filtrar por estado",
-    //  },
-    //],
+    subMenuOptions: [
+      //{
+      //  path: "filtrar-por-estado",
+      //  name: "Filtrar por estado",
+      //},
+      {
+        path: "reservas",
+        name: "Reservas",
+      },
+      {
+        path: "cancelar-reservas",
+        name: "Cancelar Reservas",
+      },
+    ],
   },
   {
     path: "Docentes",

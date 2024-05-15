@@ -11,7 +11,9 @@ use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificacionController;
 use App\Models\Periodo;
+use App\Models\Solicitud;
 
 /*Route::resource('/ambiente', AmbienteController::class);
 Route::resource('/regla',ReglaController::class);
@@ -79,6 +81,12 @@ Route::put('/solicitud/{id}',[SolicitudController::class,'update']);
 Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
+
+//NOTIFICACIONES(NUEVO)
+Route::get('/notificacion',[NotificacionController::class,'index']);
+Route::post('/notificacion',[NotificacionController::class,'store']);
+Route::get('/notificacion/{id}',[NotificacionController::class,'show']);
+Route::delete('/notificacion/{id}',[NotificacionController::class,'destroy']);
 //reserva
 Route::get('/reserva', [ReservaController::class, 'index']);
 Route::post('/reserva', [ReservaController::class, 'store']);
@@ -100,7 +108,15 @@ Route::get('/usuario/{id}', [UserController::class, 'show']);
 //mostrar materia user
 Route::get('/usuario/materias/{id}', [UserController::class, 'showMaterias']);
 //mostrar grupos de materia de docente
+Route::get('/docentes/solicitudes/{id}', [UserController::class, 'showSolicitudes']);
 Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGruposDeMateriaDeDocente']);
+
+
+
+
+
+
+
 
 
 Route::get('/showAllDocentes/{nombre}', [SolicitudController::class, 'showAllDocentes']);
@@ -111,3 +127,6 @@ Route::post('/periodos',[PeriodoController::class,'stores']);
 Route::get('/allPeriodos', [PeriodoController::class, 'allPeriodos']);
 
 Route::put('/solicitud/editar/{id}', [SolicitudController::class, 'editar']);
+
+Route::post('/cambiarEstadoUser/{id}',[SolicitudController::class,'cambiarEstadoUser']);
+Route::post('/cambiarEstadoAdmin/{id}',[SolicitudController::class,'cambiarEstadoAdmin']);
