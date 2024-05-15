@@ -68,12 +68,12 @@ export const CancelarReservaA = () => {
             <TableColumn className="text-center text-3xl bg-slate-300">
               Materia
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
+            {/* <TableColumn className="text-center text-3xl bg-slate-300">
               H. Inicio
             </TableColumn>
             <TableColumn className="text-center text-3xl bg-slate-300">
               H. Final
-            </TableColumn>
+            </TableColumn> */}
             <TableColumn className="text-center text-3xl bg-slate-300">
               Fecha
             </TableColumn>
@@ -99,12 +99,12 @@ export const CancelarReservaA = () => {
                 <TableCell className="text-base text-black">
                   {solicitud.materia.nombre_materia}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                {/* <TableCell className="text-base text-black">
                   {solicitud.hora_inicio}
                 </TableCell>
                 <TableCell className="text-base text-black">
                   {solicitud.hora_fin}
-                </TableCell>
+                </TableCell> */}
                 <TableCell className="text-base text-black">
                   {solicitud.fecha_solicitud}
                 </TableCell>

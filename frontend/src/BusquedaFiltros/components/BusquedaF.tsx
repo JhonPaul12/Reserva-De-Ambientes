@@ -42,11 +42,12 @@ export const BusquedaF = () => {
     return periodos.filter((periodo) => {
       return (
         (filtroAula === "" || periodo.ambiente.nombre.includes(filtroAula)) &&
-        (filtroCapacidad === null || periodo.ambiente.capacidad >= (filtroCapacidad || 0)) &&
+        (filtroCapacidad === null ||
+          periodo.ambiente.capacidad >= (filtroCapacidad || 0)) &&
         (filtroTipo === "" || periodo.ambiente.tipo === filtroTipo)
       );
     });
-  };  
+  };
 
   const handleAulaClick = (aula: string) => {
     const periodosAula = periodos.filter(
@@ -58,11 +59,7 @@ export const BusquedaF = () => {
 
   let periodosFiltrados = filtrarPeriodos();
 
-  if (
-    filtroAula === "" &&
-    filtroCapacidad === null &&
-    filtroTipo === ""
-  ) {
+  if (filtroAula === "" && filtroCapacidad === null && filtroTipo === "") {
     periodosFiltrados = periodos;
   }
 
@@ -171,7 +168,9 @@ export const BusquedaF = () => {
       >
         <ModalHeader>Horario de Aula</ModalHeader>
         <ModalContent>
-          <h2 className="p-2 text-center">Horarios para {aulaSeleccionada[0]?.ambiente.nombre}</h2>
+          <h2 className="p-2 text-center">
+            Horarios para {aulaSeleccionada[0]?.ambiente.nombre}
+          </h2>
           <div className="p-5 w-full">
             <input
               type="text"

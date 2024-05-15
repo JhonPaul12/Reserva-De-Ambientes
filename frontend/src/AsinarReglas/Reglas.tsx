@@ -221,9 +221,7 @@ export const Reglas = () => {
         style={{ position: "absolute" }}
       />
       <div className="flex flex-col text-negro mx-10 my-10">
-        <h1 className="text-3xl font-bold text-center">
-          Registrar Reglas para ambientes
-        </h1>
+        <h1 className="text-3xl font-bold text-center">Periodos</h1>
         <div className="flex flex-row mt-8">
           <p className="text-2xl font-bold text-center justify-center mt-5 mx-5">
             Seleccionar Ambiente

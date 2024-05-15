@@ -40,7 +40,9 @@ export const FormOrdenado = () => {
   };
   const [usuario, setUsuario] = useState(instanciaInicial);
   const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
-  const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(new Set([]));
+  const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(
+    new Set([])
+  );
   const [listOficial, setListOficial] = useState([]);
   const [listdocentes, setListDocentes] = useState([]);
 
@@ -60,8 +62,10 @@ export const FormOrdenado = () => {
     const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
     setDocentes(respuesta.data);
   };
-  
-  const handleSelectionChangeDocentes = (e: React.ChangeEvent<HTMLSelectElement>) => {
+
+  const handleSelectionChangeDocentes = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const valores = e.target.value;
     const arrayNumeros = valores.split(",").map((numero) => numero.trim());
     console.log(arrayNumeros);
@@ -204,7 +208,7 @@ export const FormOrdenado = () => {
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const inputValue = e.target as HTMLSelectElement;
-    console.log(inputValue.value)
+    console.log(inputValue.value);
     if (inputValue.value.length < 30) {
       setInputMotivo(inputValue.value);
     } else {
@@ -269,11 +273,11 @@ export const FormOrdenado = () => {
     console.log(inputHIni);
     console.log(value);
     setInputAmbiente(value);
-    if(inputHIni.length!= 0 || inputFecha !='') {
+    if (inputHIni.length != 0 || inputFecha != "") {
       setInputHIni([]);
-      console.log('pasa');
+      console.log("pasa");
       console.log(inputFecha);
-      getRangos(value,inputFecha);
+      getRangos(value, inputFecha);
     }
     //Deveriamos verificar si la fecha no esta vacia
     //getRangos(inputFecha);
@@ -295,12 +299,12 @@ export const FormOrdenado = () => {
       setInputFecha(fecha);
       console.log(fecha);
       console.log(inputFecha);
-      
-      if(inputAmbiente==='') {
-        toast.error('Seleccione un ambiente') 
+
+      if (inputAmbiente === "") {
+        toast.error("Seleccione un ambiente");
         return;
-      }else{
-        await getRangos(inputAmbiente,fecha);
+      } else {
+        await getRangos(inputAmbiente, fecha);
       }
     } else {
       toast.error(
@@ -336,10 +340,9 @@ export const FormOrdenado = () => {
     console.log(values);
   };
 
-  const getRangos = async (id:string, fecha: string) => {
+  const getRangos = async (id: string, fecha: string) => {
     try {
-      if (inputFecha!='' || fecha!='') {
-        
+      if (inputFecha != "" || fecha != "") {
         const dataToSend = {
           id_ambiente: id,
           fecha: fecha,
@@ -357,13 +360,12 @@ export const FormOrdenado = () => {
           const rangoHorario = `${hora_inicio} - ${hora_fin}`;
           rangosHorario.push(rangoHorario);
         });
-  
+
         setInputHIni(responseData);
         console.log(responseData);
-      }else{
-        toast.error('Seleccione una fecha')
+      } else {
+        toast.error("Seleccione una fecha");
       }
-      
     } catch (error) {
       console.error("Ocurrió un error al obtener los rangos horarios:", error);
       setInputHIni([]);
@@ -371,16 +373,16 @@ export const FormOrdenado = () => {
       toast.error("No se tienen horarios disponibles para ese dia");
     }
   };
-  const verificar = async()=>{
-    if(inputFecha==='') toast.error('Seleccione una fecha')
-    if(inputAmbiente==='')toast.error('Seleccione un ambiente')
-  }
+  const verificar = async () => {
+    if (inputFecha === "") toast.error("Seleccione una fecha");
+    if (inputAmbiente === "") toast.error("Seleccione un ambiente");
+  };
 
   //ENVIAR
 
   const createSolicitud = useSolicitudStore((state) => state.createSolicitud);
-  
-  const [oficial,setOficial] = useState([]);
+
+  const [oficial, setOficial] = useState([]);
   const onInputChangeSave = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -403,17 +405,17 @@ export const FormOrdenado = () => {
     } else {
       const fechaActual = new Date();
       const fechaSeleccionada = new Date(inputFecha);
-    
+
       if (fechaSeleccionada > fechaActual) {
         console.log(listOficial.concat(listdocentes));
         console.log(listOficial);
         console.log(listdocentes);
         console.log(listdocentes.length);
-        if(listdocentes.length === 0 || listdocentes[0] === '' ){
+        if (listdocentes.length === 0 || listdocentes[0] === "") {
           await createSolicitud(
             inputMotivo,
             inputFecha,
-            "Pendiente",
+            "Aceptado",
             parseInt(inputNEst),
             parseInt(inputMateria),
             parseInt(inputGrupo),
@@ -421,7 +423,7 @@ export const FormOrdenado = () => {
             listOficial,
             inputHFin
           );
-        }else{
+        } else {
           await createSolicitud(
             inputMotivo,
             inputFecha,
@@ -436,23 +438,21 @@ export const FormOrdenado = () => {
         }
         setTimeout(() => {
           window.location.reload();
-      }, 2000);
-        
+        }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
         );
       }
     }
-    
   };
   return (
-    <div >
+    <div>
       <label className="text-3xl font-bold text-center text-gray-900">
         CREAR RESERVA
       </label>
       <form className="flex mt-5 space-y-6">
-      <div className="mt-5 ml-5 mx-auto w-full sm:w-1/2 p-5">
+        <div className="mt-5 ml-5 mx-auto w-full sm:w-1/2 p-5">
           {/*DOCENTES */}
 
           <label className="text-ms text-gray-900">Docente:</label>
@@ -463,8 +463,8 @@ export const FormOrdenado = () => {
           >
             {usuario.name} {usuario.apellidos}
           </span>
-          
-              <Select
+
+          <Select
             label="Docentes asociados a la reserva"
             selectionMode="multiple"
             placeholder="Seleccione docente"
@@ -556,7 +556,6 @@ export const FormOrdenado = () => {
             min="0"
           />
           <br />
-          
 
           {/*GRUPO */}
 
@@ -575,10 +574,9 @@ export const FormOrdenado = () => {
             ))}
           </Select>
           <br />
-          </div>
+        </div>
 
-          <div className="mt-10 ml-5 mx-auto w-full sm:w-1/2 p-5">
-
+        <div className="mt-10 ml-5 mx-auto w-full sm:w-1/2 p-5">
           {/*AMBIENTE */}
 
           <label className="text-ms text-gray-900">Ambiente*:</label>
@@ -645,8 +643,7 @@ export const FormOrdenado = () => {
               {" "}
               Enviar{" "}
             </Button>
-            </div>
-          
+          </div>
         </div>
       </form>
     </div>

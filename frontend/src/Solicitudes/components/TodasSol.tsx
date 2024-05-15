@@ -1,33 +1,35 @@
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-  } from "@nextui-org/react";
-  import axios from "axios";
-  import { useEffect, useState } from "react";
-  import { Solicitud } from "../interfaces/Solicitud";
-  
-
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Solicitud } from "../interfaces/Solicitud";
 
 export const TodasSol = () => {
-    const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
-  
-    useEffect(()=>{
-      getSolicitudes();
-    }, []);
-  
-    const getSolicitudes = async () => {
-      const respuesta = await axios.get(`http://127.0.0.1:8000/api/showAllDocentes/Vladimir Abel`);
-      setSolicitudes(respuesta.data)
-      console.log(respuesta.data)
-    }
+  const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
+
+  useEffect(() => {
+    getSolicitudes();
+  }, []);
+
+  const getSolicitudes = async () => {
+    const respuesta = await axios.get(
+      `http://127.0.0.1:8000/api/showAllDocentes/Vladimir Abel`
+    );
+    setSolicitudes(respuesta.data);
+    console.log(respuesta.data);
+  };
 
   return (
-    <div className="contenedor-table">
-      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>HISTORIAL DE SOLICITUDES </label>
+    <div className="contenedor-table text-center my-8">
+      <label className="ml-10 text-3xl font-bold text-center text-gray-900">
+        HISTORIAL DE RESERVAS{" "}
+      </label>
       <section className="mx-6 my-4">
         <Table className="custom-table" aria-label="Tabla de datos">
           <TableHeader>
@@ -40,12 +42,12 @@ export const TodasSol = () => {
             <TableColumn className="text-center text-3xl bg-slate-300">
               Materia
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
+            {/* <TableColumn className="text-center text-3xl bg-slate-300">
               H. Inicio
             </TableColumn>
             <TableColumn className="text-center text-3xl bg-slate-300">
               H. Final
-            </TableColumn>
+            </TableColumn> */}
             <TableColumn className="text-center text-3xl bg-slate-300">
               Fecha
             </TableColumn>
@@ -63,17 +65,17 @@ export const TodasSol = () => {
                   {solicitud.ambiente.nombre}
                 </TableCell>
                 <TableCell className="text-base text-black">
-                  {solicitud.docente.nombre+" "+solicitud.docente.apellido}
+                  {solicitud.docente.nombre + " " + solicitud.docente.apellido}
                 </TableCell>
                 <TableCell className="text-base text-black">
                   {solicitud.materia.nombre_materia}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                {/* <TableCell className="text-base text-black">
                   {solicitud.hora_inicio}
                 </TableCell>
                 <TableCell className="text-base text-black">
                   {solicitud.hora_fin}
-                </TableCell>
+                </TableCell> */}
                 <TableCell className="text-base text-black">
                   {solicitud.fecha_solicitud}
                 </TableCell>
@@ -90,4 +92,4 @@ export const TodasSol = () => {
       </section>
     </div>
   );
-}
+};
