@@ -82,24 +82,6 @@ export const EditSolicitudModal = ({ solicitud }) => {
     setSelectedDate(
       solicitud.fecha_solicitud ? dayjs(solicitud.fecha_solicitud) : null
     );
-    // Buscar el índice de la hora de inicio de la solicitud en el arreglo horasInicio
-    const indiceHoraInicio = horasInicio.findIndex(
-      (hora) => hora === solicitud.hora_inicio.slice(0, -3)
-    );
-    if (indiceHoraInicio !== -1) {
-      setSelectedHoraInicio(horasInicio[indiceHoraInicio]);
-    } else {
-      setSelectedHoraInicio(horasInicio[0]);
-    }
-
-    const indiceHoraFinal = horasFin.findIndex(
-      (hora) => hora === solicitud.hora_fin.slice(0, -3)
-    );
-    if (indiceHoraFinal !== -1) {
-      setSelectedHoraFin(horasFin[indiceHoraFinal]);
-    } else {
-      setSelectedHoraFin(horasFin[0]);
-    }
   }, []);
 
   const getMaterias = async () => {

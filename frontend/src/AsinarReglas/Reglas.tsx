@@ -114,7 +114,7 @@ export const Reglas = () => {
               { periodos: periodosData }
             );
             toast.success("Guardado", { description: response.data.message });
-            setSelectedAmbiente("");
+            //setSelectedAmbiente("");
             setSelectedDate(null);
             setSelectedDateFinal(null);
             setCheckedCheckboxes([]);
@@ -252,6 +252,7 @@ export const Reglas = () => {
         >
           Registrar
         </Button>
+        {/* <Button onClick={handleResetInParent}>Prueb</Button> */}
       </div>
     </div>
   );

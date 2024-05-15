@@ -14,12 +14,14 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
 }) => {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
+  //const [initialOptions, setInitialOptions] = useState<Option[]>([]);
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/ambiente")
       .then((response) => response.json())
       .then((data) => {
         setOptions(data);
+        //setInitialOptions(data); // Guardar las opciones iniciales
       })
       .catch((error) => {
         console.error("Error al obtener la lista de elementos:", error);
@@ -31,6 +33,12 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
     setSelectedOption(selectedValue);
     onSelectChange(selectedValue);
   };
+
+  // const handleReset = () => {
+  //   setOptions(initialOptions); // Restablecer las opciones a su estado inicial
+  //   setSelectedOption(""); // Limpiar la opción seleccionada
+  //   onSelectChange(""); // Notificar que no hay opción seleccionada
+  // };
 
   return (
     <div className="mt-8">
@@ -48,6 +56,12 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
           </option>
         ))}
       </select>
+      {/* <button
+        onClick={handleReset}
+        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Restablecer
+      </button> */}
     </div>
   );
 };

@@ -51,7 +51,7 @@ export const Lista_Ambientes = () => {
               <TableRow key={ambiente.id}>
                 <TableCell className=" text-xl">{ambiente.nombre}</TableCell>
                 <TableCell className=" text-base">
-                  <EditPeriodosModal />
+                  <EditPeriodosModal ambiente={ambiente} />
                 </TableCell>
                 <TableCell>
                   <EditAmbienteModal />
