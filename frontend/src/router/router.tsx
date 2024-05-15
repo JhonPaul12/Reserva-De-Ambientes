@@ -57,27 +57,27 @@ export const router = createBrowserRouter([
         element: <UserLayout />,
         children: [
           {
-            path: "crear-solicitud",
+            path: "crear-reserva",
             element: <CreacionSolicitud />,
           },
           {
             path: "visualizar-ambientes",
             element: <BusquedaFil />,
           },
-          {
-            path: "modificar-solicitud",
-            element: <ModificarSolicitud />,
-          },
+          //{
+          //  path: "modificar-solicitud",
+          //  element: <ModificarSolicitud />,
+          //},
           {
             path: "lista-solicitudes",
             element: <VerSolicitudes />,
           },
           {
-            path: "cancelar-solicitud",
+            path: "cancelar-reserva",
             element: <CancelarSol />,
           },
           {
-            path: "solicitudes",
+            path: "reservas",
             element: <TodasSolicitudes />,
           },
         ],

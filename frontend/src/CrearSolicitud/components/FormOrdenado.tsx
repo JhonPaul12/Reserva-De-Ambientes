@@ -399,7 +399,7 @@ export const FormOrdenado = () => {
     } else if (inputAmbiente === "") {
       toast.error("El campo Ambiente es obligatorio");
     } else if (inputHFin.length === 0) {
-      toast.error("Debe seleccionar al menos un horario de fin");
+      toast.error("Seleccione al menos un periodo para la reserva");
     } else {
       const fechaActual = new Date();
       const fechaSeleccionada = new Date(inputFecha);
@@ -447,12 +447,12 @@ export const FormOrdenado = () => {
     
   };
   return (
-    <div>
+    <div >
       <label className="text-3xl font-bold text-center text-gray-900">
-        CREAR SOLICITUD
+        CREAR RESERVA
       </label>
-      <form className="mt-5 space-y-6">
-        <div className="columnaR">
+      <form className="flex mt-5 space-y-6">
+      <div className="mt-5 ml-5 mx-auto w-full sm:w-1/2 p-5">
           {/*DOCENTES */}
 
           <label className="text-ms text-gray-900">Docente:</label>
@@ -556,6 +556,7 @@ export const FormOrdenado = () => {
             min="0"
           />
           <br />
+          
 
           {/*GRUPO */}
 
@@ -574,6 +575,9 @@ export const FormOrdenado = () => {
             ))}
           </Select>
           <br />
+          </div>
+
+          <div className="mt-10 ml-5 mx-auto w-full sm:w-1/2 p-5">
 
           {/*AMBIENTE */}
 
@@ -641,7 +645,8 @@ export const FormOrdenado = () => {
               {" "}
               Enviar{" "}
             </Button>
-          </div>
+            </div>
+          
         </div>
       </form>
     </div>
