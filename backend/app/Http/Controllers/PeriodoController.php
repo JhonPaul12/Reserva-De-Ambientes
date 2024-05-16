@@ -7,6 +7,7 @@ use App\Models\Periodo;
 use App\Models\Regla;
 use App\Models\Ambiente;
 use App\Models\Horario;
+use App\Models\Ambiente_regla;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -19,7 +20,7 @@ class PeriodoController extends Controller
         return response()->json($periodo, 200);
     }
 
-    public function store(Request $request)
+    /*public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id_ambiente' => 'required',
@@ -64,6 +65,53 @@ class PeriodoController extends Controller
         }
     }
 
+*/
+    public function storeNew(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_ambReg'=>'required',
+            'id_ambiente' => 'required',
+            'id_horario' => 'required',
+            'estado' => 'required',
+            'fecha' => 'required|date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        $ambiente = Ambiente::find($request->id_ambiente);
+
+        if (!$ambiente) {
+            return response()->json(['error' => 'No se encontró el ambiente asociado al período'], 404);
+        }
+
+        $ambregla = Ambiente_regla::find($request->id_ambReg);
+
+        if (!$ambregla) {
+            return response()->json(['error' => 'No se encontró regla asociada al ambiente del período'], 404);
+        }
+
+        $regla= Regla::find($ambregla->id_regla);
+
+        $finish = Carbon::parse($regla->fecha_final);
+        $fechaPeriodo = Carbon::parse($request->fecha);
+        if ($fechaPeriodo < $regla->fecha_inicial || $fechaPeriodo > $finish) {
+            return response()->json(['error' => 'La fecha del período está fuera del rango de la regla'], 400);
+        }
+
+        $est = $request->estado;
+        $ini = $regla->fecha_inicial;
+        $end = $regla->fecha_final;
+        if ($est === 'libre') {
+            $this->crearPeriodosRegulares($request->id_ambiente, $request->id_horario, $request->fecha, $est, $end);
+            return response()->json(['message' => 'Periodos creados exitosamente'], 201);
+        } else {
+            $periodo = new Periodo($validator->validated());
+            $periodo->save();
+            return response()->json(['message' => 'El período se ha creado exitosamente'], 201);
+        }
+    }
 
     public function crearPeriodosRegulares($idAmbiente, $idHorario, $fecha, $estado, $fechaFinRegla)
     {
@@ -82,6 +130,7 @@ class PeriodoController extends Controller
             $fechaActual->addWeek();
         }
     }
+
 
 
     public function show($id)

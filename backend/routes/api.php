@@ -12,6 +12,7 @@ use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\AmbientereglaController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
 
@@ -45,7 +46,7 @@ Route::delete('/ambiente/{id}',[AmbienteController::class,'destroy']);
 //periodo
 Route::get('/periodo',[PeriodoController::class,'index']);
 Route::get('/periodo/{id}',[PeriodoController::class,'show']);
-Route::post('/periodo',[PeriodoController::class,'store']);
+Route::post('/periodo',[PeriodoController::class,'storeNew']);
 Route::put('/periodo/{id}',[PeriodoController::class,'update']);
 Route::delete('/periodo/{id}',[PeriodoController::class,'destroy']);
 //Route::get('/periodo/{id}',[PeriodoController::class,'show']);
@@ -66,6 +67,12 @@ Route::get('/regla/{id}',[ReglaController::class,'show']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
 Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
+//regla-Ambiente
+Route::get('/ambiente-regla',[AmbientereglaController::class,'index']);
+//Route::get('/regla/{id}',[ReglaController::class,'show']);
+Route::post('/ambiente-regla',[AmbientereglaController::class,'store']);
+//Route::put('/regla/{id}',[ReglaController::class,'update']);
+//Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
 //regExc
 Route::get('/regexc',[RegexcCotroller::class,'index']);
 Route::get('/regexc/{id}',[RegexcCotroller::class,'show']);
