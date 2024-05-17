@@ -46,5 +46,7 @@ class Solicitud extends Model
     {
         return $this->hasMany(Notificacion::class);
     }
-
+    public function periodo_solicitud(){
+        return $this->hasMany(Periodo_Solicitud::class,'solicitud_id');
+    }
 }

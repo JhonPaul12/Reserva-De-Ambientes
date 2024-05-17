@@ -48,7 +48,7 @@ class User extends Authenticatable
     }
     public function materias()
     {
-        return $this->hasMany(Materia::class );
+        return $this->hasMany(Materia::class,'user_id' );
     }
 
     public function notificaciones()

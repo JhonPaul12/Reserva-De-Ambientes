@@ -12,6 +12,7 @@ use App\Http\Controllers\Reserva\ReservaController;
 use App\Http\Controllers\Solicitud\SolicitudController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\Periodo_SolicitudController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
 
@@ -118,7 +119,6 @@ Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGr
 
 
 
-
 Route::get('/showAllDocentes/{nombre}', [SolicitudController::class, 'showAllDocentes']);
 
 Route::get('/AllDocentes', [SolicitudController::class, 'AllDocentes']);
@@ -131,3 +131,10 @@ Route::get('/periodosAsignados/{id}',[PeriodoController::class,'listarPeriodos']
 
 Route::post('/cambiarEstadoUser/{id}',[SolicitudController::class,'cambiarEstadoUser']);
 Route::post('/cambiarEstadoAdmin/{id}',[SolicitudController::class,'cambiarEstadoAdmin']);
+
+Route::get('/periodoSolicitud', [Periodo_SolicitudController::class, 'index']);
+
+Route::get('/periodoSolicitud2', [Periodo_SolicitudController::class, 'index2']);
+
+Route::get('/nombre_usuario/{nombre}', [Periodo_SolicitudController::class, 'nombre_usuario']);
+

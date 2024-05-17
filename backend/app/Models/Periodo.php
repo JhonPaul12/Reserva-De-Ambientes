@@ -31,4 +31,7 @@ class Periodo extends Model
     {
         return $this->belongsToMany(Solicitud::class,'periodo_solicitud');
     }
+    public function periodo_solicitud(){
+        return $this->hasMany(Periodo_Solicitud::class,'periodo_id');
+    }
 }
