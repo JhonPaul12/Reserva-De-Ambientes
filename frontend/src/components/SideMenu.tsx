@@ -2,13 +2,16 @@ import { useState } from "react";
 import { BsArrowLeftShort, BsChevronDown } from "react-icons/bs";
 import { IoLogoPolymer } from "react-icons/io";
 import { Link, Outlet, useLocation } from "react-router-dom";
+
+import "./sideMenu.css";
+
 interface SideMenuProps {
   sideMenuOptions: {
     path: string;
     name: string;
     icon: React.ReactNode;
     submenu?: boolean;
-    subMenuOptions?: { path: string; name: string }[];
+    subMenuOptions?: { path: string; name: string; icon: React.ReactNode }[];
   }[];
 }
 export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
@@ -39,12 +42,12 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
   //   setSubmenuStates(newSubmenuStates);
   // };
   return (
-    <div className="flex text-blanco  ">
-      <div className="bg-azul ">
+    <div className="flex text-blanco ">
+      <div className="bg-azul  ">
         <div
-          className={` bg-azul h-screen p-5 pt-8 relative ${
-            open ? "w-72" : "w-20"
-          } duration-300 `}
+          className={`p-5 pt-8 min-h-screen relative ${
+            open ? "w-[300px]" : "w-20"
+          } duration-700 `}
         >
           <BsArrowLeftShort
             className={`bg-blanco text-azul text-3xl rounded-full absolute -right-3 top-9 border border-azul cursor-pointer ${
@@ -67,21 +70,22 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
           </div>
 
           {/* Opciones del menu */}
-          <div className="pt-2">
+          <div className="pt-4  ">
             {/* Opciones */}
-            <ul className="space-y-4">
+            <ul className="space-y-4  ">
               {sideMenuOptions.map((option, index) => (
                 <li key={option.path}>
                   {option.submenu ? (
                     <div
-                      className="sidemenu__link"
+                      className="sidemenu__link "
                       onClick={() => toggleSubmenu(index)}
+                      title={option.name}
                     >
                       <span>{option.icon}</span>
                       <span className={`${!open && "scale-0"}`}>
                         {option.name}
                       </span>
-                      <BsChevronDown />
+                      {/* <BsChevronDown /> */}
                     </div>
                   ) : (
                     <Link
@@ -90,6 +94,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
                         location.pathname.includes(option.path) &&
                         "sidemenu__link--active"
                       }`}
+                      title={!open ? option.name : ""}
                     >
                       <span>{option.icon}</span>
                       <span className={`${!open && "scale-0"}`}>
@@ -100,8 +105,11 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
                   {option.submenu && submenuStates[index] && (
                     <ul className="px-6 ">
                       {option.subMenuOptions?.map((subOption) => (
-                        <li className="sidemenu__link" key={subOption.path}>
-                          <Link to={subOption.path}>{subOption.name}</Link>
+                        <li key={subOption.path}>
+                          <Link className="sidemenu__link" to={subOption.path}>
+                            <span>{subOption.icon}</span>
+                            {subOption.name}
+                          </Link>
                         </li>
                       ))}
                     </ul>

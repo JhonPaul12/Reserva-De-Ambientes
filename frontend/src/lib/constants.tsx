@@ -20,10 +20,12 @@ export const sideMenuOptions = [
       {
         path: "reservas",
         name: "Reservas",
+        icon: <LuLayers />,
       },
       {
         path: "cancelar-reservas",
         name: "Cancelar Reservas",
+        icon: <LuLayers />,
       },
     ],
   },
@@ -36,14 +38,17 @@ export const sideMenuOptions = [
       {
         path: "lista-docentes",
         name: "Docentes Registrados",
+        icon: <LuLayers />,
       },
       {
         path: "modificar-docentes",
         name: "Modificar Docentes",
+        icon: <LuLayers />,
       },
       {
         path: "crear-docente",
         name: "Crear Docente ",
+        icon: <LuLayers />,
       },
     ],
   },
@@ -56,18 +61,22 @@ export const sideMenuOptions = [
       {
         path: "registrar-ambiente",
         name: "Registrar Ambientes",
+        icon: <LuLayers />,
       },
       {
         path: "asignar-reglas",
         name: "Asignar Reglas ",
+        icon: <LuLayers />,
       },
       {
         path: "ambientes-registrados",
         name: "Ambientes Registrados",
+        icon: <LuLayers />,
       },
       {
         path: "editar-ambientes",
         name: "Editar Ambientes ",
+        icon: <LuLayers />,
       },
     ],
   },
@@ -90,14 +99,15 @@ export const sideMenuOptionsUser = [
     submenu: true,
     icon: <LuUserCircle2 />,
     subMenuOptions: [
-      
       {
         path: "crear-reserva",
         name: "Crear Reserva ",
+        icon: <LuLayers />,
       },
       {
         path: "reservas",
         name: "Reservas",
+        icon: <LuLayers />,
       },
       // {
       //   path: "lista-solicitudes",
@@ -105,11 +115,12 @@ export const sideMenuOptionsUser = [
       // },
       //{
       //  path: "modificar-solicitud",
-       // name: "Modificar Solicitud",
+      // name: "Modificar Solicitud",
       //},
       {
         path: "cancelar-reserva",
         name: "Cancelar Reserva",
+        icon: <LuLayers />,
       },
     ],
   },
@@ -122,14 +133,17 @@ export const sideMenuOptionsUser = [
       {
         path: "ambientes-registrado",
         name: "Ambientes Registrados",
+        icon: <LuLayers />,
       },
       {
         path: "registrar-ambientes",
         name: "Registrar Ambientes",
+        icon: <LuLayers />,
       },
       {
         path: "asignar-reglas",
         name: "Asignar reglas ",
+        icon: <LuLayers />,
       },
     ],
   },
@@ -142,6 +156,7 @@ export const sideMenuOptionsUser = [
       {
         path: "ambientes-registrado",
         name: "Ambientes Registrados",
+        icon: <LuLayers />,
       },
     ],
   },

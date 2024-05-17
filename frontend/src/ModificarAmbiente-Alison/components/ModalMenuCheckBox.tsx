@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { horarios, dias } from "./Periodos";
 import "./MenuCheckBox.css";
-import { toast } from "sonner";
+//import { toast } from "sonner";
 
 export const ModalMenuCheckBox = ({ Periodos, onCheckboxesChange }) => {
   const [periodos, setPeriodos] = useState([]);
