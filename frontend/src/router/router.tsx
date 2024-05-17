@@ -8,7 +8,7 @@ import { VerAmbientes } from "../VerAmbientes/VerAmbientes";
 import { CreacionSolicitud } from "../CrearSolicitud/CreacionSolicitud";
 import { BusquedaFil } from "../BusquedaFiltros";
 import { SolicitudesAceptadas } from "../VisualizarSolicitudesAcp/SolicitudesAceptadas";
-import { ModificarSolicitud } from "../ModificarSolicitud/ModificarSolicitud";
+//import { ModificarSolicitud } from "../ModificarSolicitud/ModificarSolicitud";
 import { VerSolicitudes } from "../Ver Solicitudes/VerSolicitudes";
 import { CancelarSol } from "../CancelarSolicitud";
 import { TodasSolicitudes } from "../Solicitudes";
@@ -20,77 +20,74 @@ export const router = createBrowserRouter([
   {
     element: <App />,
     path: "/",
+  },
+  {
+    //Rutas Admin
+    path: "admin",
+    element: <RootLayout />,
     children: [
-      //Rutas Admin
       {
-        path: "admin",
-        element: <RootLayout />,
-        children: [
-          {
-            path: "inicio",
-            element: <PrincipalPage />,
-          },
-          {
-            path: "asignar-reglas",
-            element: <Reglas />,
-          },
-          {
-            path: "registrar-ambiente",
-            element: <RegistroAmbiente />,
-          },
-          {
-            path: "ambientes-registrados",
-            element: <VerAmbientes />,
-          },
-          {
-            path: "editar-ambientes",
-            element: <ModificarAmbiente />,
-          },
-          {
-            path: "filtrar-por-estado",
-            element: <SolicitudesAceptadas />,
-          },
-          {
-            path: "reservas",
-            element: <VerTodasReservasAdmin />,
-          },
-          {
-            path: "cancelar-reservas",
-            element: <CancelarReservasAdmin />,
-          },
-        ],
+        path: "inicio",
+        element: <PrincipalPage />,
       },
-      //Rutas Auth
-      //Rutas Usuario
       {
-        path: "user",
-        element: <UserLayout />,
-        children: [
-          {
-            path: "crear-reserva",
-            element: <CreacionSolicitud />,
-          },
-          {
-            path: "visualizar-ambientes",
-            element: <BusquedaFil />,
-          },
-          //{
-          //  path: "modificar-solicitud",
-          //  element: <ModificarSolicitud />,
-          //},
-          {
-            path: "lista-solicitudes",
-            element: <VerSolicitudes />,
-          },
-          {
-            path: "cancelar-reserva",
-            element: <CancelarSol />,
-          },
-          {
-            path: "reservas",
-            element: <TodasSolicitudes />,
-          },
-        ],
+        path: "asignar-reglas",
+        element: <Reglas />,
+      },
+      {
+        path: "registrar-ambiente",
+        element: <RegistroAmbiente />,
+      },
+      {
+        path: "ambientes-registrados",
+        element: <VerAmbientes />,
+      },
+      {
+        path: "editar-ambientes",
+        element: <ModificarAmbiente />,
+      },
+      {
+        path: "filtrar-por-estado",
+        element: <SolicitudesAceptadas />,
+      },
+      {
+        path: "reservas",
+        element: <VerTodasReservasAdmin />,
+      },
+      {
+        path: "cancelar-reservas",
+        element: <CancelarReservasAdmin />,
+      },
+    ],
+  },
+  //Rutas Usuario
+  {
+    path: "user",
+    element: <UserLayout />,
+    children: [
+      {
+        path: "crear-reserva",
+        element: <CreacionSolicitud />,
+      },
+      {
+        path: "visualizar-ambientes",
+        element: <BusquedaFil />,
+      },
+      //{
+      //  path: "modificar-solicitud",
+      //  element: <ModificarSolicitud />,
+      //},
+      {
+        path: "lista-solicitudes",
+        element: <VerSolicitudes />,
+      },
+      {
+        path: "cancelar-reserva",
+        element: <CancelarSol />,
+      },
+      {
+        path: "reservas",
+        element: <TodasSolicitudes />,
       },
     ],
   },
