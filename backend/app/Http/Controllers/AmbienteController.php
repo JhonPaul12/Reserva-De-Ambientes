@@ -88,7 +88,7 @@ class AmbienteController extends Controller
             ], 200);
         } else {
             return response()->json([
-                'success' => false,
+                'success' => true,
                 'message' => 'No se encontraron periodos o reglas asociados al ambiente para eliminar.'
             ], 404);
         }
