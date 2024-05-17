@@ -34,7 +34,7 @@ import { ISimpleDocente } from "../interfaces/simple-deocente";
               Email
               </TableColumn>
               <TableColumn className="text-center text-3xl bg-slate-300">
-              codigo_sis
+              Código SIS
               </TableColumn>
             </TableHeader>
             <TableBody>
