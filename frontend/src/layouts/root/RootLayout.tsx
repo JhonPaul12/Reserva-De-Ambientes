@@ -2,7 +2,7 @@ import { SideMenu } from "../../components/SideMenu";
 import { sideMenuOptions } from "../../lib";
 export const RootLayout = () => {
   return (
-    <div className="w-full h-screen ">
+    <div>
       <SideMenu sideMenuOptions={sideMenuOptions} />
     </div>
   );

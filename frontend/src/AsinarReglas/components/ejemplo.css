@@ -1,10 +1,8 @@
-/* Estilo general de la tabla */
 .table {
   border: 1px solid black;
   border-collapse: collapse;
-  width: 100%; /* Ajusta el ancho de la tabla al contenedor */
-  margin: 20px auto; /* Centra la tabla horizontalmente */
-  
+  width: 100%;
+  margin: 20px auto;
 }
 
 /* Estilo de los encabezados de la tabla */
@@ -16,7 +14,7 @@ th {
   padding: 10px;
   text-align: left;
   border: 1px solid black;
-  width: 15px;
+  width: 300px;
   text-align: center;
   align-items: center;
   justify-content: center;
