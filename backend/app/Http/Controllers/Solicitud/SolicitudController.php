@@ -397,6 +397,8 @@ class SolicitudController extends Controller
 
         return response()->json($todasLasSolicitudes, 200);
     }
+
+    
     public function cambiarEstadoUser($idSolicitud)
     {
         $solicitud = Solicitud::find($idSolicitud);
@@ -407,6 +409,11 @@ class SolicitudController extends Controller
 
         $solicitud->estado = "Cancelado";
         $solicitud->save();
+            // Cambia el estado de todos los periodos asociados a la solicitud
+        foreach ($solicitud->periodos as $periodo) {
+            $periodo->estado = "libre";
+            $periodo->save();
+        }
 
         return response()->json(['message' => 'El estado de la solicitud ha sido cambiado a Rechazado'], 200);
     }
@@ -416,6 +423,11 @@ class SolicitudController extends Controller
 
         if (!$solicitud) {
             return response()->json(['message' => 'La solicitud no fue encontrada'], 404);
+        }
+        // Cambia el estado de todos los periodos asociados a la solicitud
+        foreach ($solicitud->periodos as $periodo) {
+            $periodo->estado = "libre";
+            $periodo->save();
         }
 
         $solicitud->estado = "Rechazado";
