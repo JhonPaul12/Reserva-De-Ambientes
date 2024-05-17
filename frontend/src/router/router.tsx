@@ -12,9 +12,9 @@ import { ModificarSolicitud } from "../ModificarSolicitud/ModificarSolicitud";
 import { VerSolicitudes } from "../Ver Solicitudes/VerSolicitudes";
 import { CancelarSol } from "../CancelarSolicitud";
 import { TodasSolicitudes } from "../Solicitudes";
-import { ReservasAdmin } from "../ReservasAdmin";
 import { CancelarReservasAdmin } from "../CancelarReservasAdmin";
 import { ModificarAmbiente } from "../ModificarAmbiente-Alison/ModificarAmbiente";
+import { VerTodasReservasAdmin } from "../ReservasAdmin2/indes";
 
 export const router = createBrowserRouter([
   {
@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "reservas",
-            element: <ReservasAdmin />,
+            element: <VerTodasReservasAdmin />,
           },
           {
             path: "cancelar-reservas",
