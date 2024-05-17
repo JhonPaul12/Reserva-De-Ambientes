@@ -92,6 +92,9 @@ export const FormRA = () => {
       console.log(typeof inputCap);
       console.log(inputCap);
       await createAmbiente(inputName,inputType, inputUbi,  parseInt(inputCap));
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
       setInputSave(true);
       setInputCap('');
       setInputName('');
