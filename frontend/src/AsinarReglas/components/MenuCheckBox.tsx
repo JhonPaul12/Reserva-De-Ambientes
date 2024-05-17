@@ -1,3 +1,103 @@
+// import { useCallback, useEffect, useState } from "react";
+// import "./ejemplo.css";
+// import { horarios, dias } from "./Periodos";
+// import { Button } from "@nextui-org/react";
+
+// export const MenuCheckBox = () => {
+//   const [periodos, setPeriodos] = useState([]);
+//   const [checkedItems, setCheckedItems] = useState<{
+//     [key: number]: { id: number; dia: string };
+//   }>({});
+
+//   //Cargamos los horarios de la base de datos
+//   const getPeriodos = useCallback(() => {
+//     if (periodos.length === 0) {
+//       fetch(`http://127.0.0.1:8000/api/horario`)
+//         .then((response) => response.json())
+//         .then((data) => {
+//           setPeriodos(data);
+//         });
+//     }
+//   }, [periodos]);
+
+//   const handleCheckboxChange = (
+//     event: React.ChangeEvent<HTMLInputElement>,
+//     dia: string,
+//     id: number
+//   ) => {
+//     const { checked } = event.target;
+//     if (checked) {
+//       setCheckedItems({
+//         ...checkedItems,
+//         [id]: { id, dia },
+//       });
+//     } else {
+//       const { [id]: remainingCheckedItems } = checkedItems;
+//       setCheckedItems(remainingCheckedItems);
+//     }
+//   };
+
+//   useEffect(() => {
+//     getPeriodos();
+//   }, [getPeriodos]);
+
+//   return (
+//     <div>
+//       <table>
+//         <thead>
+//           <tr>
+//             <th style={{ width: "40px" }}>Horario</th>
+//             <th>Lunes</th>
+//             <th>Martes</th>
+//             <th>Miercoles</th>
+//             <th>Jueves</th>
+//             <th>Viernes</th>
+//             <th>Sabado</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {horarios.map(([horaInicio, horaFin]) => (
+//             <tr key={horaInicio}>
+//               <td>
+//                 {horaInicio} - {horaFin}
+//               </td>
+//               {dias.map((dia) => (
+//                 <td key={`${horaInicio}-${dia}`}>
+//                   {periodos.some(
+//                     (periodo) =>
+//                       periodo.dia === dia && periodo.hora_inicio === horaInicio
+//                   ) &&
+//                     periodos
+//                       .filter(
+//                         (periodo) =>
+//                           periodo.dia === dia &&
+//                           periodo.hora_inicio === horaInicio
+//                       )
+//                       .map((periodo) => (
+//                         <input
+//                           key={periodo.id}
+//                           className="input"
+//                           id={periodo.id}
+//                           type="checkbox"
+//                           checked={checkedItems[periodo.id] || false}
+//                           onChange={(event) =>
+//                             handleCheckboxChange(event, dia, periodo.id)
+//                           }
+//                         />
+//                       ))}
+//                 </td>
+//               ))}
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//       <Button onClick={() => console.log(checkedItems)}>Asignar</Button>
+//     </div>
+//   );
+// };
+
+// export default MenuCheckBox;
+
 import { useCallback, useEffect, useState } from "react";
 import "./ejemplo.css";
 import { FaCheckSquare } from "react-icons/fa";
@@ -319,7 +419,7 @@ export const MenuCheckBox = ({
                     justify-content: center;
                 }
                 input {
-                    background-color: #000000; 
+                    background-color: #000000;
                     height: 25px;
                     width: 25px;
                     border-radius: 30px;
