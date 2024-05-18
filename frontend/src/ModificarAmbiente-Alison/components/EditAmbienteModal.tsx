@@ -146,7 +146,7 @@ export const EditAmbienteModal = ({ ambiente }) => {
               <ModalBody>
               <form className='mt-5 space-y-6'>
         <div className="columnaR">
-        <label className='text-ms text-gray-900'>Nombre*:</label>
+        <label className='text-ms text-gray-900'>Nombre:</label>
         <br />
         <Input 
             type='text'
@@ -161,7 +161,7 @@ export const EditAmbienteModal = ({ ambiente }) => {
             onChange={onInputChangeName}
           />
         <br />
-        <label className='text-ms text-gray-900'>Capacidad*:</label>
+        <label className='text-ms text-gray-900'>Capacidad:</label>
         <br />
         <Input 
             type="number"
@@ -179,7 +179,7 @@ export const EditAmbienteModal = ({ ambiente }) => {
           />
         <br />
         
-        <label className='text-ms text-gray-900'>Ubicación*:</label>
+        <label className='text-ms text-gray-900'>Ubicación:</label>
         <br />
         <Select
             value={inputUbi}
@@ -195,7 +195,7 @@ export const EditAmbienteModal = ({ ambiente }) => {
               ))}
             </Select>
         <br />
-        <label className='text-ms text-gray-900'>Tipo*:</label>
+        <label className='text-ms text-gray-900'>Tipo:</label>
         <br />
         <Select 
               value={inputType}
