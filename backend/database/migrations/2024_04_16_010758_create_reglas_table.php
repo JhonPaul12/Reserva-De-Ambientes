@@ -15,7 +15,7 @@ class CreateReglasTable extends Migration
     {
         Schema::create('reglas', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre',100);
+            $table->string('nombre',100)->unique();
             $table->date('fecha_inicial');
             $table->date('fecha_final');
             $table->boolean('activa')->default(false);

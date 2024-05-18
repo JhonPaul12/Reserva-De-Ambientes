@@ -9,7 +9,7 @@ use App\Http\Controllers\PeriodoController;
 use App\Http\Controllers\ReglaController;
 use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
-use App\Http\Controllers\Solicitud\SolicitudController;
+use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\AmbientereglaController;
@@ -55,6 +55,7 @@ Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
 Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
 Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
+Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
@@ -88,6 +89,7 @@ Route::put('/solicitud/{id}',[SolicitudController::class,'update']);
 Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
+Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
 
 //NOTIFICACIONES(NUEVO)
 Route::get('/notificacion',[NotificacionController::class,'index']);

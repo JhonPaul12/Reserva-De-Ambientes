@@ -9,10 +9,10 @@ class Regla extends Model
 {
     use HasFactory;
     protected $fillable=[
-        "ambiente_id",
+        "nombre",
         "fecha_inicial",
         "fecha_final",
-        "estado" //para ver si esta activa o no.
+        "activa" //para ver si esta activa o no.
     ];
 
     public function regla_excs()

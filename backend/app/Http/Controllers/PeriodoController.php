@@ -437,8 +437,19 @@ public function updateEstado(Request $request)
         ], 200);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error al actualizar el estado del período: ' . $e->getMessage()], 500);
+        }
     }
-}
 
+    public function ObtenerReglaAmbiente($idamb, $idreg){
+        $registro = DB::table('ambiente_reglas')
+        ->where('id_ambiente', $idamb)
+        ->where('id_regla', $idreg)
+        ->first();
 
+        if ($registro) {
+            return response()->json([$registro->id], 200);
+        } else {
+            return response()->json(['error' => 'No se encontró la relación entre ambiente y regla'], 404);
+        }
+    }
 }
