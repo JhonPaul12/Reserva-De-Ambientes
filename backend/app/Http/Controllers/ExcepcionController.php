@@ -14,9 +14,16 @@ class ExcepcionController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+         'fecha_excepcion' => 'required',
+         'motivo' => 'required',
+     ]);
 
+     $horario = Excepcion::create([
+            'fecha_excepcion' => $request->fecha_excepcion,
+            'motivo' => $request->motivo
+        ]);
     }
-
     public function show($id)
     {
         //

@@ -20,11 +20,10 @@ class Ambiente extends Model
         return $this->hasMany(Periodo::class,'id_ambiente');
     }
 
-    public function regla()
+    public function reglaAmbientes()
     {
-        return $this->hasOne(Regla::class);
+        return $this->hasMany(Ambiente_regla::class);
     }
-
     public function solicitud(){
         return $this->hasMany(Solicitud::class);
     }

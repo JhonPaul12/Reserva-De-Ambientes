@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Solicitud;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Solicitud;
 use App\Models\User;
+use App\Models\Excepcion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\FuncCall;
@@ -436,5 +437,31 @@ class SolicitudController extends Controller
         $solicitud->save();
 
         return response()->json(['message' => 'El estado de la solicitud ha sido cambiado a Rechazado'], 200);
+    }
+
+    public function verificarFecha($fecha){
+        $validated = Validator::make(['fecha' => $fecha], [
+            'fecha' => 'required|date',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json(['error' => 'Fecha no válida'], 400);
+        }
+
+        $excepcion = Excepcion::where('fecha_exepcion', $fecha)->first();
+
+        if ($excepcion) {
+            return response()->json([
+                'fecha' => $fecha,
+                'excepcion' => true,
+                'descripcion' => $excepcion->motivo
+            ], 200);
+        } else {
+            return response()->json([
+                'fecha' => $fecha,
+                'excepcion' => false,
+                'mensaje' => 'No hay excepciones para esta fecha'
+            ], 200);
+        }
     }
 }
