@@ -92,7 +92,8 @@ class SolicitudController extends Controller
             'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
             'docentes.*' => 'exists:users,id', // Asegúrate de que cada ID de docente existe en la tabla de usuarios
             'id_materia' => 'required|exists:materias,id',
-            'id_grupo' => 'required|exists:grupos,id'
+            'grupos' => 'required|array',
+            'grupos.*' => 'exists:grupos,id'
         ]);
 
         if ($validador->fails()) {
@@ -110,8 +111,8 @@ class SolicitudController extends Controller
             'estado' => $request->estado,
             'numero_estudiantes' => $request->numero_estudiantes,
             'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
-            'id_grupo' => $request->id_grupo, // Utiliza directamente $request->grupo_id en lugar de $request->input('grupo_id')
-            'ambiente_id' => $request->ambiente_id // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
+            'ambiente_id' => $request->ambiente_id, // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
+            
         ]);
 
         $solicitud->load('ambiente');
@@ -120,7 +121,8 @@ class SolicitudController extends Controller
         // Asocia los docentes con la solicitud
         $docentes = $request->input('docentes');
         $solicitud->users()->attach($docentes);
-
+        $grupos = $request->input('grupos');
+        $solicitud->grupos()->attach($grupos);
 
         // Asocia los periodos con la solicitud
         $periodos = $request->input('periodos');
