@@ -9,9 +9,10 @@ use App\Http\Controllers\PeriodoController;
 use App\Http\Controllers\ReglaController;
 use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
-use App\Http\Controllers\Solicitud\SolicitudController;
+use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\AmbientereglaController;
 use App\Http\Controllers\Periodo_SolicitudController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
@@ -46,7 +47,7 @@ Route::delete('/ambiente/{id}',[AmbienteController::class,'destroy']);
 //periodo
 Route::get('/periodo',[PeriodoController::class,'index']);
 Route::get('/periodo/{id}',[PeriodoController::class,'show']);
-Route::post('/periodo',[PeriodoController::class,'store']);
+Route::post('/periodo',[PeriodoController::class,'storeNew']);
 Route::put('/periodo/{id}',[PeriodoController::class,'update']);
 Route::delete('/periodo/{id}',[PeriodoController::class,'destroy']);
 //Route::get('/periodo/{id}',[PeriodoController::class,'show']);
@@ -55,6 +56,7 @@ Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
 Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
 Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
+Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
@@ -67,6 +69,12 @@ Route::get('/regla/{id}',[ReglaController::class,'show']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
 Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
+//regla-Ambiente
+Route::get('/ambiente-regla',[AmbientereglaController::class,'index']);
+//Route::get('/regla/{id}',[ReglaController::class,'show']);
+Route::post('/ambiente-regla',[AmbientereglaController::class,'store']);
+//Route::put('/regla/{id}',[ReglaController::class,'update']);
+//Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
 //regExc
 Route::get('/regexc',[RegexcCotroller::class,'index']);
 Route::get('/regexc/{id}',[RegexcCotroller::class,'show']);
@@ -82,6 +90,7 @@ Route::put('/solicitud/{id}',[SolicitudController::class,'update']);
 Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
+Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
 
 //NOTIFICACIONES(NUEVO)
 Route::get('/notificacion',[NotificacionController::class,'index']);
