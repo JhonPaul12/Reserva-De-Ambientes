@@ -18,9 +18,9 @@ class Materia extends Model
     {
         return $this->hasMany(Grupo::class);
     }
-    public function user(): BelongsToMany
+    public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
     public function solicitud(){
         return $this->hasMany(Solicitud::class, 'id_materia');

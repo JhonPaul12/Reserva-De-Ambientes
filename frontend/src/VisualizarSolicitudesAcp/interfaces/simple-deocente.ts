@@ -1,6 +1,6 @@
 export interface ISimpleDocente {
     id: number;
-    nombre: string;
+    name: string;
     apellidos: string;
     telefono: string;
     codigo_sis: string;

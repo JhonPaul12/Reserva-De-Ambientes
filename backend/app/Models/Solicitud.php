@@ -16,7 +16,6 @@ class Solicitud extends Model
         'estado',
         'numero_estudiantes',
         'id_materia',
-        'id_grupo',
         'ambiente_id'
     ];
 
@@ -25,9 +24,9 @@ class Solicitud extends Model
         return $this->belongsTo(Materia::class, 'id_materia');
     }
 
-    public function grupo()
+    public function grupos()
     {
-        return $this->belongsTo(Grupo::class);
+        return $this->belongsToMany(Grupo::class, 'grupo_solicitud');
     }
     public function ambiente(){
         return $this->belongsTo(Ambiente::class);
@@ -46,5 +45,7 @@ class Solicitud extends Model
     {
         return $this->hasMany(Notificacion::class);
     }
-
+    public function periodo_solicitud(){
+        return $this->hasMany(Periodo_Solicitud::class,'solicitud_id');
+    }
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Solicitud;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Solicitud;
 use App\Models\User;
+use App\Models\Excepcion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\FuncCall;
@@ -92,7 +93,8 @@ class SolicitudController extends Controller
             'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
             'docentes.*' => 'exists:users,id', // Asegúrate de que cada ID de docente existe en la tabla de usuarios
             'id_materia' => 'required|exists:materias,id',
-            'id_grupo' => 'required|exists:grupos,id'
+            'grupos' => 'required|array',
+            'grupos.*' => 'exists:grupos,id'
         ]);
 
         if ($validador->fails()) {
@@ -110,8 +112,8 @@ class SolicitudController extends Controller
             'estado' => $request->estado,
             'numero_estudiantes' => $request->numero_estudiantes,
             'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
-            'id_grupo' => $request->id_grupo, // Utiliza directamente $request->grupo_id en lugar de $request->input('grupo_id')
-            'ambiente_id' => $request->ambiente_id // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
+            'ambiente_id' => $request->ambiente_id, // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
+            
         ]);
 
         $solicitud->load('ambiente');
@@ -120,7 +122,8 @@ class SolicitudController extends Controller
         // Asocia los docentes con la solicitud
         $docentes = $request->input('docentes');
         $solicitud->users()->attach($docentes);
-
+        $grupos = $request->input('grupos');
+        $solicitud->grupos()->attach($grupos);
 
         // Asocia los periodos con la solicitud
         $periodos = $request->input('periodos');
@@ -397,6 +400,8 @@ class SolicitudController extends Controller
 
         return response()->json($todasLasSolicitudes, 200);
     }
+
+    
     public function cambiarEstadoUser($idSolicitud)
     {
         $solicitud = Solicitud::find($idSolicitud);
@@ -407,6 +412,11 @@ class SolicitudController extends Controller
 
         $solicitud->estado = "Cancelado";
         $solicitud->save();
+            // Cambia el estado de todos los periodos asociados a la solicitud
+        foreach ($solicitud->periodos as $periodo) {
+            $periodo->estado = "libre";
+            $periodo->save();
+        }
 
         return response()->json(['message' => 'El estado de la solicitud ha sido cambiado a Rechazado'], 200);
     }
@@ -417,10 +427,41 @@ class SolicitudController extends Controller
         if (!$solicitud) {
             return response()->json(['message' => 'La solicitud no fue encontrada'], 404);
         }
+        // Cambia el estado de todos los periodos asociados a la solicitud
+        foreach ($solicitud->periodos as $periodo) {
+            $periodo->estado = "libre";
+            $periodo->save();
+        }
 
         $solicitud->estado = "Rechazado";
         $solicitud->save();
 
         return response()->json(['message' => 'El estado de la solicitud ha sido cambiado a Rechazado'], 200);
+    }
+
+    public function verificarFecha($fecha){
+        $validated = Validator::make(['fecha' => $fecha], [
+            'fecha' => 'required|date',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json(['error' => 'Fecha no válida'], 400);
+        }
+
+        $excepcion = Excepcion::where('fecha_exepcion', $fecha)->first();
+
+        if ($excepcion) {
+            return response()->json([
+                'fecha' => $fecha,
+                'excepcion' => true,
+                'descripcion' => $excepcion->motivo
+            ], 200);
+        } else {
+            return response()->json([
+                'fecha' => $fecha,
+                'excepcion' => false,
+                'mensaje' => 'No hay excepciones para esta fecha'
+            ], 200);
+        }
     }
 }

@@ -15,6 +15,7 @@ import { ISimpleGrupo } from "../interfaces/simple-grupo";
 import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes";
 import React from "react";
 import { ISimplePeriodo } from "../interfaces/simple-periodo";
+import { ISimpleExcepcion } from "../interfaces/simple-exception";
 
 export const FormOrdenado = () => {
   useEffect(() => {
@@ -22,7 +23,7 @@ export const FormOrdenado = () => {
     getUsuario(id);
     getDocentes();
     getMaterias(id);
-    getAmbientes();
+    getExcepciones();
     if (listOficial.length === 0) {
       setListOficial([`${id}`]);
     }
@@ -226,6 +227,7 @@ export const FormOrdenado = () => {
     if (inputValue.value.length < 6) {
       if (!isNaN(parseInt(inputValue.value))) {
         setInputNEst(inputValue.value);
+        getAmbientes(inputValue.value);
       } else {
         setInputNEst("");
         toast.error("El numero de estudiantes debe expresarse numericamente");
@@ -260,11 +262,19 @@ export const FormOrdenado = () => {
   const [inputAmbiente, setInputAmbiente] = useState("");
   const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
 
-  const getAmbientes = async () => {
+  const getAmbientes = async (num: string) => {
     const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
-    setAmbientes(respuesta.data);
-    console.log(inputFecha);
+    const filteredAmbientes = respuesta.data.filter((ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num));
+    setAmbientes(filteredAmbientes);
+    console.log(respuesta.data);
+    console.log(filteredAmbientes);
   };
+
+  const optionsAmbiente = ambientes.map((ambiente) => ({
+    label: `${ambiente.nombre} (Cap: ${ambiente.capacidad} personas)`,
+    value: ambiente.id,
+  }));
+
 
   const onInputChangeAmbiente = async (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -277,17 +287,38 @@ export const FormOrdenado = () => {
       setInputHIni([]);
       console.log("pasa");
       console.log(inputFecha);
-      getRangos(value, inputFecha);
+      const fechaDuplicada = excepciones.find((obj) => {
+        const fechaObjetoFormato = obj.fecha_excepcion;
+        return fechaObjetoFormato === inputFecha;
+      });
+      if (fechaDuplicada) {
+        toast.error(`La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`);
+        return;
+      } else {
+        console.log("llego rangos de ambiente");
+        getRangos(value, inputFecha);
+      }
     }
     //Deveriamos verificar si la fecha no esta vacia
     //getRangos(inputFecha);
     console.log(inputAmbiente);
   };
+  const verificarCapacidad = async () => {
+    if (inputNEst === "") toast.error("Por favor, complete el campo Nro Est. para ver la lista de ambientes disponibles con la capacidad adecuada.");
+    if (inputNEst != "" && ambientes.length === 0) toast.error("No existen ambientes que con capacidad apta para el numero de estudiantes requerido");
+    console.log(ambientes);
+  };
 
   //FECHA
 
   const [inputFecha, setInputFecha] = useState("");
+  const [excepciones, setExcepciones] = useState<ISimpleExcepcion[]>([]);
 
+  const getExcepciones = async () => {
+    const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+    setExcepciones(respuesta.data);
+    console.log(respuesta.data);
+  };
   const handleDateChange = async (date) => {
     console.log(date);
 
@@ -299,12 +330,22 @@ export const FormOrdenado = () => {
       setInputFecha(fecha);
       console.log(fecha);
       console.log(inputFecha);
-
-      if (inputAmbiente === "") {
-        toast.error("Seleccione un ambiente");
+      const fechaDuplicada = excepciones.find((obj) => {
+        const fechaObjetoFormato = obj.fecha_excepcion;
+        return fechaObjetoFormato === fecha;
+      });
+      if (fechaDuplicada) {
+        toast.error(`La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`);
+        console.log("pasa exception");
         return;
       } else {
-        await getRangos(inputAmbiente, fecha);
+        if (inputAmbiente === "") {
+        toast.error("Seleccione un ambiente");
+        return;
+        } else {
+          console.log("llego rangos de fecha");
+            await getRangos(inputAmbiente, fecha);
+          }
       }
     } else {
       toast.error(
@@ -584,13 +625,14 @@ export const FormOrdenado = () => {
           <Select
             value={inputAmbiente}
             onChange={onInputChangeAmbiente}
+            onClick={verificarCapacidad}
             className="w-full"
             aria-label="Selecciona una ambiente"
             placeholder="Seleccione una opcion..."
           >
-            {ambientes.map((ambiente) => (
-              <SelectItem key={ambiente.id} value={ambiente.id}>
-                {ambiente.nombre}
+            {optionsAmbiente.map((ambiente) => (
+              <SelectItem className='text-smtext-xs' key={ambiente.value} value={ambiente.label}>
+                {ambiente.label}
               </SelectItem>
             ))}
           </Select>

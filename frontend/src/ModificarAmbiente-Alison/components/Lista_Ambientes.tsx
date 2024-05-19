@@ -28,7 +28,7 @@ export const Lista_Ambientes = () => {
   return (
     <div className="text-center">
       <label className="ml-10 text-4xl font-bold text-gray-900">
-        LISTA DE AMBIENTES
+        EDITAR AMBIENTES
       </label>
       <section style={{ margin: "5% 15%" }}>
         <Table
@@ -52,10 +52,10 @@ export const Lista_Ambientes = () => {
                 <TableCell className=" text-xl">{ambiente.nombre}</TableCell>
                 <TableCell className=" text-base">
                   <EditPeriodosModal ambiente={ambiente} />
+                  <EditAmbienteModal ambiente={ambiente}/>
                 </TableCell>
                 <TableCell>
-                  <EditAmbienteModal />
-                  <DeleteAmbienteModal />
+                  <DeleteAmbienteModal ambiente={ambiente}/>
                 </TableCell>
               </TableRow>
             ))}

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReglasTable extends Migration
+class CreateGrupoSolicitudTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateReglasTable extends Migration
      */
     public function up()
     {
-        Schema::create('reglas', function (Blueprint $table) {
+        Schema::create('grupo_solicitud', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre',100)->unique();
-            $table->date('fecha_inicial');
-            $table->date('fecha_final');
-            $table->boolean('activa')->default(false);
+            $table->foreignId('grupo_id')->constrained('grupos')->onDelete('cascade');
+            $table->foreignId('solicitud_id')->constrained('solicitudes')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateReglasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reglas');
+        Schema::dropIfExists('grupo_solicitud');
     }
 }

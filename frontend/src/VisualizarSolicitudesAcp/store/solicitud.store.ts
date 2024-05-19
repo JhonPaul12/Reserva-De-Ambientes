@@ -1,12 +1,12 @@
 import { StateCreator, create } from "zustand";
 import { reservasDB } from "../api";
-import { ISimpleSolicitud } from "../interfaces/simple-solicitud";
 import { toast } from "sonner";
 import axios, { isAxiosError } from "axios";
 import { ISolicitudesResponse } from "../interfaces/solicitudes-response";
+import { ISimpleDocente } from "../interfaces/simple-deocente";
 
 interface SolicitudState {
-  solicitudes: ISimpleSolicitud[];
+  solicitudes: ISimpleDocente[];
 }
 
 interface Actions {
@@ -27,7 +27,7 @@ const storeApi: StateCreator<SolicitudState & Actions> = (set) => ({
 
   getSolicitudes: async () => {
     try {
-      const { data } = await reservasDB.get<ISolicitudesResponse>("/solicitud");
+      const { data } = await reservasDB.get<ISolicitudesResponse>("/usuario/docentes");
 
       console.log(data.solicitudes);
       set(() => ({

@@ -11,11 +11,11 @@ import {
   ModalContent,
 } from "@nextui-org/react";
 import axios from "axios";
-import { Solicitud } from "../interfaces/Solicitud";
+import { CReservaD} from "../interfaces/Solicitud";
 import "./estilos.css";
 
 export const CancelarS = () => {
-  const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
+  const [solicitudes, setSolicitudes] = useState<CReservaD[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [solicitudId, setSolicitudId] = useState<number | null>(null);
 
@@ -24,11 +24,11 @@ export const CancelarS = () => {
   }, []);
 
   const getSolicitudes = async () => {
-    const respuesta = await axios.get<Solicitud[]>(
-      `http://127.0.0.1:8000/api/showAllDocentes/Vladimir Abel`
+    const respuesta = await axios.get<CReservaD[]>(
+      `http://127.0.0.1:8000/api/nombre_usuario/Vladimir Abel`
     );
     const solicitudesPendientes = respuesta.data.filter(
-      (solicitud) => solicitud.estado === "Aceptado"
+      (solicitud) => solicitud.solicitud.estado === "Aceptado"
     );
     setSolicitudes(solicitudesPendientes);
   };
@@ -55,7 +55,7 @@ export const CancelarS = () => {
   return (
     <div className="contenedor-table">
       <label className="ml-10 text-3xl font-bold text-center text-gray-900">
-        CANCELAR RESERVA
+        CANCELAR RERSERVA
       </label>
       <section className="mx-6 my-4">
         <Table className="custom-table" aria-label="Tabla de datos">
@@ -69,8 +69,12 @@ export const CancelarS = () => {
             <TableColumn className="text-center text-3xl bg-slate-300">
               Materia
             </TableColumn>
-            {/* <TableColumn className="text-center text-3xl bg-slate-300">H. Inicio</TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">H. Final</TableColumn> */}
+             <TableColumn className="text-center text-3xl bg-slate-300">
+              H. Inicio
+            </TableColumn>
+            <TableColumn className="text-center text-3xl bg-slate-300">
+              H. Final
+            </TableColumn> 
             <TableColumn className="text-center text-3xl bg-slate-300">
               Fecha
             </TableColumn>
@@ -86,35 +90,35 @@ export const CancelarS = () => {
           </TableHeader>
           <TableBody>
             {solicitudes.map((solicitud) => (
-              <TableRow key={solicitud.id}>
+              <TableRow key={solicitud.solicitud_id}>
                 <TableCell className="text-base text-black">
-                  {solicitud.ambiente.nombre}
+                  {solicitud.solicitud.ambiente.nombre}
                 </TableCell>
                 <TableCell className="text-base text-black">
-                  {solicitud.docente.nombre + " " + solicitud.docente.apellido}
+                  {solicitud.solicitud.materia.user.name + " " + solicitud.solicitud.materia.user.apellidos}
                 </TableCell>
                 <TableCell className="text-base text-black">
-                  {solicitud.materia.nombre_materia}
-                </TableCell>
-                {/* <TableCell className="text-base text-black">
-                  {solicitud.hora_inicio}
+                  {solicitud.solicitud.materia.nombre_materia}
                 </TableCell>
                 <TableCell className="text-base text-black">
-                  {solicitud.hora_fin}
-                </TableCell> */}
-                <TableCell className="text-base text-black">
-                  {solicitud.fecha_solicitud}
+                    {solicitud.periodos[0].periodo.horario.hora_inicio}
+                  </TableCell>
+                  <TableCell className="text-base text-black">
+                    {solicitud.periodos[solicitud.periodos.length-1].periodo.horario.hora_fin}
                 </TableCell>
                 <TableCell className="text-base text-black">
-                  {solicitud.numero_estudiantes}
+                  {solicitud.periodos[0].periodo.fecha}
                 </TableCell>
                 <TableCell className="text-base text-black">
-                  {solicitud.estado}
+                  {solicitud.solicitud.numero_estudiantes}
+                </TableCell>
+                <TableCell className="text-base text-black">
+                  {solicitud.solicitud.estado}
                 </TableCell>
                 <TableCell className="text-base text-black">
                   <Button
                     className="bg-danger"
-                    onClick={() => openModal(solicitud.id)}
+                    onClick={() => openModal(solicitud.solicitud.id)}
                   >
                     Cancelar
                   </Button>

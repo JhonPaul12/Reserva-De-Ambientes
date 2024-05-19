@@ -7,10 +7,10 @@ import {
     TableCell,
   } from "@nextui-org/react";
   import "./estilosBusq.css";
-import { ISimpleSolicitud } from "../interfaces/simple-solicitud";
+import { ISimpleDocente } from "../interfaces/simple-deocente";
   
   interface Props {
-    solicitudes: ISimpleSolicitud[];
+    solicitudes: ISimpleDocente[];
   }
   export const TablaSolicitudes = ({ solicitudes }: Props) => {
     return (
@@ -22,33 +22,33 @@ import { ISimpleSolicitud } from "../interfaces/simple-solicitud";
           >
             <TableHeader>
               <TableColumn className="text-center  text-3xl bg-slate-300">
-                Id
+                Nombre
               </TableColumn>
               <TableColumn className="text-center text-3xl bg-slate-300">
-                Docente
+                Apellidos
               </TableColumn>
               <TableColumn className="text-center text-3xl bg-slate-300">
-                Hora inicio
+                Telefono
               </TableColumn>
               <TableColumn className="text-center text-3xl bg-slate-300">
-              Hora fin
+              Email
               </TableColumn>
               <TableColumn className="text-center text-3xl bg-slate-300">
-                estado
+              Código SIS
               </TableColumn>
             </TableHeader>
             <TableBody>
               {solicitudes.map((solicitud) => (
                 <TableRow key={solicitud.id}>
-                  <TableCell className="text-gray-900 text-base">{solicitud.id}</TableCell>
-                  <TableCell className="text-gray-900 text-base">{solicitud.id}</TableCell>
+                  <TableCell className="text-gray-900 text-base">{solicitud.name}</TableCell>
+                  <TableCell className="text-gray-900 text-base">{solicitud.apellidos}</TableCell>
                   <TableCell className="text-gray-900 text-base">
-                    {solicitud.hora_inicio}
+                    {solicitud.telefono}
                   </TableCell>
                   <TableCell className="text-gray-900 text-base">
-                    {solicitud.hora_fin}
+                    {solicitud.email}
                   </TableCell>
-                  <TableCell className="text-gray-900 text-base">{solicitud.estado}</TableCell>
+                  <TableCell className="text-gray-900 text-base">{solicitud.codigo_sis}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
