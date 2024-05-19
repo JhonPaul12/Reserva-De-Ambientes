@@ -15,6 +15,7 @@ import { TodasSolicitudes } from "../Solicitudes";
 import { ReservasAdmin } from "../ReservasAdmin";
 import { CancelarReservasAdmin } from "../CancelarReservasAdmin";
 import { ModificarAmbiente } from "../ModificarAmbiente-Alison/ModificarAmbiente";
+import { ReglasAmbientes } from "../ReglasAmbientes/ReglasAmbientes";
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +58,10 @@ export const router = createBrowserRouter([
       {
         path: "cancelar-reservas",
         element: <CancelarReservasAdmin />,
+      },
+      {
+        path: "reglas-ambientes",
+        element: <ReglasAmbientes />,
       },
     ],
   },
