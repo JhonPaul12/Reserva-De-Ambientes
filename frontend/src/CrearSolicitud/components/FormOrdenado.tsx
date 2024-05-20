@@ -172,21 +172,42 @@ export const FormOrdenado = () => {
   );
 
   const getGrupos = async (materia_id: number, docente_id: number) => {
-    
-    const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`
-    );
-    setGrupos(respuesta.data);
-    if (listdocentes.length != 0) {
-    listdocentes.map((docente) => 
-      {const respuesta = axios.get(
-        `http://127.0.0.1:8000/api/docentes/${docente.id}/${materia_id}`
+    try {
+      // Obtener los grupos para el docente principal
+      const respuestaPrincipal = await axios.get(
+        `http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`
       );
-      setListGrupos(...listGrupos, respuesta.data);}
-    );
-  }
+      setGrupos(respuestaPrincipal.data);
+      let gruposTem = respuestaPrincipal.data;
+  
+      console.log('Grupos del docente principal:', gruposTem);
+  
+      // Si hay otros docentes en la lista, obtener sus grupos también
+      if (listdocentes.length !== 0) {
+        const solicitudes = listdocentes.map((docente) =>
+          axios.get<ISimpleGrupo[]>(
+            `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
+          )
+        );
+  
+        // Esperar a que todas las solicitudes se completen
+        const respuestas = await Promise.all(solicitudes);
+  
+        // Extraer los datos de cada respuesta y unirlos a la lista de grupos
+        respuestas.forEach((respuesta) => {
+          gruposTem = [...gruposTem, ...respuesta.data];
+        });
+  
+        console.log('Grupos de todos los docentes:', gruposTem);
+      }
+  
+      // Actualizar el estado con la lista unida de grupos
+      setGrupos(gruposTem);
+      console.log('Estado actualizado con los grupos:', gruposTem);
+    } catch (error) {
+      console.error('Error al obtener los grupos:', error);
+    }
   };
-
 
 
   const onInputChangeGrupo = async (event) => {
@@ -384,7 +405,7 @@ export const FormOrdenado = () => {
       toast.error("El campo Fecha es obligatorio");
     } else if (inputMotivo === "") {
       toast.error("El campo Motivo es obligatorio");
-    } else if (inputGrupo === "") {
+    } else if (listGrupos.length === 0) {
       toast.error("El campo Grupo es obligatorio");
     } else if (inputAmbiente === "") {
       toast.error("El campo Ambiente es obligatorio");
@@ -396,9 +417,9 @@ export const FormOrdenado = () => {
 
       if (fechaSeleccionada > fechaActual) {
         console.log(listOficial.concat(listdocentes));
-        console.log(listOficial);
-        console.log(listdocentes);
-        console.log(listdocentes.length);
+        console.log('lsita grupoa');
+        console.log(listGrupos);
+        console.log(listGrupos.length);
         if (listdocentes.length === 0 || listdocentes[0] === "") {
           await createSolicitud(
             inputMotivo,
@@ -406,7 +427,7 @@ export const FormOrdenado = () => {
             "Aceptado",
             parseInt(inputNEst),
             parseInt(inputMateria),
-            parseInt(inputGrupo),
+            listGrupos,
             parseInt(inputAmbiente),
             listOficial,
             inputHFin
@@ -418,15 +439,12 @@ export const FormOrdenado = () => {
             "Pendiente",
             parseInt(inputNEst),
             parseInt(inputMateria),
-            parseInt(inputGrupo),
+            listGrupos,
             parseInt(inputAmbiente),
             listOficial.concat(listdocentes),
             inputHFin
           );
         }
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -546,7 +564,7 @@ export const FormOrdenado = () => {
             className="mb-5 mt-5 w-full"
             onChange={handleSelectionChangeGrupos}
           >
-            {optionsGrupos.map((grupo) => (
+            {grupos.map((grupo) => (
               <SelectItem key={grupo.id} value={grupo.grupo}>
                 {grupo.grupo}
               </SelectItem>
