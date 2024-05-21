@@ -12,7 +12,7 @@ class Regla extends Model
         "nombre",
         "fecha_inicial",
         "fecha_final",
-        "activa" //para ver si esta activa o no.
+        "activa"
     ];
 
     public function regla_excs()
