@@ -9,9 +9,10 @@ class Regla extends Model
 {
     use HasFactory;
     protected $fillable=[
-        "ambiente_id",
+        "nombre",
         "fecha_inicial",
-        "fecha_final"
+        "fecha_final",
+        "activa"
     ];
 
     public function regla_excs()
@@ -19,8 +20,8 @@ class Regla extends Model
         return $this->hasMany(Reg_exc::class);
     }
 
-    public function ambiente()
+    public function reglaAmbientes()
     {
-        return $this->belongsTo(Ambiente::class);
+        return $this->hasMany(Ambiente_regla::class);
     }
 }

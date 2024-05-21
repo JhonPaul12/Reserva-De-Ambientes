@@ -1,120 +1,47 @@
 import {
   Modal,
   ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  useDisclosure,
+  Button
 } from "@nextui-org/react";
+import { useAmbienteStore } from "../../RegistrarAmbientes/store/ambientes.store";
+import { useState } from "react";
 
-export const DeleteAmbienteModal = () => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+export const DeleteAmbienteModal = ({ambiente}) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const deleteAmbiente = useAmbienteStore( state => state.deleteAmbiente);
+  
+  const openModal = async() => {
+    setModalOpen(true);
+  };
+  const eliminarAmbiente = async () => {
+    await deleteAmbiente(parseInt(ambiente.id));
+        setModalOpen(false);
+        
+  };
 
   return (
     <div>
       <div className="flex justify-center items-center">
-        <Button className="bg-danger text-white " onPress={onOpen}>
+        <Button className="bg-danger text-white " onClick={() => openModal()}>
           Eliminar
         </Button>
       </div>
       <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        scrollBehavior="inside"
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        className="p-10 bg-white"
       >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Modal Title
-              </ModalHeader>
-              <ModalBody>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Magna exercitation reprehenderit magna aute tempor cupidatat
-                  consequat elit dolor adipisicing. Mollit dolor eiusmod sunt ex
-                  incididunt cillum quis. Velit duis sit officia eiusmod Lorem
-                  aliqua enim laboris do dolor eiusmod. Et mollit incididunt
-                  nisi consectetur esse laborum eiusmod pariatur proident Lorem
-                  eiusmod et. Culpa deserunt nostrud ad veniam.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                  Magna exercitation reprehenderit magna aute tempor cupidatat
-                  consequat elit dolor adipisicing. Mollit dolor eiusmod sunt ex
-                  incididunt cillum quis. Velit duis sit officia eiusmod Lorem
-                  aliqua enim laboris do dolor eiusmod. Et mollit incididunt
-                  nisi consectetur esse laborum eiusmod pariatur proident Lorem
-                  eiusmod et. Culpa deserunt nostrud ad veniam.
-                </p>
-                <p>
-                  Mollit dolor eiusmod sunt ex incididunt cillum quis. Velit
-                  duis sit officia eiusmod Lorem aliqua enim laboris do dolor
-                  eiusmod. Et mollit incididunt nisi consectetur esse laborum
-                  eiusmod pariatur proident Lorem eiusmod et. Culpa deserunt
-                  nostrud ad veniam. Lorem ipsum dolor sit amet, consectetur
-                  adipiscing elit. Nullam pulvinar risus non risus hendrerit
-                  venenatis. Pellentesque sit amet hendrerit risus, sed
-                  porttitor quam. Magna exercitation reprehenderit magna aute
-                  tempor cupidatat consequat elit dolor adipisicing. Mollit
-                  dolor eiusmod sunt ex incididunt cillum quis. Velit duis sit
-                  officia eiusmod Lorem aliqua enim laboris do dolor eiusmod. Et
-                  mollit incididunt nisi consectetur esse laborum eiusmod
-                  pariatur proident Lorem eiusmod et. Culpa deserunt nostrud ad
-                  veniam.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Magna exercitation reprehenderit magna aute tempor cupidatat
-                  consequat elit dolor adipisicing. Mollit dolor eiusmod sunt ex
-                  incididunt cillum quis. Velit duis sit officia eiusmod Lorem
-                  aliqua enim laboris do dolor eiusmod. Et mollit incididunt
-                  nisi consectetur esse laborum eiusmod pariatur proident Lorem
-                  eiusmod et. Culpa deserunt nostrud ad veniam.
-                </p>
-                <p>
-                  Mollit dolor eiusmod sunt ex incididunt cillum quis. Velit
-                  duis sit officia eiusmod Lorem aliqua enim laboris do dolor
-                  eiusmod. Et mollit incididunt nisi consectetur esse laborum
-                  eiusmod pariatur proident Lorem eiusmod et. Culpa deserunt
-                  nostrud ad veniam. Lorem ipsum dolor sit amet, consectetur
-                  adipiscing elit. Nullam pulvinar risus non risus hendrerit
-                  venenatis. Pellentesque sit amet hendrerit risus, sed
-                  porttitor quam. Magna exercitation reprehenderit magna aute
-                  tempor cupidatat consequat elit dolor adipisicing. Mollit
-                  dolor eiusmod sunt ex incididunt cillum quis. Velit duis sit
-                  officia eiusmod Lorem aliqua enim laboris do dolor eiusmod. Et
-                  mollit incididunt nisi consectetur esse laborum eiusmod
-                  pariatur proident Lorem eiusmod et. Culpa deserunt nostrud ad
-                  veniam.
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
-                </Button>
-              </ModalFooter>
-            </>
-          )}
+        <ModalContent className="">
+          ¿Estás seguro de que quieres eliminar este ambiente?
+          <Button
+            className="bg-danger m-2 text-white"
+            onClick={eliminarAmbiente}
+          >
+            Sí
+          </Button>
+          <Button className="m-2" onClick={() => setModalOpen(false)}>
+            No
+          </Button>
         </ModalContent>
       </Modal>
     </div>

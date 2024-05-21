@@ -14,6 +14,14 @@ interface Actions {
     ubicacion: string,
     capacidad: number
   ) => Promise<void>;
+  updateAmbiente: (
+    id:number,
+    nombre: string,
+    tipo: string,
+    ubicacion: string,
+    capacidad: number
+  ) => Promise<void>;
+  deleteAmbiente: ( id:number ) => Promise<void>;
 }
 
 const storeApi: StateCreator<AmbienteState & Actions> = () => ({
@@ -27,7 +35,7 @@ const storeApi: StateCreator<AmbienteState & Actions> = () => ({
         ubicacion,
         capacidad,
       });
-
+      console.log(data);
       toast.success("Guardado", { description: data.message });
     } catch (error) {
       if (isAxiosError(error)) {
@@ -35,6 +43,34 @@ const storeApi: StateCreator<AmbienteState & Actions> = () => ({
       }
     }
   },
+  updateAmbiente: async (id, nombre, tipo, ubicacion, capacidad) => {
+    try {
+      const { data } = await reservasDB.put<{ message: string }>(`/ambiente/${id}`, {
+        nombre,
+        tipo,
+        ubicacion,
+        capacidad,
+      });
+      console.log(data);
+      toast.success("Guardado", { description: data.message });
+    } catch (error) {
+      if (isAxiosError(error)) {
+        toast.error("El ambiente ya existe");
+      }
+    }
+  },
+  deleteAmbiente: async (id) => {
+    try {
+      const { data } = await reservasDB.delete<{ message: string }>(`/ambiente/${id}`);
+      console.log(data);
+      toast.success("Eliminado:", { description: data.message });
+    } catch (error) {
+      if (isAxiosError(error)) {
+        toast.error("Error al eliminar el ambiente");
+      }
+    }
+  },
+
 });
 
 export const useAmbienteStore = create<AmbienteState & Actions>()(storeApi);

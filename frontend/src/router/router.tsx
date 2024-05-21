@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
         element: <ModificarAmbiente />,
       },
       {
-        path: "filtrar-por-estado",
+        path: "lista-docentes",
         element: <SolicitudesAceptadas />,
       },
       {

@@ -161,4 +161,22 @@ class UserController extends Controller
     return response()->json($solicitudes, 200);
 }
 
+
+public function showGrupos($id)
+{
+    // Encuentra la materia por ID
+    $materia = Materia::find($id);
+
+    // Si la materia no existe, devuelve un error
+    if (!$materia) {
+        return response()->json(['message' => 'Materia no encontrada'], 404);
+    }
+
+    // Obtiene los grupos de la materia
+    $grupos = $materia->grupos;
+
+    // Devuelve los grupos
+    return response()->json($grupos, 200);
+}
+
 }

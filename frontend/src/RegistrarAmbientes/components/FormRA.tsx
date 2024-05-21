@@ -92,6 +92,9 @@ export const FormRA = () => {
       console.log(typeof inputCap);
       console.log(inputCap);
       await createAmbiente(inputName,inputType, inputUbi,  parseInt(inputCap));
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
       setInputSave(true);
       setInputCap('');
       setInputName('');
@@ -167,9 +170,9 @@ const onInputChangeCancel = () => {
               name='tipoAmbiente'
             onChange={onInputChangeType}
           >
-          <SelectItem key={1} value="Multifuncional">Multifuncional</SelectItem>
-          <SelectItem key={2} value="Aula">Aula</SelectItem>
-          <SelectItem key={3} value="Laboratorio">Laboratorio</SelectItem>
+          <SelectItem key={"Multifuncional"} value="Multifuncional">Multifuncional</SelectItem>
+          <SelectItem key={"Aula"} value="Aula">Aula</SelectItem>
+          <SelectItem key={"Laboratorio"} value="Laboratorio">Laboratorio</SelectItem>
         </Select>
         
         <br />

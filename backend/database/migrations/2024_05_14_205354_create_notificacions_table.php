@@ -17,10 +17,10 @@ class CreateNotificacionsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('id_usuario');
             $table->unsignedBigInteger('id_solicitud')->nullable();
-            $table->string('contenido');
+            $table->string('titulo',255);
+            $table->string('contenido',500);
             $table->boolean('visto')->default(false);
             $table->timestamps();
-
             $table->foreign('id_usuario')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('id_solicitud')->references('id')->on('solicitudes')->onDelete('cascade');
         });
