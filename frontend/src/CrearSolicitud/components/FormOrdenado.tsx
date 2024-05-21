@@ -539,7 +539,7 @@ export const FormOrdenado = () => {
             onClick={verificarMateria}
           >
             {grupos.map((grupo) => (
-              <SelectItem key={grupo.id} value={grupo.grupo}>
+              <SelectItem key={grupo.id} value={grupo.grupo} textValue={grupo.grupo}>
                 {grupo.grupo}
               </SelectItem>
             ))}

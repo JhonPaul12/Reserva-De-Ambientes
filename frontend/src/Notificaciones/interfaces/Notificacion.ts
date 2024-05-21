@@ -2,6 +2,7 @@ export interface Notificacion {
     id: number;
     id_usuario: number;
     id_solicitud: number;
+    titulo: string;
     contenido: string;
     visto: number;
     created_at: string;

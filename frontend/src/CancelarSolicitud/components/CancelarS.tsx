@@ -55,7 +55,7 @@ export const CancelarS = () => {
   return (
     <div className="contenedor-table">
       <label className="ml-10 text-3xl font-bold text-center text-gray-900">
-        CANCELAR RERSERVA
+        CANCELAR RESERVA
       </label>
       <section className="mx-6 my-4">
         <Table className="custom-table" aria-label="Tabla de datos">

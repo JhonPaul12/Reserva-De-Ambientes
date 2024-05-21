@@ -30,6 +30,7 @@ export const NotificacionU = () => {
                   <p className="mt-2 font-bold text-l">
                     Detalles de la notificación:
                   </p>
+                  <p className="text-bold">{notificacion.titulo}</p>
                   <p >{notificacion.contenido}</p>
                 </div>
                 <div className="flex-1 p-2">

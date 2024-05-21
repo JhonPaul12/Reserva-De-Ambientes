@@ -34,8 +34,7 @@ export const TodasSol = () => {
   };
 
   const handleRechazadoClick = async (solicitudId: string) => {
-    // Manejar el clic en "Rechazado"
-    setModalSolicitudId(solicitudId); // Establecer el ID de la solicitud en el estado
+    setModalSolicitudId(solicitudId);
     try {
       const response = await axios.get(
         `http://localhost:8000/api/solicitudID/${solicitudId}`

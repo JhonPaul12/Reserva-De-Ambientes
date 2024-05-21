@@ -9,16 +9,20 @@ import {
   TableRow,
   Modal,
   ModalContent,
+  Input,
   Textarea,
+  ModalHeader,
+  ModalBody,
 } from "@nextui-org/react";
 import axios from "axios";
 import { CReservaA } from "../interfaces/Reserva";
-
+import "./estilosCancelar.css";
 export const CancelarReservaA = () => {
   const [solicitudes, setSolicitudes] = useState<CReservaA[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [solicitudId, setSolicitudId] = useState<number | null>(null);
   const [cancelReason, setCancelReason] = useState<string>("");
+  const [tituloNotificacion, setTituloNotificacion] = useState<string>("");
   const [usuarioId, setUsuarioId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -52,13 +56,15 @@ export const CancelarReservaA = () => {
         await axios.post(`http://127.0.0.1:8000/api/notificacion`, {
           id_usuario: usuarioId,
           id_solicitud: solicitudId,
-          contenido: `${cancelReason}`,
+          titulo: tituloNotificacion,
+          contenido: cancelReason,
           visto: 1,
         });
 
         getSolicitudes();
         setModalOpen(false);
         setCancelReason("");
+        setTituloNotificacion("");
       } catch (error) {
         console.error("Error al cancelar la solicitud:", error);
       }
@@ -135,7 +141,7 @@ export const CancelarReservaA = () => {
                 </TableCell>
                 <TableCell className="text-base text-black">
                   <Button
-                    className="bg-danger"
+                    className="bg-danger text-white"
                     onClick={() =>
                       openModal(
                         solicitud.solicitud.id,
@@ -154,28 +160,43 @@ export const CancelarReservaA = () => {
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        className="p-10 bg-white"
+        className="modal-large"
       >
-        <ModalContent className="">
-          <label className="text-lg">
-            Por favor, ingrese los motivos de la cancelación:
-          </label>
-          <Textarea
-            fullWidth
-            value={cancelReason}
-            onChange={(e) => setCancelReason(e.target.value)}
-            placeholder="Motivo de cancelación"
-            className="my-4"
-          />
-          <Button
-            className="bg-danger m-2 text-white"
-            onClick={cancelarSolicitud}
-          >
-            Sí, cancelar
-          </Button>
-          <Button className="m-2" onClick={() => setModalOpen(false)}>
-            No
-          </Button>
+        <ModalContent className="modal-content-large">
+          <ModalHeader>
+            <h2 className="text-lg">
+              Por favor, ingrese los motivos de la cancelación:
+            </h2>
+          </ModalHeader>
+          <ModalBody className="">
+            <div>
+            <Input
+              fullWidth
+              value={tituloNotificacion}
+              onChange={(e) => setTituloNotificacion(e.target.value)}
+              placeholder="Título"
+              className="my-2"
+            />
+            </div>
+            <div className="textArea">
+            <Textarea
+              fullWidth
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder="Motivo de cancelación"
+              className=""
+            />
+            </div>
+          </ModalBody>
+            <Button
+              className="bg-danger m-2 text-white"
+              onClick={cancelarSolicitud}
+            >
+              Sí, cancelar
+            </Button>
+            <Button className="m-2" onClick={() => setModalOpen(false)}>
+              No
+            </Button>
         </ModalContent>
       </Modal>
     </div>

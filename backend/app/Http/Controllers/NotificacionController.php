@@ -79,13 +79,13 @@ class NotificacionController extends Controller
     }
     public function solicitudID($idSolicitud = null)
     {
-        $query = Notificacion::query()->select('contenido');
+        $query = Notificacion::query()->select('titulo');
 
         if ($idSolicitud) {
             $query->where('id_solicitud', $idSolicitud);
         }
 
-        $contenidos = $query->pluck('contenido');
+        $contenidos = $query->pluck('titulo');
         return response()->json($contenidos, 200);
     }
 }
