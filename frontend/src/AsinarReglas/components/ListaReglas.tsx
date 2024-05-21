@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react";
+// import { Button } from "@nextui-org/react";
 import React, { useState, useEffect } from "react";
 
 interface Option {
@@ -8,28 +8,42 @@ interface Option {
 
 interface ListaReglasProps {
   onSelectChange: (selectedValue: string) => void;
+  reset: boolean;
 }
 
-export const ListaReglas: React.FC<ListaReglasProps> = ({ onSelectChange }) => {
+export const ListaReglas: React.FC<ListaReglasProps> = ({
+  onSelectChange,
+  reset,
+}) => {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
-  //const [initialOptions, setInitialOptions] = useState<Option[]>([]);
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/regla/")
       .then((response) => response.json())
       .then((data) => {
-        setOptions(data);
+        const opcionesActivas = data.filter(
+          (opcion: { activa: number }) => opcion.activa === 1
+        );
+        setOptions(opcionesActivas);
       })
       .catch((error) => {
         console.error("Error al obtener la lista de elementos:", error);
       });
   }, []);
 
+  useEffect(() => {
+    resetSelection();
+  }, [reset]);
+
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = event.target.value;
     setSelectedOption(selectedValue);
     onSelectChange(selectedValue);
+  };
+
+  const resetSelection = () => {
+    setSelectedOption("");
   };
 
   return (
@@ -48,13 +62,13 @@ export const ListaReglas: React.FC<ListaReglasProps> = ({ onSelectChange }) => {
           </option>
         ))}
       </select>
-      <Button
+      {/* <Button
         onClick={() => setSelectedOption("")}
         className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         {" "}
         Limpiar
-      </Button>
+      </Button> */}
     </div>
   );
 };

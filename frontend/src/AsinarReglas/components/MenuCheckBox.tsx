@@ -3,7 +3,7 @@ import "./ejemplo.css";
 import { horarios, dias } from "./Periodos";
 import { Button } from "@nextui-org/react";
 
-export const MenuCheckBox = ({ prueba }) => {
+export const MenuCheckBox = ({ prueba, reset }) => {
   const [periodos, setPeriodos] = useState<
     { dia: string; hora_inicio: string; id: number }[]
   >([]);
@@ -21,6 +21,10 @@ export const MenuCheckBox = ({ prueba }) => {
         });
     }
   }, [periodos]);
+
+  useEffect(() => {
+    resetCheckboxes();
+  }, [reset]);
 
   //Cambiamos el estado de los  checkbox
   const handleCheckboxChange = (
@@ -60,7 +64,7 @@ export const MenuCheckBox = ({ prueba }) => {
     prueba(checkedItems);
   }, [checkedItems, prueba]);
 
-  const reset = () => {
+  const resetCheckboxes = () => {
     setCheckedItems({});
   };
   return (
@@ -126,7 +130,9 @@ export const MenuCheckBox = ({ prueba }) => {
           ))}
         </tbody>
       </table>
-      <Button onClick={reset}>Limpiar</Button>
+      <Button className="bg-primary text-white " onClick={resetCheckboxes}>
+        Limpiar
+      </Button>
     </div>
   );
 };

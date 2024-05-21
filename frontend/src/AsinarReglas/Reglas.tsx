@@ -16,7 +16,21 @@ export const Reglas = () => {
   const [fechaInicial, setFechainicial] = useState<Dayjs | null>(null);
   const [fechafinal, setFechafinal] = useState<Dayjs | null>(null);
 
-  const resetValues = () => {};
+  //Para resetear los ambientes
+  const [resetAmbiente, setResetAmbiente] = useState(false);
+  const [resetRegla, setResetRegla] = useState(false);
+  const [resetCheckboxes, setResetCheckboxes] = useState(false);
+
+  const resetValues = () => {
+    setCheckedItems({});
+    setSelectedAmbiente("");
+    setSelectedRegla(null);
+    setFechainicial(null);
+    setFechafinal(null);
+    setResetAmbiente((prev) => !prev);
+    setResetRegla((prev) => !prev);
+    setResetCheckboxes((prev) => !prev);
+  };
 
   //Lsita de checkbox
   const handleCheckboxChange = (checkedItems) => {
@@ -139,11 +153,14 @@ export const Reglas = () => {
         <h1 className="text-3xl font-bold"> Asignar Horarios</h1>
         <div className="flex flex-row ">
           <p className="text-2xl font-bold m-auto my-9">Seleccionar Regla</p>
-          <ListaReglas onSelectChange={handleReglaChange} />
+          <ListaReglas onSelectChange={handleReglaChange} reset={resetRegla} />
           <p className="text-2xl font-bold mx-5 mt-9">Seleccionar Ambiente</p>
-          <ListaAmbientes onSelectChange={handleSelectChange} />
+          <ListaAmbientes
+            onSelectChange={handleSelectChange}
+            reset={resetAmbiente}
+          />
         </div>
-        <MenuCheckBox prueba={handleCheckboxChange} />
+        <MenuCheckBox prueba={handleCheckboxChange} reset={resetCheckboxes} />
         <Button
           className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={guardar}

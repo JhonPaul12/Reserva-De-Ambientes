@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BsArrowLeftShort, BsChevronDown } from "react-icons/bs";
+import { BsArrowLeftShort } from "react-icons/bs";
 import { IoLogoPolymer } from "react-icons/io";
 import { Link, Outlet, useLocation } from "react-router-dom";
 
@@ -108,7 +108,9 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
                         <li key={subOption.path}>
                           <Link className="sidemenu__link" to={subOption.path}>
                             <span>{subOption.icon}</span>
-                            {subOption.name}
+                            <p className={`${!open && "scale-0"}`}>
+                              {subOption.name}
+                            </p>
                           </Link>
                         </li>
                       ))}

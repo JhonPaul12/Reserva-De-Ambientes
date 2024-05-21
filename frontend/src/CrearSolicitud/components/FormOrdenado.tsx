@@ -178,9 +178,8 @@ export const FormOrdenado = () => {
         `http://127.0.0.1:8000/api/gruposMateria/${materia_id}`
       );
       setGrupos(respuestaPrincipal.data);
-  
     } catch (error) {
-      console.error('Error al obtener los grupos:', error);
+      console.error("Error al obtener los grupos:", error);
     }
   };
   const verificarMateria = async () => {
@@ -204,7 +203,9 @@ export const FormOrdenado = () => {
 
   const getAmbientes = async (num: string) => {
     const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
-    const filteredAmbientes = respuesta.data.filter((ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num));
+    const filteredAmbientes = respuesta.data.filter(
+      (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
+    );
     setAmbientes(filteredAmbientes);
     console.log(respuesta.data);
     console.log(filteredAmbientes);
@@ -214,7 +215,6 @@ export const FormOrdenado = () => {
     label: `${ambiente.nombre} (Cap: ${ambiente.capacidad} personas)`,
     value: ambiente.id,
   }));
-
 
   const onInputChangeAmbiente = async (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -232,7 +232,9 @@ export const FormOrdenado = () => {
         return fechaObjetoFormato === inputFecha;
       });
       if (fechaDuplicada) {
-        toast.error(`La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`);
+        toast.error(
+          `La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`
+        );
         return;
       } else {
         console.log("llego rangos de ambiente");
@@ -244,8 +246,14 @@ export const FormOrdenado = () => {
     console.log(inputAmbiente);
   };
   const verificarCapacidad = async () => {
-    if (inputNEst === "") toast.error("Por favor, complete el campo Nro Est. para ver la lista de ambientes disponibles con la capacidad adecuada.");
-    if (inputNEst != "" && ambientes.length === 0) toast.error("No existen ambientes que con capacidad apta para el numero de estudiantes requerido");
+    if (inputNEst === "")
+      toast.error(
+        "Por favor, complete el campo Nro Est. para ver la lista de ambientes disponibles con la capacidad adecuada."
+      );
+    if (inputNEst != "" && ambientes.length === 0)
+      toast.error(
+        "No existen ambientes que con capacidad apta para el numero de estudiantes requerido"
+      );
     console.log(ambientes);
   };
 
@@ -275,17 +283,19 @@ export const FormOrdenado = () => {
         return fechaObjetoFormato === fecha;
       });
       if (fechaDuplicada) {
-        toast.error(`La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`);
+        toast.error(
+          `La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`
+        );
         console.log("pasa exception");
         return;
       } else {
         if (inputAmbiente === "") {
-        toast.error("Seleccione un ambiente");
-        return;
+          toast.error("Seleccione un ambiente");
+          return;
         } else {
           console.log("llego rangos de fecha");
-            await getRangos(inputAmbiente, fecha);
-          }
+          await getRangos(inputAmbiente, fecha);
+        }
       }
     } else {
       toast.error(
@@ -389,7 +399,7 @@ export const FormOrdenado = () => {
 
       if (fechaSeleccionada > fechaActual) {
         console.log(listOficial.concat(listdocentes));
-        console.log('lsita grupoa');
+        console.log("lsita grupoa");
         console.log(listGrupos);
         console.log(listGrupos.length);
         if (listdocentes.length === 0 || listdocentes[0] === "") {
@@ -529,7 +539,6 @@ export const FormOrdenado = () => {
             ))}
           </Select>*/}
           <Select
-            
             label="Seleccione los grupos asociados a la materia "
             selectionMode="multiple"
             placeholder="Seleccione grupo"
@@ -539,7 +548,11 @@ export const FormOrdenado = () => {
             onClick={verificarMateria}
           >
             {grupos.map((grupo) => (
-              <SelectItem key={grupo.id} value={grupo.grupo}>
+              <SelectItem
+                key={grupo.id}
+                value={grupo.grupo}
+                textValue={grupo.grupo}
+              >
                 {grupo.grupo}
               </SelectItem>
             ))}
@@ -561,7 +574,11 @@ export const FormOrdenado = () => {
             placeholder="Seleccione una opcion..."
           >
             {optionsAmbiente.map((ambiente) => (
-              <SelectItem className='text-smtext-xs' key={ambiente.value} value={ambiente.label}>
+              <SelectItem
+                className="text-smtext-xs"
+                key={ambiente.value}
+                value={ambiente.label}
+              >
                 {ambiente.label}
               </SelectItem>
             ))}

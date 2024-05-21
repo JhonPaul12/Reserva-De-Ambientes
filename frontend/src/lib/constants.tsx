@@ -65,7 +65,7 @@ export const sideMenuOptions = [
       },
       {
         path: "asignar-reglas",
-        name: "Asignar Reglas ",
+        name: "Asignar Horarios ",
         icon: <LuLayers />,
       },
       {
