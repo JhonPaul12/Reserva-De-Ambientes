@@ -15,9 +15,6 @@ export const DeleteAmbienteModal = ({ambiente}) => {
   };
   const eliminarAmbiente = async () => {
     await deleteAmbiente(parseInt(ambiente.id));
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
         setModalOpen(false);
         
   };

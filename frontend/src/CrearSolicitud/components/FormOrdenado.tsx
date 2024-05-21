@@ -183,11 +183,8 @@ export const FormOrdenado = () => {
       console.error('Error al obtener los grupos:', error);
     }
   };
-
-
-  const onInputChangeGrupo = async (event) => {
-    setInputGrupo(event.target.value);
-    console.log(event.target.value);
+  const verificarMateria = async () => {
+    if (inputMateria === "") toast.error("Seleccione una materia");
   };
 
   const handleSelectionChangeGrupos = (
@@ -532,12 +529,14 @@ export const FormOrdenado = () => {
             ))}
           </Select>*/}
           <Select
-            label="Docentes asociados a la reserva"
+            
+            label="Seleccione los grupos asociados a la materia "
             selectionMode="multiple"
-            placeholder="Seleccione docente"
+            placeholder="Seleccione grupo"
             selectedKeys={valuesGrupos}
-            className="mb-5 mt-5 w-full"
+            className="mb-5 mt-5 w-full text-gray-900"
             onChange={handleSelectionChangeGrupos}
+            onClick={verificarMateria}
           >
             {grupos.map((grupo) => (
               <SelectItem key={grupo.id} value={grupo.grupo}>
