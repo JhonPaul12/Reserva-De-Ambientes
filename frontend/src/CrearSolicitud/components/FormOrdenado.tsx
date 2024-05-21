@@ -99,7 +99,7 @@ export const FormOrdenado = () => {
     const { value } = e.target as HTMLSelectElement;
     console.log(value);
     setInputMateria(value);
-    getGrupos(parseInt(value), 2);
+    getGrupos(parseInt(value));
   };
 
   //MOTIVO
@@ -171,39 +171,14 @@ export const FormOrdenado = () => {
     new Set([])
   );
 
-  const getGrupos = async (materia_id: number, docente_id: number) => {
+  const getGrupos = async (materia_id: number) => {
     try {
       // Obtener los grupos para el docente principal
       const respuestaPrincipal = await axios.get(
-        `http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`
+        `http://127.0.0.1:8000/api/gruposMateria/${materia_id}`
       );
       setGrupos(respuestaPrincipal.data);
-      let gruposTem = respuestaPrincipal.data;
   
-      console.log('Grupos del docente principal:', gruposTem);
-  
-      // Si hay otros docentes en la lista, obtener sus grupos también
-      if (listdocentes.length !== 0) {
-        const solicitudes = listdocentes.map((docente) =>
-          axios.get<ISimpleGrupo[]>(
-            `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
-          )
-        );
-  
-        // Esperar a que todas las solicitudes se completen
-        const respuestas = await Promise.all(solicitudes);
-  
-        // Extraer los datos de cada respuesta y unirlos a la lista de grupos
-        respuestas.forEach((respuesta) => {
-          gruposTem = [...gruposTem, ...respuesta.data];
-        });
-  
-        console.log('Grupos de todos los docentes:', gruposTem);
-      }
-  
-      // Actualizar el estado con la lista unida de grupos
-      setGrupos(gruposTem);
-      console.log('Estado actualizado con los grupos:', gruposTem);
     } catch (error) {
       console.error('Error al obtener los grupos:', error);
     }
