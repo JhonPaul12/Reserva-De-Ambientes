@@ -32,9 +32,7 @@ export const BusquedaF = () => {
     const respuesta = await axios.get<Periodo[]>(
       `http://127.0.0.1:8000/api/allPeriodos`
     );
-    const Libres = respuesta.data.filter(
-      (solicitud) => solicitud.estado === "libre"
-    );
+    const Libres = respuesta.data;
     setPeriodo(Libres);
   };
 
@@ -193,6 +191,9 @@ export const BusquedaF = () => {
                 <TableColumn className="text-center text-3xl bg-slate-300">
                   Hora final
                 </TableColumn>
+                <TableColumn className="text-center text-3xl bg-slate-300">
+                  Estado
+                </TableColumn>
               </TableHeader>
               <TableBody>
                 {filtrarPeriodosModal().map((periodo, index) => (
@@ -205,6 +206,9 @@ export const BusquedaF = () => {
                     </TableCell>
                     <TableCell className="text-base text-black">
                       {periodo.horario.hora_fin}
+                    </TableCell>
+                    <TableCell className="text-base text-black">
+                      {periodo.estado}
                     </TableCell>
                   </TableRow>
                 ))}

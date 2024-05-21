@@ -15,6 +15,7 @@ import { TodasSolicitudes } from "../Solicitudes";
 import { CancelarReservasAdmin } from "../CancelarReservasAdmin";
 import { ModificarAmbiente } from "../ModificarAmbiente-Alison/ModificarAmbiente";
 import { VerTodasReservasAdmin } from "../ReservasAdmin2/indes";
+import { NotificacionesUsuario } from "../Notificaciones";
 
 export const router = createBrowserRouter([
   {
@@ -88,6 +89,10 @@ export const router = createBrowserRouter([
       {
         path: "reservas",
         element: <TodasSolicitudes />,
+      },
+      {
+        path: "notificaciones",
+        element: <NotificacionesUsuario />,
       },
     ],
   },

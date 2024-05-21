@@ -17,11 +17,11 @@ class Notificacion extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'id_usuario');
     }
 
     public function solicitud()
     {
-        return $this->belongsTo(Solicitud::class);
+        return $this->belongsTo(Solicitud::class,'id_solicitud');
     }
 }
