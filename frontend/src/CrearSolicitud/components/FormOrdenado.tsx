@@ -498,7 +498,7 @@ export const FormOrdenado = () => {
 
           {/*NUMERO DE ESTUDIANTES */}
 
-          <label className="text-ms text-gray-900">Nro Est*:</label>
+          <label className="text-ms text-gray-900">Nro de personas*:</label>
           <Input
             type="number"
             value={inputNEst}
@@ -508,7 +508,7 @@ export const FormOrdenado = () => {
               padding: "20px",
             }}
             onChange={onInputChangeNEst}
-            min="0"
+            min="1"
           />
           <br />
 

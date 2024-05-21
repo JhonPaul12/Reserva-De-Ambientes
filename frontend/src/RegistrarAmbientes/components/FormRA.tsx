@@ -143,7 +143,7 @@ const onInputChangeCancel = () => {
               padding: '10px', 
             }}
             onChange={onInputChangeCap}
-            min="0"
+            min="1"
           />
         <br />
         

@@ -63,7 +63,7 @@ const storeApi: StateCreator<AmbienteState & Actions> = () => ({
     try {
       const { data } = await reservasDB.delete<{ message: string }>(`/ambiente/${id}`);
       console.log(data);
-      toast.success("Eliminado:", { description: data.message });
+      toast.success("Eliminado", { description: data.message });
     } catch (error) {
       if (isAxiosError(error)) {
         toast.error("Error al eliminar el ambiente");
