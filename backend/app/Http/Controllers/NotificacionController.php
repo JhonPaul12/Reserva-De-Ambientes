@@ -19,6 +19,7 @@ class NotificacionController extends Controller
         $validator = Validator::make($request->all(), [
             'id_usuario' =>'required|exists:users,id',
             'id_solicitud' => 'nullable|exists:solicitudes,id',
+            'titulo'=>'required',
             'contenido' => 'required',
             'visto' => 'required|boolean',
         ]);
