@@ -43,7 +43,7 @@ class Solicitud extends Model
 
     public function notificaciones()
     {
-        return $this->hasMany(Notificacion::class);
+        return $this->hasMany(Notificacion::class,'id_solicitud');
     }
     public function periodo_solicitud(){
         return $this->hasMany(Periodo_Solicitud::class,'solicitud_id');

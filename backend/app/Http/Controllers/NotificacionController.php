@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Notificacion;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class NotificacionController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'id_usuario' =>'required|exists:users,id',
+            'id_usuario' => 'required|exists:users,id',
             'id_solicitud' => 'nullable|exists:solicitudes,id',
             'titulo'=>'required',
             'contenido' => 'required',
@@ -41,7 +42,7 @@ class NotificacionController extends Controller
     public function show($id)
     {
         $noti = Notificacion::find($id);
-        return response()->json($noti,200);
+        return response()->json($noti, 200);
     }
 
     public function destroy($id)
@@ -56,5 +57,35 @@ class NotificacionController extends Controller
 
             return response()->json(['error' => 'Error al eliminar la notificación: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function index2()
+    {
+        $notificacion = Notificacion::with('user', 'solicitud.materia', 'solicitud.ambiente')->get();
+        return response()->json($notificacion, 200);
+    }
+
+    public function nombre_usuario_Notificacion($nombreUsuario = null)
+    {
+        $query = Notificacion::with('user', 'solicitud.materia', 'solicitud.ambiente');
+
+        if ($nombreUsuario) {
+            $query->whereHas('user', function ($query) use ($nombreUsuario) {
+                $query->where('name', $nombreUsuario);
+            });
+        }
+        $notificaciones = $query->get();
+        return response()->json($notificaciones, 200);
+    }
+    public function solicitudID($idSolicitud = null)
+    {
+        $query = Notificacion::query()->select('titulo');
+
+        if ($idSolicitud) {
+            $query->where('id_solicitud', $idSolicitud);
+        }
+
+        $contenidos = $query->pluck('titulo');
+        return response()->json($contenidos, 200);
     }
 }

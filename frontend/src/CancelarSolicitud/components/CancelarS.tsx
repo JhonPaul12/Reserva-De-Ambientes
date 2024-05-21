@@ -55,7 +55,7 @@ export const CancelarS = () => {
   return (
     <div className="contenedor-table">
       <label className="ml-10 text-3xl font-bold text-center text-gray-900">
-        CANCELAR RERSERVA
+        CANCELAR RESERVA
       </label>
       <section className="mx-6 my-4">
         <Table className="custom-table" aria-label="Tabla de datos">
@@ -117,7 +117,7 @@ export const CancelarS = () => {
                 </TableCell>
                 <TableCell className="text-base text-black">
                   <Button
-                    className="bg-danger"
+                    className="bg-danger text-white"
                     onClick={() => openModal(solicitud.solicitud.id)}
                   >
                     Cancelar
@@ -134,7 +134,7 @@ export const CancelarS = () => {
         className="p-10 bg-white"
       >
         <ModalContent className="">
-          ¿Estás seguro de que quieres cancelar esta solicitud?
+          ¿Estás seguro de que quieres cancelar su reserva?
           <Button
             className="bg-danger m-2 text-white"
             onClick={cancelarSolicitud}
