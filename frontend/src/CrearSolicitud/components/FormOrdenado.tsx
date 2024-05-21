@@ -81,84 +81,6 @@ export const FormOrdenado = () => {
     value: docente.id,
   }));
 
-  /*
-  const [selects, setSelects] = useState([]);
-  const [listdocentes, setListDocentes] = useState([]);
-
-  const getUsuario = async (id: number) => {
-    const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/${id}`
-    );
-    console.log(respuesta.data);
-    setUsuario(respuesta.data);
-    console.log(usuario);
-  };
-  const getDocentes = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
-    setDocentes(respuesta.data);
-  };
-
-  const docentesOrdenAlfabetico = [...docentes].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-
-  const botonAnadirClick = async () => {
-    const limiteSelects = 5;
-    if (selects.length < limiteSelects) {
-      const ultimoSelect = selects[selects.length - 1];
-      if (selects.length ===0 || ultimoSelect.value!= '') {
-      setSelects((prevSelects) => [
-        ...prevSelects,
-        { id: prevSelects.length, value: "" },
-      ]);
-      }else{
-        toast.error("Seleccione un docente antes de añadir otro");
-      }
-    } else {
-      toast.error("Se ha alcanzado el límite de docentes");
-    }
-  };
-
-  const handleSelectChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    selectId
-  ) => {
-    const { value } = event.target as HTMLSelectElement;
-
-    console.log(selectId);
-    if (!listdocentes.includes(value) || listdocentes.length===1) {
-      setSelects((prevSelects) =>
-        prevSelects.map((select) =>
-          select.id === selectId ? { ...select, value } : select
-        )
-      );
-      anadir(value);
-    } else {
-      toast.error("El docente ya está presente en la lista:", value);
-      setSelects((prevSelects) =>
-        prevSelects.map((select) =>
-          select.id === selectId ? { ...select, value: "" } : select
-        )
-      );
-    }
-    console.log(value);
-  };
-
-  const anadir = async (id: string) => {
-      console.log(listdocentes);
-    console.log(usuario.id);
-    if (!listdocentes.includes(id)) {
-      setListDocentes([...listdocentes, id]);
-      console.log("ID añadido:", id);
-      console.log(typeof id);
-      console.log(id);
-      console.log(typeof listdocentes);
-      console.log(listdocentes);
-    } else {
-      toast.error("El docente ya está presente en la lista:", id);
-    }
-  };*/
-
   //MATERIA
 
   const [inputMateria, setInputMateria] = useState("");
@@ -177,7 +99,7 @@ export const FormOrdenado = () => {
     const { value } = e.target as HTMLSelectElement;
     console.log(value);
     setInputMateria(value);
-    getGrupos(parseInt(value), 2);
+    getGrupos(parseInt(value));
   };
 
   //MOTIVO
@@ -244,17 +166,35 @@ export const FormOrdenado = () => {
 
   const [inputGrupo, setInputGrupo] = useState("");
   const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
+  const [listGrupos, setListGrupos] = useState([]);
+  const [valuesGrupos, setValuesGrupos] = React.useState<Selection>(
+    new Set([])
+  );
 
-  const getGrupos = async (materia_id: number, docente_id: number) => {
-    const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`
-    );
-    setGrupos(respuesta.data);
+  const getGrupos = async (materia_id: number) => {
+    try {
+      // Obtener los grupos para el docente principal
+      const respuestaPrincipal = await axios.get(
+        `http://127.0.0.1:8000/api/gruposMateria/${materia_id}`
+      );
+      setGrupos(respuestaPrincipal.data);
+  
+    } catch (error) {
+      console.error('Error al obtener los grupos:', error);
+    }
+  };
+  const verificarMateria = async () => {
+    if (inputMateria === "") toast.error("Seleccione una materia");
   };
 
-  const onInputChangeGrupo = async (event) => {
-    setInputGrupo(event.target.value);
-    console.log(event.target.value);
+  const handleSelectionChangeGrupos = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const valores = e.target.value;
+    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+    console.log(arrayNumeros);
+    setListGrupos(arrayNumeros);
+    setValuesGrupos(new Set(e.target.value.split(",")));
   };
 
   //AMBIENTE
@@ -437,7 +377,7 @@ export const FormOrdenado = () => {
       toast.error("El campo Fecha es obligatorio");
     } else if (inputMotivo === "") {
       toast.error("El campo Motivo es obligatorio");
-    } else if (inputGrupo === "") {
+    } else if (listGrupos.length === 0) {
       toast.error("El campo Grupo es obligatorio");
     } else if (inputAmbiente === "") {
       toast.error("El campo Ambiente es obligatorio");
@@ -449,9 +389,9 @@ export const FormOrdenado = () => {
 
       if (fechaSeleccionada > fechaActual) {
         console.log(listOficial.concat(listdocentes));
-        console.log(listOficial);
-        console.log(listdocentes);
-        console.log(listdocentes.length);
+        console.log('lsita grupoa');
+        console.log(listGrupos);
+        console.log(listGrupos.length);
         if (listdocentes.length === 0 || listdocentes[0] === "") {
           await createSolicitud(
             inputMotivo,
@@ -459,7 +399,7 @@ export const FormOrdenado = () => {
             "Aceptado",
             parseInt(inputNEst),
             parseInt(inputMateria),
-            parseInt(inputGrupo),
+            listGrupos,
             parseInt(inputAmbiente),
             listOficial,
             inputHFin
@@ -471,15 +411,12 @@ export const FormOrdenado = () => {
             "Pendiente",
             parseInt(inputNEst),
             parseInt(inputMateria),
-            parseInt(inputGrupo),
+            listGrupos,
             parseInt(inputAmbiente),
             listOficial.concat(listdocentes),
             inputHFin
           );
         }
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -519,29 +456,6 @@ export const FormOrdenado = () => {
               </SelectItem>
             ))}
           </Select>
-          {/*<button
-            type="button"
-            className="flex justify-center rounded-md bg-azul p-5 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={botonAnadirClick}
-          >
-            Añadir docente
-          </button>
-          {selects.map((select) => (
-            <Select
-              key={select.id}
-              value={select.value}
-              onChange={(event) => handleSelectChange(event, select.id)}
-              className="mt-2 w-full text-gray-900"
-              aria-label="Selecciona una docente"
-              placeholder="Seleccione una opcion..."
-            >
-              {docentesOrdenAlfabetico.map((docente) => (
-                <SelectItem key={docente.id} textValue={docente.name}>
-                  {docente.name} {docente.apellidos}
-                </SelectItem>
-              ))}
-            </Select>
-          ))}*/}
           <br />
 
           {/*MATERIA */}
@@ -601,7 +515,7 @@ export const FormOrdenado = () => {
           {/*GRUPO */}
 
           <label className="text-ms text-gray-900">Grupo*:</label>
-          <Select
+          {/*<Select
             value={inputGrupo}
             onChange={onInputChangeGrupo}
             className="w-full text-gray-900"
@@ -611,6 +525,22 @@ export const FormOrdenado = () => {
             {grupos.map((grup) => (
               <SelectItem key={grup.id} textValue={grup.grupo}>
                 {grup.grupo}
+              </SelectItem>
+            ))}
+          </Select>*/}
+          <Select
+            
+            label="Seleccione los grupos asociados a la materia "
+            selectionMode="multiple"
+            placeholder="Seleccione grupo"
+            selectedKeys={valuesGrupos}
+            className="mb-5 mt-5 w-full text-gray-900"
+            onChange={handleSelectionChangeGrupos}
+            onClick={verificarMateria}
+          >
+            {grupos.map((grupo) => (
+              <SelectItem key={grupo.id} value={grupo.grupo}>
+                {grupo.grupo}
               </SelectItem>
             ))}
           </Select>

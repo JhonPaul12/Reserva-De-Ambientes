@@ -57,10 +57,10 @@ class AmbienteController extends Controller
     }
     public function destroy($id)
     {
-        $horario = Ambiente::find($id)->delete();
+        $ambiente = Ambiente::find($id)->delete();
         return response()->json([
             'success'=>true,
-            'data'=> $horario
+            'data'=> $ambiente
         ],200);
     }
 }
