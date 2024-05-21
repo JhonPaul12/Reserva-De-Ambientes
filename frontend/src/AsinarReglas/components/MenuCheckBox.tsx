@@ -60,6 +60,9 @@ export const MenuCheckBox = ({ prueba }) => {
     prueba(checkedItems);
   }, [checkedItems, prueba]);
 
+  const reset = () => {
+    setCheckedItems({});
+  };
   return (
     <div>
       <table>
@@ -123,7 +126,7 @@ export const MenuCheckBox = ({ prueba }) => {
           ))}
         </tbody>
       </table>
-      <Button onClick={() => console.log(checkedItems)}>Asignar</Button>
+      <Button onClick={reset}>Limpiar</Button>
     </div>
   );
 };

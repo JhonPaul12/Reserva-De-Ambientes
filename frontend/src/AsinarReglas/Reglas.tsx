@@ -1,21 +1,155 @@
 import { Button } from "@nextui-org/react";
 import { MenuCheckBox } from "./components/MenuCheckBox";
 import "./reglas.css";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { ListaAmbientes } from "./components/ListaAmbientes";
+import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+import { ListaReglas } from "./components/ListaReglas";
+import axios from "axios";
+import { Toaster, toast } from "sonner";
 
 export const Reglas = () => {
   const [checkedItems, setCheckedItems] = useState({});
+  const [selectedAmbiente, setSelectedAmbiente] = useState("");
+  const [selectedRegla, setSelectedRegla] = useState(null);
+  const [fechaInicial, setFechainicial] = useState<Dayjs | null>(null);
+  const [fechafinal, setFechafinal] = useState<Dayjs | null>(null);
+
+  const resetValues = () => {};
+
+  //Lsita de checkbox
   const handleCheckboxChange = (checkedItems) => {
-    // Aquí puedes manejar los cambios de checkedItems
-    //console.log(checkedItems);
     setCheckedItems(checkedItems);
   };
+
+  //Lsita de Ambientes
+  const handleSelectChange = (selectedValue: string) => {
+    setSelectedAmbiente(selectedValue);
+  };
+
+  //Lsita de Reglas
+  const handleReglaChange = (selectedValue: string) => {
+    setSelectedRegla(selectedValue);
+  };
+
+  //Obtengo rela
+  const obtenerRegla = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/regla/${selectedRegla}`
+      );
+      if (!response.ok) {
+        throw new Error("No se pudo obtener la fecha inicial");
+      }
+      const data = await response.json();
+      setFechainicial(data.fecha_inicial);
+      setFechafinal(data.fecha_final);
+    } catch (error) {
+      console.error("Error al obtener la fecha inicial:", error);
+    }
+  }, [selectedRegla]);
+
+  useEffect(() => {
+    if (selectedRegla) {
+      obtenerRegla();
+    }
+  }, [selectedRegla, obtenerRegla]);
+
+  const guardar = async () => {
+    await obtenerRegla();
+    if (
+      fechaInicial &&
+      fechafinal &&
+      selectedRegla &&
+      selectedAmbiente &&
+      Object.keys(checkedItems).length !== 0
+    ) {
+      const startDate = dayjs(fechaInicial);
+      const endDate = dayjs(fechafinal);
+      const datos = {
+        periodos: Object.values(checkedItems)
+          .map((item) => ({
+            id_ambReg: selectedRegla,
+            id_ambiente: selectedAmbiente,
+            id_horario: item.id,
+            estado: "libre",
+            fecha: obtenerFecha(item.dia, startDate, endDate),
+          }))
+          .filter((periodo) => periodo.fecha !== null), // Filtrar los períodos con fecha nula
+      };
+
+      try {
+        const response = await axios.post("http://127.0.0.1:8000/api/periodo", {
+          periodos: datos.periodos,
+        });
+        if (response.data.errores !== undefined) {
+          console.log(response.data.errores);
+          toast.error("Ya existen periodos con este ambiente y horario");
+        } else {
+          resetValues();
+          toast.success("Guardado con exito");
+        }
+      } catch (error) {
+        console.error("Error al guardar:", error);
+      }
+    } else {
+      if (!selectedRegla) {
+        toast.error("Debe seleccionar una regla");
+      } else if (!selectedAmbiente) {
+        toast.error("Debe seleccionar un ambiente");
+      } else if (Object.keys(checkedItems).length === 0) {
+        toast.error("Debe seleccionar al menos un horario");
+      }
+    }
+
+    // Crear el objeto de datos
+  };
+  const obtenerFecha = (day: string, startDate: Dayjs, endDate: Dayjs) => {
+    const daysOfWeek: { [key: string]: number } = {
+      domingo: 0,
+      lunes: 1,
+      martes: 2,
+      miércoles: 3,
+      jueves: 4,
+      viernes: 5,
+      sábado: 6,
+    };
+    const dayIndex = daysOfWeek[day];
+    let currentDate = startDate.startOf("day");
+    while (currentDate <= endDate) {
+      if (currentDate.day() === dayIndex) {
+        return currentDate.toISOString().slice(0, 10);
+      }
+      currentDate = currentDate.add(1, "day");
+    }
+    return null;
+  };
+
   return (
     <div className="reglas-container">
-      Reglas
-      <div className="mt-10 mx-10 text-negro">
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+        style={{ position: "absolute" }}
+      />
+
+      <div className="mt-10 mx-10 text-negro flex flex-col text-center">
+        <h1 className="text-3xl font-bold"> Asignar Horarios</h1>
+        <div className="flex flex-row ">
+          <p className="text-2xl font-bold m-auto my-9">Seleccionar Regla</p>
+          <ListaReglas onSelectChange={handleReglaChange} />
+          <p className="text-2xl font-bold mx-5 mt-9">Seleccionar Ambiente</p>
+          <ListaAmbientes onSelectChange={handleSelectChange} />
+        </div>
         <MenuCheckBox prueba={handleCheckboxChange} />
-        <Button onClick={() => console.log(checkedItems)}>Prueba</Button>
+        <Button
+          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={guardar}
+        >
+          Guardar
+        </Button>
       </div>
     </div>
   );

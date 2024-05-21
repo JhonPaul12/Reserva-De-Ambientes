@@ -1,3 +1,4 @@
+import { Button } from "@nextui-org/react";
 import React, { useState, useEffect } from "react";
 
 interface Option {
@@ -5,18 +6,17 @@ interface Option {
   nombre: string;
 }
 
-interface ListaAmbientesProps {
+interface ListaReglasProps {
   onSelectChange: (selectedValue: string) => void;
 }
 
-export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
-  onSelectChange,
-}) => {
+export const ListaReglas: React.FC<ListaReglasProps> = ({ onSelectChange }) => {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
+  //const [initialOptions, setInitialOptions] = useState<Option[]>([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/ambiente/")
+    fetch("http://127.0.0.1:8000/api/regla/")
       .then((response) => response.json())
       .then((data) => {
         setOptions(data);
@@ -30,11 +30,6 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
     const selectedValue = event.target.value;
     setSelectedOption(selectedValue);
     onSelectChange(selectedValue);
-  };
-
-  const resetSelection = () => {
-    setSelectedOption("");
-    onSelectChange("");
   };
 
   return (
@@ -53,12 +48,13 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
           </option>
         ))}
       </select>
-      <button
-        onClick={resetSelection}
+      <Button
+        onClick={() => setSelectedOption("")}
         className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
-        Restablecer
-      </button>
+        {" "}
+        Limpiar
+      </Button>
     </div>
   );
 };

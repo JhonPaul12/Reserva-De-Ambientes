@@ -16,11 +16,16 @@ import { CancelarReservasAdmin } from "../CancelarReservasAdmin";
 import { ModificarAmbiente } from "../ModificarAmbiente-Alison/ModificarAmbiente";
 import { ReglasAmbientes } from "../ReglasAmbientes/ReglasAmbientes";
 import { VerTodasReservasAdmin } from "../ReservasAdmin2/indes";
+import { Login } from "../Login/Login";
 
 export const router = createBrowserRouter([
   {
     element: <App />,
     path: "/",
+  },
+  {
+    element: <Login />,
+    path: "/login",
   },
   {
     //Rutas Admin
