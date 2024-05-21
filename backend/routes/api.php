@@ -120,7 +120,8 @@ Route::get('/usuario/materias/{id}', [UserController::class, 'showMaterias']);
 //mostrar grupos de materia de docente
 Route::get('/docentes/solicitudes/{id}', [UserController::class, 'showSolicitudes']);
 Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGruposDeMateriaDeDocente']);
-
+//ruta para devolver grupos dado un id materia
+Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
 
 
 
