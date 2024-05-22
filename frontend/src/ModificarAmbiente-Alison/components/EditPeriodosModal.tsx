@@ -63,12 +63,12 @@ export const EditPeriodosModal = ({ ambiente }) => {
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={imprimir}>
+                {/* <Button color="primary" onPress={imprimir}>
                   Action
                 </Button>
                 <Button onClick={() => console.log(checkedPeriodos)}>
                   Prueba
-                </Button>
+                </Button> */}
               </ModalFooter>
             </>
           )}
