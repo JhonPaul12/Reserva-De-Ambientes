@@ -248,11 +248,11 @@ export const FormOrdenado = () => {
   const verificarCapacidad = async () => {
     if (inputNEst === "")
       toast.error(
-        "Por favor, complete el campo Nro Est. para ver la lista de ambientes disponibles con la capacidad adecuada."
+        "Por favor, complete el campo Nro de personas para ver la lista de ambientes disponibles con la capacidad adecuada."
       );
     if (inputNEst != "" && ambientes.length === 0)
       toast.error(
-        "No existen ambientes que con capacidad apta para el numero de estudiantes requerido"
+        "No existen ambientes que con capacidad apta para el numero de personas requerido"
       );
     console.log(ambientes);
   };
@@ -361,7 +361,7 @@ export const FormOrdenado = () => {
       console.error("Ocurrió un error al obtener los rangos horarios:", error);
       setInputHIni([]);
       // También puedes mostrar un mensaje de error al usuario si lo deseas
-      toast.error("No se tienen horarios disponibles para ese dia");
+      toast.error("No se tienen horarios disponibles para esta fecha");
     }
   };
   const verificar = async () => {
@@ -372,27 +372,36 @@ export const FormOrdenado = () => {
   //ENVIAR
 
   const createSolicitud = useSolicitudStore((state) => state.createSolicitud);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const [oficial, setOficial] = useState([]);
   const onInputChangeSave = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
+    setIsButtonDisabled(true);
 
     if (inputMateria === "") {
       toast.error("El campo Materia es obligatorio");
+      setIsButtonDisabled(false);
     } else if (inputNEst === "") {
       toast.error("El campo Número de estudiantes es obligatorio");
+      setIsButtonDisabled(false);
     } else if (inputFecha === "") {
       toast.error("El campo Fecha es obligatorio");
+      setIsButtonDisabled(false);
     } else if (inputMotivo === "") {
       toast.error("El campo Motivo es obligatorio");
+      setIsButtonDisabled(false);
     } else if (listGrupos.length === 0) {
       toast.error("El campo Grupo es obligatorio");
+      setIsButtonDisabled(false);
     } else if (inputAmbiente === "") {
       toast.error("El campo Ambiente es obligatorio");
+      setIsButtonDisabled(false);
     } else if (inputHFin.length === 0) {
       toast.error("Seleccione al menos un periodo para la reserva");
+      setIsButtonDisabled(false);
     } else {
       const fechaActual = new Date();
       const fechaSeleccionada = new Date(inputFecha);
@@ -418,7 +427,7 @@ export const FormOrdenado = () => {
           await createSolicitud(
             inputMotivo,
             inputFecha,
-            "Pendiente",
+            "Aceptado",
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
@@ -444,7 +453,7 @@ export const FormOrdenado = () => {
   return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900">
-        CREAR RESERVA
+        SOLICITAR RESERVA
       </label>
       <form className="flex mt-5 space-y-6">
         <div className="mt-5 ml-5 mx-auto w-full sm:w-1/2 p-5">
@@ -635,9 +644,10 @@ export const FormOrdenado = () => {
               size="lg"
               className="w-full mb-10"
               color="primary"
+              disabled={isButtonDisabled}
             >
               {" "}
-              Enviar{" "}
+              {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
             </Button>
           </div>
         </div>

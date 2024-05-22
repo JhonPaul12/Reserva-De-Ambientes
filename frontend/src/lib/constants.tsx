@@ -100,8 +100,8 @@ export const sideMenuOptionsUser = [
     icon: <LuUserCircle2 />,
     subMenuOptions: [
       {
-        path: "crear-reserva",
-        name: "Crear Reserva ",
+        path: "solicitar-reserva",
+        name: "Solicitar Reserva",
         icon: <LuLayers />,
       },
       {

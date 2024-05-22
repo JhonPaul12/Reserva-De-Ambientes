@@ -27,6 +27,11 @@ const [solicitudes, setSolicitudes] = useState<ISimpleDocente[]>([]);
     console.log(respuesta.data);
     setSolicitudes(respuesta.data);
   }
+
+  const solicitudesOrdenAlfabetico = [...solicitudes].sort((a, b) =>
+    a.name.localeCompare(b.name)
+);
+
 /*
   const solicitudesFiltrados = solicitudes.filter((solicitud) => {
     console.log(estado);
@@ -53,7 +58,7 @@ const [solicitudes, setSolicitudes] = useState<ISimpleDocente[]>([]);
           </input>
         </div>
   </div>*/}
-      <TablaSolicitudes solicitudes={solicitudes} />
+      <TablaSolicitudes solicitudes={solicitudesOrdenAlfabetico} />
     </div>
   );
 };

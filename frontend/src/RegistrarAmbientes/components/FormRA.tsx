@@ -118,7 +118,8 @@ export const FormRA = () => {
     }
   };
 
-  const onInputChangeCancel = () => {};
+  const onInputChangeCancel = () => {
+    window.location.reload();};
   return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900">

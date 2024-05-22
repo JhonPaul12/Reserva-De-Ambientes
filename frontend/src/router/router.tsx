@@ -77,7 +77,7 @@ export const router = createBrowserRouter([
     element: <UserLayout />,
     children: [
       {
-        path: "crear-reserva",
+        path: "solicitar-reserva",
         element: <CreacionSolicitud />,
       },
       {
