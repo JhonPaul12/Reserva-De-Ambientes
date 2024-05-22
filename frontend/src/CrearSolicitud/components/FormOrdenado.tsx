@@ -437,6 +437,10 @@ export const FormOrdenado = () => {
       }
     }
   };
+  const onInputChangeCancelar = async (
+  ) => {
+    window.location.reload();
+  };
   return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900">
@@ -623,7 +627,7 @@ export const FormOrdenado = () => {
           {/*BOTONES */}
 
           <div className="flex gap-5 items-center">
-            <Button size="lg" className="w-full  mb-10" color="primary">
+            <Button size="lg" className="w-full  mb-10" color="primary" onClick={onInputChangeCancelar}>
               Cancelar
             </Button>
             <Button
