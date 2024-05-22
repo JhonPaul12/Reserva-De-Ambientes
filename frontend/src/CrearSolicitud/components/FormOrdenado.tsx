@@ -427,6 +427,9 @@ export const FormOrdenado = () => {
             inputHFin
           );
         }
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
