@@ -124,29 +124,29 @@ export const sideMenuOptionsUser = [
       },
     ],
   },
-  {
-    path: "historial",
-    name: "Historial",
-    submenu: false,
-    icon: <BsBuildingsFill />,
-    subMenuOptions: [
-      {
-        path: "ambientes-registrado",
-        name: "Ambientes Registrados",
-        icon: <LuLayers />,
-      },
-      {
-        path: "registrar-ambientes",
-        name: "Registrar Ambientes",
-        icon: <LuLayers />,
-      },
-      {
-        path: "asignar-reglas",
-        name: "Asignar reglas ",
-        icon: <LuLayers />,
-      },
-    ],
-  },
+  // {
+  //   path: "historial",
+  //   name: "Historial",
+  //   submenu: false,
+  //   icon: <BsBuildingsFill />,
+  //   subMenuOptions: [
+  //     {
+  //       path: "ambientes-registrado",
+  //       name: "Ambientes Registrados",
+  //       icon: <LuLayers />,
+  //     },
+  //     {
+  //       path: "registrar-ambientes",
+  //       name: "Registrar Ambientes",
+  //       icon: <LuLayers />,
+  //     },
+  //     {
+  //       path: "asignar-reglas",
+  //       name: "Asignar reglas ",
+  //       icon: <LuLayers />,
+  //     },
+  //   ],
+  // },
   {
     path: "notificaciones",
     name: "Notificaciones",

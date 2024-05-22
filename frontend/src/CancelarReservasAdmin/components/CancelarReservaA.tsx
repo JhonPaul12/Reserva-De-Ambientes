@@ -72,9 +72,9 @@ export const CancelarReservaA = () => {
   };
 
   return (
-    <div className="contenedor-table">
+    <div className="contenedor-table text-center my-5">
       <label className="ml-10 text-3xl font-bold text-center text-gray-900">
-        CANCELAR RESERVA
+        RECHAZAR RESERVA
       </label>
       <section className="mx-6 my-4">
         <Table className="custom-table" aria-label="Tabla de datos">
@@ -149,7 +149,7 @@ export const CancelarReservaA = () => {
                       )
                     }
                   >
-                    Cancelar
+                    Rechazar
                   </Button>
                 </TableCell>
               </TableRow>
@@ -165,38 +165,38 @@ export const CancelarReservaA = () => {
         <ModalContent className="modal-content-large">
           <ModalHeader>
             <h2 className="text-lg">
-              Por favor, ingrese los motivos de la cancelación:
+              Por favor, ingrese el motivo para rechazar la reserva:
             </h2>
           </ModalHeader>
           <ModalBody className="">
             <div>
-            <Input
-              fullWidth
-              value={tituloNotificacion}
-              onChange={(e) => setTituloNotificacion(e.target.value)}
-              placeholder="Título"
-              className="my-2"
-            />
+              <Input
+                fullWidth
+                value={tituloNotificacion}
+                onChange={(e) => setTituloNotificacion(e.target.value)}
+                placeholder="Motivo"
+                className="my-2"
+              />
             </div>
             <div className="textArea">
-            <Textarea
-              fullWidth
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              placeholder="Motivo de cancelación"
-              className=""
-            />
+              <Textarea
+                fullWidth
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="Descripcion del motivo"
+                className=""
+              />
             </div>
           </ModalBody>
-            <Button
-              className="bg-danger m-2 text-white"
-              onClick={cancelarSolicitud}
-            >
-              Sí, cancelar
-            </Button>
-            <Button className="m-2" onClick={() => setModalOpen(false)}>
-              No
-            </Button>
+          <Button
+            className="bg-danger m-2 text-white"
+            onClick={cancelarSolicitud}
+          >
+            Sí, rechazar
+          </Button>
+          <Button className="m-2" onClick={() => setModalOpen(false)}>
+            No
+          </Button>
         </ModalContent>
       </Modal>
     </div>
