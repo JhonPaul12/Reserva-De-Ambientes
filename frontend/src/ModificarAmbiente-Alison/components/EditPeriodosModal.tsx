@@ -61,7 +61,7 @@ export const EditPeriodosModal = ({ ambiente }) => {
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
-                  Close
+                  Cancelar
                 </Button>
                 {/* <Button color="primary" onPress={imprimir}>
                   Action
