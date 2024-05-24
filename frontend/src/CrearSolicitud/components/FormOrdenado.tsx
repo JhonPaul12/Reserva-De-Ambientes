@@ -99,7 +99,7 @@ export const FormOrdenado = () => {
     const { value } = e.target as HTMLSelectElement;
     console.log(value);
     setInputMateria(value);
-    getGrupos(parseInt(value));
+    getGrupos(parseInt(value),2);
   };
 
   //MOTIVO
@@ -143,20 +143,23 @@ export const FormOrdenado = () => {
   //NUMERO DE ESTUDIANTES
 
   const [inputNEst, setInputNEst] = useState("");
+  
+
+    const handleKeyPress = (event) => {
+    const charCode = event.charCode;
+    // Allow only numbers (charCode 48-57)
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  };
 
   const onInputChangeNEst = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
+
     if (inputValue.value.length < 6) {
-      if (!isNaN(parseInt(inputValue.value))) {
         setInputNEst(inputValue.value);
         getAmbientes(inputValue.value);
-      } else {
-        setInputNEst("");
-        toast.error("El numero de estudiantes debe expresarse numericamente");
-        console.log("El numero de estudiantes debe expresarse numericamente");
-      }
     } else {
-      setInputNEst("");
       toast.error("El numero de estudiantes no debe superar los 5 caracteres");
       console.log("El numero de estudiantes no debe superar los 5 caracteres");
     }
@@ -171,7 +174,7 @@ export const FormOrdenado = () => {
     new Set([])
   );
 
-  const getGrupos = async (materia_id: number) => {
+  /*const getGrupos = async (materia_id: number) => {
     try {
       // Obtener los grupos para el docente principal
       const respuestaPrincipal = await axios.get(
@@ -180,6 +183,45 @@ export const FormOrdenado = () => {
       setGrupos(respuestaPrincipal.data);
     } catch (error) {
       console.error("Error al obtener los grupos:", error);
+    }
+  };*/
+
+  const getGrupos = async (materia_id: number, docente_id: number) => {
+    try {
+      // Obtener los grupos para el docente principal
+      const respuestaPrincipal = await axios.get(
+        `http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`
+      );
+      setGrupos(respuestaPrincipal.data);
+      let gruposTem = respuestaPrincipal.data;
+
+      console.log('Grupos del docente principal:', gruposTem);
+
+      // Si hay otros docentes en la lista, obtener sus grupos también
+      if (listdocentes.length !== 1) {
+
+        const solicitudes = listdocentes.map((docente) =>
+          axios.get<ISimpleGrupo[]>(
+            `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
+          )
+        );
+
+        //Esperar a que todas las solicitudes se completen
+        const respuestas = await Promise.all(solicitudes);
+
+         //Extraer los datos de cada respuesta y unirlos a la lista de grupos
+        respuestas.forEach((respuesta) => {
+          gruposTem = [...gruposTem, ...respuesta.data];
+        });
+
+        console.log('Grupos de todos los docentes:', gruposTem);
+      }
+
+      // Actualizar el estado con la lista unida de grupos
+      setGrupos(gruposTem);
+      console.log('Estado actualizado con los grupos:', gruposTem);
+    } catch (error) {
+      console.error('Error al obtener los grupos:', error);
     }
   };
   const verificarMateria = async () => {
@@ -471,7 +513,7 @@ export const FormOrdenado = () => {
           <Select
             label="Docentes asociados a la reserva"
             selectionMode="multiple"
-            placeholder="Seleccione docente"
+            placeholder="Seleccione docente..."
             selectedKeys={valuesDocentes}
             className="mb-5 mt-5 w-full"
             onChange={handleSelectionChangeDocentes}
@@ -526,15 +568,14 @@ export const FormOrdenado = () => {
 
           <label className="text-ms text-gray-900">Nro de personas*:</label>
           <Input
-            type="number"
+            type="text"
             value={inputNEst}
-            className="w-full"
-            style={{
-              fontSize: "10px",
-              padding: "20px",
-            }}
+            placeholder="Ingrese un número..."
             onChange={onInputChangeNEst}
-            min="1"
+            onKeyPress={handleKeyPress}
+            style={{
+              fontSize: "13px",
+            }}
           />
           <br />
 

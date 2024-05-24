@@ -10,6 +10,7 @@ import {
 import { FcCalendar } from "react-icons/fc";
 import ModalMenuCheckBox from "./ModalMenuCheckBox";
 import { useEffect, useState } from "react";
+import { CalendarIcon } from "@mui/x-date-pickers";
 
 export const EditPeriodosModal = ({ ambiente }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -38,7 +39,10 @@ export const EditPeriodosModal = ({ ambiente }) => {
   return (
     <>
       <div className="flex justify-center items-center">
-        <FcCalendar size={60} onClick={onOpen} />
+      <Button color="success" endContent={<CalendarIcon/>} onClick={onOpen}>
+        Horarios
+      </Button>  
+        {/*<FcCalendar size={60} onClick={onOpen} />*/}
       </div>
 
       <Modal

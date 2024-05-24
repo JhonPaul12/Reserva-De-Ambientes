@@ -51,20 +51,22 @@ export const FormRA = () => {
     }
   };
 
+  const handleKeyPress = (event) => {
+    const charCode = event.charCode;
+    // Allow only numbers (charCode 48-57)
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  };
+
   const onInputChangeCap = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
 
-    if (inputValue.value.length <= 5 || inputValue.value === "") {
-      if (!isNaN(parseInt(inputValue.value))) {
+    if (inputValue.value.length <= 5) {
         setInputCap(inputValue.value);
-      } else {
-        setInputCap("");
-        toast.error("La capacidad debe expresarse numericamente");
-        console.log("La capacidad debe expresarse numericamente");
-      }
     } else {
-      toast.error("La capacidad debe tener más de 5 caracteres numericos");
-      console.log("La capacidad debe tener más de 5 caracteres numericos");
+      toast.error("La capacidad no debe tener más de 5 caracteres numericos");
+      console.log("La capacidad no debe tener más de 5 caracteres numericos");
     }
   };
   const onInputChangeUbi = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -132,11 +134,11 @@ export const FormRA = () => {
           <Input
             type="text"
             name="nombre"
+            placeholder="Ingrese el nombre del ambiente..."
             className="w-full"
             value={inputName}
             style={{
-              textAlign: "center",
-              fontSize: "16px",
+              fontSize: "15px",
               padding: "10px",
             }}
             onChange={onInputChangeName}
@@ -145,17 +147,15 @@ export const FormRA = () => {
           <label className="text-ms text-gray-900">Capacidad*:</label>
           <br />
           <Input
-            type="number"
-            name="capacidad"
-            className="w-full"
+            type="text"
             value={inputCap}
+            placeholder="Ingrese un número..."
+            onChange={onInputChangeCap}
+            onKeyPress={handleKeyPress}
             style={{
-              textAlign: "center",
-              fontSize: "16px",
+              fontSize: "15px",
               padding: "10px",
             }}
-            onChange={onInputChangeCap}
-            min="1"
           />
           <br />
 
@@ -164,7 +164,7 @@ export const FormRA = () => {
           <Select
             value={inputUbi}
             className="w-full"
-            aria-label="Selecciona una motivo"
+            placeholder="Seleccione una ubicacion..."
             onChange={onInputChangeUbi}
           >
             {ubicaciones.map((ubi) => (
@@ -179,6 +179,7 @@ export const FormRA = () => {
           <Select
             value={inputType}
             className="w-full"
+            placeholder="Ingrese el tipo de ambiente..."
             name="tipoAmbiente"
             onChange={onInputChangeType}
           >

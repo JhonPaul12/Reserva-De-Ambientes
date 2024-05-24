@@ -15,6 +15,9 @@ export default {
         blanco: "#ffffff",
         negro: "#000000",
       },
+      fontSize: {
+        'xxs': '2px', 
+      },
     },
   },
   darkMode: "class",
