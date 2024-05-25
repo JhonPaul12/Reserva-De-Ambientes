@@ -7,16 +7,18 @@ interface Option {
 
 interface ListaAmbientesProps {
   onSelectChange: (selectedValue: string) => void;
+  reset: boolean;
 }
 
 export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
   onSelectChange,
+  reset,
 }) => {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/ambiente")
+    fetch("http://127.0.0.1:8000/api/ambiente/")
       .then((response) => response.json())
       .then((data) => {
         setOptions(data);
@@ -26,14 +28,20 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
       });
   }, []);
 
+  useEffect(() => {
+    resetSelection();
+  }, [reset]);
+
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = event.target.value;
     setSelectedOption(selectedValue);
     onSelectChange(selectedValue);
   };
-
+  const resetSelection = () => {
+    setSelectedOption("");
+  };
   return (
-    <div className="mt-8">
+    <div className="mt-8 mx-auto">
       <select
         value={selectedOption}
         onChange={handleChange}
@@ -48,6 +56,12 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
           </option>
         ))}
       </select>
+      {/* <button
+        onClick={resetSelection}
+        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Restablecer
+      </button> */}
     </div>
   );
 };

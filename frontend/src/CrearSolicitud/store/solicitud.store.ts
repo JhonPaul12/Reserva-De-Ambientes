@@ -17,7 +17,7 @@ interface SolicitudState {
     estado: string,
     numero_estudiantes: number,
     id_materia:number, 
-    id_grupo:number, 
+    grupos:number[], 
     ambiente_id:number,
     docentes:number[],
     periodos:number[]
@@ -26,6 +26,7 @@ interface SolicitudState {
   
   const storeApi: StateCreator<SolicitudState & Actions> = (set) => ({
     solicitudes: [],
+
   
     getSolicitudes: async () => {
       try {
@@ -39,7 +40,7 @@ interface SolicitudState {
         console.log(error);
       }
     },
-    createSolicitud: async (motivo,fecha_solicitud, estado, numero_estudiantes,id_materia, id_grupo, ambiente_id, docentes, periodos) => {
+    createSolicitud: async (motivo,fecha_solicitud, estado, numero_estudiantes,id_materia, grupos, ambiente_id, docentes, periodos) => {
       try {
         console.log(typeof motivo);
         console.log( motivo);
@@ -56,12 +57,20 @@ interface SolicitudState {
           estado,
           numero_estudiantes,
           id_materia, 
-          id_grupo, 
+          grupos, 
           ambiente_id,
           docentes,
           periodos
 
         });
+        
+        for (const periodo of periodos) {
+        const dataToSend = {
+          id: periodo,
+          estado: 'Reservado',
+        };
+        const { data } = await reservasDB.put<{ message: string }>("/updateEstado", dataToSend);
+      }
   
         toast.success("Su reserva fue creada exitosamente", { description: data.message });
       } catch (error) {

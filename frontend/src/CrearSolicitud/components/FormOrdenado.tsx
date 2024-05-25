@@ -15,6 +15,7 @@ import { ISimpleGrupo } from "../interfaces/simple-grupo";
 import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes";
 import React from "react";
 import { ISimplePeriodo } from "../interfaces/simple-periodo";
+import { ISimpleExcepcion } from "../interfaces/simple-exception";
 
 export const FormOrdenado = () => {
   useEffect(() => {
@@ -22,9 +23,9 @@ export const FormOrdenado = () => {
     getUsuario(id);
     getDocentes();
     getMaterias(id);
-    getAmbientes();
-    if (listdocentes.length === 0) {
-      setListDocentes([`${id}`]);
+    getExcepciones();
+    if (listOficial.length === 0) {
+      setListOficial([`${id}`]);
     }
   }, []);
 
@@ -40,7 +41,10 @@ export const FormOrdenado = () => {
   };
   const [usuario, setUsuario] = useState(instanciaInicial);
   const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
-  const [selects, setSelects] = useState([]);
+  const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(
+    new Set([])
+  );
+  const [listOficial, setListOficial] = useState([]);
   const [listdocentes, setListDocentes] = useState([]);
 
   const getUsuario = async (id: number) => {
@@ -51,71 +55,31 @@ export const FormOrdenado = () => {
     setUsuario(respuesta.data);
     console.log(usuario);
   };
+
+  const docentesOrdenAlfabetico = [...docentes].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
   const getDocentes = async () => {
     const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
     setDocentes(respuesta.data);
   };
 
-  const docentesOrdenAlfabetico = [...docentes].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-
-  const botonAnadirClick = async () => {
-    const limiteSelects = 5;
-    if (selects.length < limiteSelects) {
-      const ultimoSelect = selects[selects.length - 1];
-      if (selects.length ===0 || ultimoSelect.value!= '') {
-      setSelects((prevSelects) => [
-        ...prevSelects,
-        { id: prevSelects.length, value: "" },
-      ]);
-      }else{
-        toast.error("Seleccione un docente antes de añadir otro");
-      }
-    } else {
-      toast.error("Se ha alcanzado el límite de docentes");
-    }
-  };
-
-  const handleSelectChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    selectId
+  const handleSelectionChangeDocentes = (
+    e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const { value } = event.target as HTMLSelectElement;
-
-    console.log(selectId);
-    if (!listdocentes.includes(value) || listdocentes.length===1) {
-      setSelects((prevSelects) =>
-        prevSelects.map((select) =>
-          select.id === selectId ? { ...select, value } : select
-        )
-      );
-      anadir(value);
-    } else {
-      toast.error("El docente ya está presente en la lista:", value);
-      setSelects((prevSelects) =>
-        prevSelects.map((select) =>
-          select.id === selectId ? { ...select, value: "" } : select
-        )
-      );
-    }
-    console.log(value);
+    const valores = e.target.value;
+    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+    console.log(arrayNumeros);
+    setListDocentes(arrayNumeros);
+    console.log(listOficial);
+    console.log(listdocentes);
+    setValuesDocentes(new Set(e.target.value.split(",")));
   };
 
-  const anadir = async (id: string) => {
-      console.log(listdocentes);
-    console.log(usuario.id);
-    if (!listdocentes.includes(id)) {
-      setListDocentes([...listdocentes, id]);
-      console.log("ID añadido:", id);
-      console.log(typeof id);
-      console.log(id);
-      console.log(typeof listdocentes);
-      console.log(listdocentes);
-    } else {
-      toast.error("El docente ya está presente en la lista:", id);
-    }
-  };
+  const optionsDocentes = docentesOrdenAlfabetico.map((docente) => ({
+    label: `${docente.name} ${docente.apellidos}`,
+    value: docente.id,
+  }));
 
   //MATERIA
 
@@ -135,7 +99,7 @@ export const FormOrdenado = () => {
     const { value } = e.target as HTMLSelectElement;
     console.log(value);
     setInputMateria(value);
-    getGrupos(parseInt(value), 2);
+    getGrupos(parseInt(value));
   };
 
   //MOTIVO
@@ -167,7 +131,7 @@ export const FormOrdenado = () => {
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const inputValue = e.target as HTMLSelectElement;
-    console.log(inputValue.value)
+    console.log(inputValue.value);
     if (inputValue.value.length < 30) {
       setInputMotivo(inputValue.value);
     } else {
@@ -185,6 +149,7 @@ export const FormOrdenado = () => {
     if (inputValue.value.length < 6) {
       if (!isNaN(parseInt(inputValue.value))) {
         setInputNEst(inputValue.value);
+        getAmbientes(inputValue.value);
       } else {
         setInputNEst("");
         toast.error("El numero de estudiantes debe expresarse numericamente");
@@ -201,17 +166,34 @@ export const FormOrdenado = () => {
 
   const [inputGrupo, setInputGrupo] = useState("");
   const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
+  const [listGrupos, setListGrupos] = useState([]);
+  const [valuesGrupos, setValuesGrupos] = React.useState<Selection>(
+    new Set([])
+  );
 
-  const getGrupos = async (materia_id: number, docente_id: number) => {
-    const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`
-    );
-    setGrupos(respuesta.data);
+  const getGrupos = async (materia_id: number) => {
+    try {
+      // Obtener los grupos para el docente principal
+      const respuestaPrincipal = await axios.get(
+        `http://127.0.0.1:8000/api/gruposMateria/${materia_id}`
+      );
+      setGrupos(respuestaPrincipal.data);
+    } catch (error) {
+      console.error("Error al obtener los grupos:", error);
+    }
+  };
+  const verificarMateria = async () => {
+    if (inputMateria === "") toast.error("Seleccione una materia");
   };
 
-  const onInputChangeGrupo = async (event) => {
-    setInputGrupo(event.target.value);
-    console.log(event.target.value);
+  const handleSelectionChangeGrupos = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const valores = e.target.value;
+    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+    console.log(arrayNumeros);
+    setListGrupos(arrayNumeros);
+    setValuesGrupos(new Set(e.target.value.split(",")));
   };
 
   //AMBIENTE
@@ -219,11 +201,20 @@ export const FormOrdenado = () => {
   const [inputAmbiente, setInputAmbiente] = useState("");
   const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
 
-  const getAmbientes = async () => {
+  const getAmbientes = async (num: string) => {
     const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
-    setAmbientes(respuesta.data);
-    console.log(inputFecha);
+    const filteredAmbientes = respuesta.data.filter(
+      (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
+    );
+    setAmbientes(filteredAmbientes);
+    console.log(respuesta.data);
+    console.log(filteredAmbientes);
   };
+
+  const optionsAmbiente = ambientes.map((ambiente) => ({
+    label: `${ambiente.nombre} (Cap: ${ambiente.capacidad} personas)`,
+    value: ambiente.id,
+  }));
 
   const onInputChangeAmbiente = async (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -232,20 +223,50 @@ export const FormOrdenado = () => {
     console.log(inputHIni);
     console.log(value);
     setInputAmbiente(value);
-    if(inputHIni.length!= 0) {
+    if (inputHIni.length != 0 || inputFecha != "") {
       setInputHIni([]);
-      console.log('pasa');
-      getRangos(value,inputFecha);
+      console.log("pasa");
+      console.log(inputFecha);
+      const fechaDuplicada = excepciones.find((obj) => {
+        const fechaObjetoFormato = obj.fecha_excepcion;
+        return fechaObjetoFormato === inputFecha;
+      });
+      if (fechaDuplicada) {
+        toast.error(
+          `La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`
+        );
+        return;
+      } else {
+        console.log("llego rangos de ambiente");
+        getRangos(value, inputFecha);
+      }
     }
     //Deveriamos verificar si la fecha no esta vacia
     //getRangos(inputFecha);
     console.log(inputAmbiente);
   };
+  const verificarCapacidad = async () => {
+    if (inputNEst === "")
+      toast.error(
+        "Por favor, complete el campo Nro de personas para ver la lista de ambientes disponibles con la capacidad adecuada."
+      );
+    if (inputNEst != "" && ambientes.length === 0)
+      toast.error(
+        "No existen ambientes que con capacidad apta para el numero de personas requerido"
+      );
+    console.log(ambientes);
+  };
 
   //FECHA
 
   const [inputFecha, setInputFecha] = useState("");
+  const [excepciones, setExcepciones] = useState<ISimpleExcepcion[]>([]);
 
+  const getExcepciones = async () => {
+    const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+    setExcepciones(respuesta.data);
+    console.log(respuesta.data);
+  };
   const handleDateChange = async (date) => {
     console.log(date);
 
@@ -257,7 +278,25 @@ export const FormOrdenado = () => {
       setInputFecha(fecha);
       console.log(fecha);
       console.log(inputFecha);
-      await getRangos(inputAmbiente,fecha);
+      const fechaDuplicada = excepciones.find((obj) => {
+        const fechaObjetoFormato = obj.fecha_excepcion;
+        return fechaObjetoFormato === fecha;
+      });
+      if (fechaDuplicada) {
+        toast.error(
+          `La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`
+        );
+        console.log("pasa exception");
+        return;
+      } else {
+        if (inputAmbiente === "") {
+          toast.error("Seleccione un ambiente");
+          return;
+        } else {
+          console.log("llego rangos de fecha");
+          await getRangos(inputAmbiente, fecha);
+        }
+      }
     } else {
       toast.error(
         "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -292,9 +331,9 @@ export const FormOrdenado = () => {
     console.log(values);
   };
 
-  const getRangos = async (id:string, fecha: string) => {
+  const getRangos = async (id: string, fecha: string) => {
     try {
-      if (inputFecha!='' || fecha!='') {
+      if (inputFecha != "" || fecha != "") {
         const dataToSend = {
           id_ambiente: id,
           fecha: fecha,
@@ -312,85 +351,112 @@ export const FormOrdenado = () => {
           const rangoHorario = `${hora_inicio} - ${hora_fin}`;
           rangosHorario.push(rangoHorario);
         });
-  
+
         setInputHIni(responseData);
         console.log(responseData);
-      }else{
-        toast.error('Seleccione una fecha')
+      } else {
+        toast.error("Seleccione una fecha");
       }
-      
     } catch (error) {
       console.error("Ocurrió un error al obtener los rangos horarios:", error);
       setInputHIni([]);
       // También puedes mostrar un mensaje de error al usuario si lo deseas
-      toast.error("No se tienen horarios disponibles para ese dia");
+      toast.error("No se tienen horarios disponibles para esta fecha");
     }
   };
-  const verificar = async()=>{
-    if(inputFecha==='') toast.error('Seleccione una fecha')
-  }
+  const verificar = async () => {
+    if (inputFecha === "") toast.error("Seleccione una fecha");
+    if (inputAmbiente === "") toast.error("Seleccione un ambiente");
+  };
 
   //ENVIAR
 
   const createSolicitud = useSolicitudStore((state) => state.createSolicitud);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+  const [oficial, setOficial] = useState([]);
   const onInputChangeSave = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
+    setIsButtonDisabled(true);
 
-    if (inputMotivo === "") {
-      toast.error("El campo Motivo es obligatorio");
+    if (inputMateria === "") {
+      toast.error("El campo Materia es obligatorio");
+      setIsButtonDisabled(false);
     } else if (inputNEst === "") {
       toast.error("El campo Número de estudiantes es obligatorio");
+      setIsButtonDisabled(false);
     } else if (inputFecha === "") {
       toast.error("El campo Fecha es obligatorio");
-    } else if (inputMateria === "") {
-      toast.error("El campo Materia es obligatorio");
-    } else if (inputGrupo === "") {
+      setIsButtonDisabled(false);
+    } else if (inputMotivo === "") {
+      toast.error("El campo Motivo es obligatorio");
+      setIsButtonDisabled(false);
+    } else if (listGrupos.length === 0) {
       toast.error("El campo Grupo es obligatorio");
+      setIsButtonDisabled(false);
     } else if (inputAmbiente === "") {
       toast.error("El campo Ambiente es obligatorio");
+      setIsButtonDisabled(false);
     } else if (inputHFin.length === 0) {
-      toast.error("Debe seleccionar al menos un horario de fin");
+      toast.error("Seleccione al menos un periodo para la reserva");
+      setIsButtonDisabled(false);
     } else {
       const fechaActual = new Date();
       const fechaSeleccionada = new Date(inputFecha);
-    
+
       if (fechaSeleccionada > fechaActual) {
-        console.log(listdocentes);
-        await createSolicitud(
-          inputMotivo,
-          inputFecha,
-          "Pendiente",
-          parseInt(inputNEst),
-          parseInt(inputMateria),
-          parseInt(inputGrupo),
-          parseInt(inputAmbiente),
-          listdocentes,
-          inputHFin
-        );
-        setInputMateria("1");
-        setInputMotivo("");
-        setInputNEst("");
-        setInputGrupo("");
-        setInputAmbiente("1");
-        setInputFecha("");
+        console.log(listOficial.concat(listdocentes));
+        console.log("lsita grupoa");
+        console.log(listGrupos);
+        console.log(listGrupos.length);
+        if (listdocentes.length === 0 || listdocentes[0] === "") {
+          await createSolicitud(
+            inputMotivo,
+            inputFecha,
+            "Aceptado",
+            parseInt(inputNEst),
+            parseInt(inputMateria),
+            listGrupos,
+            parseInt(inputAmbiente),
+            listOficial,
+            inputHFin
+          );
+        } else {
+          await createSolicitud(
+            inputMotivo,
+            inputFecha,
+            "Aceptado",
+            parseInt(inputNEst),
+            parseInt(inputMateria),
+            listGrupos,
+            parseInt(inputAmbiente),
+            listOficial.concat(listdocentes),
+            inputHFin
+          );
+        }
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
         );
       }
     }
-    
+  };
+  const onInputChangeCancelar = async (
+  ) => {
+    window.location.reload();
   };
   return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900">
-        CREAR SOLICITUD
+        SOLICITAR RESERVA
       </label>
-      <form className="mt-5 space-y-6">
-        <div className="columnaR">
+      <form className="flex mt-5 space-y-6">
+        <div className="mt-5 ml-5 mx-auto w-full sm:w-1/2 p-5">
           {/*DOCENTES */}
 
           <label className="text-ms text-gray-900">Docente:</label>
@@ -401,29 +467,21 @@ export const FormOrdenado = () => {
           >
             {usuario.name} {usuario.apellidos}
           </span>
-          <button
-            type="button"
-            className="flex justify-center rounded-md bg-azul p-5 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={botonAnadirClick}
+
+          <Select
+            label="Docentes asociados a la reserva"
+            selectionMode="multiple"
+            placeholder="Seleccione docente"
+            selectedKeys={valuesDocentes}
+            className="mb-5 mt-5 w-full"
+            onChange={handleSelectionChangeDocentes}
           >
-            Añadir docente
-          </button>
-          {selects.map((select) => (
-            <Select
-              key={select.id}
-              value={select.value}
-              onChange={(event) => handleSelectChange(event, select.id)}
-              className="mt-2 w-full text-gray-900"
-              aria-label="Selecciona una docente"
-              placeholder="Seleccione una opcion..."
-            >
-              {docentesOrdenAlfabetico.map((docente) => (
-                <SelectItem key={docente.id} textValue={docente.name}>
-                  {docente.name} {docente.apellidos}
-                </SelectItem>
-              ))}
-            </Select>
-          ))}
+            {optionsDocentes.map((docente) => (
+              <SelectItem key={docente.value} value={docente.label}>
+                {docente.label}
+              </SelectItem>
+            ))}
+          </Select>
           <br />
 
           {/*MATERIA */}
@@ -466,7 +524,7 @@ export const FormOrdenado = () => {
 
           {/*NUMERO DE ESTUDIANTES */}
 
-          <label className="text-ms text-gray-900">Nro Est*:</label>
+          <label className="text-ms text-gray-900">Nro de personas*:</label>
           <Input
             type="number"
             value={inputNEst}
@@ -476,14 +534,14 @@ export const FormOrdenado = () => {
               padding: "20px",
             }}
             onChange={onInputChangeNEst}
-            min="0"
+            min="1"
           />
           <br />
 
           {/*GRUPO */}
 
           <label className="text-ms text-gray-900">Grupo*:</label>
-          <Select
+          {/*<Select
             value={inputGrupo}
             onChange={onInputChangeGrupo}
             className="w-full text-gray-900"
@@ -495,9 +553,30 @@ export const FormOrdenado = () => {
                 {grup.grupo}
               </SelectItem>
             ))}
+          </Select>*/}
+          <Select
+            label="Seleccione los grupos asociados a la materia "
+            selectionMode="multiple"
+            placeholder="Seleccione grupo"
+            selectedKeys={valuesGrupos}
+            className="mb-5 mt-5 w-full text-gray-900"
+            onChange={handleSelectionChangeGrupos}
+            onClick={verificarMateria}
+          >
+            {grupos.map((grupo) => (
+              <SelectItem
+                key={grupo.id}
+                value={grupo.grupo}
+                textValue={grupo.grupo}
+              >
+                {grupo.grupo}
+              </SelectItem>
+            ))}
           </Select>
           <br />
+        </div>
 
+        <div className="mt-10 ml-5 mx-auto w-full sm:w-1/2 p-5">
           {/*AMBIENTE */}
 
           <label className="text-ms text-gray-900">Ambiente*:</label>
@@ -505,13 +584,18 @@ export const FormOrdenado = () => {
           <Select
             value={inputAmbiente}
             onChange={onInputChangeAmbiente}
+            onClick={verificarCapacidad}
             className="w-full"
             aria-label="Selecciona una ambiente"
             placeholder="Seleccione una opcion..."
           >
-            {ambientes.map((ambiente) => (
-              <SelectItem key={ambiente.id} value={ambiente.id}>
-                {ambiente.nombre}
+            {optionsAmbiente.map((ambiente) => (
+              <SelectItem
+                className="text-smtext-xs"
+                key={ambiente.value}
+                value={ambiente.label}
+              >
+                {ambiente.label}
               </SelectItem>
             ))}
           </Select>
@@ -552,7 +636,7 @@ export const FormOrdenado = () => {
           {/*BOTONES */}
 
           <div className="flex gap-5 items-center">
-            <Button size="lg" className="w-full  mb-10" color="primary">
+            <Button size="lg" className="w-full  mb-10" color="primary" onClick={onInputChangeCancelar}>
               Cancelar
             </Button>
             <Button
@@ -560,9 +644,10 @@ export const FormOrdenado = () => {
               size="lg"
               className="w-full mb-10"
               color="primary"
+              disabled={isButtonDisabled}
             >
               {" "}
-              Enviar{" "}
+              {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
             </Button>
           </div>
         </div>

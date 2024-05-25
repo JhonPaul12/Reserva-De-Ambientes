@@ -52,14 +52,19 @@ class User extends Authenticatable
     public function rols(): BelongsToMany
     {
         return $this->belongsToMany(Rol::class, 'rol_user');
-    }  
-   
+    }
+
     public function solicitudes(): BelongsToMany
     {
         return $this->belongsToMany(Solicitud::class, 'solicitud_user');
     }
     public function materias()
     {
-        return $this->hasMany(Materia::class );
+        return $this->hasMany(Materia::class,'user_id' );
+    }
+
+    public function notificaciones()
+    {
+        return $this->hasMany(Notificacion::class,'id_usuario');
     }
 }

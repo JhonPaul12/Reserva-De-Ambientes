@@ -16,18 +16,17 @@ class Solicitud extends Model
         'estado',
         'numero_estudiantes',
         'id_materia',
-        'id_grupo',
         'ambiente_id'
     ];
-    
+
     public function materia()
     {
         return $this->belongsTo(Materia::class, 'id_materia');
     }
 
-    public function grupo()
+    public function grupos()
     {
-        return $this->belongsTo(Grupo::class);
+        return $this->belongsToMany(Grupo::class, 'grupo_solicitud');
     }
     public function ambiente(){
         return $this->belongsTo(Ambiente::class);
@@ -38,8 +37,15 @@ class Solicitud extends Model
         return $this->belongsToMany(User::class, 'solicitud_user');
     }
     public function periodos()
-{
+    {
     return $this->belongsToMany(Periodo::class,'periodo_solicitud');
-}
+    }
 
+    public function notificaciones()
+    {
+        return $this->hasMany(Notificacion::class,'id_solicitud');
+    }
+    public function periodo_solicitud(){
+        return $this->hasMany(Periodo_Solicitud::class,'solicitud_id');
+    }
 }

@@ -143,4 +143,40 @@ class UserController extends Controller
         return response()->json($grupos, 200);
     }
 
+
+    public function showSolicitudes($id)
+{
+    // Encuentra el usuario por ID
+    $user = User::find($id);
+
+    // Si el usuario no existe, devuelve un error
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    // Obtiene las solicitudes del usuario
+    $solicitudes = $user->solicitudes;
+
+    // Devuelve las solicitudes
+    return response()->json($solicitudes, 200);
+}
+
+
+public function showGrupos($id)
+{
+    // Encuentra la materia por ID
+    $materia = Materia::find($id);
+
+    // Si la materia no existe, devuelve un error
+    if (!$materia) {
+        return response()->json(['message' => 'Materia no encontrada'], 404);
+    }
+
+    // Obtiene los grupos de la materia
+    $grupos = $materia->grupos;
+
+    // Devuelve los grupos
+    return response()->json($grupos, 200);
+}
+
 }

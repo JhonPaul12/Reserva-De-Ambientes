@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap");
 @tailwind base;
 @tailwind components;
@@ -30,7 +26,7 @@
   }
 
   .login__form {
-    @apply container bg-stone-900 py-8 px-6 max-w-[500px] w-full rounded-lg;
+    @apply container bg-azul py-8 px-6 max-w-[500px] w-full rounded-lg;
   }
 
   .dashboard {

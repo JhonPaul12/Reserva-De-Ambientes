@@ -16,8 +16,48 @@ class AmbienteSeeder extends Seeder
     {
         Ambiente::create([
             'nombre' => '690A',
-            'tipo' => 'aula regular',
-            'ubicacion' => 'cerca de la biblioteca',
+            'tipo' => 'Aula',
+            'ubicacion' => 'EDIFICIO ACADÉMICO 2 PLANTA BAJA',
+            'capacidad' => 140,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Ambiente::create([
+            'nombre' => '690B',
+            'tipo' => 'Aula',
+            'ubicacion' => 'EDIFICIO ACADÉMICO 2 PLANTA BAJA',
+            'capacidad' => 140,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Ambiente::create([
+            'nombre' => '690C',
+            'tipo' => 'Aula',
+            'ubicacion' => 'EDIFICIO ACADÉMICO 2 PLANTA BAJA',
+            'capacidad' => 140,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Ambiente::create([
+            'nombre' => '691A',
+            'tipo' => 'Aula',
+            'ubicacion' => 'EDIFICIO ACADÉMICO 2 PRIMER PISO',
+            'capacidad' => 140,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Ambiente::create([
+            'nombre' => '691B',
+            'tipo' => 'Aula',
+            'ubicacion' => 'Edificio Central',
+            'capacidad' => 140,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Ambiente::create([
+            'nombre' => '691C',
+            'tipo' => 'Aula',
+            'ubicacion' => 'EDIFICIO ACADÉMICO 2 PRIMER PISO',
             'capacidad' => 140,
             'created_at' => now(),
             'updated_at' => now(),
@@ -25,17 +65,17 @@ class AmbienteSeeder extends Seeder
 
         Ambiente::create([
             'nombre' => 'Sala de juntas',
-            'tipo' => 'Oficina',
-            'ubicacion' => 'Piso 7',
+            'tipo' => 'Multifuncional',
+            'ubicacion' => 'BIBLIOTECA FCYT',
             'capacidad' => 10,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         Ambiente::create([
-            'nombre' => 'Auditorio principal',
-            'tipo' => 'Auditorio',
-            'ubicacion' => 'Piso 2',
+            'nombre' => 'Laboratorio 1',
+            'tipo' => 'Laboratorio',
+            'ubicacion' => 'AULAS INFLAB',
             'capacidad' => 300,
             'created_at' => now(),
             'updated_at' => now(),

@@ -10,9 +10,13 @@ use App\Http\Controllers\PeriodoController;
 use App\Http\Controllers\ReglaController;
 use App\Http\Controllers\RegexcCotroller;
 use App\Http\Controllers\Reserva\ReservaController;
-use App\Http\Controllers\Solicitud\SolicitudController;
+use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\AmbientereglaController;
+use App\Http\Controllers\Periodo_SolicitudController;
 use App\Models\Periodo;
+use App\Models\Solicitud;
 
 /*Route::resource('/ambiente', AmbienteController::class);
 Route::resource('/regla',ReglaController::class);
@@ -39,12 +43,12 @@ Route::get('/ambiente',[AmbienteController::class,'index']);
 Route::get('/ambiente/{id}',[AmbienteController::class,'show']);
 Route::post('/ambiente',[AmbienteController::class,'store']);
 Route::put('/ambiente/{id}',[AmbienteController::class,'update']);
-Route::delete('/solicitud/{id}',[AmbienteController::class,'destroy']);
+Route::delete('/ambiente/{id}',[AmbienteController::class,'destroy']);
 
 //periodo
 Route::get('/periodo',[PeriodoController::class,'index']);
 Route::get('/periodo/{id}',[PeriodoController::class,'show']);
-Route::post('/periodo',[PeriodoController::class,'store']);
+Route::post('/periodo',[PeriodoController::class,'storeNew']);
 Route::put('/periodo/{id}',[PeriodoController::class,'update']);
 Route::delete('/periodo/{id}',[PeriodoController::class,'destroy']);
 //Route::get('/periodo/{id}',[PeriodoController::class,'show']);
@@ -52,6 +56,8 @@ Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorar
 Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
 Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
+Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
+Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
@@ -64,6 +70,12 @@ Route::get('/regla/{id}',[ReglaController::class,'show']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
 Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
+//regla-Ambiente
+Route::get('/ambiente-regla',[AmbientereglaController::class,'index']);
+//Route::get('/regla/{id}',[ReglaController::class,'show']);
+Route::post('/ambiente-regla',[AmbientereglaController::class,'store']);
+//Route::put('/regla/{id}',[ReglaController::class,'update']);
+//Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
 //regExc
 Route::get('/regexc',[RegexcCotroller::class,'index']);
 Route::get('/regexc/{id}',[RegexcCotroller::class,'show']);
@@ -80,6 +92,13 @@ Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
 Route::get('/solicitud/guardar',[SolicitudController::class,'mostrarGuardado']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
+Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
+
+//NOTIFICACIONES(NUEVO)
+Route::get('/notificacion',[NotificacionController::class,'index']);
+Route::post('/notificacion',[NotificacionController::class,'store']);
+Route::get('/notificacion/{id}',[NotificacionController::class,'show']);
+Route::delete('/notificacion/{id}',[NotificacionController::class,'destroy']);
 //reserva
 
 Route::post('/reserva', [ReservaController::class, 'store']);
@@ -101,7 +120,15 @@ Route::get('/usuario/{id}', [UserController::class, 'show']);
 //mostrar materia user
 Route::get('/usuario/materias/{id}', [UserController::class, 'showMaterias']);
 //mostrar grupos de materia de docente
+Route::get('/docentes/solicitudes/{id}', [UserController::class, 'showSolicitudes']);
 Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGruposDeMateriaDeDocente']);
+//ruta para devolver grupos dado un id materia
+Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
+
+
+
+
+
 
 
 Route::get('/showAllDocentes/{nombre}', [SolicitudController::class, 'showAllDocentes']);
@@ -134,3 +161,20 @@ Route::middleware(['auth:sanctum','rol.admin'])->group(function(){
 
 
 
+Route::get('/periodosAsignados/{id}',[PeriodoController::class,'listarPeriodos']);
+
+Route::post('/cambiarEstadoUser/{id}',[SolicitudController::class,'cambiarEstadoUser']);
+Route::post('/cambiarEstadoAdmin/{id}',[SolicitudController::class,'cambiarEstadoAdmin']);
+
+Route::get('/periodoSolicitud', [Periodo_SolicitudController::class, 'index']);
+
+Route::get('/periodoSolicitud2', [Periodo_SolicitudController::class, 'index2']);
+
+Route::get('/nombre_usuario/{nombre}', [Periodo_SolicitudController::class, 'nombre_usuario']);
+
+
+Route::get('/notificacion2',[NotificacionController::class,'index2']);
+
+Route::get('/nombre_usuario_Notificacion/{nombre}',[NotificacionController::class,'nombre_usuario_Notificacion']);
+
+Route::get('/solicitudID/{nombre}',[NotificacionController::class,'solicitudID']);

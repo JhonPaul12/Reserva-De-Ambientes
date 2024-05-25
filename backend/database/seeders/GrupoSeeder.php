@@ -15,35 +15,68 @@ class GrupoSeeder extends Seeder
      */
     public function run()
     {
-        //intro - lety
+        //Introduccion a la Programacion 
+        //Carla
         Grupo::create([
             'grupo' =>1,
+            'materia_id' => 1
+        ]);
+        //Vladimir
+        Grupo::create([
+            'grupo' =>10,
             'materia_id' => 2
         ]);
-        //elemento-rosmary
+        //Leticia
+        Grupo::create([
+            'grupo' =>2,
+            'materia_id' => 3
+        ]);
+        //Ustariz
+        Grupo::create([
+            'grupo' =>3,
+            'materia_id' => 4
+        ]);
+        //Henry 
+        Grupo::create([
+            'grupo' =>4,
+            'materia_id' => 5
+        ]);
+        // Montañio
+        Grupo::create([
+            'grupo' =>6,
+            'materia_id' => 6
+        ]);
+        //Carla
+        Grupo::create([
+            'grupo' =>6,
+            'materia_id' => 1
+        ]);
+        //Vladimir
+        Grupo::create([
+            'grupo' =>7,
+            'materia_id' => 2
+        ]);
+        //elementos
         Grupo::create([
             'grupo' => 1,
             'materia_id' => 7
         ]);
-        //arqui-acha
-        Grupo::create([
-            'grupo' =>1,
-            'materia_id' => 11
-        ]);
-        //programacion-rosemary
-        Grupo::create([
-            'grupo' => 1,
-            'materia_id' => 12
-        ]);
-        //
-
-
-
-
         Grupo::create([
             'grupo' => 2,
-            'materia_id' => 1
+            'materia_id' => 8
         ]);
-        
+        Grupo::create([
+            'grupo' => 3,
+            'materia_id' => 8
+        ]);
+        Grupo::create([
+            'grupo' => 5 ,
+            'materia_id' => 9
+        ]);;
+        //Programacion Web
+        Grupo::create([
+            'grupo' => 1,
+            'materia_id' => 10
+        ]);        
     }
 }

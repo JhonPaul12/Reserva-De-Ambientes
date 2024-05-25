@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Regla;
+use App\Http\Controllers\PeriodoController;
+
 class ReglaController extends Controller
 {
     public function index()
@@ -12,28 +14,98 @@ class ReglaController extends Controller
         return response()->json($regla, 200);
     }
 
-
     public function store(Request $request)
-{
-    $datos = $request->validate([
-        'ambiente_id' =>'required|unique:reglas',
-        'fecha_inicial' => 'required|date',
-        'fecha_final' => 'required|date',
-    ]);
+    {
+        $datos = $request->validate([
+            'nombre' => 'required|string|max:255|unique:reglas,nombre',
+            'fecha_inicial' => 'required|date',
+            'fecha_final' => 'required|date|after_or_equal:fecha_inicial',
+            'activa' => 'required|boolean',
+        ]);
 
-    // Verificar si ya existe una regla para el mismo ambiente
-    $reglaExistente = Regla::where('ambiente_id', $datos['ambiente_id'])->exists();
+        // Verificación adicional para nombres "primer semestre" y "segundo semestre"
+        if (in_array($datos['nombre'], ['Primer semestre', 'Segundo semestre'])) {
+            $fechaInicial = new \DateTime($datos['fecha_inicial']);
+            $fechaFinal = new \DateTime($datos['fecha_final']);
+            $interval = $fechaInicial->diff($fechaFinal);
 
-    if ($reglaExistente) {
-        return response()->json(['error' => 'Ya existe una regla para este ambiente'], 400);
+            if ($interval->m > 5 || ($interval->y == 1 && $interval->m == 0)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Las fechas para "primer semestre" o "segundo semestre" deben ser menores a 6 meses.',
+                ], 422);
+            }
+        }
+
+        // Verificación adicional para nombres "invierno" y "verano"
+        if (in_array($datos['nombre'], ['Invierno', 'Verano'])) {
+            $fechaInicial = new \DateTime($datos['fecha_inicial']);
+            $fechaFinal = new \DateTime($datos['fecha_final']);
+            $interval = $fechaInicial->diff($fechaFinal);
+
+            if ($interval->m > 1 || ($interval->m == 1 && $interval->d > 0) || $interval->y >= 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Las fechas para "invierno" o "verano" deben ser de máximo un mes.',
+                ], 422);
+            }
+        }
+
+        try {
+            // Crear la regla
+            $regla = Regla::create($datos);
+
+            // Ejecutar el método store de AmbienteReglaController
+            $ambienteReglaController = new AmbientereglaController();
+            $response = $ambienteReglaController->store(new Request([
+                'id_regla' => $regla->id
+            ]));
+
+            // Verificar la respuesta del método store de AmbienteReglaController
+            if ($response->getStatusCode() === 201) {
+                return response()->json([
+                    'success' => true,
+                    'data' => $regla,
+                    'message' => 'Regla y relaciones regla_ambiente creadas con éxito'
+                ], 201);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al crear las relaciones regla_ambiente'
+                ], $response->getStatusCode());
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear la regla: ' . $e->getMessage()
+            ], 500);
+        }
     }
+    
 
-    // Si no hay regla existente, crear una nueva regla
-    $regla = new Regla($datos);
-    $regla->save();
+    // public function store(Request $request)
+    // {
+    //     $datos = $request->validate([
+    //         'nombre' => 'required|string|max:255|unique:reglas,nombre',
+    //         'fecha_inicial' => 'required|date',
+    //         'fecha_final' => 'required|date|after_or_equal:fecha_inicial',
+    //         'activa' => 'required|boolean',
+    //     ]);
 
-    return response()->json($regla, 201);
-}
+    //     try {
+    //         $regla = Regla::create($datos);
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $regla,
+    //             'message' => 'Regla creada con éxito'
+    //         ], 201);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Error al crear la regla: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
 
     public function show($id)
@@ -56,12 +128,34 @@ class ReglaController extends Controller
 
     }
 
+
     public function destroy($id)
     {
-        $regla = Regla::find($id)->delete();
+        $regla = Regla::find($id);
+
+        if (!$regla) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontró la regla.'
+            ], 404);
+        }
+
+
+        $idAmbiente = $regla->ambiente_id;
+
+
+        $regla->delete();
+
+
+        $periodoController = new PeriodoController();
+
+
+        $periodoController->destroy($idAmbiente);
+
         return response()->json([
-            'success'=>true,
-            'data'=> $regla
-        ],200);
+            'success' => true,
+            'message' => 'La regla y los periodos asociados al ambiente se han eliminado correctamente.'
+        ], 200);
     }
+
 }

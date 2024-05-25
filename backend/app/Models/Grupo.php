@@ -13,4 +13,9 @@ class Grupo extends Model
     {
         return $this->belongsTo('materias');
     }
+
+    public function solicitudes()
+    {
+        return $this->belongsToMany(Solicitud::class, 'grupo_solicitud');
+    }
 }

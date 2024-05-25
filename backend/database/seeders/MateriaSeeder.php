@@ -22,95 +22,48 @@ class MateriaSeeder extends Seeder
         //2
         Materia::create([
             'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 6	
+            'user_id' => 2	
         ]);
         //3
         Materia::create([
             'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 2	
+            'user_id' => 3	
         ]);
         //4
         Materia::create([
             'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 7	
+            'user_id' => 4	
         ]);
         //5
         Materia::create([
             'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 8
+            'user_id' => 5
         ]);
         //6
         Materia::create([
             'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 9	
+            'user_id' => 6	
         ]);
         //7
         Materia::create([
             'nombre_materia' => 'Elementos De Programacion y Estructura De Datos',
-            'user_id' => 10	
+            'user_id' => 7	
         ]);
         //8
         Materia::create([
             'nombre_materia' => 'Elementos De Programacion y Estructura De Datos',
-            'user_id' => 1
+            'user_id' => 3
         ]);
         //9
         Materia::create([
             'nombre_materia' => 'Elementos De Programacion y Estructura De Datos',
-            'user_id' => 11
+            'user_id' => 8
         ]);
         //10
         Materia::create([
-            'nombre_materia' => 'Arquitectura De Computadoras I',
-            'user_id' => 1	
+            'nombre_materia' => 'Programacion Web',
+            'user_id' => 2	
         ]);
-        //11
-        Materia::create([
-            'nombre_materia' => 'Arquitectura De Computadoras I',
-            'user_id' => 12	
-        ]);
-        //12
-
-        Materia::create([
-            'nombre_materia' => 'Programacion',
-            'user_id' => 10	
-        ]);
-        //13
-        Materia::create([
-            'nombre_materia' => 'Teoria De Grafos',
-            'user_id' => 3	
-        ]);
-        //14
-        Materia::create([
-            'nombre_materia' => 'Metodos Y Tecnicas De Programacion',
-            'user_id' => 4	
-        ]);
-        //15
-        Materia::create([
-            'nombre_materia' => 'Metodos Y Tecnicas De Programacion',
-            'user_id' => 15	
-        ]);
-        //16
-        Materia::create([
-            'nombre_materia' => 'Metodos Y Tecnicas De Programacion',
-            'user_id' => 3	
-        ]);
-        //17
-        Materia::create([
-            'nombre_materia' => 'Organizacion Y Metodos',
-            'user_id' => 14	
-        ]);
-        //18
-        Materia::create([
-            'nombre_materia' => 'Algoritmos Avanzados',
-            'user_id' => 1	
-        ]);
-        //19
-        Materia::create([
-            'nombre_materia' => 'Programacion Funcional',
-            'user_id' => 5	
-        ]);
-
      
     }
 }

@@ -1,32 +1,76 @@
-export interface Solicitud {
-    id: number;
-    motivo: string;
-    fecha_solicitud: string;
-    hora_inicio: string;
-    hora_fin: string;
-    estado: string,
-    numero_estudiantes: number,
-    ambiente_id:number,
-    created_at: string,
-    updated_at: string,
-    pivot: {
-        user_id: number,
-        solicitud_id: number
-    },
-    materia: {
-      id: number,
-      nombre_materia: string,
-    },
-    ambiente: {
-      id: number,
-      nombre: string,
-      tipo: string,
-      ubicacion: string,
-      capacidad: number,
-    },
-    docente: {
-      id: number,
-      nombre: string,
-      apellido: string
-    }
-  }
+export interface CReservaD {
+  solicitud_id: number;
+  solicitud: Solicitud;
+  periodos: Periodo[];
+}
+
+interface Solicitud {
+  id: number;
+  motivo: string;
+  fecha_solicitud: string;
+  estado: string;
+  numero_estudiantes: number;
+  id_materia: number;
+  id_grupo: number;
+  ambiente_id: number;
+  created_at: string;
+  updated_at: string;
+  materia: Materia;
+  ambiente: Ambiente;
+}
+
+interface Materia {
+  id: number;
+  nombre_materia: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  user: User;
+}
+
+interface User {
+  id: number;
+  name: string;
+  apellidos: string;
+  telefono: string;
+  codigo_sis: string;
+  email: string;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Ambiente {
+  id: number;
+  nombre: string;
+  tipo: string;
+  ubicacion: string;
+  capacidad: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Periodo {
+  periodo_id: number;
+  periodo: PeriodoDetail;
+}
+
+interface PeriodoDetail {
+  id: number;
+  id_ambiente: number;
+  id_horario: number;
+  estado: string;
+  fecha: string;
+  created_at: string;
+  updated_at: string;
+  horario: Horario;
+}
+
+interface Horario {
+  id: number;
+  dia: string;
+  hora_inicio: string;
+  hora_fin: string;
+  created_at: string;
+  updated_at: string;
+}
