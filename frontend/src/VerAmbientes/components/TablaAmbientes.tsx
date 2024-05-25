@@ -14,7 +14,7 @@ interface Props {
 }
 export const TablaAmbientes = ({ ambientes }: Props) => {
   return (
-    <div className=" contenedor-table ">
+    <div className="mt-10 sm:mx-auto w-full max-w-screen-md">
       <label className='ml-10 text-3xl font-bold text-center text-gray-900'>LISTA DE AMBIENTES</label>
       <section className="mx-6 my-4  ">
         <Table
@@ -22,34 +22,34 @@ export const TablaAmbientes = ({ ambientes }: Props) => {
           aria-label="Example table with dynamic content"
         >
           <TableHeader>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Id
+            <TableColumn className="text-center text-sm bg-slate-300">
+              ID
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Nombre
+            <TableColumn className="text-center text-sm bg-slate-300">
+              NOMBRE
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Ubicacion
+            <TableColumn className="text-center text-sm bg-slate-300">
+              UBICACIÓN
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Capacidad
+            <TableColumn className="text-center text-sm bg-slate-300">
+              CAPACIDAD
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Tipo
+            <TableColumn className="text-center text-sm bg-slate-300">
+              TIPO
             </TableColumn>
           </TableHeader>
           <TableBody>
             {ambientes.map((ambiente) => (
               <TableRow key={ambiente.id}>
-                <TableCell className=" text-base">{ambiente.id}</TableCell>
-                <TableCell className=" text-base">{ambiente.nombre}</TableCell>
-                <TableCell className=" text-base">
+                <TableCell className=" text-xs">{ambiente.id}</TableCell>
+                <TableCell className=" text-xs">{ambiente.nombre}</TableCell>
+                <TableCell className=" text-xs">
                   {ambiente.ubicacion}
                 </TableCell>
-                <TableCell className=" text-base">
+                <TableCell className=" text-xs">
                   {ambiente.capacidad}
                 </TableCell>
-                <TableCell className="text-base">{ambiente.tipo}</TableCell>
+                <TableCell className="text-xs">{ambiente.tipo}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -49,8 +49,8 @@ export const TodasSol = () => {
     }
   };
   const statusColorMap: Record<string, ChipProps["color"]>  = {
-    Aceptado: "success",
-    Cancelado: "danger",
+    Aceptada: "success",
+    Cancelada: "danger",
     Rechazado: "danger",
     Pendiente: "danger",
   };
@@ -61,31 +61,31 @@ export const TodasSol = () => {
       <label className="ml-10 text-3xl font-bold text-center text-gray-900">
         HISTORIAL DE RESERVAS
       </label>
-      <Table removeWrapper className="w-80% mt-5" aria-label="Tabla de datos">
+      <Table  className="w-80% mt-5 mb-8" aria-label="Tabla de datos">
         <TableHeader>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            Ambiente
+            AMBIENTE
           </TableColumn>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            Docente
+            DOCENTE
           </TableColumn>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            Materia
+            MATERIA
           </TableColumn>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            H. Inicio
+            INICIO
           </TableColumn>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            H. Final
+            FIN
           </TableColumn>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            Fecha
+          &nbsp; &nbsp; FECHA &nbsp; &nbsp; 
           </TableColumn>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            Nro. Est.
+            PERSONAS
           </TableColumn>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            Estado
+            ESTADO
           </TableColumn>
         </TableHeader>
         <TableBody>
@@ -101,22 +101,22 @@ export const TodasSol = () => {
                 {solicitud.solicitud.materia.nombre_materia}
               </TableCell>
               <TableCell className="text-xs border-0 text-black">
-                {solicitud.periodos[0].periodo.horario.hora_inicio}
+                {solicitud.periodos[0].periodo.horario.hora_inicio.slice(0, -3)}
               </TableCell>
               <TableCell className="text-xs border-0 text-black">
                 {
                   solicitud.periodos[solicitud.periodos.length - 1].periodo
-                    .horario.hora_fin
+                    .horario.hora_fin.slice(0, -3)
                 }
               </TableCell>
               <TableCell className="text-xs border-0 text-black">
-                {solicitud.periodos[0].periodo.fecha}
+                {solicitud.periodos[0].periodo.fecha} 
               </TableCell>
               <TableCell className="text-xs border-0 text-black">
                 {solicitud.solicitud.numero_estudiantes}
               </TableCell>
               <TableCell className="text-xs border-0 text-black">
-                {solicitud.solicitud.estado === "Rechazado" ? (
+                {solicitud.solicitud.estado === "Cancelada" ? (
                   
                   <button
                   >

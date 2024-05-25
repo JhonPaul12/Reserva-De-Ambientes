@@ -457,7 +457,7 @@ export const FormOrdenado = () => {
           await createSolicitud(
             inputMotivo,
             inputFecha,
-            "Aceptado",
+            "Aceptada",
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
@@ -469,7 +469,7 @@ export const FormOrdenado = () => {
           await createSolicitud(
             inputMotivo,
             inputFecha,
-            "Aceptado",
+            "Aceptada",
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
