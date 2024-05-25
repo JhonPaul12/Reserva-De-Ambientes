@@ -15,12 +15,10 @@ class CreateRolUserTable extends Migration
     {
         Schema::create('rol_user', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('rol_id');
-            $table->unsignedBigInteger('user_id');
-            $table->timestamps();
-     
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+            $table->foreignId('rol_id')->constrained()->onDelete('cascade');
         });
-    }
+    } 
 
     /**
      * Reverse the migrations.

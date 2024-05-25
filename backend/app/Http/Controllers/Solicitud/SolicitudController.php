@@ -235,33 +235,33 @@ public function editar(Request $request, $id)
 
 
 
-    public function postDocente(Request $request){
+    // public function postDocente(Request $request){
        
-        $usuario = new User();
-        $usuario->name      = $request->name;          
-        $usuario->apellido  = $request->apellido;
-        $usuario->telefono  = $request->telefono;
-        $usuario->codigo_sis= $request->codigo_sis;
-        $usuario->email     = $request->email;
-        $usuario->password  = $request->password;
-        $usuario->solicitud_user = $request->solicitud_user;
+    //     $usuario = new User();
+    //     $usuario->name      = $request->name;          
+    //     $usuario->apellido  = $request->apellido;
+    //     $usuario->telefono  = $request->telefono;
+    //     $usuario->codigo_sis= $request->codigo_sis;
+    //     $usuario->email     = $request->email;
+    //     $usuario->password  = $request->password;
+    //     $usuario->solicitud_user = $request->solicitud_user;
 
-        $usuario->save();
+    //     $usuario->save();
 
-        $arr = [];
-        $solicitudes = $request->solicitudes;
+    //     $arr = [];
+    //     $solicitudes = $request->solicitudes;
 
 
-        foreach($solicitudes as $solicitud){
+    //     foreach($solicitudes as $solicitud){
 
-            $arr[] = [
+    //         $arr[] = [
                 
-            ];
-        }
+    //         ];
+    //     }
 
 
-        return $usuario;
-    }
+    //     return $usuario;
+    // }
     
     public function showAllDocentes($nombreDocente){
         $users = User::where('name', $nombreDocente)
@@ -318,4 +318,7 @@ public function editar(Request $request, $id)
         return response()->json($todasLasSolicitudes, 200);
     }
     
+
+    
+
 }

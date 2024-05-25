@@ -25,7 +25,10 @@ class AuthRegisterRequest extends FormRequest
     {
         return [
             "name" => "required|min:4",
-            "email"=> "required|email|unique:user,email",
+            'apellidos' => 'nullable|string|max:50',
+            'telefono' => 'nullable|string|max:15',
+            'codigo_sis' => 'required|string|max:10|unique:users,codigo_sis',
+            "email"=> "required|email|unique:users,email",
             "password"=> "required|min:6|max:18"
         ];
     }
@@ -33,14 +36,15 @@ class AuthRegisterRequest extends FormRequest
     public function messages()
     {
      return [
-         "name.required" => "El campo es requerido",
-         "name.min" => "El nombre es corto",
-         "email.required"=> "El campo email es requerido",
-         "email.email"=> "Ingrese un correo valido",
-         "email.unique"=> "Ya se registro un usuario con este correo",
-        "password.required"=> "El campo es requerido",
-        "password.min"=> "El password es muy corta",
-        "password.max"=> "El password es muy larga",
+        "name.required" => "El campo nombre es requerido",
+        "name.min" => "El nombre es muy corto",
+        "email.required" => "El campo email es requerido",
+        "email.email" => "Ingrese un correo valido",
+        "email.unique" => "Ya se registro un usuario con este correo",
+        "password.required" => "El campo password es requerido",
+        "password.min" => "La contraseña es muy corta",
+        "password.max" => "La contraseña es muy larga",
+        'codigo_sis.unique' => 'Ya se registro un codigo sis ',
      ];   
     }
 }
