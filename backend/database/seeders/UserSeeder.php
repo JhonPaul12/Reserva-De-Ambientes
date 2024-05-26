@@ -14,15 +14,15 @@ class UserSeeder extends Seeder
     public function run()
     {
         //id 1
-        // User :: create([
-        //     'name' => 'LETICIA',
-        //     'apellidos' => 'BLANCO COCA',
-        //     'telefono' => '6' . rand(1000000, 9999999),
-        //     'codigo_sis' => '202400535', // '1234567890' => '1234567890
-        //     'email' => 'leticia@gmail.com',
-        //     'password' => bcrypt('12345678')
+        User :: create([
+            'name' => 'LETICIA',
+            'apellidos' => 'BLANCO COCA',
+            'telefono' => '6' . rand(1000000, 9999999),
+            'codigo_sis' => '202400535', // '1234567890' => '1234567890
+            'email' => 'leticia@gmail.com',
+            'password' => bcrypt('12345678')
 
-        // ]);
+        ]);
         //id 2	
         // User :: create([
         //     'name' => 'VLADIMIR ABEL',

@@ -146,6 +146,7 @@ Route::post('/auth/register',[ AuthController::class,'register']);
 Route::post('/auth/login',[ AuthController::class,'login']);
 Route::post('/auth/register-admin', [AuthController::class, 'registerAdmin']);
 
+
 Route::middleware(['auth:sanctum'])->group(function (){
     Route::get('/solicitud',[SolicitudController::class,'index']);
     Route::post('/auth/logout',[ AuthController::class,'logout']);
