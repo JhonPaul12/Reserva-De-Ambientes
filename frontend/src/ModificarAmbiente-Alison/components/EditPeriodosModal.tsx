@@ -16,12 +16,13 @@ export const EditPeriodosModal = ({ ambiente }) => {
   const [periodos, setPeriodos] = useState<[]>([]);
   const [checkedPeriodos, setCheckedPeriodos] = useState({});
 
+  const [regla, setRegla] = useState({});
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFinal, setFechaFinal] = useState("");
+
   useEffect(() => {
-    if (isOpen) getAmbiente();
+    if (isOpen) getAmbiente(), obtenerRegla();
   }, [isOpen]);
-  const imprimir = () => {
-    console.log(periodos);
-  };
 
   const getAmbiente = async () => {
     fetch(`http://127.0.0.1:8000/api/periodosAsignados/${ambiente.id}`)
@@ -32,9 +33,23 @@ export const EditPeriodosModal = ({ ambiente }) => {
   };
 
   const handleCheckboxesChange = (newCheckedItems) => {
-    setCheckedPeriodos(newCheckedItems); // Actualizar el estado de los checkboxes marcados
+    setCheckedPeriodos(newCheckedItems); // Actualizar el estado de los checkboxes marcaos
   };
 
+  const guardar = async () => {
+    console.log(checkedPeriodos);
+    console.log(regla);
+  };
+
+  const obtenerRegla = async () => {
+    fetch(`http://127.0.0.1:8000/api/regla-ambientes/${ambiente.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setRegla(data);
+        setFechaInicio(data.fecha_inicio);
+        setFechaFinal(data.fecha_fin);
+      });
+  };
   return (
     <>
       <div className="flex justify-center items-center">
@@ -63,12 +78,12 @@ export const EditPeriodosModal = ({ ambiente }) => {
                 <Button color="danger" variant="light" onPress={onClose}>
                   Cancelar
                 </Button>
-                {/* <Button color="primary" onPress={imprimir}>
-                  Action
+                <Button color="primary" onPress={guardar}>
+                  Guardar
                 </Button>
                 <Button onClick={() => console.log(checkedPeriodos)}>
                   Prueba
-                </Button> */}
+                </Button>
               </ModalFooter>
             </>
           )}
