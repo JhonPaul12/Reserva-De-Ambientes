@@ -154,3 +154,10 @@ Route::get('/notificacion2',[NotificacionController::class,'index2']);
 Route::get('/nombre_usuario_Notificacion/{nombre}',[NotificacionController::class,'nombre_usuario_Notificacion']);
 
 Route::get('/solicitudID/{nombre}',[NotificacionController::class,'solicitudID']);
+
+
+
+
+
+// Obtienes la regla pasando un ambiente
+Route::get('/regla-ambientes/{id_ambiente}', [AmbientereglaController::class, 'getReglaByAmbiente']);
