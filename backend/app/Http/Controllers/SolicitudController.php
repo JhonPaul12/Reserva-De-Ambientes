@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Solicitud\SolicitudRequest;
+use App\Http\Resources\Solicitud\SolicitudCollection;
+use App\Http\Resources\Solicitud\SolicitudResource;
 use App\Models\Solicitud;
 use App\Models\User;
 use App\Models\Excepcion;
@@ -33,7 +36,7 @@ class SolicitudController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SolicitudRequest $request)
     {
         $validador = Validator::make($request->all(), [
             'motivo' => 'required|max:250',
@@ -80,6 +83,7 @@ class SolicitudController extends Controller
 
         return response()->json($data, 201);
     }
+
     public function guardar(Request $request)
     {
         $validador = Validator::make($request->all(), [
@@ -255,7 +259,7 @@ class SolicitudController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(SolicitudRequest $request, $id)
     {
         $solicitud = Solicitud::find($id);
         if (!$solicitud) {

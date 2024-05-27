@@ -28,6 +28,7 @@ class AmbienteRequest extends FormRequest
             'tipo' => 'required|string|max:40',
             'ubicacion' => 'required|string|max:200',
             'capacidad' => 'required|integer|min:1',
+            'ambiente_id'=> 'required|exists:ambientes,id'  
         ];
     }
 }

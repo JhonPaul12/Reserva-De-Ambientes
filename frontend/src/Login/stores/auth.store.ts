@@ -24,16 +24,17 @@ interface authState {
 //Guardamos las funciones que cambian el estado
 interface Actions {
   login: (email: string, password: string) => Promise<void>;
+  checkAuthStatus: () => Promise<void>;
 }
 
-const storeApi: StateCreator<authState & Actions> = (set) => ({
+const storeApi: StateCreator<authState & Actions> = (set, get) => ({
   user: undefined,
   token: undefined,
   authStatus: "pending",
 
   login: async (email, password) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login", {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,6 +55,42 @@ const storeApi: StateCreator<authState & Actions> = (set) => ({
         authStatus: "not-auth",
       }));
       console.log(error);
+    }
+  },
+
+  checkAuthStatus: async () => {
+    const token = get().token;
+    if (!token) {
+      set(() => ({
+        user: undefined,
+        token: undefined,
+        authStatus: "not-auth",
+      }));
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/auth/checkToken",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      set(() => ({
+        user: data.user,
+        token: token,
+        authStatus: "auth",
+      }));
+    } catch (error) {
+      set(() => ({
+        user: undefined,
+        token: undefined,
+        authStatus: "not-auth",
+      }));
+      return;
     }
   },
 });

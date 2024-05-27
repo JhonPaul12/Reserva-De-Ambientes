@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Rol extends Model
 {
     use HasFactory;
-    protected $guarded = [];
+    protected $guarded = ['nombre_rol'];
     
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'rol_user');
+        return $this->belongsToMany(User::class, 'rol_user','rol_id','user_id');
     }
 }

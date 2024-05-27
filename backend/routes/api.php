@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AmbienteController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ExcepcionController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\PeriodoController;
@@ -83,12 +84,13 @@ Route::put('/regexc/{id}',[RegexcCotroller::class,'update']);
 Route::delete('/regexc/{id}',[RegexcCotroller::class,'destroy']);
 
 //solicitudes
-Route::get('/solicitud',[SolicitudController::class,'index']);
+
 Route::get('/solicitud/{id}',[SolicitudController::class,'show']);
 Route::post('/solicitud',[SolicitudController::class,'store']);
 Route::put('/solicitud/{id}',[SolicitudController::class,'update']);
 Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
+Route::get('/solicitud/guardar',[SolicitudController::class,'mostrarGuardado']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
 Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
 
@@ -98,7 +100,7 @@ Route::post('/notificacion',[NotificacionController::class,'store']);
 Route::get('/notificacion/{id}',[NotificacionController::class,'show']);
 Route::delete('/notificacion/{id}',[NotificacionController::class,'destroy']);
 //reserva
-Route::get('/reserva', [ReservaController::class, 'index']);
+
 Route::post('/reserva', [ReservaController::class, 'store']);
 Route::get('/reserva/{id}', [ReservaController::class, 'show']);
 Route::put('/reserva/{id}', [ReservaController::class, 'update']);
@@ -137,6 +139,29 @@ Route::post('/periodos',[PeriodoController::class,'stores']);
 Route::get('/allPeriodos', [PeriodoController::class, 'allPeriodos']);
 
 Route::put('/solicitud/editar/{id}', [SolicitudController::class, 'editar']);
+
+
+//autenticacion
+Route::post('/auth/register',[ AuthController::class,'register']);
+Route::post('/auth/login',[ AuthController::class,'login']);
+Route::post('/auth/register-admin', [AuthController::class, 'registerAdmin']);
+
+
+Route::middleware(['auth:sanctum'])->group(function (){
+    Route::get('/solicitud',[SolicitudController::class,'index']);
+    Route::post('/auth/logout',[ AuthController::class,'logout']);
+    Route::get('/auth/checkToken',[AuthController::class,'checkToken']);
+    
+});
+
+
+Route::middleware(['auth:sanctum','rol.admin'])->group(function(){
+    Route::post('/auth/admin-action', [AuthController::class, 'adminOnlyAction']);
+    Route::get('/reserva', [ReservaController::class, 'index']);
+});
+
+
+
 Route::get('/periodosAsignados/{id}',[PeriodoController::class,'listarPeriodos']);
 
 Route::post('/cambiarEstadoUser/{id}',[SolicitudController::class,'cambiarEstadoUser']);
