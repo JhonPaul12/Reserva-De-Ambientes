@@ -16,6 +16,7 @@ export const RootLayout = () => {
   if (authStatus === "not-auth") {
     return <Navigate to="/login" />;
   }
+
   return (
     <div>
       <SideMenu sideMenuOptions={sideMenuOptions} />

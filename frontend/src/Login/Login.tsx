@@ -14,9 +14,13 @@ export const Login = () => {
   if (authStatus === "pending") {
     checkAuthStatus();
   }
+
+  //Valido si el usuario ya es este autenticado lleva a admin por defecto
   if (authStatus === "auth") {
+    toast.success("Bienvenido");
     return <Navigate to="/admin" />;
   }
+  //Falta controlar cuadno sea admin o user
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
