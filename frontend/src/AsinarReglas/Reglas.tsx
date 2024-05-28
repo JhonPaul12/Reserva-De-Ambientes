@@ -33,7 +33,9 @@ export const Reglas = () => {
   };
 
   //Lsita de checkbox
-  const handleCheckboxChange = (checkedItems) => {
+  const handleCheckboxChange = (
+    checkedItems: Record<string, { id: number; dia: string; fijo?: boolean }>
+  ) => {
     setCheckedItems(checkedItems);
   };
 
@@ -43,7 +45,7 @@ export const Reglas = () => {
   };
 
   //Lsita de Reglas
-  const handleReglaChange = (selectedValue: string) => {
+  const handleReglaChange = (selectedValue) => {
     setSelectedRegla(selectedValue);
   };
 
@@ -98,8 +100,13 @@ export const Reglas = () => {
           periodos: datos.periodos,
         });
         if (response.data.errores !== undefined) {
-          console.log(response.data.errores);
-          toast.error("Ya existen periodos con este ambiente y horario");
+          if (response.data.success !== undefined) {
+            resetValues();
+            toast.success("Guardado con exito");
+          } else {
+            console.log(response.data);
+            toast.error("Los peridos seleccionados ya estan asignados");
+          }
         } else {
           resetValues();
           toast.success("Guardado con exito");
@@ -152,7 +159,7 @@ export const Reglas = () => {
       <div className="mt-10 mx-10 text-negro flex flex-col text-center">
         <h1 className="text-3xl font-bold"> Asignar Horarios</h1>
         <div className="flex flex-row ">
-          <p className="text-2xl font-bold m-auto my-9">Seleccionar Regla</p>
+          <p className="text-2xl font-bold m-auto my-9">Seleccionar Gestion</p>
           <ListaReglas onSelectChange={handleReglaChange} reset={resetRegla} />
           <p className="text-2xl font-bold mx-5 mt-9">Seleccionar Ambiente</p>
           <ListaAmbientes
@@ -160,7 +167,11 @@ export const Reglas = () => {
             reset={resetAmbiente}
           />
         </div>
-        <MenuCheckBox prueba={handleCheckboxChange} reset={resetCheckboxes} />
+        <MenuCheckBox
+          prueba={handleCheckboxChange}
+          reset={resetCheckboxes}
+          selectedAmbiente={selectedAmbiente}
+        />
         <Button
           className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={guardar}

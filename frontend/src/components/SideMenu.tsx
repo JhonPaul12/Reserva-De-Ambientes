@@ -4,6 +4,8 @@ import { IoLogoPolymer } from "react-icons/io";
 import { Link, Outlet, useLocation } from "react-router-dom";
 
 import "./sideMenu.css";
+import { useAuthStore } from "../Login/stores/auth.store";
+import { Button } from "@nextui-org/react";
 
 interface SideMenuProps {
   sideMenuOptions: {
@@ -19,6 +21,9 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
   const [submenuStates, setSubmenuStates] = useState<Record<number, boolean>>(
     {}
   );
+
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
 
   const location = useLocation();
 
@@ -119,6 +124,22 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
                 </li>
               ))}
             </ul>
+          </div>
+          <div className="flex flex-col  mt-24">
+            <div className="sidemenu__avatar">
+              <p>{user?.name}</p>
+              <p>{user?.email}</p>
+              <Button
+                onClick={logout}
+                className="mt-5 text-azul"
+                variant="light"
+                fullWidth
+                color="danger"
+              >
+                {" "}
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </div>

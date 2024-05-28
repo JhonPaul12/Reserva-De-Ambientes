@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/insert-rol-user', function () {
+    DB::table('rol_user')->insert([
+        'rol_id' => 1,
+        'user_id' => 2
+    ]);
 });

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { horarios, dias } from "./Periodos";
 import "./MenuCheckBox.css";
+import { Button } from "@nextui-org/react";
 //import { toast } from "sonner";
 
 export const ModalMenuCheckBox = ({ Periodos, onCheckboxesChange }) => {
@@ -61,6 +62,10 @@ export const ModalMenuCheckBox = ({ Periodos, onCheckboxesChange }) => {
 
   return (
     <div>
+      <Button onPress={() => console.log(checkedItems)} className="bg-primary">
+        {" "}
+        Prueba{" "}
+      </Button>
       <table>
         <thead>
           <tr>
