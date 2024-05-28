@@ -19,7 +19,7 @@ export const sideMenuOptions = [
       //},
       {
         path: "reservas",
-        name: "Reservas",
+        name: "Ver Reservas",
         icon: <LuLayers />,
       },
       {
@@ -37,7 +37,7 @@ export const sideMenuOptions = [
     subMenuOptions: [
       {
         path: "lista-docentes",
-        name: "Docentes Registrados",
+        name: "Ver Docentes",
         icon: <LuLayers />,
       },
       {
@@ -70,7 +70,7 @@ export const sideMenuOptions = [
       },
       {
         path: "ambientes-registrados",
-        name: "Ambientes Registrados",
+        name: "Ver Ambientes",
         icon: <LuLayers />,
       },
       {

@@ -14,46 +14,44 @@ import { ISimpleDocente } from "../interfaces/simple-deocente";
   }
   export const TablaSolicitudes = ({ solicitudes }: Props) => {
     return (
-      <div className=" contenedor-table ">
-        <section className="mx-6 my-4  ">
+      <div className="mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
           <Table
             className="custom-table"
             aria-label="Example table with dynamic content"
           >
             <TableHeader>
-              <TableColumn className="text-center  text-3xl bg-slate-300">
-                Nombre
+              <TableColumn className="text-center  text-sm bg-slate-300">
+                NOMBRE
               </TableColumn>
-              <TableColumn className="text-center text-3xl bg-slate-300">
-                Apellidos
+              <TableColumn className="text-center text-sm bg-slate-300">
+                APELLIDOS
               </TableColumn>
-              <TableColumn className="text-center text-3xl bg-slate-300">
-                Telefono
+              <TableColumn className="text-center text-sm bg-slate-300">
+                TELEFONO
               </TableColumn>
-              <TableColumn className="text-center text-3xl bg-slate-300">
-              Email
+              <TableColumn className="text-center text-sm bg-slate-300">
+              EMAIL
               </TableColumn>
-              <TableColumn className="text-center text-3xl bg-slate-300">
-              Código SIS
+              <TableColumn className="text-center text-sm bg-slate-300">
+              CÓDIGO SIS
               </TableColumn>
             </TableHeader>
             <TableBody>
               {solicitudes.map((solicitud) => (
                 <TableRow key={solicitud.id}>
-                  <TableCell className="text-gray-900 text-base">{solicitud.name}</TableCell>
-                  <TableCell className="text-gray-900 text-base">{solicitud.apellidos}</TableCell>
-                  <TableCell className="text-gray-900 text-base">
+                  <TableCell className="text-gray-900 text-xs">{solicitud.name}</TableCell>
+                  <TableCell className="text-gray-900 text-xs">{solicitud.apellidos}</TableCell>
+                  <TableCell className="text-gray-900 text-xs">
                     {solicitud.telefono}
                   </TableCell>
-                  <TableCell className="text-gray-900 text-base">
+                  <TableCell className="text-gray-900 text-xs">
                     {solicitud.email}
                   </TableCell>
-                  <TableCell className="text-gray-900 text-base">{solicitud.codigo_sis}</TableCell>
+                  <TableCell className="text-gray-900 text-xs">{solicitud.codigo_sis}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </section>
       </div>
     );
   };
