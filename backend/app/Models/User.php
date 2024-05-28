@@ -58,9 +58,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Solicitud::class, 'solicitud_user');
     }
-    public function materias()
+    public function grupos()
     {
-        return $this->hasMany(Materia::class,'user_id' );
+        return $this->hasMany(Grupo::class,'user_id');
     }
 
     public function notificaciones()

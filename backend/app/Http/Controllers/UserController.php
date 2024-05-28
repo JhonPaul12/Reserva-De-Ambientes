@@ -93,55 +93,33 @@ class UserController extends Controller
     }
 
         
+   
+  
     public function showMaterias($id)
     {
         // Encuentra el usuario por ID
         $user = User::find($id);
-
+    
         // Si el usuario no existe, devuelve un error
         if (!$user) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
-
-        // Obtiene las materias del usuario
-        $materias = $user->materias;
-
+    
+        // Obtiene los grupos del usuario
+        $grupos = $user->grupos;
+    
+        // Obtiene las materias de los grupos
+        $materias = $grupos->map(function ($grupo) {
+            return $grupo->materia;
+        });
+    
+        // Elimina las materias duplicadas
+        $materias = $materias->unique('id');
+    
         // Devuelve las materias
-        return response()->json($materias, 200);
+        return response()->json($materias->values(), 200);
     }
-
-
-        
-    public function getGruposDeMateriaDeDocente($docente_id, $materia_id)
-    {
-        // Encuentra el docente por su ID
-        $docente = User::find($docente_id);
-
-        // Si el docente no existe, devuelve un error
-        if (!$docente) {
-            return response()->json(['message' => 'Docente no encontrado'], 404);
-        }
-
-        // Encuentra la materia por su ID
-        $materia = Materia::find($materia_id);
-
-        // Si la materia no existe, devuelve un error
-        if (!$materia) {
-            return response()->json(['message' => 'Materia no encontrada'], 404);
-        }
-
-        // Si la materia no pertenece al docente, devuelve un error
-        if ($materia->user_id != $docente->id) {
-            return response()->json(['message' => 'La materia no pertenece al docente'], 400);
-        }
-
-        // Obtiene los grupos de la materia
-        $grupos = $materia->grupos;
-
-        // Devuelve los grupos
-        return response()->json($grupos, 200);
-    }
-
+    
 
     public function showSolicitudes($id)
 {
@@ -163,16 +141,16 @@ class UserController extends Controller
 
 public function showGrupos($id)
 {
-    // Encuentra la materia por ID
-    $materia = Materia::find($id);
+    // Encuentra el usuario por ID
+    $user = User::find($id);
 
-    // Si la materia no existe, devuelve un error
-    if (!$materia) {
-        return response()->json(['message' => 'Materia no encontrada'], 404);
+    // Si el usuario no existe, devuelve un error
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
     }
 
-    // Obtiene los grupos de la materia
-    $grupos = $materia->grupos;
+    // Obtiene los grupos del usuario
+    $grupos = $user->grupos;
 
     // Devuelve los grupos
     return response()->json($grupos, 200);
