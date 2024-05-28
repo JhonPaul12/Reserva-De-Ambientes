@@ -14,6 +14,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\AmbientereglaController;
 use App\Http\Controllers\Periodo_SolicitudController;
+use App\Http\Controllers\GrupoController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
 
@@ -119,9 +120,14 @@ Route::get('/usuario/{id}', [UserController::class, 'show']);
 Route::get('/usuario/materias/{id}', [UserController::class, 'showMaterias']);
 //mostrar grupos de materia de docente
 Route::get('/docentes/solicitudes/{id}', [UserController::class, 'showSolicitudes']);
-Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGruposDeMateriaDeDocente']);
 //ruta para devolver grupos dado un id materia
+
 Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
+//GRUPOS
+//ruta para devolver grupos dado un id docente y un id materia 
+Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getGruposPorUsuarioYMateria']);
+//ruta para devolver docentes de una materia y un id docente 
+Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
 
 
 
