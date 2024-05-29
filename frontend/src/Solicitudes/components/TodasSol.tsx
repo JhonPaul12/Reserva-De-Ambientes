@@ -73,6 +73,9 @@ export const TodasSol = () => {
             MATERIA
           </TableColumn>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
+            MOTIVO
+          </TableColumn>
+          <TableColumn className="text-center border-0 text-sm bg-slate-300">
             INICIO
           </TableColumn>
           <TableColumn className="text-center border-0 text-sm bg-slate-300">
@@ -99,6 +102,9 @@ export const TodasSol = () => {
               </TableCell>
               <TableCell className="text-xs border-0 text-black">
                 {solicitud.solicitud.materia.nombre_materia}
+              </TableCell>
+              <TableCell className="text-xs border-0 text-black">
+                {solicitud.solicitud.motivo}
               </TableCell>
               <TableCell className="text-xs border-0 text-black">
                 {solicitud.periodos[0].periodo.horario.hora_inicio.slice(0, -3)}

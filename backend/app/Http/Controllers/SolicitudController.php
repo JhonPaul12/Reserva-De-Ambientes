@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ambiente;
 use App\Models\Solicitud;
 use App\Models\User;
 use App\Models\Excepcion;
+use App\Models\Materia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\FuncCall;
@@ -113,7 +115,7 @@ class SolicitudController extends Controller
             'numero_estudiantes' => $request->numero_estudiantes,
             'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
             'ambiente_id' => $request->ambiente_id, // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
-            
+
         ]);
 
         $solicitud->load('ambiente');
@@ -401,7 +403,7 @@ class SolicitudController extends Controller
         return response()->json($todasLasSolicitudes, 200);
     }
 
-    
+
     public function cambiarEstadoUser($idSolicitud)
     {
         $solicitud = Solicitud::find($idSolicitud);
@@ -412,7 +414,7 @@ class SolicitudController extends Controller
 
         $solicitud->estado = "Cancelado";
         $solicitud->save();
-            // Cambia el estado de todos los periodos asociados a la solicitud
+        // Cambia el estado de todos los periodos asociados a la solicitud
         foreach ($solicitud->periodos as $periodo) {
             $periodo->estado = "libre";
             $periodo->save();
@@ -439,7 +441,8 @@ class SolicitudController extends Controller
         return response()->json(['message' => 'El estado de la solicitud ha sido cambiado a Rechazado'], 200);
     }
 
-    public function verificarFecha($fecha){
+    public function verificarFecha($fecha)
+    {
         $validated = Validator::make(['fecha' => $fecha], [
             'fecha' => 'required|date',
         ]);
@@ -464,4 +467,5 @@ class SolicitudController extends Controller
             ], 200);
         }
     }
+
 }

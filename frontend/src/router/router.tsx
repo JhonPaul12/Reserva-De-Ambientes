@@ -18,6 +18,7 @@ import { ReglasAmbientes } from "../ReglasAmbientes/ReglasAmbientes";
 import { VerTodasReservasAdmin } from "../ReservasAdmin2/indes";
 import { Login } from "../Login/Login";
 import { NotificacionesUsuario } from "../Notificaciones";
+import { NotificarCancelaciones } from "../NotificarCancelacion";
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
       {
         path: "reglas-ambientes",
         element: <ReglasAmbientes />,
+      },
+      {
+        path: "notificar-ambiente",
+        element: <NotificarCancelaciones />,
       },
     ],
   },

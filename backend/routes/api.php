@@ -154,3 +154,10 @@ Route::get('/notificacion2',[NotificacionController::class,'index2']);
 Route::get('/nombre_usuario_Notificacion/{nombre}',[NotificacionController::class,'nombre_usuario_Notificacion']);
 
 Route::get('/solicitudID/{nombre}',[NotificacionController::class,'solicitudID']);
+
+
+Route::post('/cambiarEstadoPorNombreAmbiente/{aula}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbiente']);
+Route::get('/periodoSolicitud3', [Periodo_SolicitudController::class, 'index3']);
+Route::get('/obtenerSolicitudesPorFechaYHorario2/{fecha}/{inicio}/{fin}', [Periodo_SolicitudController::class, 'obtenerSolicitudesPorFechaYHorario2']);
+Route::post('/cambiarEstadoPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbienteYHorario']);
+Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'mostrarSolicitudPorNombreAmbienteYHorario']);
