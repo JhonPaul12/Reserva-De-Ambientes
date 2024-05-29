@@ -63,6 +63,10 @@ export const FormRA = () => {
     const inputValue = e.target as HTMLInputElement;
 
     if (inputValue.value.length <= 5) {
+      if (inputValue.value === '0') {
+        e.preventDefault();
+        return;
+      }
         setInputCap(inputValue.value);
     } else {
       toast.error("La capacidad no debe tener más de 5 caracteres numericos");
