@@ -15,11 +15,11 @@ class UserSeeder extends Seeder
     {
         //id 1
         User :: create([
-            'name' => 'CARLA',
-            'apellidos' => 'SALAZAR SERRUDO',
+            'name' => 'LETICIA',
+            'apellidos' => 'BLANCO COCA',
             'telefono' => '6' . rand(1000000, 9999999),
             'codigo_sis' => '202400535', // '1234567890' => '1234567890
-            'email' => 'carla@gmail.com',
+            'email' => 'leticia@gmail.com',
             'password' => bcrypt('12345678')
 
         ]);
@@ -31,15 +31,14 @@ class UserSeeder extends Seeder
             'codigo_sis' => '202300535', // '1234567890' => '1234567890
             'email' => 'vladimir@gmail.com',
             'password' => bcrypt('12345678')
-
-        ]);
+        ]);    
         //id 3
         User :: create([
-            'name' => 'LETICIA',
-            'apellidos' => 'BLANCO COCA',
+            'name' => 'YONY RICHAARD',
+            'apellidos' => 'MONTOYA BURGOS',
             'telefono' => '6' . rand(1000000, 9999999),
             'codigo_sis' => '1234567890', // '1234567890' => '1234567890
-            'email' => 'leticia@gmail.com',
+            'email' => 'yony@gmail.com',
             'password' => bcrypt('12345678')
 
         ]);
@@ -109,7 +108,7 @@ class UserSeeder extends Seeder
             'email' => 'agreda@gmail.com',
             'password' => bcrypt('12345678')
         ]);
-        //id 11
+        // id 11
         User :: create([
             'name' => 'INDIRA',
             'apellidos' => 'CAMACHO DEL CASTILLO',

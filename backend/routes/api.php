@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AmbienteController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ExcepcionController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\PeriodoController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\AmbientereglaController;
 use App\Http\Controllers\Periodo_SolicitudController;
+use App\Http\Controllers\GrupoController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
 
@@ -83,12 +85,13 @@ Route::put('/regexc/{id}',[RegexcCotroller::class,'update']);
 Route::delete('/regexc/{id}',[RegexcCotroller::class,'destroy']);
 
 //solicitudes
-Route::get('/solicitud',[SolicitudController::class,'index']);
+
 Route::get('/solicitud/{id}',[SolicitudController::class,'show']);
 Route::post('/solicitud',[SolicitudController::class,'store']);
 Route::put('/solicitud/{id}',[SolicitudController::class,'update']);
 Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
+Route::get('/solicitud/guardar',[SolicitudController::class,'mostrarGuardado']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
 Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
 
@@ -98,7 +101,7 @@ Route::post('/notificacion',[NotificacionController::class,'store']);
 Route::get('/notificacion/{id}',[NotificacionController::class,'show']);
 Route::delete('/notificacion/{id}',[NotificacionController::class,'destroy']);
 //reserva
-Route::get('/reserva', [ReservaController::class, 'index']);
+
 Route::post('/reserva', [ReservaController::class, 'store']);
 Route::get('/reserva/{id}', [ReservaController::class, 'show']);
 Route::put('/reserva/{id}', [ReservaController::class, 'update']);
@@ -119,9 +122,14 @@ Route::get('/usuario/{id}', [UserController::class, 'show']);
 Route::get('/usuario/materias/{id}', [UserController::class, 'showMaterias']);
 //mostrar grupos de materia de docente
 Route::get('/docentes/solicitudes/{id}', [UserController::class, 'showSolicitudes']);
-Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGruposDeMateriaDeDocente']);
 //ruta para devolver grupos dado un id materia
+
 Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
+//GRUPOS
+//ruta para devolver grupos dado un id docente y un id materia 
+Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getGruposPorUsuarioYMateria']);
+//ruta para devolver docentes de una materia y un id docente 
+Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
 
 
 
@@ -137,6 +145,29 @@ Route::post('/periodos',[PeriodoController::class,'stores']);
 Route::get('/allPeriodos', [PeriodoController::class, 'allPeriodos']);
 
 Route::put('/solicitud/editar/{id}', [SolicitudController::class, 'editar']);
+
+
+//autenticacion
+Route::post('/auth/register',[ AuthController::class,'register']);
+Route::post('/auth/login',[ AuthController::class,'login']);
+Route::post('/auth/register-admin', [AuthController::class, 'registerAdmin']);
+
+
+Route::middleware(['auth:sanctum'])->group(function (){
+    Route::get('/solicitud',[SolicitudController::class,'index']);
+    Route::post('/auth/logout',[ AuthController::class,'logout']);
+    Route::get('/auth/checkToken',[AuthController::class,'checkToken']);
+    
+});
+
+
+Route::middleware(['auth:sanctum','rol.admin'])->group(function(){
+    Route::post('/auth/admin-action', [AuthController::class, 'adminOnlyAction']);
+    Route::get('/reserva', [ReservaController::class, 'index']);
+});
+
+
+
 Route::get('/periodosAsignados/{id}',[PeriodoController::class,'listarPeriodos']);
 
 Route::post('/cambiarEstadoUser/{id}',[SolicitudController::class,'cambiarEstadoUser']);
@@ -161,3 +192,8 @@ Route::get('/periodoSolicitud3', [Periodo_SolicitudController::class, 'index3'])
 Route::get('/obtenerSolicitudesPorFechaYHorario2/{fecha}/{inicio}/{fin}', [Periodo_SolicitudController::class, 'obtenerSolicitudesPorFechaYHorario2']);
 Route::post('/cambiarEstadoPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbienteYHorario']);
 Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'mostrarSolicitudPorNombreAmbienteYHorario']);
+
+
+
+// Obtienes la regla pasando un ambiente
+Route::get('/regla-ambientes/{id_ambiente}', [AmbientereglaController::class, 'getReglaByAmbiente']);

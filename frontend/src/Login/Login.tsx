@@ -1,15 +1,32 @@
 import { Button, Input } from "@nextui-org/react";
 import { useState } from "react";
 import { Toaster, toast } from "sonner";
+import { useAuthStore } from "./stores/auth.store";
+import { Navigate } from "react-router-dom";
 
 export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const authStatus = useAuthStore((state) => state.authStatus);
+  const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
+
+  const login = useAuthStore((state) => state.login);
+  if (authStatus === "pending") {
+    checkAuthStatus();
+  }
+
+  //Valido si el usuario ya es este autenticado lleva a admin por defecto
+  if (authStatus === "auth") {
+    toast.success("Bienvenido");
+    return <Navigate to="/admin" />;
+  }
+  //Falta controlar cuadno sea admin o user
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
+    const email = data.get("email") as string;
+    const password = data.get("password") as string;
     console.log({ email, password });
     setIsLoading(true);
 
@@ -19,6 +36,7 @@ export const Login = () => {
     } else {
       setIsLoading(false);
       console.log("Autenticado");
+      await login(email, password);
     }
   };
   return (

@@ -65,22 +65,31 @@ export const EditAmbienteModal = ({ ambiente }) => {
     }
   }
   
-  const onInputChangeCap = (e: React.ChangeEvent<HTMLInputElement>) => {
+  
+
+    const handleKeyPress = (event) => {
+    const charCode = event.charCode;
+    // Allow only numbers (charCode 48-57)
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  };
+
+  const onInputChangeCap = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
-    
-      if (inputValue.value.length <= 5 || inputValue.value === '') {
-        if (!isNaN(parseInt(inputValue.value))) {
-            setInputCap(inputValue.value);
-          } else {
-            setInputCap('');
-            toast.error('La capacidad debe expresarse numericamente');
-            console.log("La capacidad debe expresarse numericamente");
-          }
-        } else {
-          toast.error('La capacidad debe tener más de 5 caracteres numericos');
-          console.log("La capacidad debe tener más de 5 caracteres numericos");
-        }
+
+    if (inputValue.value.length < 6) {
+      if (inputValue.value === '0') {
+        e.preventDefault();
+        return;
       }
+      setInputCap(inputValue.value);
+    } else {
+      toast.error("El numero de estudiantes no debe superar los 5 caracteres");
+      console.log("El numero de estudiantes no debe superar los 5 caracteres");
+    }
+  };
+
   const onInputChangeUbi = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target as HTMLSelectElement;
   if (inputValue.value.length <= 150) {
@@ -164,8 +173,7 @@ export const EditAmbienteModal = ({ ambiente }) => {
         <label className='text-ms text-gray-900'>Capacidad:</label>
         <br />
         <Input 
-            type="number"
-            name='capacidad'
+            type="text"
             className='w-full'
             placeholder={placeholderCap}
             value={inputCap}
@@ -175,7 +183,7 @@ export const EditAmbienteModal = ({ ambiente }) => {
               padding: '10px', 
             }}
             onChange={onInputChangeCap}
-            min="1"
+            onKeyPress={handleKeyPress}
           />
         <br />
         

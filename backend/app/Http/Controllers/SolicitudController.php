@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ambiente;
+use App\Http\Requests\Solicitud\SolicitudRequest;
+use App\Http\Resources\Solicitud\SolicitudCollection;
+use App\Http\Resources\Solicitud\SolicitudResource;
 use App\Models\Solicitud;
 use App\Models\User;
 use App\Models\Excepcion;
@@ -35,7 +38,7 @@ class SolicitudController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SolicitudRequest $request)
     {
         $validador = Validator::make($request->all(), [
             'motivo' => 'required|max:250',
@@ -82,6 +85,7 @@ class SolicitudController extends Controller
 
         return response()->json($data, 201);
     }
+
     public function guardar(Request $request)
     {
         $validador = Validator::make($request->all(), [
@@ -89,7 +93,7 @@ class SolicitudController extends Controller
             'fecha_solicitud' => 'required',
             'periodos' => 'required|array', // Asegúrate de que 'periodos' es un array
             'periodos.*' => 'exists:periodos,id', // Asegúrate de que cada ID de periodo existe en la tabla de periodos
-            'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
+            'estado' => 'required|in:Cancelada,Aceptada',
             'numero_estudiantes' => 'required',
             'ambiente_id' => 'required|exists:ambientes,id',
             'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
@@ -257,7 +261,7 @@ class SolicitudController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(SolicitudRequest $request, $id)
     {
         $solicitud = Solicitud::find($id);
         if (!$solicitud) {

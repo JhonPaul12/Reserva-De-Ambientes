@@ -46,6 +46,18 @@ interface SolicitudState {
         console.log( motivo);
         console.log(typeof fecha_solicitud);
         console.log(fecha_solicitud);
+        
+        console.log(typeof estado);
+        console.log(estado);
+        console.log(typeof numero_estudiantes);
+        console.log(numero_estudiantes);
+        
+        console.log(typeof id_materia);
+        console.log(id_materia);
+        console.log(typeof grupos[0]);
+        console.log(grupos);
+        console.log(typeof ambiente_id);
+        console.log(ambiente_id);
         console.log(typeof docentes);
         console.log( docentes);
         console.log(typeof periodos);
@@ -56,10 +68,10 @@ interface SolicitudState {
           fecha_solicitud,
           estado,
           numero_estudiantes,
-          id_materia, 
-          grupos, 
           ambiente_id,
           docentes,
+          id_materia, 
+          grupos, 
           periodos
 
         });

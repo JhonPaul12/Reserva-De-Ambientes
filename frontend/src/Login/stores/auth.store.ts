@@ -10,7 +10,11 @@ interface IloginResponse {
 interface IUser {
   id: number;
   name: string;
+  apellidos: string;
+  telefono: string;
+  codigo_sis: string;
   email: string;
+  email_verified_at: null;
   created_at: string;
   updated_at: string;
 }
@@ -24,16 +28,18 @@ interface authState {
 //Guardamos las funciones que cambian el estado
 interface Actions {
   login: (email: string, password: string) => Promise<void>;
+  checkAuthStatus: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const storeApi: StateCreator<authState & Actions> = (set) => ({
+const storeApi: StateCreator<authState & Actions> = (set, get) => ({
   user: undefined,
   token: undefined,
   authStatus: "pending",
 
   login: async (email, password) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login", {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +59,67 @@ const storeApi: StateCreator<authState & Actions> = (set) => ({
         token: undefined,
         authStatus: "not-auth",
       }));
-      console.log(error);
+      toast.error("Error al iniciar sesión");
+    }
+  },
+
+  checkAuthStatus: async () => {
+    const token = get().token;
+    if (!token) {
+      set(() => ({
+        user: undefined,
+        token: undefined,
+        authStatus: "not-auth",
+      }));
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/auth/checkToken",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      set(() => ({
+        user: data.user,
+        token: token,
+        authStatus: "auth",
+      }));
+    } catch (error) {
+      set(() => ({
+        user: undefined,
+        token: undefined,
+        authStatus: "not-auth",
+      }));
+      return;
+    }
+  },
+
+  logout: async () => {
+    const token = get().token;
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      set(() => ({
+        user: undefined,
+        token: undefined,
+        authStatus: "not-auth",
+      }));
+      console.log(data);
+      toast.success("Sesión cerrada con exito");
+    } catch (error) {
+      toast.error("Error al cerrar sesión" + error);
     }
   },
 });
