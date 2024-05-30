@@ -15,6 +15,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\AmbientereglaController;
 use App\Http\Controllers\Periodo_SolicitudController;
+use App\Http\Controllers\GrupoController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
 
@@ -121,9 +122,14 @@ Route::get('/usuario/{id}', [UserController::class, 'show']);
 Route::get('/usuario/materias/{id}', [UserController::class, 'showMaterias']);
 //mostrar grupos de materia de docente
 Route::get('/docentes/solicitudes/{id}', [UserController::class, 'showSolicitudes']);
-Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGruposDeMateriaDeDocente']);
 //ruta para devolver grupos dado un id materia
+
 Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
+//GRUPOS
+//ruta para devolver grupos dado un id docente y un id materia 
+Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getGruposPorUsuarioYMateria']);
+//ruta para devolver docentes de una materia y un id docente 
+Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
 
 
 
@@ -186,3 +192,24 @@ Route::get('/solicitudID/{nombre}',[NotificacionController::class,'solicitudID']
 
 // Obtienes la regla pasando un ambiente
 Route::get('/regla-ambientes/{id_ambiente}', [AmbientereglaController::class, 'getReglaByAmbiente']);
+
+
+
+
+
+
+//DE LAS RESERVAS ACEPTADAS (MUESTRA LAS AULAS) EN LA FECHA-HORAINICIO-HORAFIN(SIN REPETICIONES)
+Route::get('/obtenerSolicitudesPorFechaYHorario2/{fecha}/{inicio}/{fin}', [Periodo_SolicitudController::class, 'obtenerSolicitudesPorFechaYHorario2']);
+
+//DE LAS RESERVAS ACEPTADAS (muestra las ubicaciones ) en la fecha-horainicio-horafin(sin repeticiones)
+Route::get('/obtenerUbicacionDeSolicitudesAceptadas/{fecha}/{inicio}/{fin}', [Periodo_SolicitudController::class, 'obtenerUbicacionDeSolicitudesAceptadas']);
+
+//CAMBIA EL ESTADO DE LAS RESERVA, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN
+Route::post('/cambiarEstadoPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbienteYHorario']);
+
+//CAMBIA El ESTADO DE LAS RESERVAS ,POR UBICACION FECHA HORA
+Route::post('/cambiarEstadoPorUbicacionFechaHora/{ubicacion}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorUbicacionAmbienteYHorario']);
+
+
+//DE LAS RESERVAS, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN => MUESTRA LOS ID_USER Y ID_SOLICITUD
+Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'mostrarSolicitudPorNombreAmbienteYHorario']);

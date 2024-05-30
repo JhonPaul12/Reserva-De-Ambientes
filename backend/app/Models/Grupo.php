@@ -9,9 +9,14 @@ class Grupo extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    public function materias()
+    public function user()
     {
-        return $this->belongsTo('materias');
+        return $this->belongsTo(User::class);
+    }
+    
+    public function materia()
+    {
+        return $this->belongsTo(Materia::class);
     }
 
     public function solicitudes()

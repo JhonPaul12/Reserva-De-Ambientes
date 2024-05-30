@@ -16,30 +16,25 @@ import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes"
 import React from "react";
 import { ISimplePeriodo } from "../interfaces/simple-periodo";
 import { ISimpleExcepcion } from "../interfaces/simple-exception";
+import { useAuthStore } from "../../Login/stores/auth.store";
 
 export const FormOrdenado = () => {
+
+  const user = useAuthStore((state) => state.user);
+
+
   useEffect(() => {
-    const id = 2;
-    getUsuario(id);
-    getDocentes();
-    getMaterias(id);
+   // getUsuario(user?.id);
+   getMaterias();
     getExcepciones();
     if (listOficial.length === 0) {
-      setListOficial([`${id}`]);
+      setListOficial([`${user?.id}`]);
     }
   }, []);
 
   //DOCENTES
-  const instanciaInicial: ISimpleDocente = {
-    id: 0, // Pon el valor que necesites aquí
-    name: "",
-    apellidos: "",
-    telefono: "",
-    codigo_sis: "",
-    email: "",
-    email_verified_at: null,
-  };
-  const [usuario, setUsuario] = useState(instanciaInicial);
+  //const [usuario, setUsuario] = useState(instanciaInicial);
+  
   const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
   const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(
     new Set([])
@@ -47,21 +42,23 @@ export const FormOrdenado = () => {
   const [listOficial, setListOficial] = useState([]);
   const [listdocentes, setListDocentes] = useState([]);
 
-  const getUsuario = async (id: number) => {
+  /*const getUsuario = async (id: number) => {
     const respuesta = await axios.get(
       `http://127.0.0.1:8000/api/usuario/${id}`
     );
     console.log(respuesta.data);
     setUsuario(respuesta.data);
-    console.log(usuario);
-  };
+    console.log(user);
+  };*/
 
   const docentesOrdenAlfabetico = [...docentes].sort((a, b) =>
     a.name.localeCompare(b.name)
   );
-  const getDocentes = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
-    setDocentes(respuesta.data);
+  const getDocentes = async (id: number) => {
+    const respuesta = await axios.get(`http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`);
+    const docentesArray = Object.values(respuesta.data); 
+    console.log(docentesArray); 
+    setDocentes(docentesArray); 
   };
 
   const handleSelectionChangeDocentes = (
@@ -74,6 +71,7 @@ export const FormOrdenado = () => {
     console.log(listOficial);
     console.log(listdocentes);
     setValuesDocentes(new Set(e.target.value.split(",")));
+    getGrupos(parseInt(inputMateria),arrayNumeros);
   };
 
   const optionsDocentes = docentesOrdenAlfabetico.map((docente) => ({
@@ -86,9 +84,9 @@ export const FormOrdenado = () => {
   const [inputMateria, setInputMateria] = useState("");
   const [materias, setMaterias] = useState<ISimpleMateria[]>([]);
 
-  const getMaterias = async (id: number) => {
+  const getMaterias = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/materias/${id}/`
+      `http://127.0.0.1:8000/api/usuario/materias/${user?.id}/`
     );
     setMaterias(respuesta.data);
   };
@@ -99,7 +97,11 @@ export const FormOrdenado = () => {
     const { value } = e.target as HTMLSelectElement;
     console.log(value);
     setInputMateria(value);
-    getGrupos(parseInt(value),2);
+    getDocentes(parseInt(value));
+    getGrupos(parseInt(value),listdocentes);
+  };
+  const verificarMateriaDoc = async () => {
+    if (inputMateria === "") toast.error("Seleccione una materia para ver a los docentes asociados");
   };
 
   //MOTIVO
@@ -157,6 +159,10 @@ export const FormOrdenado = () => {
     const inputValue = e.target as HTMLInputElement;
 
     if (inputValue.value.length < 6) {
+      if (inputValue.value === '0') {
+        e.preventDefault();
+        return;
+      }
         setInputNEst(inputValue.value);
         getAmbientes(inputValue.value);
     } else {
@@ -186,21 +192,21 @@ export const FormOrdenado = () => {
     }
   };*/
 
-  const getGrupos = async (materia_id: number, docente_id: number) => {
+  const getGrupos = async (materia_id: number, docente_id: []) => {
     try {
       // Obtener los grupos para el docente principal
       const respuestaPrincipal = await axios.get(
-        `http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`
+        `http://127.0.0.1:8000/api/docentes/${user?.id}/${materia_id}`
       );
       setGrupos(respuestaPrincipal.data);
       let gruposTem = respuestaPrincipal.data;
 
       console.log('Grupos del docente principal:', gruposTem);
 
-      // Si hay otros docentes en la lista, obtener sus grupos también
-      if (listdocentes.length !== 1) {
+      console.log(docente_id.length );
+      if (docente_id.length !== 0) {
 
-        const solicitudes = listdocentes.map((docente) =>
+        const solicitudes = docente_id.map((docente) =>
           axios.get<ISimpleGrupo[]>(
             `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
           )
@@ -208,6 +214,7 @@ export const FormOrdenado = () => {
 
         //Esperar a que todas las solicitudes se completen
         const respuestas = await Promise.all(solicitudes);
+        console.log(respuestas);
 
          //Extraer los datos de cada respuesta y unirlos a la lista de grupos
         respuestas.forEach((respuesta) => {
@@ -478,9 +485,9 @@ export const FormOrdenado = () => {
             inputHFin
           );
         }
-        setTimeout(() => {
+        /*setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 2000);*/
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -507,7 +514,7 @@ export const FormOrdenado = () => {
             style={{ marginRight: "50px" }}
             className="text-ms text-gray-900"
           >
-            {usuario.name} {usuario.apellidos}
+            {user?.name} {user?.apellidos}
           </span>
 
           <Select
@@ -517,6 +524,7 @@ export const FormOrdenado = () => {
             selectedKeys={valuesDocentes}
             className="mb-5 mt-5 w-full"
             onChange={handleSelectionChangeDocentes}
+            onClick={verificarMateriaDoc}
           >
             {optionsDocentes.map((docente) => (
               <SelectItem key={docente.value} value={docente.label}>

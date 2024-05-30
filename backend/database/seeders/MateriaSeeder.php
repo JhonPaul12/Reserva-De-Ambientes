@@ -17,53 +17,44 @@ class MateriaSeeder extends Seeder
         //1
         Materia::create([
             'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 1	
+            
         ]);
+      
         //2
         Materia::create([
-            'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 2	
+            'nombre_materia' => 'Elementos De Programacion Y Estructura De Datos',
+            
         ]);
         //3
+       
         Materia::create([
-            'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 3	
+            'nombre_materia' => 'Programacion Web',
+            
         ]);
-        //4
+        //4 
         Materia::create([
-            'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 4	
+            'nombre_materia' => 'Teoria De Grafos',
+            
         ]);
         //5
         Materia::create([
-            'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 5
+            'nombre_materia' => 'Arquitecura De Computadoras I',
+            
         ]);
-        //6
+        //6 
         Materia::create([
-            'nombre_materia' => 'Introduccion A La Programacion',
-            'user_id' => 6	
+            'nombre_materia' => 'Programacion',
+            
         ]);
         //7
         Materia::create([
-            'nombre_materia' => 'Elementos De Programacion y Estructura De Datos',
-            'user_id' => 7	
+            'nombre_materia' => 'Organizacion Y Metodos',
+           
         ]);
         //8
         Materia::create([
-            'nombre_materia' => 'Elementos De Programacion y Estructura De Datos',
-            'user_id' => 3
+            'nombre_materia' => 'Metodos Y Tecnicas De Programacion',
+          
         ]);
-        //9
-        Materia::create([
-            'nombre_materia' => 'Elementos De Programacion y Estructura De Datos',
-            'user_id' => 8
-        ]);
-        //10
-        Materia::create([
-            'nombre_materia' => 'Programacion Web',
-            'user_id' => 2	
-        ]);
-     
     }
 }
