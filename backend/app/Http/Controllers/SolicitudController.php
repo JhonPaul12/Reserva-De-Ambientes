@@ -91,7 +91,7 @@ class SolicitudController extends Controller
             'fecha_solicitud' => 'required',
             'periodos' => 'required|array', // Asegúrate de que 'periodos' es un array
             'periodos.*' => 'exists:periodos,id', // Asegúrate de que cada ID de periodo existe en la tabla de periodos
-            'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
+            'estado' => 'required|in:Cancelada,Aceptada',
             'numero_estudiantes' => 'required',
             'ambiente_id' => 'required|exists:ambientes,id',
             'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
