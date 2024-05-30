@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
+            'roles' => $this->rols->pluck('nombre_rol')
         ];
     }
 }

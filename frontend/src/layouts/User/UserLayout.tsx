@@ -7,6 +7,7 @@ import { Navigate } from "react-router-dom";
 export const UserLayout = () => {
   const authStatus = useAuthStore((state) => state.authStatus);
   const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
+  //const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (authStatus === "pending") {
@@ -17,6 +18,11 @@ export const UserLayout = () => {
   if (authStatus === "not-auth") {
     return <Navigate to="/login" />;
   }
+
+  // if (!user?.roles.includes("Docente")) {
+  //   return <Navigate to="/admin" />;
+  // }
+
   return (
     <div>
       <SideMenu sideMenuOptions={sideMenuOptionsUser} />
