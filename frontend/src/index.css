@@ -53,7 +53,7 @@
   }
 
   .sidemenu__avatar {
-    @apply shadow-lg bg-violet-600 px-4 py-6 rounded-2xl text-center;
+    @apply shadow-lg bg-gradient-to-tr from-violet-700 to-indigo-600 px-4 py-6 rounded-2xl text-center;
   }
   .sidemenu__link:hover span {
     @apply text-white;
