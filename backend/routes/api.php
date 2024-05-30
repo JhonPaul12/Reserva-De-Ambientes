@@ -175,8 +175,9 @@ Route::post('/cambiarEstadoAdmin/{id}',[SolicitudController::class,'cambiarEstad
 
 Route::get('/periodoSolicitud', [Periodo_SolicitudController::class, 'index']);
 
+//DEVUELVE TODAS LAS RESERVAS
 Route::get('/periodoSolicitud2', [Periodo_SolicitudController::class, 'index2']);
-
+//DEVUELVE LAS RESERVAS DE UN USUARIO POR NOMBRE, TOMA EL PERIODO INICIAL Y FINAL 8:15-11:15
 Route::get('/nombre_usuario/{nombre}', [Periodo_SolicitudController::class, 'nombre_usuario']);
 
 
@@ -189,8 +190,13 @@ Route::get('/solicitudID/{nombre}',[NotificacionController::class,'solicitudID']
 
 Route::post('/cambiarEstadoPorNombreAmbiente/{aula}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbiente']);
 Route::get('/periodoSolicitud3', [Periodo_SolicitudController::class, 'index3']);
+
+//DE LAS RESERVAS ACEPTADAS (MUESTRA LAS AULAS) EN LA FECHA-HORAINICIO-HORAFIN(SIN REPETICIONES)
 Route::get('/obtenerSolicitudesPorFechaYHorario2/{fecha}/{inicio}/{fin}', [Periodo_SolicitudController::class, 'obtenerSolicitudesPorFechaYHorario2']);
+
+//CAMBIA EL ESTADO DE LAS RESERVA, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN
 Route::post('/cambiarEstadoPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbienteYHorario']);
+//DE LAS RESERVAS, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN => MUESTRA LOS ID_USER Y ID_SOLICITUD
 Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'mostrarSolicitudPorNombreAmbienteYHorario']);
 
 
