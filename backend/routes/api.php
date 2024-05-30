@@ -192,3 +192,24 @@ Route::get('/solicitudID/{nombre}',[NotificacionController::class,'solicitudID']
 
 // Obtienes la regla pasando un ambiente
 Route::get('/regla-ambientes/{id_ambiente}', [AmbientereglaController::class, 'getReglaByAmbiente']);
+
+
+
+
+
+
+//DE LAS RESERVAS ACEPTADAS (MUESTRA LAS AULAS) EN LA FECHA-HORAINICIO-HORAFIN(SIN REPETICIONES)
+Route::get('/obtenerSolicitudesPorFechaYHorario2/{fecha}/{inicio}/{fin}', [Periodo_SolicitudController::class, 'obtenerSolicitudesPorFechaYHorario2']);
+
+//DE LAS RESERVAS ACEPTADAS (muestra las ubicaciones ) en la fecha-horainicio-horafin(sin repeticiones)
+Route::get('/obtenerUbicacionDeSolicitudesAceptadas/{fecha}/{inicio}/{fin}', [Periodo_SolicitudController::class, 'obtenerUbicacionDeSolicitudesAceptadas']);
+
+//CAMBIA EL ESTADO DE LAS RESERVA, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN
+Route::post('/cambiarEstadoPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbienteYHorario']);
+
+//CAMBIA El ESTADO DE LAS RESERVAS ,POR UBICACION FECHA HORA
+Route::post('/cambiarEstadoPorUbicacionFechaHora/{ubicacion}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorUbicacionAmbienteYHorario']);
+
+
+//DE LAS RESERVAS, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN => MUESTRA LOS ID_USER Y ID_SOLICITUD
+Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'mostrarSolicitudPorNombreAmbienteYHorario']);
