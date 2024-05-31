@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
 class PeriodoController extends Controller
 {
     public function index()
@@ -187,7 +189,7 @@ class PeriodoController extends Controller
             $response['errores'][] = [
                 'id_ambiente' => $periodoData['id_ambiente'],
                 'error' => 'Ya existe un período con el mismo id_ambiente e id_horario.'
-                
+
             ];
             continue;
         }
@@ -539,6 +541,47 @@ public function updateEstado(Request $request)
         } else {
             return response()->json(['error' => 'No se encontró la relación entre ambiente y regla'], 404);
         }
+    }
+
+    public function EliminarPorSemestre(Request $request)
+    {
+    $validator = Validator::make($request->all(), [
+        'id_regla' => 'required',
+        'id_horario' => 'required',
+        'id_ambiente' => 'required'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'error' => 'Datos de entrada no válidos',
+            'mensajes' => $validator->errors()
+        ], 422);
+    }
+
+    try {
+        $regla = Regla::findOrFail($request->id_regla);
+        $fechaInicial = $regla->fecha_inicial;
+        $fechaFinal = $regla->fecha_final;
+
+        // Buscar y eliminar los periodos con estado 'libre' dentro del rango de fechas
+        $periodosEliminados = Periodo::whereBetween('fecha', [$fechaInicial, $fechaFinal])
+            ->where('estado', 'libre')->where('id_ambiente', $request->id_ambiente)
+            ->where('id_horario', $request->id_horario)
+            ->delete();
+
+        return response()->json([
+            'mensaje' => 'Periodos libres eliminados con éxito',
+            'periodos_eliminados' => $periodosEliminados
+        ], 200);
+    } catch (ModelNotFoundException $e) {
+        return response()->json([
+            'error' => 'Registro no encontrado'
+        ], 404);
+    } catch (Exception $e) {
+        return response()->json([
+            'error' => 'Ocurrió un error al intentar eliminar los periodos'
+        ], 500);
+    }
     }
 }
 

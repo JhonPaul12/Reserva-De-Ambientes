@@ -59,6 +59,7 @@ Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
 Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
+Route::delete('/eliminarPeriodo',[PeriodoController::class,'EliminarPorSemestre']);
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
@@ -126,9 +127,9 @@ Route::get('/docentes/solicitudes/{id}', [UserController::class, 'showSolicitude
 
 Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
 //GRUPOS
-//ruta para devolver grupos dado un id docente y un id materia 
+//ruta para devolver grupos dado un id docente y un id materia
 Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getGruposPorUsuarioYMateria']);
-//ruta para devolver docentes de una materia y un id docente 
+//ruta para devolver docentes de una materia y un id docente
 Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
 
 
@@ -157,7 +158,7 @@ Route::middleware(['auth:sanctum'])->group(function (){
     Route::get('/solicitud',[SolicitudController::class,'index']);
     Route::post('/auth/logout',[ AuthController::class,'logout']);
     Route::get('/auth/checkToken',[AuthController::class,'checkToken']);
-    
+
 });
 
 
