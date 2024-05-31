@@ -60,6 +60,9 @@ Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaRe
 Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
 Route::delete('/eliminarPeriodo',[PeriodoController::class,'EliminarPorSemestre']);
+Route::get('/reasignacion',[PeriodoController::class,'verificarReasignacion']);
+
+
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
