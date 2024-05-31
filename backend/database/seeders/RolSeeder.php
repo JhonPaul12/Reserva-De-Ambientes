@@ -15,7 +15,7 @@ class RolSeeder extends Seeder
     public function run()
     {
 
-         DB::table('rols')->insert([
+        DB::table('rols')->insert([
             ['id' => 1, 'nombre_rol' => 'Admin'],
             ['id' => 2, 'nombre_rol' => 'User']
         ]);

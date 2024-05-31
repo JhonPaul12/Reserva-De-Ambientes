@@ -68,24 +68,26 @@ export const ModalMenuCheckBox = ({ Periodos, onCheckboxesChange }) => {
       </Button>
       <table>
         <thead>
-          <tr>
-            <th style={{ width: "200px" }}>Horario</th>
-            <th>Lunes</th>
-            <th>Martes</th>
-            <th>Miercoles</th>
-            <th>Jueves</th>
-            <th>Viernes</th>
-            <th>Sabado</th>
+          <tr className="tr">
+            <th className="th" style={{ width: "200px" }}>
+              Horario
+            </th>
+            <th className="th">Lunes</th>
+            <th className="th">Martes</th>
+            <th className="th">Miercoles</th>
+            <th className="th">Jueves</th>
+            <th className="th">Viernes</th>
+            <th className="th">Sabado</th>
           </tr>
         </thead>
         <tbody>
           {horarios.map(([horaInicio, horaFin]) => (
-            <tr key={horaInicio}>
-              <td>
+            <tr className="tr" key={horaInicio}>
+              <td className="td">
                 {horaInicio} - {horaFin}
               </td>
               {dias.map((dia) => (
-                <td key={`${horaInicio}-${dia}`}>
+                <td className="td" key={`${horaInicio}-${dia}`}>
                   {periodos.some(
                     (periodo) =>
                       periodo.dia === dia && periodo.hora_inicio === horaInicio

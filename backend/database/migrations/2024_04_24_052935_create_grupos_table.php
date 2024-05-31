@@ -16,8 +16,8 @@ class CreateGruposTable extends Migration
         Schema::create('grupos', function (Blueprint $table) {
             $table->id();
             $table->integer('grupo');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('materia_id')->constrained('materias')->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('materia_id')->references('id')->on('materias')->onDelete('cascade');
             $table->timestamps();
         });
     }

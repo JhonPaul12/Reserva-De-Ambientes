@@ -17,6 +17,7 @@ interface IUser {
   email_verified_at: null;
   created_at: string;
   updated_at: string;
+  roles: string[];
 }
 //Guardamos estados
 interface authState {

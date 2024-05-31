@@ -75,6 +75,7 @@ class AuthController extends Controller
     public function checkToken(Request $request)
     {
         $user = $request->user();
+        $user->load('rols'); 
         return response()->json([
             "user" => new UserResource($user),
         ]);
