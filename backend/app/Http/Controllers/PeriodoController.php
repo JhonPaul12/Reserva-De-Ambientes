@@ -611,13 +611,35 @@ public function updateEstado(Request $request)
             ],422);
         }
 
-        $fechaT = Carbon::parse($request->fecha);
-        $fechaTMasUnaSemana = $fechaT->addWeek();
-        $fechaTFormateada = $fechaTMasUnaSemana->format('Y-m-d');
-        return response()->json([
-            'fecha_original' => $request->fecha,
-            'fecha_mas_una_semana' => $fechaTFormateada
-        ], 200);
+        try {
+            // Convertir $fechaT a un objeto Carbon y sumar una semana
+            $fechaT = Carbon::parse($request->fecha);
+            $fechaTMasUnaSemana = $fechaT->addWeek();
+
+            //bscamos el periodo
+            $periodo = Periodo::where('id_horario', $request->id_horario)
+                ->where('id_ambiente', $request->id_ambiente)
+                ->where('fecha', $fechaTMasUnaSemana->format('Y-m-d'))
+                ->first();
+
+            if (!$periodo) {
+                return response()->json([
+                    'mensaje' => 'Periodo no encontrado',
+                ], 404);
+            }
+
+            return response()->json([
+                'fecha_original' => $request->fecha,
+                'fecha_mas_una_semana' => $fechaTMasUnaSemana->format('Y-m-d'),
+                'periodo' => $periodo
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Ocurrió un error al intentar obtener el periodo',
+                'mensaje' => $e->getMessage()
+            ], 500);
+        }
 
     }
+
 }
