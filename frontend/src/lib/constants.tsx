@@ -50,6 +50,12 @@ export const sideMenuOptions = [
         name: "Crear Docente ",
         icon: <LuLayers />,
       },
+      {
+        path: "dar-baja-docente",
+        name: "Dar De Baja ",
+        icon: <LuLayers />,
+      },
+
     ],
   },
   {
