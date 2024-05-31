@@ -10,7 +10,7 @@ export const NotificacionU = () => {
 
   const getNotificaciones = async () => {
     const respuesta = await axios.get<Notificacion[]>(
-      `http://127.0.0.1:8000/api/nombre_usuario_Notificacion/Vladimir Abel`
+      `http://127.0.0.1:8000/api/nombre_usuario_Notificacion/VLADIMIR ABEL`
     );
     setNotificaciones(respuesta.data);
   };

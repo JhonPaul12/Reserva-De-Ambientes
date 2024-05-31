@@ -10,17 +10,16 @@ import {
   TimeInput,
   TimeInputValue,
 } from "@nextui-org/react";
-import "./esstilosNotificar.css";
 import axios from "axios";
 import { toast } from "sonner";
-import { IDS } from "../interface/IDS";
+import { IDS } from "../interfaces/IDS";
 
-export const NotificarCan = () => {
+export const NotificarCanUbi = () => {
   const [horaInicio, setHoraInicio] = useState<TimeInputValue | null>(null);
   const [horaFin, setHoraFin] = useState<TimeInputValue | null>(null);
   const [fecha, setFecha] = useState<CalendarDate | null>(null);
-  const [aulas, setAulas] = useState<any>([]);
-  const [aulasSeleccionadas, setAulasSeleccionadas] = useState<any>([]);
+  const [ubicaciones, setUbicaciones] = useState<any>([]);
+  const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any>([]);
   const [ids, setIDS] = useState<IDS[]>([]);
   const [descripcionNotificacion, setDescripcionNotificacion] =
     useState<string>("");
@@ -33,11 +32,11 @@ export const NotificarCan = () => {
 
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/obtenerSolicitudesPorFechaYHorario2/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+        `http://127.0.0.1:8000/api/obtenerUbicacionDeSolicitudesAceptadas/${fechaStr}/${horaInicioStr}/${horaFinStr}`
       );
-      setAulas(response.data);
+      setUbicaciones(response.data);
     } catch (error) {
-      setAulas([]);
+      setUbicaciones([]);
       toast.error("No hay Aulas en la fecha");
     }
   };
@@ -46,15 +45,15 @@ export const NotificarCan = () => {
     const horaInicioStr = horaInicio ? horaInicio.toString() : "";
     const horaFinStr = horaFin ? horaFin.toString() : "";
     const fechaStr = fecha ? fecha.toString() : "";
-    console.log(aulasSeleccionadas);
-    const aulasArray = Array.from(aulasSeleccionadas);
+    console.log(ubicacionesSeleccionadas);
+    const aulasArray = Array.from(ubicacionesSeleccionadas);
     console.log(aulasArray);
     if (aulasArray.length > 0) {
       await Promise.all(
         aulasArray.map(async (aula: any) => {
           try {
             const response = await axios.post(
-              `http://127.0.0.1:8000/api/cambiarEstadoPorNombreAmbienteYHorario/${aula}/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+              `http://127.0.0.1:8000/api/cambiarEstadoPorUbicacionAmbienteYHorario/${aula}/${fechaStr}/${horaInicioStr}/${horaFinStr}`
             );
             console.log(ids);
             const idsActualizados = response.data;
@@ -95,8 +94,8 @@ export const NotificarCan = () => {
     setHoraInicio(null);
     setHoraFin(null);
     setFecha(null);
-    setAulas([]);
-    setAulasSeleccionadas([]);
+    setUbicaciones([]);
+    setUbicacionesSeleccionadas([]);
     setTituloNotificacion("");
     setDescripcionNotificacion("");
   };
@@ -134,7 +133,7 @@ export const NotificarCan = () => {
         </form>
       </div>
       <div className="m-5">
-        <h2 className="text-3xl font-bold text-gray-900">Seleccionar Aulas</h2>
+        <h2 className="text-3xl font-bold text-gray-900">Seleccionar Ubicaciones</h2>
         <div className="container-aulas">
           <TimeInput
             className="m-5"
@@ -163,14 +162,14 @@ export const NotificarCan = () => {
           className="m-5"
           labelPlacement="outside"
           fullWidth
-          label="Aulas"
-          placeholder="Seleccione las aulas"
+          label="Ubicaciones"
+          placeholder="Seleccione las ubicaciones"
           selectionMode="multiple"
-          onSelectionChange={setAulasSeleccionadas}
+          onSelectionChange={setUbicacionesSeleccionadas}
         >
-          {aulas.length > 0
-            ? aulas.map((aula: any) => (
-                <SelectItem key={aula}>{String(aula)}</SelectItem>
+          {ubicaciones.length > 0
+            ? ubicaciones.map((ubicacion: any) => (
+                <SelectItem key={ubicacion}>{String(ubicacion)}</SelectItem>
               ))
             : null}
         </Select>
@@ -188,3 +187,4 @@ export const NotificarCan = () => {
     </div>
   );
 };
+

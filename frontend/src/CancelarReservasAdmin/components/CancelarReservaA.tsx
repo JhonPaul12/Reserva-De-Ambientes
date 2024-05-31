@@ -34,7 +34,7 @@ export const CancelarReservaA = () => {
       `http://127.0.0.1:8000/api/periodoSolicitud2`
     );
     const solicitudesPendientes = respuesta.data.filter(
-      (solicitud) => solicitud.solicitud.estado === "Aceptado"
+      (solicitud) => solicitud.solicitud.estado === "Aceptada"
     );
     setSolicitudes(solicitudesPendientes);
   };
@@ -113,10 +113,12 @@ export const CancelarReservaA = () => {
                 <TableCell className="text-base text-black">
                   {solicitud.solicitud.ambiente.nombre}
                 </TableCell>
-                <TableCell className="text-base text-black">
-                  {solicitud.solicitud.materia.user.name +
-                    " " +
-                    solicitud.solicitud.materia.user.apellidos}
+                <TableCell className="text-xs text-black">
+                  {solicitud.solicitud.users.map((user, index) => (
+                    <div key={index}>
+                      *{user.name} {user.apellidos}
+                    </div>
+                  ))}
                 </TableCell>
                 <TableCell className="text-base text-black">
                   {solicitud.solicitud.materia.nombre_materia}
@@ -145,7 +147,7 @@ export const CancelarReservaA = () => {
                     onClick={() =>
                       openModal(
                         solicitud.solicitud.id,
-                        solicitud.solicitud.materia.user.id
+                        solicitud.solicitud.users[0].id
                       )
                     }
                   >
