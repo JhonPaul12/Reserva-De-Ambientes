@@ -81,7 +81,7 @@ class ReglaController extends Controller
             ], 500);
         }
     }
-    
+
 
     // public function store(Request $request)
     // {
@@ -132,26 +132,16 @@ class ReglaController extends Controller
     public function destroy($id)
     {
         $regla = Regla::find($id);
-
         if (!$regla) {
             return response()->json([
                 'success' => false,
                 'message' => 'No se encontró la regla.'
             ], 404);
         }
-
-
         $idAmbiente = $regla->ambiente_id;
-
-
         $regla->delete();
-
-
         $periodoController = new PeriodoController();
-
-
         $periodoController->destroy($idAmbiente);
-
         return response()->json([
             'success' => true,
             'message' => 'La regla y los periodos asociados al ambiente se han eliminado correctamente.'
