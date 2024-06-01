@@ -18,11 +18,14 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { SolicitudD } from "../interfaces/Solicitud";
+import { useAuthStore } from "../../Login/stores/auth.store";
 
 export const TodasSol = () => {
   const [solicitudes, setSolicitudes] = useState<SolicitudD[]>([]);
-  const [modalSolicitudId, setModalSolicitudId] = useState<string | null>(null); // Estado para almacenar el ID de la solicitud para el modal
-  const [modalText, setModalText] = useState<string>(""); // Estado para almacenar el texto de la solicitud
+  const [modalSolicitudId, setModalSolicitudId] = useState<string | null>(null); 
+  const [modalText, setModalText] = useState<string>(""); 
+
+  const user = useAuthStore((state) => state.user?.id)
 
   useEffect(() => {
     getSolicitudes();
@@ -30,7 +33,7 @@ export const TodasSol = () => {
 
   const getSolicitudes = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/nombre_usuario/VLADIMIR ABEL`
+      `http://127.0.0.1:8000/api/nombre_usuario/${user}`
     );
     setSolicitudes(respuesta.data);
     console.log(respuesta.data);
@@ -182,7 +185,8 @@ export const TodasSol = () => {
             </ModalBody>
             <ModalFooter>
               <Button
-                className="bg-primary text-white"
+                color="primary"
+                variant="shadow"
                 onClick={() => setModalSolicitudId(null)}
               >
                 Aceptar

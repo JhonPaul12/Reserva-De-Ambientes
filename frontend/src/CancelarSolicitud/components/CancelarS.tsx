@@ -9,23 +9,30 @@ import {
   TableRow,
   Modal,
   ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "@nextui-org/react";
 import axios from "axios";
 import { CReservaD } from "../interfaces/Solicitud";
 import "./estilos.css";
+import { useAuthStore } from "../../Login/stores/auth.store";
 
 export const CancelarS = () => {
   const [solicitudes, setSolicitudes] = useState<CReservaD[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [solicitudId, setSolicitudId] = useState<number | null>(null);
+  const [solicitudDetalles, setSolicitudDetalles] = useState<{ materia: string; motivo: string } | null>(null);
 
   useEffect(() => {
     getSolicitudes();
   }, []);
 
+  const user = useAuthStore((state) => state.user?.id)
+
   const getSolicitudes = async () => {
     const respuesta = await axios.get<CReservaD[]>(
-      `http://127.0.0.1:8000/api/nombre_usuario/VLADIMIR ABEL`
+      `http://127.0.0.1:8000/api/nombre_usuario/${user}`
     );
     const solicitudesPendientes = respuesta.data.filter(
       (solicitud) => solicitud.solicitud.estado === "Aceptada"
@@ -33,8 +40,12 @@ export const CancelarS = () => {
     setSolicitudes(solicitudesPendientes);
   };
 
-  const openModal = (id: number) => {
-    setSolicitudId(id);
+  const openModal = (solicitud: CReservaD) => {
+    setSolicitudId(solicitud.solicitud.id);
+    setSolicitudDetalles({
+      materia: solicitud.solicitud.materia.nombre_materia,
+      motivo: solicitud.solicitud.motivo,
+    });
     setModalOpen(true);
   };
 
@@ -132,9 +143,9 @@ export const CancelarS = () => {
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
                   <Button
-                    className="bg-danger text-white"
+                    color="danger"
                     size="sm"
-                    onClick={() => openModal(solicitud.solicitud.id)}
+                    onClick={() => openModal(solicitud)}
                     variant="shadow"
                   >
                     Cancelar
@@ -144,22 +155,19 @@ export const CancelarS = () => {
             ))}
           </TableBody>
         </Table>
-        <Modal
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          className="p-10 bg-white"
-        >
+        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
           <ModalContent className="">
-            ¿Estás seguro de que quieres cancelar su reserva?
-            <Button
-              className="bg-danger m-2 text-white"
-              onClick={cancelarSolicitud}
-            >
-              Sí, cancelar
-            </Button>
-            <Button className="m-2" onClick={() => setModalOpen(false)}>
-              No
-            </Button>
+            <ModalHeader>¿Está seguro de cancelar su reserva?</ModalHeader>
+            <ModalBody>
+              <p>Materia: {solicitudDetalles?.materia}</p>
+              <p>Motivo: {solicitudDetalles?.motivo}</p>
+            </ModalBody>
+            <ModalFooter className="">
+              <Button color="danger" variant="shadow" onClick={cancelarSolicitud}>
+                Sí, cancelar
+              </Button>
+              <Button onClick={() => setModalOpen(false)}>No</Button>
+            </ModalFooter>
           </ModalContent>
         </Modal>
       </div>

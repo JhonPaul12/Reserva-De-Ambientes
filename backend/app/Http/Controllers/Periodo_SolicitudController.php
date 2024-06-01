@@ -35,12 +35,12 @@ class Periodo_SolicitudController extends Controller
 
         return response()->json($grouped, 200);
     }
-    public function nombre_usuario($nombreUsuario)
+    public function nombre_usuario($idUsuario)
     {
         $query = Periodo_Solicitud::with('periodo.horario', 'solicitud.materia', 'solicitud.users', 'solicitud.ambiente');
 
-        if ($nombreUsuario) {
-            $users = User::where('name', $nombreUsuario)->get();
+        if ($idUsuario) {
+            $users = User::where('id', $idUsuario)->get();
 
             if ($users->isEmpty()) {
                 return response()->json(['message' => 'No se encontraron usuarios con ese nombre'], 404);

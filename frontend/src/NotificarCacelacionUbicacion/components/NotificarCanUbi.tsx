@@ -4,6 +4,11 @@ import {
   CalendarDate,
   DatePicker,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Select,
   SelectItem,
   Textarea,
@@ -19,11 +24,14 @@ export const NotificarCanUbi = () => {
   const [horaFin, setHoraFin] = useState<TimeInputValue | null>(null);
   const [fecha, setFecha] = useState<CalendarDate | null>(null);
   const [ubicaciones, setUbicaciones] = useState<any>([]);
-  const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any>([]);
+  const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any>(
+    []
+  );
   const [ids, setIDS] = useState<IDS[]>([]);
   const [descripcionNotificacion, setDescripcionNotificacion] =
     useState<string>("");
   const [tituloNotificacion, setTituloNotificacion] = useState<string>("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleChange = async () => {
     const horaInicioStr = horaInicio ? horaInicio.toString() : "";
@@ -42,6 +50,12 @@ export const NotificarCanUbi = () => {
   };
 
   const cambiarEstado = async () => {
+    setModalOpen(false);
+    if (!tituloNotificacion || !descripcionNotificacion) {
+      toast.error("El título y la descripción no pueden estar vacíos");
+      return;
+    }
+
     const horaInicioStr = horaInicio ? horaInicio.toString() : "";
     const horaFinStr = horaFin ? horaFin.toString() : "";
     const fechaStr = fecha ? fecha.toString() : "";
@@ -64,13 +78,16 @@ export const NotificarCanUbi = () => {
                 await Promise.all(
                   id.id_usuario.map(async (usuario: any) => {
                     try {
-                      await axios.post(`http://127.0.0.1:8000/api/notificacion`, {
-                        id_usuario: usuario,
-                        id_solicitud: id.id_solicitud,
-                        titulo: tituloNotificacion,
-                        contenido: descripcionNotificacion,
-                        visto: 1,
-                      });
+                      await axios.post(
+                        `http://127.0.0.1:8000/api/notificacion`,
+                        {
+                          id_usuario: usuario,
+                          id_solicitud: id.id_solicitud,
+                          titulo: tituloNotificacion,
+                          contenido: descripcionNotificacion,
+                          visto: 1,
+                        }
+                      );
                     } catch (error) {
                       console.error(
                         `Error al enviar notificaciones ${aula}: ${error}`
@@ -133,7 +150,9 @@ export const NotificarCanUbi = () => {
         </form>
       </div>
       <div className="m-5">
-        <h2 className="text-3xl font-bold text-gray-900">Seleccionar Ubicaciones</h2>
+        <h2 className="text-3xl font-bold text-gray-900">
+          Seleccionar Ubicaciones
+        </h2>
         <div className="container-aulas">
           <TimeInput
             className="m-5"
@@ -177,14 +196,25 @@ export const NotificarCanUbi = () => {
           <Button
             color="primary"
             variant="shadow"
-            onClick={cambiarEstado}
+            onClick={() => setModalOpen(true)}
             fullWidth
           >
-            Notificar
+            Notificar Ubicaciones
           </Button>
         </div>
       </div>
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+        <ModalContent className="">
+          <ModalHeader>¿Esta seguro de cancelar las reservas?</ModalHeader>
+          <ModalBody>Se cancelaran</ModalBody>
+          <ModalFooter className="">
+            <Button color="danger" variant="shadow" onClick={cambiarEstado}>
+              Sí, cancelar
+            </Button>
+            <Button onClick={() => setModalOpen(false)}>No</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
-

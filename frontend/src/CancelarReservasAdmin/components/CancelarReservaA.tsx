@@ -192,7 +192,7 @@ export const CancelarReservaA = () => {
           </ModalBody>
           <ModalFooter>
             <Button color="danger" variant="shadow" onClick={cancelarSolicitud}>
-              Sí, rechazar
+              Rechazar
             </Button>
             <Button variant="shadow" onClick={() => setModalOpen(false)}>
               No

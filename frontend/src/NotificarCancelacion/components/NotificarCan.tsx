@@ -4,6 +4,11 @@ import {
   CalendarDate,
   DatePicker,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Select,
   SelectItem,
   Textarea,
@@ -25,6 +30,7 @@ export const NotificarCan = () => {
   const [descripcionNotificacion, setDescripcionNotificacion] =
     useState<string>("");
   const [tituloNotificacion, setTituloNotificacion] = useState<string>("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleChange = async () => {
     const horaInicioStr = horaInicio ? horaInicio.toString() : "";
@@ -43,6 +49,12 @@ export const NotificarCan = () => {
   };
 
   const cambiarEstado = async () => {
+    setModalOpen(false);
+    if (!tituloNotificacion || !descripcionNotificacion) {
+      toast.error("El título y la descripción no pueden estar vacíos");
+      return;
+    }
+
     const horaInicioStr = horaInicio ? horaInicio.toString() : "";
     const horaFinStr = horaFin ? horaFin.toString() : "";
     const fechaStr = fecha ? fecha.toString() : "";
@@ -181,13 +193,25 @@ export const NotificarCan = () => {
           <Button
             color="primary"
             variant="shadow"
-            onClick={cambiarEstado}
+            onClick={() => setModalOpen(true)}
             fullWidth
           >
-            Notificar
+            Notificar Aulas
           </Button>
         </div>
       </div>
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+        <ModalContent className="">
+          <ModalHeader>¿Esta seguro de cancelar las reservas?</ModalHeader>
+          <ModalBody>Se cancelaran</ModalBody>
+          <ModalFooter className="">
+            <Button color="danger" variant="shadow" onClick={cambiarEstado}>
+              Sí, cancelar
+            </Button>
+            <Button onClick={() => setModalOpen(false)}>No</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
