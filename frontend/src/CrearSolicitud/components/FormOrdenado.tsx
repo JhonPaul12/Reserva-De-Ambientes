@@ -251,7 +251,7 @@ export const FormOrdenado = () => {
   const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
 
   const getAmbientes = async (num: string) => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
+    const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambientesLibres`);
     const filteredAmbientes = respuesta.data.filter(
       (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
     );
