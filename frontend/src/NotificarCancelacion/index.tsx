@@ -1,0 +1,1 @@
+export { NotificarCancelaciones } from "./page/NotificarCancelaciones";

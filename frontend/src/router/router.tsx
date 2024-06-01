@@ -19,6 +19,8 @@ import { VerTodasReservasAdmin } from "../ReservasAdmin2/indes";
 import { Login } from "../Login/Login";
 import { NotificacionesUsuario } from "../Notificaciones";
 import { ModificarDocentes } from "../ModificarDocentes/ModificarDocentes";
+import { NotificarCancelaciones } from "../NotificarCancelacion";
+import { NotificarCancelacionesUbi } from "../NotificarCacelacionUbicacion";
 
 export const router = createBrowserRouter([
   {
@@ -74,6 +76,14 @@ export const router = createBrowserRouter([
         path: "modificar-docentes",
         element: <ModificarDocentes />,
       },
+      {
+        path: "notificar-ambiente",
+        element: <NotificarCancelaciones />,
+      },
+      {
+        path: "notificar-ubicacion",
+        element: <NotificarCancelacionesUbi />
+      }
     ],
   },
   //Rutas Usuario

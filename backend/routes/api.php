@@ -214,7 +214,7 @@ Route::get('/obtenerUbicacionDeSolicitudesAceptadas/{fecha}/{inicio}/{fin}', [Pe
 Route::post('/cambiarEstadoPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbienteYHorario']);
 
 //CAMBIA El ESTADO DE LAS RESERVAS ,POR UBICACION FECHA HORA
-Route::post('/cambiarEstadoPorUbicacionFechaHora/{ubicacion}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorUbicacionAmbienteYHorario']);
+Route::post('/cambiarEstadoPorUbicacionAmbienteYHorario/{ubicacion}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorUbicacionAmbienteYHorario']);
 
 
 //DE LAS RESERVAS, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN => MUESTRA LOS ID_USER Y ID_SOLICITUD

@@ -13,6 +13,7 @@ import {
   Textarea,
   ModalHeader,
   ModalBody,
+  ModalFooter,
 } from "@nextui-org/react";
 import axios from "axios";
 import { CReservaA } from "../interfaces/Reserva";
@@ -34,7 +35,7 @@ export const CancelarReservaA = () => {
       `http://127.0.0.1:8000/api/periodoSolicitud2`
     );
     const solicitudesPendientes = respuesta.data.filter(
-      (solicitud) => solicitud.solicitud.estado === "Aceptado"
+      (solicitud) => solicitud.solicitud.estado === "Aceptada"
     );
     setSolicitudes(solicitudesPendientes);
   };
@@ -79,73 +80,76 @@ export const CancelarReservaA = () => {
       <section className="mx-6 my-4">
         <Table className="custom-table" aria-label="Tabla de datos">
           <TableHeader>
-            <TableColumn className="text-center text-3xl bg-slate-300">
+            <TableColumn className="text-center text-2xl bg-slate-300">
               Ambiente
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
+            <TableColumn className="text-center text-2xl bg-slate-300">
               Docente
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
+            <TableColumn className="text-center text-2xl bg-slate-300">
               Materia
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              H. Inicio
+            <TableColumn className="text-center text-2xl bg-slate-300">
+              Inicio
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              H. Final
+            <TableColumn className="text-center text-2xl bg-slate-300">
+              Fin
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
+            <TableColumn className="text-center text-2xl bg-slate-300">
               Fecha
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Nro. Est.
+            <TableColumn className="text-center text-2xl bg-slate-300">
+              Est.
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
+            <TableColumn className="text-center text-2xl bg-slate-300">
               Estado
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
+            <TableColumn className="text-center text-2xl bg-slate-300">
               Opción
             </TableColumn>
           </TableHeader>
           <TableBody>
             {solicitudes.map((solicitud) => (
               <TableRow key={solicitud.solicitud_id}>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.solicitud.ambiente.nombre}
                 </TableCell>
-                <TableCell className="text-base text-black">
-                  {solicitud.solicitud.materia.user.name +
-                    " " +
-                    solicitud.solicitud.materia.user.apellidos}
+                <TableCell className="text-xs text-black">
+                  {solicitud.solicitud.users.map((user, index) => (
+                    <div key={index}>
+                      *{user.name} {user.apellidos}
+                    </div>
+                  ))}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.solicitud.materia.nombre_materia}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.periodos[0].periodo.horario.hora_inicio}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {
                     solicitud.periodos[solicitud.periodos.length - 1].periodo
                       .horario.hora_fin
                   }
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.periodos[0].periodo.fecha}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.solicitud.numero_estudiantes}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.solicitud.estado}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   <Button
-                    className="bg-danger text-white"
+                    color="danger"
+                    variant="shadow"
                     onClick={() =>
                       openModal(
                         solicitud.solicitud.id,
-                        solicitud.solicitud.materia.user.id
+                        solicitud.solicitud.users[0].id
                       )
                     }
                   >
@@ -157,11 +161,7 @@ export const CancelarReservaA = () => {
           </TableBody>
         </Table>
       </section>
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        className="modal-large"
-      >
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} size="3xl">
         <ModalContent className="modal-content-large">
           <ModalHeader>
             <h2 className="text-lg">
@@ -171,32 +171,33 @@ export const CancelarReservaA = () => {
           <ModalBody className="">
             <div>
               <Input
+                labelPlacement="outside"
                 fullWidth
                 value={tituloNotificacion}
                 onChange={(e) => setTituloNotificacion(e.target.value)}
-                placeholder="Motivo"
+                label="Motivo"
                 className="my-2"
               />
             </div>
             <div className="textArea">
               <Textarea
                 fullWidth
+                labelPlacement="outside"
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                placeholder="Descripcion del motivo"
+                label="Descripcion del motivo"
                 className=""
               />
             </div>
           </ModalBody>
-          <Button
-            className="bg-danger m-2 text-white"
-            onClick={cancelarSolicitud}
-          >
-            Sí, rechazar
-          </Button>
-          <Button className="m-2" onClick={() => setModalOpen(false)}>
-            No
-          </Button>
+          <ModalFooter>
+            <Button color="danger" variant="shadow" onClick={cancelarSolicitud}>
+              Sí, rechazar
+            </Button>
+            <Button variant="shadow" onClick={() => setModalOpen(false)}>
+              No
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </div>
