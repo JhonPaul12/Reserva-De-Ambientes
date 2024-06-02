@@ -543,12 +543,14 @@ public function updateEstado(Request $request)
         }
     }
 
+    // 
     public function EliminarPorSemestre(Request $request)
-    {
+{
     $validator = Validator::make($request->all(), [
-        'id_regla' => 'required',
-        'id_horario' => 'required',
-        'id_ambiente' => 'required'
+        'periodos' => 'required|array',
+        'periodos.*.id_regla' => 'required|integer',
+        'periodos.*.id_horario' => 'required|integer',
+        'periodos.*.id_ambiente' => 'required|integer'
     ]);
 
     if ($validator->fails()) {
@@ -558,20 +560,32 @@ public function updateEstado(Request $request)
         ], 422);
     }
 
-    try {
-        $regla = Regla::findOrFail($request->id_regla);
-        $fechaInicial = $regla->fecha_inicial;
-        $fechaFinal = $regla->fecha_final;
+    $result = [];
 
-        // Buscar y eliminar los periodos con estado 'libre' dentro del rango de fechas
-        $periodosEliminados = Periodo::whereBetween('fecha', [$fechaInicial, $fechaFinal])
-            ->where('estado', 'libre')->where('id_ambiente', $request->id_ambiente)
-            ->where('id_horario', $request->id_horario)
-            ->delete();
+    try {
+        foreach ($request->periodos as $periodo) {
+            $regla = Regla::findOrFail($periodo['id_regla']);
+            $fechaInicial = $regla->fecha_inicial;
+            $fechaFinal = $regla->fecha_final;
+
+            // Buscar y eliminar los periodos con estado 'libre' dentro del rango de fechas
+            $periodosEliminados = Periodo::whereBetween('fecha', [$fechaInicial, $fechaFinal])
+                ->where('estado', 'libre')
+                ->where('id_ambiente', $periodo['id_ambiente'])
+                ->where('id_horario', $periodo['id_horario'])
+                ->delete();
+
+            $result[] = [
+                'id_regla' => $periodo['id_regla'],
+                'id_horario' => $periodo['id_horario'],
+                'id_ambiente' => $periodo['id_ambiente'],
+                'periodos_eliminados' => $periodosEliminados
+            ];
+        }
 
         return response()->json([
             'mensaje' => 'Periodos libres eliminados con éxito',
-            'periodos_eliminados' => $periodosEliminados
+            'resultados' => $result
         ], 200);
     } catch (ModelNotFoundException $e) {
         return response()->json([
@@ -582,10 +596,50 @@ public function updateEstado(Request $request)
             'error' => 'Ocurrió un error al intentar eliminar los periodos'
         ], 500);
     }
-    }
 }
 
+}
 
+// public function EliminarPorSemestre(Request $request)
+//     {
+//     $validator = Validator::make($request->all(), [
+//         'id_regla' => 'required',
+//         'id_horario' => 'required',
+//         'id_ambiente' => 'required'
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json([
+//             'error' => 'Datos de entrada no válidos',
+//             'mensajes' => $validator->errors()
+//         ], 422);
+//     }
+
+//     try {
+//         $regla = Regla::findOrFail($request->id_regla);
+//         $fechaInicial = $regla->fecha_inicial;
+//         $fechaFinal = $regla->fecha_final;
+
+//         // Buscar y eliminar los periodos con estado 'libre' dentro del rango de fechas
+//         $periodosEliminados = Periodo::whereBetween('fecha', [$fechaInicial, $fechaFinal])
+//             ->where('estado', 'libre')->where('id_ambiente', $request->id_ambiente)
+//             ->where('id_horario', $request->id_horario)
+//             ->delete();
+
+//         return response()->json([
+//             'mensaje' => 'Periodos libres eliminados con éxito',
+//             'periodos_eliminados' => $periodosEliminados
+//         ], 200);
+//     } catch (ModelNotFoundException $e) {
+//         return response()->json([
+//             'error' => 'Registro no encontrado'
+//         ], 404);
+//     } catch (Exception $e) {
+//         return response()->json([
+//             'error' => 'Ocurrió un error al intentar eliminar los periodos'
+//         ], 500);
+//     }
+//     } 
 
 
 
