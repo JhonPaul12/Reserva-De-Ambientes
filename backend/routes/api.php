@@ -45,6 +45,7 @@ Route::get('/ambiente/{id}',[AmbienteController::class,'show']);
 Route::post('/ambiente',[AmbienteController::class,'store']);
 Route::put('/ambiente/{id}',[AmbienteController::class,'update']);
 Route::delete('/ambiente/{id}',[AmbienteController::class,'destroy']);
+Route::get('/ambientesLibres',[AmbienteController::class,'libres']);
 
 //periodo
 Route::get('/periodo',[PeriodoController::class,'index']);
@@ -60,6 +61,10 @@ Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaRe
 Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
 Route::delete('/eliminarPeriodo',[PeriodoController::class,'EliminarPorSemestre']);
+Route::get('/reasignacion',[PeriodoController::class,'verificarReasignacion']);
+//Route::get('/ambientesLibres',[PeriodoController::class,'libres']);
+
+
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
@@ -209,7 +214,7 @@ Route::get('/obtenerUbicacionDeSolicitudesAceptadas/{fecha}/{inicio}/{fin}', [Pe
 Route::post('/cambiarEstadoPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbienteYHorario']);
 
 //CAMBIA El ESTADO DE LAS RESERVAS ,POR UBICACION FECHA HORA
-Route::post('/cambiarEstadoPorUbicacionFechaHora/{ubicacion}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorUbicacionAmbienteYHorario']);
+Route::post('/cambiarEstadoPorUbicacionAmbienteYHorario/{ubicacion}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorUbicacionAmbienteYHorario']);
 
 
 //DE LAS RESERVAS, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN => MUESTRA LOS ID_USER Y ID_SOLICITUD

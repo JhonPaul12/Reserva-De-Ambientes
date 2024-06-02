@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Periodo_Solicitud;
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Models\Ambiente;
+use App\Models\Periodo_Solicitud;
+use App\Models\Solicitud;
+use App\Models\User;
 use DateTime;
+use Illuminate\Http\Request;
+
 class Periodo_SolicitudController extends Controller
 {
     public function index()
@@ -16,7 +18,7 @@ class Periodo_SolicitudController extends Controller
     }
     public function index2()
     {
-        $periodo_solicitudes = Periodo_Solicitud::with('periodo.horario', 'solicitud.users', 'solicitud.ambiente')->get();
+        $periodo_solicitudes = Periodo_Solicitud::with('periodo.horario', 'solicitud.materia', 'solicitud.users', 'solicitud.ambiente')->get();
 
         $grouped = $periodo_solicitudes->groupBy('solicitud_id')->map(function ($items, $key) {
             return [
@@ -33,12 +35,12 @@ class Periodo_SolicitudController extends Controller
 
         return response()->json($grouped, 200);
     }
-    public function nombre_usuario($nombreUsuario )
+    public function nombre_usuario($idUsuario)
     {
-        $query = Periodo_Solicitud::with('periodo.horario', 'solicitud.users', 'solicitud.ambiente');
+        $query = Periodo_Solicitud::with('periodo.horario', 'solicitud.materia', 'solicitud.users', 'solicitud.ambiente');
 
-        if ($nombreUsuario) {
-            $users = User::where('name', $nombreUsuario)->get();
+        if ($idUsuario) {
+            $users = User::where('id', $idUsuario)->get();
 
             if ($users->isEmpty()) {
                 return response()->json(['message' => 'No se encontraron usuarios con ese nombre'], 404);
@@ -77,7 +79,7 @@ class Periodo_SolicitudController extends Controller
         $periodo_solicitudes = Periodo_Solicitud::with('solicitud')->get();
         return response()->json($periodo_solicitudes, 200);
     }
-    
+
     public function obtenerSolicitudesPorFechaYHorario2($fechaSolicitud, $horaInicio, $horaFin)
     {
         $fecha = DateTime::createFromFormat('Y-m-d', $fechaSolicitud);
@@ -169,29 +171,40 @@ class Periodo_SolicitudController extends Controller
         }
 
         $ambiente = Ambiente::where('nombre', $nombreAmbiente)->first();
-
         if (!$ambiente) {
             return response()->json(['message' => 'El ambiente no fue encontrado'], 404);
         }
 
         $periodoSolicitudes = Periodo_Solicitud::whereHas('solicitud', function ($query) use ($fechaFormateada, $ambiente) {
             $query->whereDate('fecha_solicitud', $fechaFormateada)
-                ->where('ambiente_id', $ambiente->id);
+                ->where('ambiente_id', $ambiente->id)
+                ->where('estado', 'Aceptada');
         })->whereHas('periodo.horario', function ($query) use ($horaInicio, $horaFin) {
             $query->where('hora_inicio', '>=', $horaInicio)
                 ->where('hora_fin', '<=', $horaFin);
         })->with('solicitud')->get();
 
         if ($periodoSolicitudes->isEmpty()) {
-            return response()->json(['message' => 'No se encontraron solicitudes para la fecha, horario y ambiente especificados'], 404);
+            return response()->json(['message' => 'No se encontraron solicitudes aceptadas para la fecha, horario y ambiente especificados'], 404);
         }
+
         foreach ($periodoSolicitudes as $periodoSolicitud) {
             $solicitud = $periodoSolicitud->solicitud;
             $solicitud->estado = "Rechazado";
             $solicitud->save();
         }
-        return response()->json(['message' => 'El estado de todas las solicitudes ha sido cambiado a Rechazado'], 200);
+
+        $agrupadosPorSolicitud = $periodoSolicitudes->groupBy('solicitud_id')->map(function ($group) {
+            $firstSolicitud = $group->first()->solicitud;
+            return [
+                'id_solicitud' => $firstSolicitud->id,
+                'id_usuario' => $firstSolicitud->users->pluck('id')->toArray(),
+            ];
+        })->values();
+
+        return response()->json($agrupadosPorSolicitud, 200);
     }
+
 
     public function cambiarEstadoPorUbicacionAmbienteYHorario($ubicacion, $fechaSolicitud, $horaInicio, $horaFin)
     {
@@ -205,30 +218,52 @@ class Periodo_SolicitudController extends Controller
             return response()->json(['message' => 'Formato de hora inválido. Use el formato HH:MM:SS'], 400);
         }
 
-        $ambiente = Ambiente::where('ubicacion', $ubicacion)->first();
+        $ambientes = Ambiente::where('ubicacion', $ubicacion)->get();
 
-        if (!$ambiente) {
-            return response()->json(['message' => 'El ambiente no fue encontrado'], 404);
+        if ($ambientes->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron ambientes para la ubicación especificada'], 404);
         }
 
-        $periodoSolicitudes = Periodo_Solicitud::whereHas('solicitud', function ($query) use ($fechaFormateada, $ambiente) {
-            $query->whereDate('fecha_solicitud', $fechaFormateada)
-                ->where('ambiente_id', $ambiente->id);
-        })->whereHas('periodo.horario', function ($query) use ($horaInicio, $horaFin) {
-            $query->where('hora_inicio', '>=', $horaInicio)
-                ->where('hora_fin', '<=', $horaFin);
-        })->with('solicitud')->get();
+        $agrupadosPorSolicitud = collect();
 
-        if ($periodoSolicitudes->isEmpty()) {
-            return response()->json(['message' => 'No se encontraron solicitudes para la fecha, horario y ambiente especificados'], 404);
+        foreach ($ambientes as $ambiente) {
+            $periodoSolicitudes = Periodo_Solicitud::whereHas('solicitud', function ($query) use ($fechaFormateada, $ambiente) {
+                $query->whereDate('fecha_solicitud', $fechaFormateada)
+                    ->where('ambiente_id', $ambiente->id)
+                    ->where('estado', 'Aceptada');
+            })->whereHas('periodo.horario', function ($query) use ($horaInicio, $horaFin) {
+                $query->where('hora_inicio', '>=', $horaInicio)
+                    ->where('hora_fin', '<=', $horaFin);
+            })->with('solicitud')->get();
+
+            if ($periodoSolicitudes->isEmpty()) {
+                continue;
+            }
+
+            foreach ($periodoSolicitudes as $periodoSolicitud) {
+                $solicitud = $periodoSolicitud->solicitud;
+                $solicitud->estado = "Rechazado";
+                $solicitud->save();
+            }
+
+            $agrupadosPorSolicitud = $agrupadosPorSolicitud->merge(
+                $periodoSolicitudes->groupBy('solicitud_id')->map(function ($group) {
+                    $firstSolicitud = $group->first()->solicitud;
+                    return [
+                        'id_solicitud' => $firstSolicitud->id,
+                        'id_usuario' => $firstSolicitud->users->pluck('id')->toArray(),
+                    ];
+                })->values()
+            );
         }
-        foreach ($periodoSolicitudes as $periodoSolicitud) {
-            $solicitud = $periodoSolicitud->solicitud;
-            $solicitud->estado = "Rechazado";
-            $solicitud->save();
+
+        if ($agrupadosPorSolicitud->isEmpty()) {
+            return response()->json(['message' => 'No se encontraron solicitudes para la fecha, horario y ambientes especificados'], 404);
         }
-        return response()->json(['message' => 'El estado de todas las solicitudes ha sido cambiado a Rechazado'], 200);
+
+        return response()->json($agrupadosPorSolicitud->values(), 200);
     }
+
 
 
 
@@ -258,7 +293,8 @@ class Periodo_SolicitudController extends Controller
 
         $periodoSolicitudes = Periodo_Solicitud::whereHas('solicitud', function ($query) use ($fechaFormateada, $ambiente) {
             $query->whereDate('fecha_solicitud', $fechaFormateada)
-                ->where('ambiente_id', $ambiente->id);
+                ->where('ambiente_id', $ambiente->id)
+                ->where('estado', 'Aceptada');
         })->whereHas('periodo.horario', function ($query) use ($horaInicio, $horaFin) {
             $query->where('hora_inicio', '>=', $horaInicio)
                 ->where('hora_fin', '<=', $horaFin);
@@ -278,5 +314,4 @@ class Periodo_SolicitudController extends Controller
 
         return response()->json($agrupadosPorSolicitud, 200);
     }
-
 }

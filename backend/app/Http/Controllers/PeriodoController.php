@@ -553,12 +553,12 @@ public function updateEstado(Request $request)
         'periodos.*.id_ambiente' => 'required|integer'
     ]);
 
-    if ($validator->fails()) {
-        return response()->json([
-            'error' => 'Datos de entrada no válidos',
-            'mensajes' => $validator->errors()
-        ], 422);
-    }
+         if ($validator->fails()) {
+              return response()->json([
+                  'error' => 'Datos de entrada no válidos',
+                  'mensajes' => $validator->errors()
+              ], 422);
+         }
 
     $result = [];
 
@@ -587,19 +587,17 @@ public function updateEstado(Request $request)
             'mensaje' => 'Periodos libres eliminados con éxito',
             'resultados' => $result
         ], 200);
-    } catch (ModelNotFoundException $e) {
-        return response()->json([
-            'error' => 'Registro no encontrado'
-        ], 404);
-    } catch (Exception $e) {
-        return response()->json([
-            'error' => 'Ocurrió un error al intentar eliminar los periodos'
-        ], 500);
+         } catch (ModelNotFoundException $e) {
+                  return response()->json([
+                  'error' => 'Registro no encontrado'
+             ], 404);
+         } catch (Exception $e) {
+             return response()->json([
+             'error' => 'Ocurrió un error al intentar eliminar los periodos'
+             ], 500);
+        }
     }
 }
-
-}
-
 // public function EliminarPorSemestre(Request $request)
 //     {
 //     $validator = Validator::make($request->all(), [
