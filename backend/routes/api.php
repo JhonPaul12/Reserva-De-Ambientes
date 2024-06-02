@@ -16,6 +16,7 @@ use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\AmbientereglaController;
 use App\Http\Controllers\Periodo_SolicitudController;
 use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\MateriaController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
 
@@ -137,6 +138,7 @@ Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getG
 //ruta para devolver docentes de una materia y un id docente
 Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
 
+Route::get('/Materias',[MateriaController::class,'index']);
 
 
 

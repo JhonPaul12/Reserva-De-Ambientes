@@ -43,7 +43,7 @@ class Periodo_SolicitudController extends Controller
             $users = User::where('id', $idUsuario)->get();
 
             if ($users->isEmpty()) {
-                return response()->json(['message' => 'No se encontraron usuarios con ese nombre'], 404);
+                return response()->json(['message' => 'No se encontraron usuarios con ese id'], 404);
             }
 
             $query->whereHas('solicitud.users', function ($query) use ($users) {
