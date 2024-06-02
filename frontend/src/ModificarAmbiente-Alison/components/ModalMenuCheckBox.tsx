@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { horarios, dias } from "./Periodos";
 import "./MenuCheckBox.css";
-import { Button } from "@nextui-org/react";
+import { RiCheckboxMultipleFill } from "react-icons/ri";
 
 interface Periodo {
   id: number;
@@ -216,10 +216,10 @@ export const ModalMenuCheckBox = ({
             <td className="td">Seleccionar Todo</td>
             {dias.map((dia) => (
               <td className="td" key={`new-${dia}`}>
-                <Button
-                  className="bg-primary"
+                <RiCheckboxMultipleFill
+                  className="mx-12"
                   onClick={() => handleSelectAllChange(dia)}
-                ></Button>
+                />
               </td>
             ))}
           </tr>

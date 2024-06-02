@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import "./ejemplo.css";
 import { horarios, dias } from "./Periodos";
 import { Button } from "@nextui-org/react";
+import { RiCheckboxMultipleFill } from "react-icons/ri";
 
 interface MenuCheckBoxProps {
   prueba: (checkedItems: {
@@ -163,12 +164,10 @@ export const MenuCheckBox = ({
             <th className="th">Seleccionar todo</th>
             {dias.map((dia) => (
               <th className="th" key={`select-all-${dia}`}>
-                <Button
-                  className="bg-primary text-white "
+                <RiCheckboxMultipleFill
+                  className="mx-12"
                   onClick={() => handleSelectAll(dia)}
-                >
-                  {dia}
-                </Button>
+                />
               </th>
             ))}
           </tr>

@@ -10,9 +10,12 @@ import axios from "axios";
 import { Toaster, toast } from "sonner";
 
 export const Reglas = () => {
-  const [checkedItems, setCheckedItems] = useState({});
+  const [checkedItems, setCheckedItems] = useState<{
+    [key: string]: { id: number; dia: string; fijo?: boolean };
+  }>({});
+  //const [checkedItems, setCheckedItems] = useState({});
   const [selectedAmbiente, setSelectedAmbiente] = useState("");
-  const [selectedRegla, setSelectedRegla] = useState(null);
+  const [selectedRegla, setSelectedRegla] = useState("");
   const [fechaInicial, setFechainicial] = useState<Dayjs | null>(null);
   const [fechafinal, setFechafinal] = useState<Dayjs | null>(null);
 
@@ -24,7 +27,7 @@ export const Reglas = () => {
   const resetValues = () => {
     setCheckedItems({});
     setSelectedAmbiente("");
-    setSelectedRegla(null);
+    setSelectedRegla("");
     setFechainicial(null);
     setFechafinal(null);
     setResetAmbiente((prev) => !prev);
@@ -42,10 +45,14 @@ export const Reglas = () => {
   //Lsita de Ambientes
   const handleSelectChange = (selectedValue: string) => {
     setSelectedAmbiente(selectedValue);
+    if (selectedValue === "") {
+      setCheckedItems({});
+      setResetCheckboxes((prev) => !prev); // Trigger reset for checkboxes
+    }
   };
 
   //Lsita de Reglas
-  const handleReglaChange = (selectedValue) => {
+  const handleReglaChange = (selectedValue: string) => {
     setSelectedRegla(selectedValue);
   };
 
@@ -116,7 +123,7 @@ export const Reglas = () => {
       }
     } else {
       if (!selectedRegla) {
-        toast.error("Debe seleccionar una regla");
+        toast.error("Debe seleccionar una Gestion");
       } else if (!selectedAmbiente) {
         toast.error("Debe seleccionar un ambiente");
       } else if (Object.keys(checkedItems).length === 0) {
