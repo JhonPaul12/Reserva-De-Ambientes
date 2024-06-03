@@ -150,7 +150,14 @@ class PeriodoController extends Controller
             continue;
         }
 
-        $regla = Regla::find($ambregla->id_regla);
+         $regla = Regla::find($ambregla->id_regla);
+        // $regla = Regla::find($periodoData['id_ambReg']);
+
+        // // Check if the regla exists
+        // if (!$regla) {
+        //     $response['errores'][] = ['id_ambReg' => $periodoData['id_ambReg'], 'error' => 'No se encontró la regla asociada al ambiente del período'];
+        //     continue;
+        // }
 
         $finish = Carbon::parse($regla->fecha_final);
         $fechaPeriodo = Carbon::parse($periodoData['fecha']);

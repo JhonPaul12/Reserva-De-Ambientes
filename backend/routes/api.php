@@ -28,6 +28,7 @@ Route::resource('/periodo',PeriodoController::class);*/
 //regla
 Route::get('/regla',[ReglaController::class,'index']);
 Route::get('/regla/{id}',[ReglaController::class,'show']);
+Route::get('/reglaActiva',[ReglaController::class,'getReglasActivas']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
 Route::delete('/regla/{id}',[ReglaController::class,'destroy']);

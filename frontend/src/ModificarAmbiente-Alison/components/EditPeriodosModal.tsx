@@ -9,7 +9,7 @@ import {
 } from "@nextui-org/react";
 //import { FcCalendar } from "react-icons/fc";
 import ModalMenuCheckBox from "./ModalMenuCheckBox";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
@@ -27,17 +27,26 @@ export const EditPeriodosModal = ({ ambiente }) => {
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFinal, setFechaFinal] = useState("");
 
-  useEffect(() => {
-    if (isOpen) getAmbiente(), obtenerRegla();
-  }, [isOpen]);
+  // const getAmbiente = async () => {
+  //   fetch(`http://127.0.0.1:8000/api/periodosAsignados/${ambiente.id}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setPeriodos(data);
+  //     });
+  // };
 
-  const getAmbiente = async () => {
+  //Obtenemos los periodos de el ambiente
+  const getAmbiente = useCallback(async () => {
     fetch(`http://127.0.0.1:8000/api/periodosAsignados/${ambiente.id}`)
       .then((response) => response.json())
       .then((data) => {
         setPeriodos(data);
       });
-  };
+  }, [ambiente.id]);
+
+  useEffect(() => {
+    if (isOpen) getAmbiente(), obtenerRegla();
+  }, [isOpen, getAmbiente]);
 
   const checkboxCreated = (newCreatedItems) => {
     setCreatedItems(newCreatedItems);
@@ -50,6 +59,7 @@ export const EditPeriodosModal = ({ ambiente }) => {
   const guardar = async () => {
     // console.log(cretedItems);
     //console.log(deleteItems);
+    //Verficamos si tiene regla
 
     // console.log(regla.id_regla);
     // console.log(ambiente.id);
@@ -58,20 +68,22 @@ export const EditPeriodosModal = ({ ambiente }) => {
     // const startDate = dayjs(fechaInicio);
     // const endDate = dayjs(fechaFinal);
     // console.log(obtenerFecha("martes", startDate, endDate));
-
     if (
       fechaInicio &&
       fechaFinal &&
-      regla.id_regla &&
+      regla.id &&
       ambiente.id &&
       Object.keys(cretedItems).length !== 0
     ) {
+      //Verficamos si tiene regla
+      await reglaAmbiente();
+
       const startDate = dayjs(fechaInicio);
       const endDate = dayjs(fechaFinal);
       const datos = {
         periodos: Object.values(cretedItems)
           .map((item) => ({
-            id_ambReg: regla.id_regla,
+            id_ambReg: regla.id,
             id_ambiente: ambiente.id,
             id_horario: item.id, // Assuming each item has an id
             estado: "libre",
@@ -100,12 +112,18 @@ export const EditPeriodosModal = ({ ambiente }) => {
         console.error("Error al guardar:", error);
       }
     } else {
-      console.log("No se ha seleccionado ningun horario");
+      if (!regla.id) {
+        toast.error("No hay una gestion activa");
+      } else if (!ambiente.id) {
+        toast.error("No hay un ambiente ");
+      } else if (Object.keys(cretedItems).length === 0) {
+        //toast.info("Debe seleccionar al menos un horario");
+      }
     }
-    if (regla.id_regla && ambiente.id && deleteItems.length !== 0) {
+    if (regla.id && ambiente.id && deleteItems.length !== 0) {
       const datos1 = {
         periodos: deleteItems.flat().map((item) => ({
-          id_regla: String(regla.id_regla),
+          id_regla: String(regla.id),
           id_horario: String(item), // Adjust item access if necessary
           id_ambiente: String(ambiente.id),
         })),
@@ -128,10 +146,27 @@ export const EditPeriodosModal = ({ ambiente }) => {
         }
       }
     } else {
-      console.log("No se ha seleccionado ningun horario para borrar");
+      //toast.error("No hay periodos para eliminar");
     }
 
     onOpenChange();
+  };
+
+  const reglaAmbiente = async () => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/ambiente-regla",
+        {
+          id_ambiente: ambiente.id,
+          id_regla: regla.id,
+        }
+      );
+      if (response.status !== 200) {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log("Error al guardar:", error);
+    }
   };
 
   const obtenerFecha = (day: string, startDate: Dayjs, endDate: Dayjs) => {
@@ -156,12 +191,22 @@ export const EditPeriodosModal = ({ ambiente }) => {
   };
 
   const obtenerRegla = async () => {
-    fetch(`http://127.0.0.1:8000/api/regla-ambientes/${ambiente.id}`)
+    // fetch(`http://127.0.0.1:8000/api/regla-ambientes/${ambiente.id}`)
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     setRegla(data);
+    //     setFechaInicio(data.fecha_inicio);
+    //     setFechaFinal(data.fecha_fin);
+    //   });
+    fetch("http://127.0.0.1:8000/api/reglaActiva/")
       .then((response) => response.json())
       .then((data) => {
         setRegla(data);
-        setFechaInicio(data.fecha_inicio);
-        setFechaFinal(data.fecha_fin);
+        setFechaInicio(data.fecha_inicial);
+        setFechaFinal(data.fecha_final);
+      })
+      .catch((error) => {
+        console.error("Error al obtener la lista de elementos:", error);
       });
   };
   return (
@@ -199,14 +244,15 @@ export const EditPeriodosModal = ({ ambiente }) => {
                 <Button color="primary" onPress={guardar}>
                   Guardar
                 </Button>
-                {/* <Button
+                <Button
                   onClick={() => {
-                    console.log(cretedItems);
-                    console.log(deleteItems);
+                    console.log(regla);
+                    console.log(fechaInicio);
+                    console.log(fechaFinal);
                   }}
                 >
                   Prueba
-                </Button> */}
+                </Button>
               </ModalFooter>
             </>
           )}
