@@ -631,7 +631,8 @@ public function updateEstado(Request $request)
             return response()->json([
                 'fecha_original' => $request->fecha,
                 'fecha_mas_una_semana' => $fechaTMasUnaSemana->format('Y-m-d'),
-                'periodo' => $periodo
+                'periodo' => $periodo,
+                'estado'=>$periodo->estado
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -641,5 +642,4 @@ public function updateEstado(Request $request)
         }
 
     }
-
 }
