@@ -69,7 +69,7 @@ class UserController extends Controller
     {
         // Obtiene todos los usuarios que tienen el rol "docente"
         $docentes = User::whereHas('rols', function ($query) {
-            $query->where('nombre_rol', 'Docente');
+            $query->where('nombre_rol', 'User');
         })->get();
 
         // Devuelve la lista de docentes

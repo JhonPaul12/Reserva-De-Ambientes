@@ -65,18 +65,21 @@ class NotificacionController extends Controller
         return response()->json($notificacion, 200);
     }
 
-    public function nombre_usuario_Notificacion($nombreUsuario = null)
+    public function nombre_usuario_Notificacion($idUsuario = null)
     {
         $query = Notificacion::with('user', 'solicitud.materia', 'solicitud.ambiente');
 
-        if ($nombreUsuario) {
-            $query->whereHas('user', function ($query) use ($nombreUsuario) {
-                $query->where('name', $nombreUsuario);
+        if ($idUsuario) {
+            $query->whereHas('user', function ($query) use ($idUsuario) {
+                $query->where('id', $idUsuario);
             });
         }
         $notificaciones = $query->get();
         return response()->json($notificaciones, 200);
     }
+
+    
+
     public function solicitudID($idSolicitud = null)
     {
         $query = Notificacion::query()->select('titulo');
@@ -88,4 +91,5 @@ class NotificacionController extends Controller
         $contenidos = $query->pluck('titulo');
         return response()->json($contenidos, 200);
     }
+    
 }

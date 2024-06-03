@@ -2,15 +2,19 @@ import { useEffect, useState } from "react";
 import { Notificacion } from "../interfaces/Notificacion";
 import axios from "axios";
 import "./estilosNotificaciones.css";
+import { useAuthStore } from "../../Login/stores/auth.store";
+
 export const NotificacionU = () => {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   useEffect(() => {
     getNotificaciones();
   }, []);
 
+  const user = useAuthStore((state) => state.user?.id)
+
   const getNotificaciones = async () => {
     const respuesta = await axios.get<Notificacion[]>(
-      `http://127.0.0.1:8000/api/nombre_usuario_Notificacion/Vladimir Abel`
+      `http://127.0.0.1:8000/api/nombre_usuario_Notificacion/${user}`
     );
     setNotificaciones(respuesta.data);
   };
