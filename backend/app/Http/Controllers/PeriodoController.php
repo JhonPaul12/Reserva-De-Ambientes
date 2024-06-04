@@ -628,12 +628,16 @@ public function updateEstado(Request $request)
                 ], 404);
             }
 
-            return response()->json([
-                'fecha_original' => $request->fecha,
-                'fecha_mas_una_semana' => $fechaTMasUnaSemana->format('Y-m-d'),
-                'periodo' => $periodo,
-                'estado'=>$periodo->estado
-            ], 200);
+            if($periodo->estado=='libre'){
+                return response()->json([
+                    'mensaje' => 'La semana que viene está este ambiente esta libre, puede reservarlo.'
+                ], 200);
+            }else{
+                return response()->json([
+                    'mensaje' => 'El ambiente está reservado la próxima semana en la hora que solicitó, busque otra opción.'
+                ], 200);
+            }
+
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Ocurrió un error al intentar obtener el periodo',
