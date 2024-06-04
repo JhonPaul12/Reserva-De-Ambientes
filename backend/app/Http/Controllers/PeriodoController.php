@@ -604,6 +604,71 @@ public function updateEstado(Request $request)
              ], 500);
         }
     }
+
+    //metod para reasignar si es que se cancela, solo preguntar por la semana siguiente.
+    public function reasignar(Request $request){
+        $validator = Validator::make($request->all(), [
+            'id_ambiente' => 'required',
+            'id_horario' => 'required',
+            'fecha'=>'required'
+         ]);
+
+             if ($validator->fails()) {
+                  return response()->json([
+                      'error' => 'Datos de entrada no válidos',
+                      'mensajes' => $validator->errors()
+                  ], 422);
+        }
+    }
+
+    public function verificarReasignacion(Request $request){
+        $validator = Validator::make($request->all(),[
+            'id_horario'=> 'required',
+            'id_ambiente' => 'required',
+            'fecha' => 'required'
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'error' => 'Datos no validos',
+                'mensaje' =>$validator->errors()
+            ],422);
+        }
+
+        try {
+            // Convertir $fechaT a un objeto Carbon y sumar una semana
+            $fechaT = Carbon::parse($request->fecha);
+            $fechaTMasUnaSemana = $fechaT->addWeek();
+
+            //bscamos el periodo
+            $periodo = Periodo::where('id_horario', $request->id_horario)
+                ->where('id_ambiente', $request->id_ambiente)
+                ->where('fecha', $fechaTMasUnaSemana->format('Y-m-d'))
+                ->first();
+
+            if (!$periodo) {
+                return response()->json([
+                    'mensaje' => 'Periodo no encontrado',
+                ], 404);
+            }
+
+            if($periodo->estado=='libre'){
+                return response()->json([
+                    'mensaje' => 'La semana que viene está este ambiente esta libre, puede reservarlo.'
+                ], 200);
+            }else{
+                return response()->json([
+                    'mensaje' => 'El ambiente está reservado la próxima semana en la hora que solicitó, busque otra opción.'
+                ], 200);
+            }
+
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Ocurrió un error al intentar obtener el periodo',
+                'mensaje' => $e->getMessage()
+            ], 500);
+        }
+
+    }
 }
 // public function EliminarPorSemestre(Request $request)
 //     {

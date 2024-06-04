@@ -73,38 +73,38 @@ export const CancelarReservaA = () => {
   };
 
   return (
-    <div className="contenedor-table text-center my-5">
-      <label className="ml-10 text-3xl font-bold text-center text-gray-900">
+    <div className="contenedor-table my-5">
+      <label className="ml-10 text-3xl font-bold text-gray-900">
         RECHAZAR RESERVA
       </label>
       <section className="mx-6 my-4">
-        <Table className="custom-table" aria-label="Tabla de datos">
+        <Table className="custom-table text-center" aria-label="Tabla de datos">
           <TableHeader>
-            <TableColumn className="text-center text-2xl bg-slate-300">
+            <TableColumn className="text-center text-sm bg-slate-300">
               Ambiente
             </TableColumn>
-            <TableColumn className="text-center text-2xl bg-slate-300">
+            <TableColumn className="text-center text-sm bg-slate-300">
               Docente
             </TableColumn>
-            <TableColumn className="text-center text-2xl bg-slate-300">
+            <TableColumn className="text-center text-sm bg-slate-300">
               Materia
             </TableColumn>
-            <TableColumn className="text-center text-2xl bg-slate-300">
+            <TableColumn className="text-center text-sm bg-slate-300">
               Inicio
             </TableColumn>
-            <TableColumn className="text-center text-2xl bg-slate-300">
+            <TableColumn className="text-center text-sm bg-slate-300">
               Fin
             </TableColumn>
-            <TableColumn className="text-center text-2xl bg-slate-300">
+            <TableColumn className=" text-center text-sm bg-slate-300">
               Fecha
             </TableColumn>
-            <TableColumn className="text-center text-2xl bg-slate-300">
-              Est.
+            <TableColumn className="text-center text-sm bg-slate-300">
+              Personas
             </TableColumn>
-            <TableColumn className="text-center text-2xl bg-slate-300">
+            <TableColumn className="text-center text-sm bg-slate-300">
               Estado
             </TableColumn>
-            <TableColumn className="text-center text-2xl bg-slate-300">
+            <TableColumn className="text-center text-sm bg-slate-300">
               Opción
             </TableColumn>
           </TableHeader>
@@ -146,6 +146,7 @@ export const CancelarReservaA = () => {
                   <Button
                     color="danger"
                     variant="shadow"
+                    size="sm"
                     onClick={() =>
                       openModal(
                         solicitud.solicitud.id,

@@ -9,6 +9,13 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Modal,
+  Button,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Link,
 } from "@nextui-org/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -17,6 +24,8 @@ import { IReservaA } from "../interface/IReservaA";
 export const VerReservaAdmin = () => {
   const [solicitudes, setSolicitudes] = useState<IReservaA[]>([]);
   const [filtroEstado, setFiltroEstado] = useState<string>("Todos");
+  const [modalSolicitudId, setModalSolicitudId] = useState<string | null>(null);
+  const [modalText, setModalText] = useState<string>("");
 
   useEffect(() => {
     getSolicitudes();
@@ -33,6 +42,18 @@ export const VerReservaAdmin = () => {
   const handleEstadoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFiltroEstado(e.target.value);
   };
+  const handleRechazadoClick = async (solicitudId: string) => {
+    setModalSolicitudId(solicitudId);
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/solicitudID/${solicitudId}`
+      );
+      setModalText(response.data); // Establecer el texto de la solicitud en el estado
+    } catch (error) {
+      console.error("Error al obtener el texto de la solicitud:", error);
+      setModalText("Error al obtener el texto de la solicitud");
+    }
+  };
 
   const solicitudesFiltradas = solicitudes.filter((solicitud) => {
     if (filtroEstado === "Todos") return true;
@@ -46,10 +67,10 @@ export const VerReservaAdmin = () => {
   };
 
   return (
-    <div className="mx-6 my-4mt-10 sm:mx-auto w-full max-w-screen-md">
+    <div className="w-full">
       <label className="ml-10 text-3xl font-bold text-gray-900">RESERVAS</label>
-      <div className="flex flex-row justify-center items-center my-4">
-        <div className="mb-3 mx-4">
+      <div className="flex flex-col justify-center items-center my-4">
+        <div className=" mb-3 mx-4">
           <label htmlFor="filtroEstado" className="mr-2 text-lg text-black">
             <b>Filtrar por estado:</b>
           </label>
@@ -72,10 +93,13 @@ export const VerReservaAdmin = () => {
             <SelectItem key={"Cancelado"} value="Cancelado">
               Cancelado
             </SelectItem>
+            <SelectItem key={"Rechazado"} value="Rechazado">
+              Rechazado
+            </SelectItem>
           </Select>
         </div>
       </div>
-      <Table className="custom-table" aria-label="Tabla de datos">
+      <Table className="custom-table text-center" aria-label="Tabla de datos">
         <TableHeader>
           <TableColumn className="text-center text-sm bg-slate-300">
             AMBIENTE
@@ -119,7 +143,7 @@ export const VerReservaAdmin = () => {
                 ))}
               </TableCell>
               <TableCell className="text-xs text-black">
-                <small>{solicitud.solicitud.materia.nombre_materia}</small>
+                {solicitud.solicitud.materia.nombre_materia}
               </TableCell>
               <TableCell className="text-xs text-black">
                 {solicitud.solicitud.motivo}
@@ -139,19 +163,71 @@ export const VerReservaAdmin = () => {
                 {solicitud.solicitud.numero_estudiantes}
               </TableCell>
               <TableCell className="text-xs text-black">
-                <Chip
-                  className="capitalize"
-                  color={statusColorMap[solicitud.solicitud.estado]}
-                  size="sm"
-                  variant="flat"
-                >
-                  {solicitud.solicitud.estado}
-                </Chip>
+                {solicitud.solicitud.estado === "Rechazado" ? (
+                  <button
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Chip
+                      className="capitalize"
+                      color={statusColorMap[solicitud.solicitud.estado]}
+                      size="sm"
+                      variant="flat"
+                      onClick={() =>
+                        handleRechazadoClick(solicitud.solicitud.id.toString())
+                      }
+                    >
+                      {solicitud.solicitud.estado}
+                    </Chip>
+                    <Link
+                      className="text-xs"
+                      underline="always"
+                      color="danger"
+                      onClick={() =>
+                        handleRechazadoClick(solicitud.solicitud.id.toString())
+                      }
+                    >
+                      detalles
+                    </Link>
+                  </button>
+                ) : (
+                  <Chip
+                    className="capitalize"
+                    color={statusColorMap[solicitud.solicitud.estado]}
+                    size="sm"
+                    variant="flat"
+                  >
+                    {solicitud.solicitud.estado}
+                  </Chip>
+                )}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Modal
+        isOpen={!!modalSolicitudId}
+        onClose={() => setModalSolicitudId(null)}
+      >
+        <ModalContent>
+          <ModalHeader>Motivo del Rechazo</ModalHeader>
+          <ModalBody>
+            <p>{modalText}</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="primary"
+              variant="shadow"
+              onClick={() => setModalSolicitudId(null)}
+            >
+              Aceptar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

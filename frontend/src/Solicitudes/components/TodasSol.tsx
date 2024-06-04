@@ -22,10 +22,10 @@ import { useAuthStore } from "../../Login/stores/auth.store";
 
 export const TodasSol = () => {
   const [solicitudes, setSolicitudes] = useState<SolicitudD[]>([]);
-  const [modalSolicitudId, setModalSolicitudId] = useState<string | null>(null); 
-  const [modalText, setModalText] = useState<string>(""); 
+  const [modalSolicitudId, setModalSolicitudId] = useState<string | null>(null);
+  const [modalText, setModalText] = useState<string>("");
 
-  const user = useAuthStore((state) => state.user?.id)
+  const user = useAuthStore((state) => state.user?.id);
 
   useEffect(() => {
     getSolicitudes();
@@ -59,14 +59,14 @@ export const TodasSol = () => {
   };
 
   return (
-    <div className="mt-10 sm:mx-auto w-full max-w-screen-md">
-      <div>
-        <label className="ml-10 text-3xl font-bold text-center text-gray-900">
+    <div className=" mt-10 sm:mx-auto w-full pr-12 pl-12">
+      <div className="">
+        <label className="text-3xl font-bold text-center text-gray-900">
           HISTORIAL DE RESERVAS
         </label>
-        <Table className="w-80% mt-5 mb-8" aria-label="Tabla de datos">
+        <Table className="custom-table text-center" aria-label="Tabla de datos">
           <TableHeader>
-            <TableColumn className="text-center border-0 text-sm bg-slate-300">
+            <TableColumn className=" text-sm bg-slate-300">
               AMBIENTE
             </TableColumn>
             <TableColumn className="text-center border-0 text-sm bg-slate-300">
@@ -132,7 +132,13 @@ export const TodasSol = () => {
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
                   {solicitud.solicitud.estado === "Rechazado" ? (
-                    <button>
+                    <button
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
                       <Chip
                         className="capitalize"
                         color={statusColorMap[solicitud.solicitud.estado]}

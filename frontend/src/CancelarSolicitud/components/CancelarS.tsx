@@ -64,12 +64,12 @@ export const CancelarS = () => {
   };
 
   return (
-    <div className="mx-6 my-4 sm:mx-auto w-full max-w-screen-md">
+    <div className=" w-full">
       <div>
-        <label className="ml-10 text-3xl font-bold text-center text-gray-900">
+        <label className=" text-3xl font-bold text-center text-gray-900">
           CANCELAR RESERVA
         </label>
-        <Table className="w-80% mt-5 mb-8" aria-label="Tabla de datos">
+        <Table className="w-80% mt-5 mb-8 text-center" aria-label="Tabla de datos">
           <TableHeader>
             <TableColumn className="text-center border-0 text-xs bg-slate-300">
               AMBIENTE
@@ -102,7 +102,7 @@ export const CancelarS = () => {
               OPCION
             </TableColumn>
           </TableHeader>
-          <TableBody>
+          <TableBody emptyContent={"No Tiene reservas para cancelar"}>
             {solicitudes.map((solicitud) => (
               <TableRow key={solicitud.solicitud_id}>
                 <TableCell className="text-xs border-0 text-black">
@@ -116,10 +116,10 @@ export const CancelarS = () => {
                   ))}
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
-                  <small> {solicitud.solicitud.materia.nombre_materia}</small>
+                   {solicitud.solicitud.materia.nombre_materia}
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
-                  <small> {solicitud.solicitud.motivo}</small>
+                   {solicitud.solicitud.motivo}
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
                   {solicitud.periodos[0].periodo.horario.hora_inicio.slice(
@@ -133,7 +133,7 @@ export const CancelarS = () => {
                   ].periodo.horario.hora_fin.slice(0, -3)}
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
-                  <small>{solicitud.periodos[0].periodo.fecha}</small>
+                  {solicitud.periodos[0].periodo.fecha}
                 </TableCell>
                 <TableCell className="text-xs  border-0 text-black">
                   {solicitud.solicitud.numero_estudiantes}
