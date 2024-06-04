@@ -16,6 +16,7 @@ use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\AmbientereglaController;
 use App\Http\Controllers\Periodo_SolicitudController;
 use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\MateriaController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
 
@@ -62,7 +63,7 @@ Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
 Route::delete('/eliminarPeriodo',[PeriodoController::class,'EliminarPorSemestre']);
 Route::get('/reasignacion',[PeriodoController::class,'verificarReasignacion']);
-//Route::get('/ambientesLibres',[PeriodoController::class,'libres']);
+Route::get('/reasignacion',[PeriodoController::class,'verificarReasignacion']);
 
 
 //Excepción
@@ -77,6 +78,9 @@ Route::get('/regla/{id}',[ReglaController::class,'show']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
 Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
+
+
+
 //regla-Ambiente
 Route::get('/ambiente-regla',[AmbientereglaController::class,'index']);
 //Route::get('/regla/{id}',[ReglaController::class,'show']);
@@ -120,7 +124,7 @@ Route::delete('/reserva/{id}', [ReservaController::class, 'destroy']);
 //lista de todos los usuario
 Route::get('/usuario', [UserController::class, 'index']);
 // guardar usuario
-Route::post('/usuario', [UserController::class, 'store']);
+Route::post('/docente', [UserController::class, 'store']);
 //mostrar docentes
 Route::get('/usuario/docentes', [UserController::class, 'getDocentes']);
 // actualizar usuario
@@ -140,7 +144,9 @@ Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getG
 //ruta para devolver docentes de una materia y un id docente
 Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
 
+Route::get('/Materias',[MateriaController::class,'index']);
 
+Route::get('/MateriasLibres',[GrupoController::class,'getNullUserGroups']);
 
 
 
