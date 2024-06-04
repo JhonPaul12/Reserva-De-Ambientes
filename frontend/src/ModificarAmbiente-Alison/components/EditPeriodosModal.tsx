@@ -15,15 +15,39 @@ import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import axios from "axios";
 import { toast } from "sonner";
+interface Ambiente {
+  id: string;
+  nombre: string;
+}
 
-export const EditPeriodosModal = ({ ambiente }) => {
+interface Props {
+  ambiente: Ambiente;
+}
+
+interface Periodo {
+  id: number;
+  id_ambiente: number;
+  id_horario: number;
+  hora_inicio: string;
+  hora_fin: string;
+  fecha: string;
+  estado: string;
+  dia: string;
+}
+
+interface Item {
+  id: number;
+  dia: string;
+}
+
+export const EditPeriodosModal = ({ ambiente }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [periodos, setPeriodos] = useState<[]>([]);
+  const [periodos, setPeriodos] = useState<Periodo[]>([]);
   //const [checkedPeriodos, setCheckedPeriodos] = useState({});
   const [cretedItems, setCreatedItems] = useState({});
-  const [deleteItems, setDeleteItems] = useState([]);
+  const [deleteItems, setDeleteItems] = useState<number[]>([]);
 
-  const [regla, setRegla] = useState({});
+  const [regla, setRegla] = useState();
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFinal, setFechaFinal] = useState("");
 
@@ -48,11 +72,13 @@ export const EditPeriodosModal = ({ ambiente }) => {
     if (isOpen) getAmbiente(), obtenerRegla();
   }, [isOpen, getAmbiente]);
 
-  const checkboxCreated = (newCreatedItems) => {
+  const checkboxCreated = (newCreatedItems: {
+    [key: number]: { id: number; dia: string };
+  }) => {
     setCreatedItems(newCreatedItems);
   };
 
-  const checkboxDeleted = (newDeleteItems) => {
+  const checkboxDeleted = (newDeleteItems: number[]) => {
     setDeleteItems(newDeleteItems);
   };
 
@@ -71,8 +97,9 @@ export const EditPeriodosModal = ({ ambiente }) => {
     if (
       fechaInicio &&
       fechaFinal &&
-      regla.id &&
+      regla &&
       ambiente.id &&
+      cretedItems &&
       Object.keys(cretedItems).length !== 0
     ) {
       //Verficamos si tiene regla
@@ -81,9 +108,9 @@ export const EditPeriodosModal = ({ ambiente }) => {
       const startDate = dayjs(fechaInicio);
       const endDate = dayjs(fechaFinal);
       const datos = {
-        periodos: Object.values(cretedItems)
-          .map((item) => ({
-            id_ambReg: regla.id,
+        periodos: Object.values(cretedItems as Record<number, Item>)
+          .map((item: Item) => ({
+            id_ambReg: regla,
             id_ambiente: ambiente.id,
             id_horario: item.id, // Assuming each item has an id
             estado: "libre",
@@ -112,7 +139,7 @@ export const EditPeriodosModal = ({ ambiente }) => {
         console.error("Error al guardar:", error);
       }
     } else {
-      if (!regla.id) {
+      if (!regla) {
         toast.error("No hay una gestion activa");
       } else if (!ambiente.id) {
         toast.error("No hay un ambiente ");
@@ -120,10 +147,10 @@ export const EditPeriodosModal = ({ ambiente }) => {
         //toast.info("Debe seleccionar al menos un horario");
       }
     }
-    if (regla.id && ambiente.id && deleteItems.length !== 0) {
+    if (regla && ambiente.id && deleteItems.length !== 0) {
       const datos1 = {
         periodos: deleteItems.flat().map((item) => ({
-          id_regla: String(regla.id),
+          id_regla: String(regla),
           id_horario: String(item), // Adjust item access if necessary
           id_ambiente: String(ambiente.id),
         })),
@@ -141,8 +168,14 @@ export const EditPeriodosModal = ({ ambiente }) => {
         }
       } catch (error) {
         console.error("Error al eliminar:", error);
-        if (error.response && error.response.data) {
+        if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.data
+        ) {
           console.error("Error detalles:", error.response.data);
+        } else {
+          console.error("Error desconocido:", error);
         }
       }
     } else {
@@ -158,7 +191,7 @@ export const EditPeriodosModal = ({ ambiente }) => {
         "http://127.0.0.1:8000/api/ambiente-regla",
         {
           id_ambiente: ambiente.id,
-          id_regla: regla.id,
+          id_regla: regla,
         }
       );
       if (response.status !== 200) {
@@ -201,7 +234,7 @@ export const EditPeriodosModal = ({ ambiente }) => {
     fetch("http://127.0.0.1:8000/api/reglaActiva/")
       .then((response) => response.json())
       .then((data) => {
-        setRegla(data);
+        setRegla(data.id);
         setFechaInicio(data.fecha_inicial);
         setFechaFinal(data.fecha_final);
       })
@@ -249,6 +282,8 @@ export const EditPeriodosModal = ({ ambiente }) => {
                     console.log(regla);
                     console.log(fechaInicio);
                     console.log(fechaFinal);
+                    console.log(cretedItems);
+                    console.log(deleteItems);
                   }}
                 >
                   Prueba
