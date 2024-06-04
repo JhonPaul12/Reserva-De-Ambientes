@@ -106,6 +106,9 @@ Route::get('/notificacion',[NotificacionController::class,'index']);
 Route::post('/notificacion',[NotificacionController::class,'store']);
 Route::get('/notificacion/{id}',[NotificacionController::class,'show']);
 Route::delete('/notificacion/{id}',[NotificacionController::class,'destroy']);
+Route::get('/notificacionSinVista/{id}',[NotificacionController::class,'notificacionSinVista']);
+Route::put('/cambiarEstadoNotificacion/{id}', [NotificacionController::class, 'cambiarEstadoNotificacion']);
+
 //reserva
 
 Route::post('/reserva', [ReservaController::class, 'store']);

@@ -1,0 +1,25 @@
+.notification-list {
+  position: absolute;
+  right: 5;
+  top: 50px;
+  background-color: white;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.notification-item h4 {
+  margin: 0 0 5px;
+  font-size: 16px;
+}
+
+.notification-item p {
+  margin: 0;
+  font-size: 14px;
+}

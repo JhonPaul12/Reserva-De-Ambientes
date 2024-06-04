@@ -154,7 +154,7 @@ export const BusquedaF = () => {
         </div>
       </div>
       <div className="mx-6 my-4 sm:mx-auto w-full max-w-screen-md">
-        <Table className="custom-table" aria-label="Tabla de datos">
+        <Table className="custom-table text-center" aria-label="Tabla de datos">
           <TableHeader>
             <TableColumn className="text-center text-sm bg-slate-300">
               AMBIENTE
@@ -226,7 +226,7 @@ export const BusquedaF = () => {
             />
           </div>
           <div className="modal-table">
-            <Table className="custom-table">
+            <Table className="custom-table text-center">
               <TableHeader>
                 <TableColumn className="text-center text-sm bg-slate-300">
                   FECHA

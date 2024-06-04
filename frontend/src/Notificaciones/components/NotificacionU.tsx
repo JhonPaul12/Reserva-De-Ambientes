@@ -3,6 +3,8 @@ import { Notificacion } from "../interfaces/Notificacion";
 import axios from "axios";
 import "./estilosNotificaciones.css";
 import { useAuthStore } from "../../Login/stores/auth.store";
+import { Accordion, AccordionItem } from "@nextui-org/react";
+import { IoInformationCircleOutline } from "react-icons/io5";
 
 export const NotificacionU = () => {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
@@ -10,7 +12,7 @@ export const NotificacionU = () => {
     getNotificaciones();
   }, []);
 
-  const user = useAuthStore((state) => state.user?.id)
+  const user = useAuthStore((state) => state.user?.id);
 
   const getNotificaciones = async () => {
     const respuesta = await axios.get<Notificacion[]>(
@@ -19,51 +21,62 @@ export const NotificacionU = () => {
     setNotificaciones(respuesta.data);
   };
   return (
-    <div className="contenedor text-black">
-      <label className="ml-10 text-3xl font-bold text-center text-gray-900">
-        NOTIFICACIONES
-      </label>
+    <div className="container p-12 text-black">
       {notificaciones.length === 0 ? (
         <p>NO TIENE NOTIFICACIONES.</p>
       ) : (
-        <div className="notification-grid">
+        <Accordion variant="bordered" isCompact>
           {notificaciones.map((notificacion) => (
-            <div className="card" key={notificacion.id}>
-              <div className="flex flex-col md:flex-row justify-between">
-                <div className="flex-1 p-2 text-aling-center">
-                  <p className="mt-2 font-bold text-l">
-                    Detalles de la notificación:
-                  </p>
-                  <p className="text-bold">{notificacion.titulo}</p>
-                  <p >{notificacion.contenido}</p>
-                </div>
-                <div className="flex-1 p-2">
-                  <p className="mt-2 font-bold text-l">Detalles de la reserva rechazada:</p>
+            <AccordionItem
+              startContent={
+                <IoInformationCircleOutline size={30} className="text-warning" />
+              }
+              className="m-5"
+              key={notificacion.id}
+              title={
+                <div className="">
+                  <div className="flex justify-content-between">
+                    <p className="pr-5">
+                      <strong>Fecha de la Notificacion: </strong>
+                      {notificacion.created_at.slice(0, 10)}
+                    </p>
+                    <p>
+                      <strong>Motivo: </strong>
+                      {notificacion.titulo}
+                    </p>
+                  </div>
                   <p>
-                    <strong>Docente:</strong> {notificacion.user.name}{" "}
-                    {notificacion.user.apellidos}
-                  </p>
-                  <p>
-                    <strong>Fecha de la reserva:</strong>{" "}
-                    {notificacion.solicitud.fecha_solicitud}
-                  </p>
-                  <p>
-                    <strong>Aula:</strong>{" "}
-                    {notificacion.solicitud.ambiente.nombre}
-                  </p>
-                  <p>
-                    <strong>Ubicación:</strong>{" "}
-                    {notificacion.solicitud.ambiente.ubicacion}
-                  </p>
-                  <p>
-                    <strong>Materia:</strong>{" "}
-                    {notificacion.solicitud.materia.nombre_materia}
+                    <strong>Descripcion:</strong> {notificacion.contenido}
                   </p>
                 </div>
+              }
+            >
+              <div className="pl-12">
+                <p className="mt-2 font-bold text-l">Detalles de la reserva:</p>
+                <p>
+                  <strong>Docente:</strong>
+                  {notificacion.user.name} {notificacion.user.apellidos}
+                </p>
+                <p>
+                  <strong>Fecha de la reserva:</strong>{" "}
+                  {notificacion.solicitud.fecha_solicitud}
+                </p>
+                <p>
+                  <strong>Aula:</strong>{" "}
+                  {notificacion.solicitud.ambiente.nombre}
+                </p>
+                <p>
+                  <strong>Ubicación:</strong>{" "}
+                  {notificacion.solicitud.ambiente.ubicacion}
+                </p>
+                <p>
+                  <strong>Materia:</strong>{" "}
+                  {notificacion.solicitud.materia.nombre_materia}
+                </p>
               </div>
-            </div>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       )}
     </div>
   );
