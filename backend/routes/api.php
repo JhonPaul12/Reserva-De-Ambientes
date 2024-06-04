@@ -118,7 +118,7 @@ Route::delete('/reserva/{id}', [ReservaController::class, 'destroy']);
 //lista de todos los usuario
 Route::get('/usuario', [UserController::class, 'index']);
 // guardar usuario
-Route::post('/usuario', [UserController::class, 'store']);
+Route::post('/docente', [UserController::class, 'store']);
 //mostrar docentes
 Route::get('/usuario/docentes', [UserController::class, 'getDocentes']);
 // actualizar usuario
@@ -140,6 +140,7 @@ Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::
 
 Route::get('/Materias',[MateriaController::class,'index']);
 
+Route::get('/MateriasLibres',[GrupoController::class,'getNullUserGroups']);
 
 
 
