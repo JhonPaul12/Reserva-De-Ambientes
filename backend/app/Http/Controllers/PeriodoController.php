@@ -150,7 +150,14 @@ class PeriodoController extends Controller
             continue;
         }
 
-        $regla = Regla::find($ambregla->id_regla);
+         $regla = Regla::find($ambregla->id_regla);
+        // $regla = Regla::find($periodoData['id_ambReg']);
+
+        // // Check if the regla exists
+        // if (!$regla) {
+        //     $response['errores'][] = ['id_ambReg' => $periodoData['id_ambReg'], 'error' => 'No se encontró la regla asociada al ambiente del período'];
+        //     continue;
+        // }
 
         $finish = Carbon::parse($regla->fecha_final);
         $fechaPeriodo = Carbon::parse($periodoData['fecha']);
@@ -543,13 +550,15 @@ public function updateEstado(Request $request)
         }
     }
 
+    // 
     public function EliminarPorSemestre(Request $request)
-    {
-      $validator = Validator::make($request->all(), [
-        'id_regla' => 'required',
-        'id_horario' => 'required',
-        'id_ambiente' => 'required'
-     ]);
+{
+    $validator = Validator::make($request->all(), [
+        'periodos' => 'required|array',
+        'periodos.*.id_regla' => 'required|integer',
+        'periodos.*.id_horario' => 'required|integer',
+        'periodos.*.id_ambiente' => 'required|integer'
+    ]);
 
          if ($validator->fails()) {
               return response()->json([
@@ -558,18 +567,32 @@ public function updateEstado(Request $request)
               ], 422);
          }
 
-        try {
-        $regla = Regla::findOrFail($request->id_regla);
-        $fechaInicial = $regla->fecha_inicial;
-        $fechaFinal = $regla->fecha_final;
-        $periodosEliminados = Periodo::whereBetween('fecha', [$fechaInicial, $fechaFinal])
-            ->where('estado', 'libre')->where('id_ambiente', $request->id_ambiente)
-            ->where('id_horario', $request->id_horario)
-            ->delete();
+    $result = [];
+
+    try {
+        foreach ($request->periodos as $periodo) {
+            $regla = Regla::findOrFail($periodo['id_regla']);
+            $fechaInicial = $regla->fecha_inicial;
+            $fechaFinal = $regla->fecha_final;
+
+            // Buscar y eliminar los periodos con estado 'libre' dentro del rango de fechas
+            $periodosEliminados = Periodo::whereBetween('fecha', [$fechaInicial, $fechaFinal])
+                ->where('estado', 'libre')
+                ->where('id_ambiente', $periodo['id_ambiente'])
+                ->where('id_horario', $periodo['id_horario'])
+                ->delete();
+
+            $result[] = [
+                'id_regla' => $periodo['id_regla'],
+                'id_horario' => $periodo['id_horario'],
+                'id_ambiente' => $periodo['id_ambiente'],
+                'periodos_eliminados' => $periodosEliminados
+            ];
+        }
 
         return response()->json([
             'mensaje' => 'Periodos libres eliminados con éxito',
-            'periodos_eliminados' => $periodosEliminados
+            'resultados' => $result
         ], 200);
          } catch (ModelNotFoundException $e) {
                   return response()->json([
@@ -628,11 +651,16 @@ public function updateEstado(Request $request)
                 ], 404);
             }
 
-            return response()->json([
-                'fecha_original' => $request->fecha,
-                'fecha_mas_una_semana' => $fechaTMasUnaSemana->format('Y-m-d'),
-                'periodo' => $periodo
-            ], 200);
+            if($periodo->estado=='libre'){
+                return response()->json([
+                    'mensaje' => 'La semana que viene está este ambiente esta libre, puede reservarlo.'
+                ], 200);
+            }else{
+                return response()->json([
+                    'mensaje' => 'El ambiente está reservado la próxima semana en la hora que solicitó, busque otra opción.'
+                ], 200);
+            }
+
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Ocurrió un error al intentar obtener el periodo',
@@ -641,5 +669,105 @@ public function updateEstado(Request $request)
         }
 
     }
-
 }
+// public function EliminarPorSemestre(Request $request)
+//     {
+//     $validator = Validator::make($request->all(), [
+//         'id_regla' => 'required',
+//         'id_horario' => 'required',
+//         'id_ambiente' => 'required'
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json([
+//             'error' => 'Datos de entrada no válidos',
+//             'mensajes' => $validator->errors()
+//         ], 422);
+//     }
+
+//     try {
+//         $regla = Regla::findOrFail($request->id_regla);
+//         $fechaInicial = $regla->fecha_inicial;
+//         $fechaFinal = $regla->fecha_final;
+
+//         // Buscar y eliminar los periodos con estado 'libre' dentro del rango de fechas
+//         $periodosEliminados = Periodo::whereBetween('fecha', [$fechaInicial, $fechaFinal])
+//             ->where('estado', 'libre')->where('id_ambiente', $request->id_ambiente)
+//             ->where('id_horario', $request->id_horario)
+//             ->delete();
+
+//         return response()->json([
+//             'mensaje' => 'Periodos libres eliminados con éxito',
+//             'periodos_eliminados' => $periodosEliminados
+//         ], 200);
+//     } catch (ModelNotFoundException $e) {
+//         return response()->json([
+//             'error' => 'Registro no encontrado'
+//         ], 404);
+//     } catch (Exception $e) {
+//         return response()->json([
+//             'error' => 'Ocurrió un error al intentar eliminar los periodos'
+//         ], 500);
+//     }
+//     } 
+
+
+
+
+// public function storeNew(Request $request)
+// {
+//     $validator = Validator::make($request->all(), [
+//         'periodos.*.id_ambReg' => 'required',
+//         'periodos.*.id_horario' => 'required',
+//         'periodos.*.estado' => 'required',
+//         'periodos.*.fecha' => 'required|date',
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json(['error' => $validator->errors()], 400);
+//     }
+
+//     // Array para almacenar los mensajes de éxito y errores
+//     $response = [];
+
+//     // Obtener todos los ambientes de la base de datos
+//     $ambientes = Ambiente::all();
+
+//     // Recorrer todos los ambientes
+//     foreach ($ambientes as $ambiente) {
+//         $ambregla = Ambiente_regla::where('id_regla', $request->input('periodos.0.id_ambReg'))->first();
+
+//         // Verificar si se encontró la regla asociada al ambiente
+//         if (!$ambregla) {
+//             $response['errores'][] = ['id_ambiente' => $ambiente->id, 'error' => 'No se encontró la regla asociada al ambiente'];
+//             continue;
+//         }
+
+//         $regla = Regla::find($ambregla->id_regla);
+
+//         $finish = Carbon::parse($regla->fecha_final);
+//         $fechaPeriodo = Carbon::parse($request->input('periodos.0.fecha'));
+
+//         // Verificar si la fecha del período está dentro del rango de la regla
+//         if ($fechaPeriodo < $regla->fecha_inicial || $fechaPeriodo > $finish) {
+//             $response['errores'][] = ['id_ambiente' => $ambiente->id, 'error' => 'La fecha del período está fuera del rango de la regla'];
+//             continue;
+//         }
+
+//         $est = $request->input('periodos.0.estado');
+//         $ini = $regla->fecha_inicial;
+//         $end = $regla->fecha_final;
+
+//         if ($est === 'libre') {
+//             $this->crearPeriodosRegulares($ambiente->id, $request->input('periodos.0.id_horario'), $request->input('periodos.0.fecha'), $est, $end);
+//             $response['success'][] = 'Periodos creados exitosamente para el ambiente ' . $ambiente->id;
+//         } else {
+//             $periodo = new Periodo($request->input('periodos.0'));
+//             $periodo->id_ambiente = $ambiente->id;
+//             $periodo->save();
+//             $response['success'][] = 'El período se ha creado exitosamente para el ambiente ' . $ambiente->id;
+//         }
+//     }
+
+//     return response()->json($response, 201);
+// }

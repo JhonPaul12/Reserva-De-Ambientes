@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Rol;
 use App\Models\Materia;
+use App\Models\Grupo;
 class UserController extends Controller
 {
     
@@ -25,7 +26,9 @@ class UserController extends Controller
             'telefono' => 'required|string',
             'codigo_sis' => 'required|string|unique:users,codigo_sis',
             'email' => 'required|email|unique:users,email',
-            'materias' => 'required|array',
+            'materias_grupos' => 'required|array',
+            'materias_grupos.*' => 'required|array|size:2',
+            'materias_grupos.*.*' => 'required|integer|exists:materias,id|exists:grupos,id',
         ]);
 
         // Crea un nuevo rol
@@ -38,13 +41,35 @@ class UserController extends Controller
         $user->telefono = $request->input('telefono');
         $user->codigo_sis = $request->input('codigo_sis');
         $user->email = $request->input('email');
+        $user->password = bcrypt($request->input('codigo_sis'));
         $user->save();
+        // Obtiene los pares de IDs de materia y grupo
+         $materias_grupos = $request->input('materias_grupos');
 
         // Crea un nuevo UsuarioRol
         $rol->users()->attach($user->id);
-        // Asocia las materias al usuario
-        $materias = $request->input('materias');
-        $user->materias()->attach($materias);
+       
+        foreach ($materias_grupos as $materia_grupo) {
+            $materia_id = $materia_grupo[0];
+            $grupoNumber = $materia_grupo[1];
+    
+            // Encuentra el grupo con el mismo id de materia y grupo
+            $grupo = Grupo::where('materia_id', $materia_id)
+                          ->where('grupo', $grupoNumber)
+                          ->whereNull('user_id')
+                          ->first();
+    
+            // Si el grupo existe, actualiza el user_id
+            if ($grupo) {
+                $grupo->user_id = $user->id;
+                $grupo->save();
+            }else{
+                $user->delete();
+                return response()->json(['message' => 'Materia y grupo ya tienen un usuario asignado'], 400);
+            }
+        }
+
+
         // Devuelve la respuesta
         return response()->json(['message' => 'Usuario, rol y materias creados correctamente'], 201);
     }
@@ -69,7 +94,7 @@ class UserController extends Controller
     {
         // Obtiene todos los usuarios que tienen el rol "docente"
         $docentes = User::whereHas('rols', function ($query) {
-            $query->where('nombre_rol', 'Docente');
+            $query->where('nombre_rol', 'User');
         })->get();
 
         // Devuelve la lista de docentes

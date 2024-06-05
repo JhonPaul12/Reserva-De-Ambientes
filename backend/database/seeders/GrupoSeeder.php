@@ -51,7 +51,7 @@ class GrupoSeeder extends Seeder
         Grupo::create([
             'grupo' =>5,
             'materia_id' => 1,
-            'user_id' => 6
+           
         ]);
         
         Grupo::create([

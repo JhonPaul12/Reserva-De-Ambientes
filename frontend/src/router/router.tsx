@@ -21,6 +21,8 @@ import { NotificacionesUsuario } from "../Notificaciones";
 import { ModificarDocentes } from "../ModificarDocentes/ModificarDocentes";
 import { CrearDocente } from "../CrearDocente/CrearDocente";
 import { DarDeBaja } from "../DarDeBajaDocente/DarDeBaja";
+import { NotificarCancelaciones } from "../NotificarCancelacion";
+import { NotificarCancelacionesUbi } from "../NotificarCacelacionUbicacion";
 
 export const router = createBrowserRouter([
   {
@@ -84,6 +86,14 @@ export const router = createBrowserRouter([
         path: "dar-baja-docente",
         element: <DarDeBaja />,
       },
+      {
+        path: "notificar-ambiente",
+        element: <NotificarCancelaciones />,
+      },
+      {
+        path: "notificar-ubicacion",
+        element: <NotificarCancelacionesUbi />
+      }
     ],
   },
   //Rutas Usuario

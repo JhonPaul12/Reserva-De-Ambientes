@@ -3,6 +3,7 @@ import { useAuthStore } from "../../Login/stores/auth.store";
 import { SideMenu } from "../../components/SideMenu";
 import { sideMenuOptionsUser } from "../../lib/constants";
 import { Navigate } from "react-router-dom";
+import { HeaderUsers } from "../../Header";
 
 export const UserLayout = () => {
   const authStatus = useAuthStore((state) => state.authStatus);
@@ -19,12 +20,13 @@ export const UserLayout = () => {
     return <Navigate to="/login" />;
   }
 
-  // if (!user?.roles.includes("Docente")) {
+  // if (!user?.roles.includes("User")) {
   //   return <Navigate to="/admin" />;
   // }
 
   return (
     <div>
+      <HeaderUsers/>
       <SideMenu sideMenuOptions={sideMenuOptionsUser} />
     </div>
   );

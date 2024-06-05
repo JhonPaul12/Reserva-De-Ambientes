@@ -9,32 +9,43 @@ import {
   TableRow,
   Modal,
   ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "@nextui-org/react";
 import axios from "axios";
-import { CReservaD} from "../interfaces/Solicitud";
+import { CReservaD } from "../interfaces/Solicitud";
 import "./estilos.css";
+import { useAuthStore } from "../../Login/stores/auth.store";
 
 export const CancelarS = () => {
   const [solicitudes, setSolicitudes] = useState<CReservaD[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [solicitudId, setSolicitudId] = useState<number | null>(null);
+  const [solicitudDetalles, setSolicitudDetalles] = useState<{ materia: string; motivo: string } | null>(null);
 
   useEffect(() => {
     getSolicitudes();
   }, []);
 
+  const user = useAuthStore((state) => state.user?.id)
+
   const getSolicitudes = async () => {
     const respuesta = await axios.get<CReservaD[]>(
-      `http://127.0.0.1:8000/api/nombre_usuario/Vladimir Abel`
+      `http://127.0.0.1:8000/api/nombre_usuario/${user}`
     );
     const solicitudesPendientes = respuesta.data.filter(
-      (solicitud) => solicitud.solicitud.estado === "Aceptado"
+      (solicitud) => solicitud.solicitud.estado === "Aceptada"
     );
     setSolicitudes(solicitudesPendientes);
   };
 
-  const openModal = (id: number) => {
-    setSolicitudId(id);
+  const openModal = (solicitud: CReservaD) => {
+    setSolicitudId(solicitud.solicitud.id);
+    setSolicitudDetalles({
+      materia: solicitud.solicitud.materia.nombre_materia,
+      motivo: solicitud.solicitud.motivo,
+    });
     setModalOpen(true);
   };
 
@@ -53,12 +64,12 @@ export const CancelarS = () => {
   };
 
   return (
-    <div className="mx-6 my-4 sm:mx-auto w-full max-w-screen-md">
+    <div className=" w-full">
       <div>
-      <label className="ml-10 text-3xl font-bold text-center text-gray-900">
-        CANCELAR RESERVA
-      </label>
-        <Table className="w-80% mt-5 mb-8" aria-label="Tabla de datos">
+        <label className=" text-3xl font-bold text-center text-gray-900">
+          CANCELAR RESERVA
+        </label>
+        <Table className="w-80% mt-5 mb-8 text-center" aria-label="Tabla de datos">
           <TableHeader>
             <TableColumn className="text-center border-0 text-xs bg-slate-300">
               AMBIENTE
@@ -69,14 +80,17 @@ export const CancelarS = () => {
             <TableColumn className="text-center border-0 text-xs bg-slate-300">
               MATERIA
             </TableColumn>
-             <TableColumn className="text-center border-0 text-xs bg-slate-300">
+            <TableColumn className="text-center border-0 text-xs bg-slate-300">
+              MOTIVO
+            </TableColumn>
+            <TableColumn className="text-center border-0 text-xs bg-slate-300">
               INICIO
             </TableColumn>
             <TableColumn className="text-center border-0 text-xs bg-slate-300">
               FIN
-            </TableColumn> 
+            </TableColumn>
             <TableColumn className="text-center border-0 text-xs bg-slate-300">
-            &nbsp; FECHA &nbsp;
+              &nbsp; FECHA &nbsp;
             </TableColumn>
             <TableColumn className="text-center border-0 text-xs bg-slate-300">
               PERSONAS
@@ -88,26 +102,38 @@ export const CancelarS = () => {
               OPCION
             </TableColumn>
           </TableHeader>
-          <TableBody>
+          <TableBody emptyContent={"No Tiene reservas para cancelar"}>
             {solicitudes.map((solicitud) => (
               <TableRow key={solicitud.solicitud_id}>
                 <TableCell className="text-xs border-0 text-black">
                   {solicitud.solicitud.ambiente.nombre}
                 </TableCell>
-                <TableCell className="text-xs border-0 text-black">
-                  <small>{solicitud.solicitud.materia.user.name + " " + solicitud.solicitud.materia.user.apellidos}</small>
+                <TableCell className="text-xs text-black border-0">
+                  {solicitud.solicitud.users.map((user, index) => (
+                    <div key={index}>
+                      *{user.name} {user.apellidos}
+                    </div>
+                  ))}
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
-                  <small> {solicitud.solicitud.materia.nombre_materia}</small>
+                   {solicitud.solicitud.materia.nombre_materia}
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
-                    {solicitud.periodos[0].periodo.horario.hora_inicio.slice(0, -3)}
-                  </TableCell>
-                  <TableCell className="text-xs border-0 text-black">
-                    {solicitud.periodos[solicitud.periodos.length-1].periodo.horario.hora_fin.slice(0, -3)}
+                   {solicitud.solicitud.motivo}
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
-                  <small>{solicitud.periodos[0].periodo.fecha}</small>
+                  {solicitud.periodos[0].periodo.horario.hora_inicio.slice(
+                    0,
+                    -3
+                  )}
+                </TableCell>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.periodos[
+                    solicitud.periodos.length - 1
+                  ].periodo.horario.hora_fin.slice(0, -3)}
+                </TableCell>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.periodos[0].periodo.fecha}
                 </TableCell>
                 <TableCell className="text-xs  border-0 text-black">
                   {solicitud.solicitud.numero_estudiantes}
@@ -117,9 +143,10 @@ export const CancelarS = () => {
                 </TableCell>
                 <TableCell className="text-xs border-0 text-black">
                   <Button
-                    className="bg-danger text-white"
+                    color="danger"
                     size="sm"
-                    onClick={() => openModal(solicitud.solicitud.id)}
+                    onClick={() => openModal(solicitud)}
+                    variant="shadow"
                   >
                     Cancelar
                   </Button>
@@ -128,24 +155,21 @@ export const CancelarS = () => {
             ))}
           </TableBody>
         </Table>
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        className="p-10 bg-white"
-      >
-        <ModalContent className="">
-          ¿Estás seguro de que quieres cancelar su reserva?
-          <Button
-            className="bg-danger m-2 text-white"
-            onClick={cancelarSolicitud}
-          >
-            Sí, cancelar
-          </Button>
-          <Button className="m-2" onClick={() => setModalOpen(false)}>
-            No
-          </Button>
-        </ModalContent>
-      </Modal>
+        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+          <ModalContent className="">
+            <ModalHeader>¿Está seguro de cancelar su reserva?</ModalHeader>
+            <ModalBody>
+              <p>Materia: {solicitudDetalles?.materia}</p>
+              <p>Motivo: {solicitudDetalles?.motivo}</p>
+            </ModalBody>
+            <ModalFooter className="">
+              <Button color="danger" variant="shadow" onClick={cancelarSolicitud}>
+                Sí, cancelar
+              </Button>
+              <Button onClick={() => setModalOpen(false)}>No</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
     </div>
   );

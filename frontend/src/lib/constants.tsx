@@ -1,5 +1,8 @@
 import { LuHome, LuLayers, LuUserCircle2 } from "react-icons/lu";
 import { BsBuildingsFill } from "react-icons/bs";
+import { IoNotificationsCircleOutline } from "react-icons/io5";
+import { FaMapLocationDot } from "react-icons/fa6";
+import { SiGoogleclassroom } from "react-icons/si";
 
 export const sideMenuOptions = [
   {
@@ -83,6 +86,24 @@ export const sideMenuOptions = [
         path: "editar-ambientes",
         name: "Editar Ambientes ",
         icon: <LuLayers />,
+      },
+    ],
+  },
+  {
+    path: "Notificar",
+    name: "Notificar",
+    submenu: true,
+    icon: <IoNotificationsCircleOutline size={30}/>,
+    subMenuOptions: [
+      {
+        path: "notificar-ambiente",
+        name: "Notificar Ambientes",
+        icon: <SiGoogleclassroom />,
+      },
+      {
+        path: "notificar-ubicacion",
+        name: "Notificar Ubicacion",
+        icon: <FaMapLocationDot />,
       },
     ],
   },

@@ -72,4 +72,18 @@ public function getOtrosUsuariosConMismaMateria($user_id, $materia_id)
     return response()->json($usuarios, 200);
 }
 
+
+public function getNullUserGroups()
+{
+    // Obtiene los grupos y nombres de materias donde user_id es null
+    $grupos = Grupo::whereNull('user_id')
+                   ->join('materias', 'grupos.materia_id', '=', 'materias.id')
+                   ->select('grupos.grupo', 'materias.nombre_materia as materia', 'materias.id as materia_id')
+                   ->get();
+
+    // Devuelve los grupos y nombres de materias
+    return response()->json($grupos, 200);
+}
+
+
 }

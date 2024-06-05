@@ -18,11 +18,14 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { SolicitudD } from "../interfaces/Solicitud";
+import { useAuthStore } from "../../Login/stores/auth.store";
 
 export const TodasSol = () => {
   const [solicitudes, setSolicitudes] = useState<SolicitudD[]>([]);
-  const [modalSolicitudId, setModalSolicitudId] = useState<string | null>(null); // Estado para almacenar el ID de la solicitud para el modal
-  const [modalText, setModalText] = useState<string>(""); // Estado para almacenar el texto de la solicitud
+  const [modalSolicitudId, setModalSolicitudId] = useState<string | null>(null);
+  const [modalText, setModalText] = useState<string>("");
+
+  const user = useAuthStore((state) => state.user?.id);
 
   useEffect(() => {
     getSolicitudes();
@@ -30,7 +33,7 @@ export const TodasSol = () => {
 
   const getSolicitudes = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/nombre_usuario/Vladimir Abel`
+      `http://127.0.0.1:8000/api/nombre_usuario/${user}`
     );
     setSolicitudes(respuesta.data);
     console.log(respuesta.data);
@@ -48,7 +51,7 @@ export const TodasSol = () => {
       setModalText("Error al obtener el texto de la solicitud");
     }
   };
-  const statusColorMap: Record<string, ChipProps["color"]>  = {
+  const statusColorMap: Record<string, ChipProps["color"]> = {
     Aceptada: "success",
     Cancelada: "danger",
     Rechazado: "danger",
@@ -56,114 +59,148 @@ export const TodasSol = () => {
   };
 
   return (
-    <div className="mt-10 sm:mx-auto w-full max-w-screen-md">
-      <div>
-      <label className="ml-10 text-3xl font-bold text-center text-gray-900">
-        HISTORIAL DE RESERVAS
-      </label>
-      <Table  className="w-80% mt-5 mb-8" aria-label="Tabla de datos">
-        <TableHeader>
-          <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            AMBIENTE
-          </TableColumn>
-          <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            DOCENTE
-          </TableColumn>
-          <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            MATERIA
-          </TableColumn>
-          <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            INICIO
-          </TableColumn>
-          <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            FIN
-          </TableColumn>
-          <TableColumn className="text-center border-0 text-sm bg-slate-300">
-          &nbsp; &nbsp; FECHA &nbsp; &nbsp; 
-          </TableColumn>
-          <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            PERSONAS
-          </TableColumn>
-          <TableColumn className="text-center border-0 text-sm bg-slate-300">
-            ESTADO
-          </TableColumn>
-        </TableHeader>
-        <TableBody>
-          {solicitudes.map((solicitud) => (
-            <TableRow>
-              <TableCell className="text-xs border-0 text-black">
-                {solicitud.solicitud.ambiente.nombre}
-              </TableCell>
-              <TableCell className="text-xs border-0 text-black">
-                {solicitud.solicitud.materia.user.name}
-              </TableCell>
-              <TableCell className="text-xs border-0 text-black">
-                {solicitud.solicitud.materia.nombre_materia}
-              </TableCell>
-              <TableCell className="text-xs border-0 text-black">
-                {solicitud.periodos[0].periodo.horario.hora_inicio.slice(0, -3)}
-              </TableCell>
-              <TableCell className="text-xs border-0 text-black">
-                {
-                  solicitud.periodos[solicitud.periodos.length - 1].periodo
-                    .horario.hora_fin.slice(0, -3)
-                }
-              </TableCell>
-              <TableCell className="text-xs border-0 text-black">
-                {solicitud.periodos[0].periodo.fecha} 
-              </TableCell>
-              <TableCell className="text-xs border-0 text-black">
-                {solicitud.solicitud.numero_estudiantes}
-              </TableCell>
-              <TableCell className="text-xs border-0 text-black">
-                {solicitud.solicitud.estado === "Cancelada" ? (
-                  
-                  <button
-                  >
-                    
-                   <Chip className="capitalize" color={statusColorMap[solicitud.solicitud.estado]} size="sm" variant="flat" onClick={() =>
-                      handleRechazadoClick(solicitud.solicitud.id.toString())
-                    }>
+    <div className=" mt-10 sm:mx-auto w-full pr-12 pl-12">
+      <div className="">
+        <label className="text-3xl font-bold text-center text-gray-900">
+          HISTORIAL DE RESERVAS
+        </label>
+        <Table className="custom-table text-center" aria-label="Tabla de datos">
+          <TableHeader>
+            <TableColumn className=" text-sm bg-slate-300">
+              AMBIENTE
+            </TableColumn>
+            <TableColumn className="text-center border-0 text-sm bg-slate-300">
+              DOCENTE
+            </TableColumn>
+            <TableColumn className="text-center border-0 text-sm bg-slate-300">
+              MATERIA
+            </TableColumn>
+            <TableColumn className="text-center border-0 text-sm bg-slate-300">
+              MOTIVO
+            </TableColumn>
+            <TableColumn className="text-center border-0 text-sm bg-slate-300">
+              INICIO
+            </TableColumn>
+            <TableColumn className="text-center border-0 text-sm bg-slate-300">
+              FIN
+            </TableColumn>
+            <TableColumn className="text-center border-0 text-sm bg-slate-300">
+              &nbsp; &nbsp; FECHA &nbsp; &nbsp;
+            </TableColumn>
+            <TableColumn className="text-center border-0 text-sm bg-slate-300">
+              PERSONAS
+            </TableColumn>
+            <TableColumn className="text-center border-0 text-sm bg-slate-300">
+              ESTADO
+            </TableColumn>
+          </TableHeader>
+          <TableBody>
+            {solicitudes.map((solicitud) => (
+              <TableRow>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.solicitud.ambiente.nombre}
+                </TableCell>
+                <TableCell className="text-xs text-black border-none">
+                  {solicitud.solicitud.users.map((user, index) => (
+                    <div key={index}>
+                      *{user.name} {user.apellidos}
+                    </div>
+                  ))}
+                </TableCell>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.solicitud.materia.nombre_materia}
+                </TableCell>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.solicitud.motivo}
+                </TableCell>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.periodos[0].periodo.horario.hora_inicio.slice(
+                    0,
+                    -3
+                  )}
+                </TableCell>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.periodos[
+                    solicitud.periodos.length - 1
+                  ].periodo.horario.hora_fin.slice(0, -3)}
+                </TableCell>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.periodos[0].periodo.fecha}
+                </TableCell>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.solicitud.numero_estudiantes}
+                </TableCell>
+                <TableCell className="text-xs border-0 text-black">
+                  {solicitud.solicitud.estado === "Rechazado" ? (
+                    <button
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Chip
+                        className="capitalize"
+                        color={statusColorMap[solicitud.solicitud.estado]}
+                        size="sm"
+                        variant="flat"
+                        onClick={() =>
+                          handleRechazadoClick(
+                            solicitud.solicitud.id.toString()
+                          )
+                        }
+                      >
+                        {solicitud.solicitud.estado}
+                      </Chip>
+                      <Link
+                        className="text-xs"
+                        underline="always"
+                        color="danger"
+                        onClick={() =>
+                          handleRechazadoClick(
+                            solicitud.solicitud.id.toString()
+                          )
+                        }
+                      >
+                        detalles
+                      </Link>
+                    </button>
+                  ) : (
+                    <Chip
+                      className="capitalize"
+                      color={statusColorMap[solicitud.solicitud.estado]}
+                      size="sm"
+                      variant="flat"
+                    >
                       {solicitud.solicitud.estado}
                     </Chip>
-                    <Link className="text-xs" underline="always" color="danger"  onClick={() =>
-                      handleRechazadoClick(solicitud.solicitud.id.toString())
-                    }>
-                      detalles
-                    </Link> 
-                  </button>
-                ) : (
-                  <Chip className="capitalize" color={statusColorMap[solicitud.solicitud.estado]} size="sm" variant="flat"
-                  >
-                    {solicitud.solicitud.estado}
-                  </Chip>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Modal
-        isOpen={!!modalSolicitudId}
-        onClose={() => setModalSolicitudId(null)}
-      >
-        <ModalContent>
-          <ModalHeader>Motivo del Rechazo</ModalHeader>
-          <ModalBody>
-            <p>{modalText}</p>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              className="bg-primary text-white"
-              onClick={() => setModalSolicitudId(null)}
-            >
-              Aceptar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Modal
+          isOpen={!!modalSolicitudId}
+          onClose={() => setModalSolicitudId(null)}
+        >
+          <ModalContent>
+            <ModalHeader>Motivo del Rechazo</ModalHeader>
+            <ModalBody>
+              <p>{modalText}</p>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="primary"
+                variant="shadow"
+                onClick={() => setModalSolicitudId(null)}
+              >
+                Aceptar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
-      
     </div>
   );
 };
