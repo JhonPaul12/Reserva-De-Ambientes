@@ -159,6 +159,7 @@ Route::get('/AllDocentes', [SolicitudController::class, 'AllDocentes']);
 
 Route::post('/periodos',[PeriodoController::class,'stores']);
 Route::get('/allPeriodos', [PeriodoController::class, 'allPeriodos']);
+Route::get('/allPeriodosLibres', [PeriodoController::class, 'allPeriodosLibres']);
 
 Route::put('/solicitud/editar/{id}', [SolicitudController::class, 'editar']);
 

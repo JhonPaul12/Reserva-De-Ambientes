@@ -19,8 +19,11 @@ import { VerTodasReservasAdmin } from "../ReservasAdmin2/indes";
 import { Login } from "../Login/Login";
 import { NotificacionesUsuario } from "../Notificaciones";
 import { ModificarDocentes } from "../ModificarDocentes/ModificarDocentes";
+import { CrearDocente } from "../CrearDocente/CrearDocente";
+import { DarDeBaja } from "../DarDeBajaDocente/DarDeBaja";
 import { NotificarCancelaciones } from "../NotificarCancelacion";
 import { NotificarCancelacionesUbi } from "../NotificarCacelacionUbicacion";
+import { CalendarioUser } from "../Calendario";
 
 export const router = createBrowserRouter([
   {
@@ -77,6 +80,14 @@ export const router = createBrowserRouter([
         element: <ModificarDocentes />,
       },
       {
+        path: "crear-docente",
+        element: <CrearDocente />,
+      },
+      {
+        path: "dar-baja-docente",
+        element: <DarDeBaja />,
+      },
+      {
         path: "notificar-ambiente",
         element: <NotificarCancelaciones />,
       },
@@ -98,6 +109,10 @@ export const router = createBrowserRouter([
       {
         path: "visualizar-ambientes",
         element: <BusquedaFil />,
+      },
+      {
+        path: "calendario",
+        element: <CalendarioUser />,
       },
       //{
       //  path: "modificar-solicitud",

@@ -5,6 +5,5 @@ export interface ISimpleDocente {
     telefono: string;
     codigo_sis: string;
     email: string;
-    materias_grupos: object;
     email_verified_at: null;
   }
