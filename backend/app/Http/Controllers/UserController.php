@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Rol;
 use App\Models\Materia;
 use App\Models\Grupo;
+use Illuminate\Support\Facades\Hash;
+
 class UserController extends Controller
 {
     
@@ -180,5 +182,35 @@ public function showGrupos($id)
     // Devuelve los grupos
     return response()->json($grupos, 200);
 }
+
+public function changePassword(Request $request, $id)
+{
+    // Encuentra el usuario por su ID
+    $user = User::find($id);
+
+    // Si el usuario no existe, devuelve un error
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    // Valida los datos del formulario
+    $request->validate([
+        'contra_actual' => 'required|string',
+        'contra_nueva' => 'required|string|min:8',
+    ]);
+
+    // Verifica que la contraseña actual sea correcta
+    if (!Hash::check($request->input('contra_actual'), $user->password)) {
+        return response()->json(['message' => 'La contraseña actual es incorrecta'], 400);
+    }
+
+    // Cambia la contraseña del usuario
+    $user->password = bcrypt($request->input('contra_nueva'));
+    $user->save();
+
+    // Devuelve una respuesta
+    return response()->json(['message' => 'Contraseña actualizada correctamente'], 200);
+}
+
 
 }

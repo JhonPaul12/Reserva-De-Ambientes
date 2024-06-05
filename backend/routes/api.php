@@ -229,3 +229,6 @@ Route::post('/cambiarEstadoPorUbicacionAmbienteYHorario/{ubicacion}/{fechaSolici
 
 //DE LAS RESERVAS, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN => MUESTRA LOS ID_USER Y ID_SOLICITUD
 Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'mostrarSolicitudPorNombreAmbienteYHorario']);
+
+//Cambio de Contrasenias
+Route::put('/user/change-password/{id}', [UserController::class, 'changePassword']);

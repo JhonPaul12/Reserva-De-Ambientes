@@ -19,13 +19,11 @@ import { ISimpleExcepcion } from "../interfaces/simple-exception";
 import { useAuthStore } from "../../Login/stores/auth.store";
 
 export const FormOrdenado = () => {
-
   const user = useAuthStore((state) => state.user);
 
-
   useEffect(() => {
-   // getUsuario(user?.id);
-   getMaterias();
+    // getUsuario(user?.id);
+    getMaterias();
     getExcepciones();
     if (listOficial.length === 0) {
       setListOficial([`${user?.id}`]);
@@ -34,7 +32,7 @@ export const FormOrdenado = () => {
 
   //DOCENTES
   //const [usuario, setUsuario] = useState(instanciaInicial);
-  
+
   const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
   const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(
     new Set([])
@@ -55,10 +53,12 @@ export const FormOrdenado = () => {
     a.name.localeCompare(b.name)
   );
   const getDocentes = async (id: number) => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`);
-    const docentesArray = Object.values(respuesta.data); 
-    console.log(docentesArray); 
-    setDocentes(docentesArray); 
+    const respuesta = await axios.get(
+      `http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`
+    );
+    const docentesArray = Object.values(respuesta.data);
+    console.log(docentesArray);
+    setDocentes(docentesArray);
   };
 
   const handleSelectionChangeDocentes = (
@@ -71,7 +71,7 @@ export const FormOrdenado = () => {
     console.log(listOficial);
     console.log(listdocentes);
     setValuesDocentes(new Set(e.target.value.split(",")));
-    getGrupos(parseInt(inputMateria),arrayNumeros);
+    getGrupos(parseInt(inputMateria), arrayNumeros);
   };
 
   const optionsDocentes = docentesOrdenAlfabetico.map((docente) => ({
@@ -98,10 +98,11 @@ export const FormOrdenado = () => {
     console.log(value);
     setInputMateria(value);
     getDocentes(parseInt(value));
-    getGrupos(parseInt(value),listdocentes);
+    getGrupos(parseInt(value), listdocentes);
   };
   const verificarMateriaDoc = async () => {
-    if (inputMateria === "") toast.error("Seleccione una materia para ver a los docentes asociados");
+    if (inputMateria === "")
+      toast.error("Seleccione una materia para ver a los docentes asociados");
   };
 
   //MOTIVO
@@ -145,9 +146,8 @@ export const FormOrdenado = () => {
   //NUMERO DE ESTUDIANTES
 
   const [inputNEst, setInputNEst] = useState("");
-  
 
-    const handleKeyPress = (event) => {
+  const handleKeyPress = (event) => {
     const charCode = event.charCode;
     // Allow only numbers (charCode 48-57)
     if (charCode < 48 || charCode > 57) {
@@ -159,12 +159,12 @@ export const FormOrdenado = () => {
     const inputValue = e.target as HTMLInputElement;
 
     if (inputValue.value.length < 6) {
-      if (inputValue.value === '0') {
+      if (inputValue.value === "0") {
         e.preventDefault();
         return;
       }
-        setInputNEst(inputValue.value);
-        getAmbientes(inputValue.value);
+      setInputNEst(inputValue.value);
+      getAmbientes(inputValue.value);
     } else {
       toast.error("El numero de estudiantes no debe superar los 5 caracteres");
       console.log("El numero de estudiantes no debe superar los 5 caracteres");
@@ -201,11 +201,10 @@ export const FormOrdenado = () => {
       setGrupos(respuestaPrincipal.data);
       let gruposTem = respuestaPrincipal.data;
 
-      console.log('Grupos del docente principal:', gruposTem);
+      console.log("Grupos del docente principal:", gruposTem);
 
-      console.log(docente_id.length );
+      console.log(docente_id.length);
       if (docente_id.length !== 0) {
-
         const solicitudes = docente_id.map((docente) =>
           axios.get<ISimpleGrupo[]>(
             `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
@@ -216,19 +215,19 @@ export const FormOrdenado = () => {
         const respuestas = await Promise.all(solicitudes);
         console.log(respuestas);
 
-         //Extraer los datos de cada respuesta y unirlos a la lista de grupos
+        //Extraer los datos de cada respuesta y unirlos a la lista de grupos
         respuestas.forEach((respuesta) => {
           gruposTem = [...gruposTem, ...respuesta.data];
         });
 
-        console.log('Grupos de todos los docentes:', gruposTem);
+        console.log("Grupos de todos los docentes:", gruposTem);
       }
 
       // Actualizar el estado con la lista unida de grupos
       setGrupos(gruposTem);
-      console.log('Estado actualizado con los grupos:', gruposTem);
+      console.log("Estado actualizado con los grupos:", gruposTem);
     } catch (error) {
-      console.error('Error al obtener los grupos:', error);
+      console.error("Error al obtener los grupos:", error);
     }
   };
   const verificarMateria = async () => {
@@ -485,9 +484,9 @@ export const FormOrdenado = () => {
             inputHFin
           );
         }
-        /*setTimeout(() => {
+        setTimeout(() => {
           window.location.reload();
-        }, 2000);*/
+        }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -495,8 +494,7 @@ export const FormOrdenado = () => {
       }
     }
   };
-  const onInputChangeCancelar = async (
-  ) => {
+  const onInputChangeCancelar = async () => {
     window.location.reload();
   };
   return (
@@ -685,7 +683,12 @@ export const FormOrdenado = () => {
           {/*BOTONES */}
 
           <div className="flex gap-5 items-center">
-            <Button size="lg" className="w-full  mb-10" color="primary" onClick={onInputChangeCancelar}>
+            <Button
+              size="lg"
+              className="w-full  mb-10"
+              color="primary"
+              onClick={onInputChangeCancelar}
+            >
               Cancelar
             </Button>
             <Button
