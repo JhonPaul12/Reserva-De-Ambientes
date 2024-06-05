@@ -1,0 +1,35 @@
+.rbc-toolbar button {
+  background-color: #0d1b47;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.rbc-toolbar button:hover {
+  background-color: #8eacd8;
+  color: black;
+}
+.rbc-toolbar-label{
+    font-size: 30px;
+    text-transform: uppercase;
+}
+.rbc-header{
+    background-color: #0d1b47;
+    color: white;
+    padding: 1%;
+    align-items: center;
+    justify-content: center;
+    margin: 0px;
+    font-size: larger;
+}
+.rbc-calendar{
+  margin: 10px;
+}
+

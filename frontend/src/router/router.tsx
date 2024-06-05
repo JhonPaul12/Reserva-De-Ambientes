@@ -21,6 +21,7 @@ import { NotificacionesUsuario } from "../Notificaciones";
 import { ModificarDocentes } from "../ModificarDocentes/ModificarDocentes";
 import { NotificarCancelaciones } from "../NotificarCancelacion";
 import { NotificarCancelacionesUbi } from "../NotificarCacelacionUbicacion";
+import { CalendarioUser } from "../Calendario";
 
 export const router = createBrowserRouter([
   {
@@ -98,6 +99,10 @@ export const router = createBrowserRouter([
       {
         path: "visualizar-ambientes",
         element: <BusquedaFil />,
+      },
+      {
+        path: "calendario",
+        element: <CalendarioUser />,
       },
       //{
       //  path: "modificar-solicitud",

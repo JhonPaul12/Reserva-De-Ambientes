@@ -3,6 +3,7 @@ import { BsBuildingsFill } from "react-icons/bs";
 import { IoNotificationsCircleOutline } from "react-icons/io5";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { SiGoogleclassroom } from "react-icons/si";
+import { FaCalendarDays } from "react-icons/fa6";
 
 export const sideMenuOptions = [
   {
@@ -113,6 +114,11 @@ export const sideMenuOptionsUser = [
     path: "visualizar-ambientes",
     name: "Ver Ambientes",
     icon: <LuLayers />,
+  },
+  {
+    path: "calendario",
+    name: "Ver Calendario",
+    icon: <FaCalendarDays />,
   },
   {
     path: "reservas",
