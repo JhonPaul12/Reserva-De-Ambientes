@@ -4,6 +4,7 @@ import { MdEmail } from 'react-icons/md';
 import { toast } from 'sonner';
 import { ISimpleMateria } from '../../CrearSolicitud/interfaces/simple-materia';
 import axios, { isAxiosError } from 'axios';
+import { useDocenteStore } from '../store/docente.store';
 
 export const FormCrearDocente = () => {
 
@@ -17,7 +18,7 @@ export const FormCrearDocente = () => {
 
   useEffect(()=>{
     getMaterias();
-  })
+  }, []);
 
   const onInputChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
@@ -101,31 +102,62 @@ export const FormCrearDocente = () => {
     }
   };
 
-  const [inputMat, setMaterias] = useState<ISimpleMateria[]>([]);
+  const [inputMat, setMaterias] = useState<[]>([]);
   const [inputMaterias, setInputMaterias] = useState([]);
   const [values, setValues] = React.useState<Selection>(new Set([]));
-
-  
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
     const valores = e.target.value;
-    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+    const arrayNumeros = valores.split(",").map((numero) => numero.trim().replace('|', ',')).map(item => JSON.parse(item));
+    console.log(arrayNumeros);
     setInputMaterias(arrayNumeros);
     setValues(new Set(e.target.value.split(",")));
     console.log(values);
   };
+/*
+  const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log(e.target.value);
+  
+    // Obtener el valor del select
+    const valores = e.target.value;
+    
+    // Remover los corchetes del principio y del final
+    const valoresSinCorchetes = valores.slice(1, -1);
+  
+    // Separar por '],['
+    const subCadenas = valoresSinCorchetes.split("],[");
+  
+    // Convertir cada sub-cadena en un array de números
+    const arrayNumeros = subCadenas.map(subCadena => {
+      return subCadena.split(",").map(numero => parseInt(numero.trim(), 10));
+    });
+  
+    // Actualizar el estado
+    setInputMaterias(arrayNumeros);
+    setValues(new Set(e.target.value.split(",")));
+    console.log(arrayNumeros);
+    console.log(values);
+  };*/
+  
 
   const getMaterias = async () => {
     try {
         const respuesta = await axios.get(
-            `http://127.0.0.1:8000/api/usuario/materias/${user?.id}/`
+            `http://127.0.0.1:8000/api/MateriasLibres`
           );
+          console.log(respuesta.data);
           setMaterias(respuesta.data);
     } catch (error) {
       toast.error('Error al rescatar las materias')
     }
   };
+  const options = inputMat.map((inputHIn) => ({
+    label: `${inputHIn.materia} - GRUPO: ${inputHIn.grupo}`,
+    value: `[${inputHIn.materia_id} | ${inputHIn.grupo}]`,
+  }));
+
+  const createDocente = useDocenteStore((state) => state.createDocente);
 
   const onInputChangeSave = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -141,23 +173,41 @@ export const FormCrearDocente = () => {
     ) {
       console.log(typeof inputName);
       console.log(inputName);
-      
+      console.log(typeof inputApellidos);
+      console.log(inputApellidos);
+      console.log(typeof inputTel);
+      console.log(inputTel);
+      console.log(typeof inputEmail);
+      console.log(inputEmail);
+
+      console.log(typeof inputCod);
+      console.log(inputCod);
+      console.log(typeof inputMaterias);
+      console.log(inputMaterias);
     if(!inputEmail.includes('@gmail.com')) toast.error('Ingrese un email válido')
-    if(inputTel.length === 8) toast.error('Ingrese un telefono con 8 digitos')
-    if(inputCod.length === 9) toast.error('Ingrese un CódigoSiS válido')
+    if(inputTel.length != 8) toast.error('Ingrese un telefono con 8 digitos')
+    if(inputCod.length != 9) toast.error('Ingrese un CódigoSiS válido')
 
         try {
-            const respuesta = await axios.post(
-                `http://127.0.0.1:8000/api/usuario`, {
+
+          await createDocente(
+            inputName,
+            inputApellidos,
+            inputTel,
+            inputCod,
+            inputEmail,
+            inputMaterias);
+            /*const respuesta = await axios.post(
+                `http://127.0.0.1:8000/api/docente`, {
                     inputName,
                     inputApellidos,
                     inputTel,
-                    inputEmail,
                     inputCod,
+                    inputEmail,
                     inputMaterias
             });
             console.log(respuesta);
-            toast.success("Guardado");
+            toast.success("Guardado");*/
           } catch (error) {
             if (isAxiosError(error)) {
               toast.error("El docente ya existe");
@@ -273,9 +323,9 @@ export const FormCrearDocente = () => {
             className="mt-2 mb-5 w-full"
             onChange={handleSelectionChange}
           >
-            {inputMat.map((option) => (
-              <SelectItem key={option.id} value={option.id}>
-                {option.nombre_materia}
+            {options.map((option) => (
+              <SelectItem key={option.value} value={option.value} textValue={option.value}>
+                {option.label}
               </SelectItem>
             ))}
           </Select>

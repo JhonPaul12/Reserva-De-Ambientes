@@ -51,9 +51,15 @@ export const FormOrdenado = () => {
     console.log(user);
   };*/
 
-  const docentesOrdenAlfabetico = [...docentes].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+  const docentesOrdenAlfabetico = [...docentes].sort((a, b) => {
+    // Si a es null, lo ponemos al final
+    if (a === null) return 1;
+    // Si b es null, lo ponemos al final
+    if (b === null) return -1;
+    // Comparar por el campo 'name'
+    return a.name.localeCompare(b.name);
+  });
+
   const getDocentes = async (id: number) => {
     const respuesta = await axios.get(`http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`);
     const docentesArray = Object.values(respuesta.data); 
@@ -74,7 +80,9 @@ export const FormOrdenado = () => {
     getGrupos(parseInt(inputMateria),arrayNumeros);
   };
 
-  const optionsDocentes = docentesOrdenAlfabetico.map((docente) => ({
+  const optionsDocentes = docentesOrdenAlfabetico
+  .filter((docente) => docente !== null) // Filtrar los valores null
+  .map((docente) => ({
     label: `${docente.name} ${docente.apellidos}`,
     value: docente.id,
   }));
@@ -301,7 +309,7 @@ export const FormOrdenado = () => {
       );
     if (inputNEst != "" && ambientes.length === 0)
       toast.error(
-        "No existen ambientes que con capacidad apta para el numero de personas requerido"
+        "No existen ambientes DISPONIBLES con capacidad apta para el numero de personas requerido"
       );
     console.log(ambientes);
   };
