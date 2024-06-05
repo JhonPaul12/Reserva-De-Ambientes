@@ -19,6 +19,8 @@ import { VerTodasReservasAdmin } from "../ReservasAdmin2/indes";
 import { Login } from "../Login/Login";
 import { NotificacionesUsuario } from "../Notificaciones";
 import { ModificarDocentes } from "../ModificarDocentes/ModificarDocentes";
+import { CrearDocente } from "../CrearDocente/CrearDocente";
+import { DarDeBaja } from "../DarDeBajaDocente/DarDeBaja";
 import { NotificarCancelaciones } from "../NotificarCancelacion";
 import { NotificarCancelacionesUbi } from "../NotificarCacelacionUbicacion";
 import { CalendarioUser } from "../Calendario";
@@ -76,6 +78,14 @@ export const router = createBrowserRouter([
       {
         path: "modificar-docentes",
         element: <ModificarDocentes />,
+      },
+      {
+        path: "crear-docente",
+        element: <CrearDocente />,
+      },
+      {
+        path: "dar-baja-docente",
+        element: <DarDeBaja />,
       },
       {
         path: "notificar-ambiente",

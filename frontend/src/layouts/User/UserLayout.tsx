@@ -20,7 +20,7 @@ export const UserLayout = () => {
     return <Navigate to="/login" />;
   }
 
-  // if (!user?.roles.includes("Docente")) {
+  // if (!user?.roles.includes("User")) {
   //   return <Navigate to="/admin" />;
   // }
 

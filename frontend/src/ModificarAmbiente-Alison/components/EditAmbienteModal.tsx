@@ -40,34 +40,36 @@ export const EditAmbienteModal = ({ ambiente }) => {
     "EDIFICIO ELEKTRO PRIMER PISO",
     "EDIFICIO ELEKTRO SEGUNDO PISO",
     "EDIFICIO ELEKTRO TERCER PISO",
-    "EDIFICIO ELEKTRO PLANTA BAJA"
+    "EDIFICIO ELEKTRO PLANTA BAJA",
   ];
-  
+
   const [inputName, setInputName] = useState(`${ambiente.nombre}`);
   const [inputCap, setInputCap] = useState(`${ambiente.capacidad}`);
   const [inputUbi, setInputUbi] = useState(`${ambiente.ubicacion}`);
   const [inputType, setInputType] = useState(`${ambiente.tipo}`);
   const [buttonSave, setInputSave] = useState(false);
-  const updateAmbiente = useAmbienteStore( state => state.updateAmbiente);
+  const updateAmbiente = useAmbienteStore((state) => state.updateAmbiente);
 
-  const placeholderName =`${ambiente.nombre}`;
+  const placeholderName = `${ambiente.nombre}`;
   const placeholderCap = `${ambiente.capacidad}`;
   const placeholderUbi = `${ambiente.ubicacion}`;
-  const placeholderType= `${ambiente.tipo}`;
+  const placeholderType = `${ambiente.tipo}`;
 
   const onInputChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
-    if (inputValue.value.length <30) {
+    if (inputValue.value.length < 30) {
       setInputName(inputValue.value);
     } else {
-      toast.error('El nombre del ambiente debe tener como maximo 30 caracteres');
-      console.log("El nombre del ambiente debe tener como maximo 30 caracteres");
+      toast.error(
+        "El nombre del ambiente debe tener como maximo 30 caracteres"
+      );
+      console.log(
+        "El nombre del ambiente debe tener como maximo 30 caracteres"
+      );
     }
-  }
-  
-  
+  };
 
-    const handleKeyPress = (event) => {
+  const handleKeyPress = (event) => {
     const charCode = event.charCode;
     // Allow only numbers (charCode 48-57)
     if (charCode < 48 || charCode > 57) {
@@ -79,7 +81,7 @@ export const EditAmbienteModal = ({ ambiente }) => {
     const inputValue = e.target as HTMLInputElement;
 
     if (inputValue.value.length < 6) {
-      if (inputValue.value === '0') {
+      if (inputValue.value === "0") {
         e.preventDefault();
         return;
       }
@@ -92,26 +94,35 @@ export const EditAmbienteModal = ({ ambiente }) => {
 
   const onInputChangeUbi = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target as HTMLSelectElement;
-  if (inputValue.value.length <= 150) {
-    console.log(inputValue.value);
-        setInputUbi(inputValue.value);
-
+    if (inputValue.value.length <= 150) {
+      console.log(inputValue.value);
+      setInputUbi(inputValue.value);
     } else {
-      toast.error('La ubicacion del ambiente debe tener como maximo 150 caracteres');
-      console.log("La ubicacion del ambiente debe tener como maximo 150 caracteres");
+      toast.error(
+        "La ubicacion del ambiente debe tener como maximo 150 caracteres"
+      );
+      console.log(
+        "La ubicacion del ambiente debe tener como maximo 150 caracteres"
+      );
     }
-  }
+  };
 
   const onInputChangeType = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const inputValue = e.target as HTMLSelectElement;
-        setInputType(inputValue.value);
-  }
+    setInputType(inputValue.value);
+  };
 
-  const onInputChangeSave = async(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onInputChangeSave = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     e.preventDefault();
 
-    
-    if (placeholderName !== '' && placeholderUbi !== ''&& placeholderCap !== ''&& placeholderType !== '') {
+    if (
+      placeholderName !== "" &&
+      placeholderUbi !== "" &&
+      placeholderCap !== "" &&
+      placeholderType !== ""
+    ) {
       console.log(typeof inputName);
       console.log(inputName);
       console.log(typeof inputCap);
@@ -120,25 +131,29 @@ export const EditAmbienteModal = ({ ambiente }) => {
       console.log(inputUbi);
       console.log(typeof inputType);
       console.log(inputType);
-      await updateAmbiente(ambiente.id, inputName,inputType, inputUbi,  parseInt(inputCap));
+      await updateAmbiente(
+        ambiente.id,
+        inputName,
+        inputType,
+        inputUbi,
+        parseInt(inputCap)
+      );
       setTimeout(() => {
         window.location.reload();
       }, 2000);
       setInputSave(true);
       console.log(buttonSave);
     } else {
-
-      toast.error('Todos los campos deben tener datos para registrar');
-      console.log('Todos los campos deben tener datos para registrar');
+      toast.error("Todos los campos deben tener datos para registrar");
+      console.log("Todos los campos deben tener datos para registrar");
     }
-}
-
+  };
 
   return (
     <div>
       <div className="flex justify-center items-center">
         <Button className="bg-primary text-white my-2" onPress={onOpen}>
-        Información básica
+          Información básica
         </Button>
       </div>
       <Modal
@@ -153,79 +168,89 @@ export const EditAmbienteModal = ({ ambiente }) => {
                 Editar información básica
               </ModalHeader>
               <ModalBody>
-              <form className='mt-5 space-y-6'>
-        <div className="columnaR">
-        <label className='text-ms text-gray-900'>Nombre:</label>
-        <br />
-        <Input 
-            type='text'
-            name='nombre'
-            className='w-full'
-            placeholder={placeholderName}
-            style={{
-              textAlign: 'center', 
-              fontSize: '16px', 
-              padding: '10px'
-            }}
-            onChange={onInputChangeName}
-          />
-        <br />
-        <label className='text-ms text-gray-900'>Capacidad:</label>
-        <br />
-        <Input 
-            type="text"
-            className='w-full'
-            placeholder={placeholderCap}
-            value={inputCap}
-            style={{
-              textAlign: 'center', 
-              fontSize: '16px', 
-              padding: '10px', 
-            }}
-            onChange={onInputChangeCap}
-            onKeyPress={handleKeyPress}
-          />
-        <br />
-        
-        <label className='text-ms text-gray-900'>Ubicación:</label>
-        <br />
-        <Select
-            value={inputUbi}
-            className="w-full"
-            aria-label="Selecciona una motivo"
-            placeholder={placeholderUbi}
-            onChange={onInputChangeUbi}
-          >
-              {ubicaciones.map((ubi) => (
-                <SelectItem  key={ubi} value={ubi}>
-                  {ubi}
-                </SelectItem >
-              ))}
-            </Select>
-        <br />
-        <label className='text-ms text-gray-900'>Tipo:</label>
-        <br />
-        <Select 
-              value={inputType}
-              className='w-full'
-              name='tipoAmbiente'
-              placeholder={placeholderType}
-            onChange={onInputChangeType}
-          >
-          <SelectItem key={"Multifuncional"} value="Multifuncional">Multifuncional</SelectItem>
-          <SelectItem key={"Aula"} value="Aula">Aula</SelectItem>
-          <SelectItem key={"Laboratorio"} value="Laboratorio">Laboratorio</SelectItem>
-        </Select>
-        
-        <br />
-        </div>
-      </form>
+                <form className="mt-5 space-y-6">
+                  <div className="columnaR">
+                    <label className="text-ms text-gray-900">Nombre:</label>
+                    <br />
+                    <Input
+                      type="text"
+                      name="nombre"
+                      className="w-full"
+                      placeholder={placeholderName}
+                      style={{
+                        textAlign: "center",
+                        fontSize: "16px",
+                        padding: "10px",
+                      }}
+                      onChange={onInputChangeName}
+                    />
+                    <br />
+                    <label className="text-ms text-gray-900">Capacidad:</label>
+                    <br />
+                    <Input
+                      type="text"
+                      className="w-full"
+                      placeholder={placeholderCap}
+                      value={inputCap}
+                      style={{
+                        textAlign: "center",
+                        fontSize: "16px",
+                        padding: "10px",
+                      }}
+                      onChange={onInputChangeCap}
+                      onKeyPress={handleKeyPress}
+                    />
+                    <br />
+
+                    <label className="text-ms text-gray-900">Ubicación:</label>
+                    <br />
+                    <Select
+                      value={inputUbi}
+                      className="w-full"
+                      aria-label="Selecciona una motivo"
+                      placeholder={placeholderUbi}
+                      onChange={onInputChangeUbi}
+                    >
+                      {ubicaciones.map((ubi) => (
+                        <SelectItem key={ubi} value={ubi}>
+                          {ubi}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                    <br />
+                    <label className="text-ms text-gray-900">Tipo:</label>
+                    <br />
+                    <Select
+                      value={inputType}
+                      className="w-full"
+                      name="tipoAmbiente"
+                      placeholder={placeholderType}
+                      onChange={onInputChangeType}
+                    >
+                      <SelectItem key={"Multifuncional"} value="Multifuncional">
+                        Multifuncional
+                      </SelectItem>
+                      <SelectItem key={"Aula"} value="Aula">
+                        Aula
+                      </SelectItem>
+                      <SelectItem key={"Laboratorio"} value="Laboratorio">
+                        Laboratorio
+                      </SelectItem>
+                    </Select>
+
+                    <br />
+                  </div>
+                </form>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Cancelar
                 </Button>
-                <Button color="primary" onClick={onInputChangeSave} onPress={onOpen}>
+                <Button
+                  color="primary"
+                  onClick={onInputChangeSave}
+                  onPress={onOpen}
+                >
                   Guardar
                 </Button>
               </ModalFooter>

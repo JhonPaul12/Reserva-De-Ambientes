@@ -1,6 +1,8 @@
-import { Toaster } from "sonner";
-import { FormReglas } from "./components/formReglas";
-export const ReglasAmbientes = () => {
+
+import { Toaster } from 'sonner'
+import { FormCrearDocente } from './components/FormCrearDocente'
+
+export const CrearDocente = () => {
   return (
     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <Toaster
@@ -9,7 +11,7 @@ export const ReglasAmbientes = () => {
         closeButton
         style={{ position: "absolute" }}
       />
-      <FormReglas />
+        <FormCrearDocente/>
     </div>
-  );
-};
+  )
+}
