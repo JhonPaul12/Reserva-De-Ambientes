@@ -35,12 +35,13 @@ export const FormOrdenado = () => {
   //DOCENTES
   //const [usuario, setUsuario] = useState(instanciaInicial);
   
+  type Selection = Set<string>;
   const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
   const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(
-    new Set([])
+    new Set<string>([])
   );
-  const [listOficial, setListOficial] = useState([]);
-  const [listdocentes, setListDocentes] = useState([]);
+  const [listOficial, setListOficial] = useState<string[]>([]);
+  const [listdocentes, setListDocentes] = React.useState<string[]>([]);
 
   /*const getUsuario = async (id: number) => {
     const respuesta = await axios.get(
@@ -62,7 +63,7 @@ export const FormOrdenado = () => {
 
   const getDocentes = async (id: number) => {
     const respuesta = await axios.get(`http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`);
-    const docentesArray = Object.values(respuesta.data); 
+    const docentesArray = Object.values(respuesta.data).map(item => item as ISimpleDocente);
     console.log(docentesArray); 
     setDocentes(docentesArray); 
   };
@@ -181,9 +182,9 @@ export const FormOrdenado = () => {
 
   //GRUPO
 
-  const [inputGrupo, setInputGrupo] = useState("");
+  
   const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
-  const [listGrupos, setListGrupos] = useState([]);
+  const [listGrupos, setListGrupos] = useState<string[]>([]);
   const [valuesGrupos, setValuesGrupos] = React.useState<Selection>(
     new Set([])
   );
@@ -200,7 +201,7 @@ export const FormOrdenado = () => {
     }
   };*/
 
-  const getGrupos = async (materia_id: number, docente_id: []) => {
+  const getGrupos = async (materia_id: number, docente_id: string[]) => {
     try {
       // Obtener los grupos para el docente principal
       const respuestaPrincipal = await axios.get(
@@ -319,12 +320,19 @@ export const FormOrdenado = () => {
   const [inputFecha, setInputFecha] = useState("");
   const [excepciones, setExcepciones] = useState<ISimpleExcepcion[]>([]);
 
+  interface DateObject {
+    year: number;
+    month: number;
+    day: number;
+  }
+  
+
   const getExcepciones = async () => {
     const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
     setExcepciones(respuesta.data);
     console.log(respuesta.data);
   };
-  const handleDateChange = async (date) => {
+  const handleDateChange = async (date: DateObject) => {
     console.log(date);
 
     const fecha = `${date.year.toString()}-${date.month.toString()}-${date.day.toString()}`;
@@ -368,7 +376,7 @@ export const FormOrdenado = () => {
   //PERIODO
 
   const [inputHIni, setInputHIni] = useState<ISimplePeriodo[]>([]);
-  const [inputHFin, setInputHFin] = useState([]);
+  const [inputHFin, setInputHFin] = React.useState<string[]>([]);
   const [values, setValues] = React.useState<Selection>(new Set([]));
 
   const options = inputHIni.map((inputHIn) => ({
@@ -430,8 +438,6 @@ export const FormOrdenado = () => {
 
   const createSolicitud = useSolicitudStore((state) => state.createSolicitud);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  const [oficial, setOficial] = useState([]);
   const onInputChangeSave = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
