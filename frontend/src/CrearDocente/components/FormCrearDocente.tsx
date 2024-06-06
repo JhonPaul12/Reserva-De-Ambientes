@@ -103,15 +103,20 @@ export const FormCrearDocente = () => {
 
   type Selection = Set<string>;
   const [inputMat, setMaterias] = useState<[]>([]);
-  const [inputMaterias, setInputMaterias] = React.useState<string[]>([]);
+  const [inputMaterias, setInputMaterias] = React.useState<number[][]>([]);
   const [values, setValues] = React.useState<Selection>(new Set<string>([]));
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
     const valores = e.target.value;
-    const arrayNumeros = valores.split(",").map((numero) => numero.trim().replace('|', ',')).map(item => JSON.parse(item));
+    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
     console.log(arrayNumeros);
-    setInputMaterias(arrayNumeros);
+    const parsedArray = arrayNumeros.map((item) => {
+      const [first, second] = item.slice(1, -1).split('|').map((num) => Number(num.trim()));
+      return [first, second];
+    });
+    console.log(parsedArray);
+    setInputMaterias(parsedArray);
     setValues(new Set(e.target.value.split(",")));
     console.log(values);
   };

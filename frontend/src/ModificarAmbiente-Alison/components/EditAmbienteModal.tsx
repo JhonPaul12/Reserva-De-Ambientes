@@ -13,8 +13,15 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAmbienteStore } from "../../RegistrarAmbientes/store/ambientes.store";
+import { ISimpleAmbiente } from "../interfaces/simple-ambientes";
 
-export const EditAmbienteModal = ({ ambiente }) => {
+
+
+interface Props {
+  ambiente: ISimpleAmbiente;
+}
+
+export const EditAmbienteModal = ({ ambiente }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const ubicaciones = [
@@ -69,7 +76,7 @@ export const EditAmbienteModal = ({ ambiente }) => {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const charCode = event.charCode;
     // Allow only numbers (charCode 48-57)
     if (charCode < 48 || charCode > 57) {
@@ -132,7 +139,7 @@ export const EditAmbienteModal = ({ ambiente }) => {
       console.log(typeof inputType);
       console.log(inputType);
       await updateAmbiente(
-        ambiente.id,
+        parseInt(ambiente.id),
         inputName,
         inputType,
         inputUbi,
