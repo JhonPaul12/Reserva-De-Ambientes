@@ -1,5 +1,5 @@
 export interface ISimpleAmbiente {
-  id: number;
+  id: string;
   nombre: string;
   tipo: string;
   ubicacion: string;

@@ -3,6 +3,7 @@ import { reservasDB } from "../api";
 import { ISimpleSolicitud } from "../interfaces/simple-solicitud";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
+import { ISolicitudesResponse } from "../interfaces/solicitudes-response";
 
 
 interface SolicitudState {
@@ -82,6 +83,7 @@ interface SolicitudState {
           estado: 'Reservado',
         };
         const { data } = await reservasDB.put<{ message: string }>("/updateEstado", dataToSend);
+        console.log(data);
       }
   
         toast.success("Su reserva fue creada exitosamente", { description: data.message });

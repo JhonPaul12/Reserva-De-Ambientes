@@ -155,7 +155,7 @@ export const FormOrdenado = () => {
   const [inputNEst, setInputNEst] = useState("");
   
 
-    const handleKeyPress = (event) => {
+    const handleKeyPress = (event : React.KeyboardEvent<HTMLInputElement>) => {
     const charCode = event.charCode;
     // Allow only numbers (charCode 48-57)
     if (charCode < 48 || charCode > 57) {
