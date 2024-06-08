@@ -75,7 +75,7 @@ export const CancelarReservaA = () => {
   return (
     <div className="contenedor-table my-5">
       <label className="ml-10 text-3xl font-bold text-gray-900">
-        RECHAZAR RESERVA
+        CANCELAR RESERVA
       </label>
       <section className="mx-6 my-4">
         <Table className="custom-table text-center" aria-label="Tabla de datos">
@@ -154,7 +154,7 @@ export const CancelarReservaA = () => {
                       )
                     }
                   >
-                    Rechazar
+                    Cancelar
                   </Button>
                 </TableCell>
               </TableRow>
@@ -166,7 +166,7 @@ export const CancelarReservaA = () => {
         <ModalContent className="modal-content-large">
           <ModalHeader>
             <h2 className="text-lg">
-              Por favor, ingrese el motivo para rechazar la reserva:
+              Por favor, ingrese el motivo para cancelar la reserva:
             </h2>
           </ModalHeader>
           <ModalBody className="">
@@ -193,7 +193,7 @@ export const CancelarReservaA = () => {
           </ModalBody>
           <ModalFooter>
             <Button color="danger" variant="shadow" onClick={cancelarSolicitud}>
-              Rechazar
+              Cancelar
             </Button>
             <Button variant="shadow" onClick={() => setModalOpen(false)}>
               No

@@ -9,6 +9,7 @@ use App\Http\Resources\Solicitud\SolicitudResource;
 use App\Models\Solicitud;
 use App\Models\User;
 use App\Models\Excepcion;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\FuncCall;
@@ -117,7 +118,7 @@ class SolicitudController extends Controller
             'numero_estudiantes' => $request->numero_estudiantes,
             'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
             'ambiente_id' => $request->ambiente_id, // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
-            
+
         ]);
 
         $solicitud->load('ambiente');
@@ -405,7 +406,7 @@ class SolicitudController extends Controller
         return response()->json($todasLasSolicitudes, 200);
     }
 
-    
+
     public function cambiarEstadoUser($idSolicitud)
     {
         $solicitud = Solicitud::find($idSolicitud);
@@ -416,7 +417,7 @@ class SolicitudController extends Controller
 
         $solicitud->estado = "Cancelado";
         $solicitud->save();
-            // Cambia el estado de todos los periodos asociados a la solicitud
+        // Cambia el estado de todos los periodos asociados a la solicitud
         foreach ($solicitud->periodos as $periodo) {
             $periodo->estado = "libre";
             $periodo->save();
@@ -443,7 +444,8 @@ class SolicitudController extends Controller
         return response()->json(['message' => 'El estado de la solicitud ha sido cambiado a Rechazado'], 200);
     }
 
-    public function verificarFecha($fecha){
+    public function verificarFecha($fecha)
+    {
         $validated = Validator::make(['fecha' => $fecha], [
             'fecha' => 'required|date',
         ]);
@@ -467,5 +469,150 @@ class SolicitudController extends Controller
                 'mensaje' => 'No hay excepciones para esta fecha'
             ], 200);
         }
+    }
+    public function informeAmbientes()
+    {
+        $solicitudes = Solicitud::with('ambiente')->get();
+
+        $agrupadoPorIniciales = $solicitudes->groupBy(function ($solicitud) {
+            return substr($solicitud->ambiente->nombre, 0, 2);
+        });
+
+        $conteoPorIniciales = $agrupadoPorIniciales->map(function ($items, $key) {
+            return count($items);
+        });
+
+        $resultado = $conteoPorIniciales->map(function ($count, $initials) {
+            return [
+                'Aulas' => $initials . '0s',
+                'Cantidad de Reservas' => $count
+            ];
+        })->values();
+
+        return response()->json($resultado, 200);
+    }
+
+    public function informeAmbientes2()
+    {
+        $solicitudes = Solicitud::with('ambiente')->get();
+
+        $agrupadoPorIniciales = $solicitudes->groupBy(function ($solicitud) {
+            return substr($solicitud->ambiente->nombre, 0, 2);
+        });
+
+        $resultado = [];
+
+        foreach ($agrupadoPorIniciales as $iniciales => $solicitudesPorIniciales) {
+            $conteoPorMes = [];
+
+            foreach ($solicitudesPorIniciales as $solicitud) {
+                $fechaSolicitud = new DateTime($solicitud->fecha_solicitud);
+                $mes = $fechaSolicitud->format('F');
+
+                if (!isset($conteoPorMes[$mes])) {
+                    $conteoPorMes[$mes] = 1;
+                } else {
+                    $conteoPorMes[$mes]++;
+                }
+            }
+
+            $data = [];
+
+            $mesesEnEspañol = [
+                "January" => "Enero", "February" => "Febrero", "March" => "Marzo",
+                "April" => "Abril", "May" => "Mayo", "June" => "Junio",
+                "July" => "Julio"/*, "August" => "Agosto", "September" => "Septiembre",
+                "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"*/
+            ];
+
+            foreach ($mesesEnEspañol as $mes => $mesEnEspañol) {
+                $data[] = [
+                    'mes' => $mesEnEspañol,
+                    'cantidad' => $conteoPorMes[$mes] ?? 0
+                ];
+            }
+
+            $resultado[] = [
+                'Aula' => $iniciales . '0s',
+                'Meses' => $data
+            ];
+        }
+
+        return response()->json($resultado, 200);
+    }
+
+    public function informeAmbientes2_v2()
+    {
+        $solicitudes = Solicitud::with('ambiente')->get();
+
+        $resultado = [];
+
+        $mesesEnEspañol = [
+            "January" => "Enero", "February" => "Febrero", "March" => "Marzo",
+            "April" => "Abril", "May" => "Mayo", "June" => "Junio",
+            "July" => "Julio"/*, "August" => "Agosto", "September" => "Septiembre",
+        "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"*/
+        ];
+
+        foreach ($solicitudes as $solicitud) {
+            $aulaNombre = $solicitud->ambiente->nombre;
+
+            if (!isset($resultado[$aulaNombre])) {
+                $resultado[$aulaNombre] = [
+                    'Aula' => $aulaNombre,
+                    'Data' => array_fill_keys(array_values($mesesEnEspañol), 0)
+                ];
+            }
+
+            $fechaSolicitud = new DateTime($solicitud->fecha_solicitud);
+            $mes = $fechaSolicitud->format('F');
+            $mesEnEspañol = $mesesEnEspañol[$mes];
+
+            $resultado[$aulaNombre]['Data'][$mesEnEspañol]++;
+        }
+
+        $formatoResultado = [];
+        foreach ($resultado as $aula) {
+            $data = [];
+            foreach ($aula['Data'] as $mes => $valor) {
+                $data[] = [
+                    'mes' => $mes,
+                    'cantidad' => $valor
+                ];
+            }
+            $formatoResultado[] = [
+                'Aula' => $aula['Aula'],
+                'Meses' => $data
+            ];
+        }
+
+        return response()->json($formatoResultado, 200);
+    }
+
+    public function informeAmbientes_v2()
+    {
+        $solicitudes = Solicitud::with('ambiente')->get();
+
+        $resultado = [];
+
+        foreach ($solicitudes as $solicitud) {
+            $aulaNombre = $solicitud->ambiente->nombre;
+
+            if (!isset($resultado[$aulaNombre])) {
+                $resultado[$aulaNombre] = 1;
+            } else {
+                $resultado[$aulaNombre]++;
+            }
+        }
+
+        $formatoResultado = [];
+        foreach ($resultado as $aula => $count) {
+            $formatoResultado[] = [
+                'Aulas' => $aula,
+                'Cantidad_de_Reservas' => $count
+            ];
+        }
+
+        return response()->json($formatoResultado, 200);
     }
 }

@@ -25,7 +25,7 @@ export const NotificacionU = () => {
       {notificaciones.length === 0 ? (
         <p>NO TIENE NOTIFICACIONES.</p>
       ) : (
-        <Accordion variant="bordered" isCompact>
+        <Accordion variant="bordered" isCompact style={{overflowX:'auto'}}>
           {notificaciones.map((notificacion) => (
             <AccordionItem
               startContent={

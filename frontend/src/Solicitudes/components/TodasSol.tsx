@@ -53,7 +53,7 @@ export const TodasSol = () => {
   };
   const statusColorMap: Record<string, ChipProps["color"]> = {
     Aceptada: "success",
-    Cancelada: "danger",
+    Cancelado: "warning",
     Rechazado: "danger",
     Pendiente: "danger",
   };
@@ -150,7 +150,7 @@ export const TodasSol = () => {
                           )
                         }
                       >
-                        {solicitud.solicitud.estado}
+                        Cancelado
                       </Chip>
                       <Link
                         className="text-xs"

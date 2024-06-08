@@ -1,4 +1,9 @@
-import { Button, Badge, Listbox, ListboxItem } from "@nextui-org/react";
+import {
+  Button,
+  Badge,
+  Listbox,
+  ListboxItem,
+} from "@nextui-org/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { MdOutlineNotificationsActive } from "react-icons/md";
@@ -14,15 +19,15 @@ interface Notificacion {
   estado: string;
 }
 
-const NotificationList: React.FC<{ notifications: Notificacion[], refreshNotifications: () => void }> = ({
-  notifications,
-  refreshNotifications
-}) => {
+const NotificationList: React.FC<{
+  notifications: Notificacion[];
+  refreshNotifications: () => void;
+}> = ({ notifications, refreshNotifications }) => {
   const navigate = useNavigate();
 
   const handleAction = async (notificacionID: number) => {
     await axios.put(
-      `http://127.0.0.1:8000/api/cambiarEstadoNotificacion/${notificacionID}`,
+      `http://127.0.0.1:8000/api/cambiarEstadoNotificacion/${notificacionID}`
     );
     refreshNotifications();
     navigate("/user/notificaciones");
@@ -33,7 +38,10 @@ const NotificationList: React.FC<{ notifications: Notificacion[], refreshNotific
       {notifications.length > 0 ? (
         notifications.map((notification, index) => (
           <div key={index} className="notification-item">
-            <Listbox aria-label="Actions" onAction={() => handleAction(notification.id)}>
+            <Listbox
+              aria-label="Actions"
+              onAction={() => handleAction(notification.id)}
+            >
               <ListboxItem key={index}>
                 Solicitud: {notification.estado}
                 <br />
@@ -52,7 +60,7 @@ const NotificationList: React.FC<{ notifications: Notificacion[], refreshNotific
 export const Header = () => {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const idUser = useAuthStore((state) => state.user?.id);
+  const User = useAuthStore((state) => state.user);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
@@ -65,7 +73,7 @@ export const Header = () => {
   const getNotificaciones = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/notificacionSinVista/${idUser}`
+        `http://127.0.0.1:8000/api/notificacionSinVista/${User?.id}`
       );
       setNotificaciones(response.data);
       if (response.data.length > 0) {
@@ -82,19 +90,25 @@ export const Header = () => {
         content={notificaciones.length}
         isInvisible={notificaciones.length === 0}
         shape="circle"
-        color="primary"
-        size="sm"
+        size="md"
       >
         <Button
+          variant="bordered"
           onClick={toggleNotifications}
           radius="full"
           isIconOnly
-          variant="light"
+          className="bg-default"
+          size="md"
         >
           <MdOutlineNotificationsActive size={27} color="white" />
         </Button>
       </Badge>
-      {showNotifications && <NotificationList notifications={notificaciones} refreshNotifications={getNotificaciones} />}
+      {showNotifications && (
+        <NotificationList
+          notifications={notificaciones}
+          refreshNotifications={getNotificaciones}
+        />
+      )}
     </div>
   );
 };

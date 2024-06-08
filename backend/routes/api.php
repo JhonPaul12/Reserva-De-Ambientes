@@ -230,3 +230,11 @@ Route::post('/cambiarEstadoPorUbicacionAmbienteYHorario/{ubicacion}/{fechaSolici
 
 //DE LAS RESERVAS, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN => MUESTRA LOS ID_USER Y ID_SOLICITUD
 Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'mostrarSolicitudPorNombreAmbienteYHorario']);
+
+Route::get('/informeAmbientes', [SolicitudController::class, 'informeAmbientes']);
+
+Route::get('/informeAmbientes_v2', [SolicitudController::class, 'informeAmbientes_v2']);
+
+Route::get('/informeAmbientes2', [SolicitudController::class, 'informeAmbientes2']);
+
+Route::get('/informeAmbientes2_v2', [SolicitudController::class, 'informeAmbientes2_v2']);

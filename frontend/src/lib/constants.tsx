@@ -4,6 +4,9 @@ import { IoNotificationsCircleOutline } from "react-icons/io5";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { SiGoogleclassroom } from "react-icons/si";
 import { FaCalendarDays } from "react-icons/fa6";
+import { TbReportAnalytics } from "react-icons/tb";
+import { FaChalkboardTeacher } from "react-icons/fa";
+
 
 export const sideMenuOptions = [
   {
@@ -97,14 +100,32 @@ export const sideMenuOptions = [
     icon: <IoNotificationsCircleOutline size={30}/>,
     subMenuOptions: [
       {
-        path: "notificar-ambiente",
-        name: "Notificar Ambientes",
+        path: "cancelacion-ambiente",
+        name: "Cancelación Ambientes",
         icon: <SiGoogleclassroom />,
       },
       {
-        path: "notificar-ubicacion",
-        name: "Notificar Ubicacion",
+        path: "cancelacion-ubicacion",
+        name: "Cancelación Ubicación",
         icon: <FaMapLocationDot />,
+      },
+    ],
+  },
+  {
+    path: "Generar Informes",
+    name: "Generar Informes",
+    submenu: true,
+    icon: <TbReportAnalytics size={30}/>,
+    subMenuOptions: [
+      {
+        path: "informe-ambiente",
+        name: "Informe Ambientes",
+        icon: <SiGoogleclassroom />,
+      },
+      {
+        path: "informe-docentes",
+        name: "Informe Docentes",
+        icon: <FaChalkboardTeacher />
       },
     ],
   },
