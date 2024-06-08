@@ -212,5 +212,33 @@ public function changePassword(Request $request, $id)
     return response()->json(['message' => 'Contraseña actualizada correctamente'], 200);
 }
 
+public function deshabilitarDocente($id)
+{
+    // Busca el usuario por su ID
+    $user = User::find($id);
+
+    // Si no se encuentra el usuario, devuelve un error 404
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    // Elimina el rol de usuario
+    $user->rols()->detach();
+
+    // Cambia el estado de las reservas de "Aceptado" a "Rechazado"
+    // solo si el usuario es el único docente en la reserva
+    $user->solicitudes()->where('estado', 'Aceptada')
+                     ->whereDoesntHave('users', function ($query) use ($id) {
+                         $query->where('users.id', '<>', $id);
+                     })
+                     ->update(['estado' => 'Rechazado']);
+
+    // Elimina el campo docente_id de la tabla grupos
+    $user->grupos()->update(['user_id' => null]);
+
+    // Devuelve una respuesta
+    return response()->json(['message' => 'Docente deshabilitado correctamente'], 200);
+}
+
 
 }

@@ -25,6 +25,7 @@ import { NotificarCancelaciones } from "../NotificarCancelacion";
 import { NotificarCancelacionesUbi } from "../NotificarCacelacionUbicacion";
 import { CalendarioUser } from "../Calendario";
 import { Feriados } from "../RegistrarFeriados/Feriados";
+import { GInformeAmbientes } from "../GenerarInformes";
 
 export const router = createBrowserRouter([
   {
@@ -93,12 +94,16 @@ export const router = createBrowserRouter([
         element: <DarDeBaja />,
       },
       {
-        path: "notificar-ambiente",
+        path: "cancelacion-ambiente",
         element: <NotificarCancelaciones />,
       },
       {
-        path: "notificar-ubicacion",
+        path: "cancelacion-ubicacion",
         element: <NotificarCancelacionesUbi />,
+      },
+      {
+        path: "informe-ambiente",
+        element: <GInformeAmbientes />,
       },
     ],
   },

@@ -2,7 +2,6 @@ import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react'
 import { MdEmail } from 'react-icons/md';
 import { toast } from 'sonner';
-import { ISimpleMateria } from '../../CrearSolicitud/interfaces/simple-materia';
 import axios, { isAxiosError } from 'axios';
 import { useDocenteStore } from '../store/docente.store';
 
@@ -48,7 +47,7 @@ export const FormCrearDocente = () => {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event : React.KeyboardEvent<HTMLInputElement>) => {
     const charCode = event.charCode;
     // Allow only numbers (charCode 48-57)
     if (charCode < 48 || charCode > 57) {
@@ -102,16 +101,22 @@ export const FormCrearDocente = () => {
     }
   };
 
+  type Selection = Set<string>;
   const [inputMat, setMaterias] = useState<[]>([]);
-  const [inputMaterias, setInputMaterias] = useState([]);
-  const [values, setValues] = React.useState<Selection>(new Set([]));
+  const [inputMaterias, setInputMaterias] = React.useState<number[][]>([]);
+  const [values, setValues] = React.useState<Selection>(new Set<string>([]));
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
     const valores = e.target.value;
-    const arrayNumeros = valores.split(",").map((numero) => numero.trim().replace('|', ',')).map(item => JSON.parse(item));
+    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
     console.log(arrayNumeros);
-    setInputMaterias(arrayNumeros);
+    const parsedArray = arrayNumeros.map((item) => {
+      const [first, second] = item.slice(1, -1).split('|').map((num) => Number(num.trim()));
+      return [first, second];
+    });
+    console.log(parsedArray);
+    setInputMaterias(parsedArray);
     setValues(new Set(e.target.value.split(",")));
     console.log(values);
   };
@@ -139,6 +144,12 @@ export const FormCrearDocente = () => {
     console.log(arrayNumeros);
     console.log(values);
   };*/
+
+  interface InputMateria {
+    materia: string;
+    grupo: string;
+    materia_id: number;
+  }
   
 
   const getMaterias = async () => {
@@ -152,7 +163,7 @@ export const FormCrearDocente = () => {
       toast.error('Error al rescatar las materias')
     }
   };
-  const options = inputMat.map((inputHIn) => ({
+  const options = inputMat.map((inputHIn: InputMateria ) => ({
     label: `${inputHIn.materia} - GRUPO: ${inputHIn.grupo}`,
     value: `[${inputHIn.materia_id} | ${inputHIn.grupo}]`,
   }));

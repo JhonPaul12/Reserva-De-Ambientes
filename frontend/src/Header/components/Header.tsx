@@ -67,9 +67,10 @@ const NotificationList: React.FC<{
 export const Header = () => {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const idUser = useAuthStore((state) => state.user?.id);
+  //const idUser = useAuthStore((state) => state.user?.id);
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const User = useAuthStore((state) => state.user);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
@@ -82,7 +83,7 @@ export const Header = () => {
   const getNotificaciones = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/notificacionSinVista/${idUser}`
+        `http://127.0.0.1:8000/api/notificacionSinVista/${User?.id}`
       );
       setNotificaciones(response.data);
       if (response.data.length > 0) {

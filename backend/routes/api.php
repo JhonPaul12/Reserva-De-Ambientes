@@ -144,10 +144,14 @@ Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
 Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getGruposPorUsuarioYMateria']);
 //ruta para devolver docentes de una materia y un id docente
 Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
+//ruta para deshabilitar docente 
+Route::get('/deshabilitarDocente/{id}', [UserController::class, 'deshabilitarDocente']);
 
 Route::get('/Materias',[MateriaController::class,'index']);
 
 Route::get('/MateriasLibres',[GrupoController::class,'getNullUserGroups']);
+
+
 
 
 
@@ -233,3 +237,10 @@ Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{
 
 //Cambio de Contrasenias
 Route::put('/user/change-password/{id}', [UserController::class, 'changePassword']);
+Route::get('/informeAmbientes', [SolicitudController::class, 'informeAmbientes']);
+
+Route::get('/informeAmbientes_v2', [SolicitudController::class, 'informeAmbientes_v2']);
+
+Route::get('/informeAmbientes2', [SolicitudController::class, 'informeAmbientes2']);
+
+Route::get('/informeAmbientes2_v2', [SolicitudController::class, 'informeAmbientes2_v2']);
