@@ -144,10 +144,14 @@ Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
 Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getGruposPorUsuarioYMateria']);
 //ruta para devolver docentes de una materia y un id docente
 Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
+//ruta para deshabilitar docente 
+Route::get('/deshabilitarDocente/{id}', [UserController::class, 'deshabilitarDocente']);
 
 Route::get('/Materias',[MateriaController::class,'index']);
 
 Route::get('/MateriasLibres',[GrupoController::class,'getNullUserGroups']);
+
+
 
 
 

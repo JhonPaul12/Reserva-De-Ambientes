@@ -11,7 +11,6 @@ import { useAmbienteStore } from "../store/Ambientes.store";
 import { useEffect } from "react";
 import { EditPeriodosModal } from "./EditPeriodosModal";
 import { EditAmbienteModal } from "./EditAmbienteModal";
-import { DeleteAmbienteModal } from "./DeleteAmbieteModal";
 
 export const Lista_Ambientes = () => {
   const ambientes = useAmbienteStore((state) => state.ambientes);

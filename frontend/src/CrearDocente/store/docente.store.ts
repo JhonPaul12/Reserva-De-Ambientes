@@ -14,7 +14,7 @@ interface DocenteState {
         telefono: string,
         codigo_sis: string,
         email: string,
-        materias_grupos: object
+        materias_grupos: number[][]
     ) => Promise<void>;
     
     deleteAmbiente: ( id:number ) => Promise<void>;
@@ -23,21 +23,24 @@ interface DocenteState {
   const storeApi: StateCreator<DocenteState & Actions> = () => ({
     docentes: [],
   
-    createDocente: async (inputName, inputApellidos, inputTel, inputCod, inputEmail, inputMaterias) => {
+    createDocente: async (name, apellidos, telefono, codigo_sis, email, materias_grupos) => {
       try {
         const { data } = await reservasDB.post<{ message: string }>("/docente", {
-            inputName,
-            inputApellidos,
-            inputTel,
-            inputCod,
-            inputEmail,
-            inputMaterias
+          name,
+          apellidos,
+          telefono,
+          codigo_sis,
+          email,
+          materias_grupos
         });
         console.log(data);
         toast.success("Guardado", { description: data.message });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } catch (error) {
         if (isAxiosError(error)) {
-          toast.error("El ambiente ya existe");
+          toast.error("El docente ya existe", { description: error.message });
         }
       }
     },
