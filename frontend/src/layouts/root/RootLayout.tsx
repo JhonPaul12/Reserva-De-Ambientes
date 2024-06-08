@@ -25,7 +25,7 @@ export const RootLayout = () => {
 
   return (
     <div>
-      <HeaderUsers/>
+      <HeaderUsers />
       <SideMenu sideMenuOptions={sideMenuOptions} />
     </div>
   );

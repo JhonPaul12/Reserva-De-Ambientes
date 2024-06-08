@@ -59,7 +59,6 @@ export const sideMenuOptions = [
         name: "Dar De Baja ",
         icon: <LuLayers />,
       },
-
     ],
   },
   {
@@ -94,7 +93,7 @@ export const sideMenuOptions = [
     path: "Notificar",
     name: "Notificar",
     submenu: true,
-    icon: <IoNotificationsCircleOutline size={30}/>,
+    icon: <IoNotificationsCircleOutline size={30} />,
     subMenuOptions: [
       {
         path: "notificar-ambiente",
@@ -105,6 +104,24 @@ export const sideMenuOptions = [
         path: "notificar-ubicacion",
         name: "Notificar Ubicacion",
         icon: <FaMapLocationDot />,
+      },
+    ],
+  },
+  {
+    path: "Gestion Academica",
+    name: "Gestion",
+    icon: <LuLayers />,
+    submenu: true,
+    subMenuOptions: [
+      {
+        path: "gestion-ambientes",
+        name: "Crear Gestion",
+        icon: <LuLayers />,
+      },
+      {
+        path: "crear-feriados",
+        name: "Crear Feriados",
+        icon: <LuLayers />,
       },
     ],
   },

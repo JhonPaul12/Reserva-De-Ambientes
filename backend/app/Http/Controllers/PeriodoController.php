@@ -152,13 +152,6 @@ class PeriodoController extends Controller
             }
 
             $regla = Regla::find($ambregla->id_regla);
-            // $regla = Regla::find($periodoData['id_ambReg']);
-
-            // // Check if the regla exists
-            // if (!$regla) {
-            //     $response['errores'][] = ['id_ambReg' => $periodoData['id_ambReg'], 'error' => 'No se encontró la regla asociada al ambiente del período'];
-            //     continue;
-            // }
 
             $finish = Carbon::parse($regla->fecha_final);
             $fechaPeriodo = Carbon::parse($periodoData['fecha']);
@@ -210,7 +203,35 @@ class PeriodoController extends Controller
         return response()->json($response, 201);
     }
 
+    // public function crearPeriodosRegulares($idAmbiente, $idHorario, $fecha, $estado, $fechaFinRegla)
+    // {
+    //     $fechaActual = Carbon::parse($fecha);
+    //     $fechaFin = Carbon::parse($fechaFinRegla);
 
+    //     $datosComunes = [
+    //         'id_ambiente' => $idAmbiente,
+    //         'id_horario' => $idHorario,
+    //         'estado' => $estado,
+    //     ];
+
+    //     while ($fechaActual <= $fechaFin) {
+    //         // Verificar si la fecha actual está en la tabla de excepciones
+    //         $existeExcepcion = DB::table('excepcions')
+    //                             ->where('fecha_excepcion', $fechaActual->toDateString())
+    //                             ->exists();
+
+    //         // Si no existe excepción para la fecha actual, crea el periodo
+    //         if (!$existeExcepcion) {
+    //             $datosPeriodo = array_merge($datosComunes, ['fecha' => $fechaActual->toDateString()]);
+    //             Periodo::create($datosPeriodo);
+    //         }
+
+    //         // Avanzar a la siguiente semana
+    //         $fechaActual->addWeek();
+    //     }
+    // }
+
+    
     public function crearPeriodosRegulares($idAmbiente, $idHorario, $fecha, $estado, $fechaFinRegla)
     {
         $fechaActual = Carbon::parse($fecha);

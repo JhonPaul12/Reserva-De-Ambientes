@@ -11,7 +11,7 @@ import { useAmbienteStore } from "../store/Ambientes.store";
 import { useEffect } from "react";
 import { EditPeriodosModal } from "./EditPeriodosModal";
 import { EditAmbienteModal } from "./EditAmbienteModal";
-import { DeleteAmbienteModal } from "./DeleteAmbieteModal";
+//import { DeleteAmbienteModal } from "./DeleteAmbieteModal";
 
 export const Lista_Ambientes = () => {
   const ambientes = useAmbienteStore((state) => state.ambientes);
@@ -32,7 +32,7 @@ export const Lista_Ambientes = () => {
       </label>
       <section style={{ margin: "5% 15%" }}>
         <Table
-        hideHeader 
+          hideHeader
           className="custom-table"
           aria-label="Example table with dynamic content"
         >
@@ -55,7 +55,7 @@ export const Lista_Ambientes = () => {
                   <EditPeriodosModal ambiente={ambiente} />
                 </TableCell>
                 <TableCell>
-                  <EditAmbienteModal ambiente={ambiente}/>
+                  <EditAmbienteModal ambiente={ambiente} />
                   {/*<DeleteAmbienteModal ambiente={ambiente}/>*/}
                 </TableCell>
               </TableRow>
