@@ -18,6 +18,7 @@ import { useAuthStore } from "../../Login/stores/auth.store";
 import "./Header.css";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { IoLogoPolymer } from "react-icons/io";
 
 interface Notificacion {
   id: number;
@@ -95,8 +96,18 @@ export const Header = () => {
   };
 
   return (
-    <div className="flex bg-azul justify-end w-full p-3 relative">
-      <div>
+    <div className="flex bg-azul p-3 max-h-[15vh] ">
+      <div className="flex text-blanco mt-5  ">
+        {/* Logo */}
+        <div className="sidemenu__logo ml-3 mt-5">
+          <IoLogoPolymer className="text-7xl max-w-[80px] min-w-[50px]" />
+          <div className="leading-[.5] ml-3">
+            <h1 className={`font-bold text-3xl`}>Steel Code</h1>
+            <p className={`text-sm font-light`}>Gestion de Ambientes</p>
+          </div>
+        </div>
+      </div>
+      <div className=" ml-auto mt-2">
         <Badge
           content={notificaciones.length}
           isInvisible={notificaciones.length === 0}
