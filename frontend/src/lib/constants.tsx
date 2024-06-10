@@ -139,8 +139,8 @@ export const sideMenuOptions = [
         icon: <SiGoogleclassroom />,
       },
       {
-        path: "informe-docentes",
-        name: "Informe Docentes",
+        path: "informe-docente",
+        name: "Informe Docente",
         icon: <FaChalkboardTeacher />,
       },
     ],

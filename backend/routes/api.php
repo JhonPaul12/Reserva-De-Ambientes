@@ -244,3 +244,13 @@ Route::get('/informeAmbientes_v2', [SolicitudController::class, 'informeAmbiente
 Route::get('/informeAmbientes2', [SolicitudController::class, 'informeAmbientes2']);
 
 Route::get('/informeAmbientes2_v2', [SolicitudController::class, 'informeAmbientes2_v2']);
+
+Route::get('/informeAmbientesTable', [SolicitudController::class, 'informeAmbientesTable']);
+
+Route::get('/informeAmbientesTableID/{id}', [SolicitudController::class, 'informeAmbientesTableID']);
+
+Route::get('/informeAmbientes_v2ID/{id}', [SolicitudController::class, 'informeAmbientes_v2ID']);
+
+Route::get('/informeAmbientes2_v2ID/{id}', [SolicitudController::class, 'informeAmbientes2_v2ID']);
+
+Route::get('/datosDocente', [SolicitudController::class, 'datosDocente']);

@@ -1,17 +1,3 @@
-export interface AmbientesCont {
-  Aulas: string;
-  Cantidad_de_Reservas: number;
-}
-
-export interface AmbienteLineas {
-  Aula: number;
-  Meses: [Mes];
-}
-interface Mes{
-  mes:string,
-  cantidad:number
-}
-
 export interface AulaReservada {
   Aulas: number | string;
   Cantidad_de_Reservas: number;
@@ -24,3 +10,16 @@ interface Solicitud {
   Hora_de_Fin: string;
   Docentes: string[];
 }
+export interface AmbientesCont {
+    Aulas: string;
+    Cantidad_de_Reservas: number;
+  }
+  
+  export interface AmbienteLineas {
+    Aula: number;
+    Meses: [Mes];
+  }
+  interface Mes{
+    mes:string,
+    cantidad:number
+  }

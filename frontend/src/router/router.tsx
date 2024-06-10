@@ -26,6 +26,7 @@ import { NotificarCancelacionesUbi } from "../NotificarCacelacionUbicacion";
 import { CalendarioUser } from "../Calendario";
 import { Feriados } from "../RegistrarFeriados/Feriados";
 import { GInformeAmbientes } from "../GenerarInformes";
+import { GenerarInfoDocente } from "../GenerarInformeDocente";
 
 export const router = createBrowserRouter([
   {
@@ -104,6 +105,10 @@ export const router = createBrowserRouter([
       {
         path: "informe-ambiente",
         element: <GInformeAmbientes />,
+      },
+      {
+        path: "informe-docente",
+        element: <GenerarInfoDocente />,
       },
     ],
   },
