@@ -32,8 +32,8 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
   return (
     <div className="flex text-blanco ">
       {/* Menu hamburguesa */}
-      <div className="mobile-menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
-        <FiMenu />
+      <div className="mobile-menu-icon pt-5" onClick={() => setMenuOpen(!menuOpen)}>
+        <FiMenu color="white" />
       </div>
       <div className={`bg-azul ${menuOpen ? "block" : "menu-hidden"} sm:block`}>
         <div className={`p-5 relative w-[290px] min-h-[85vh] `}>

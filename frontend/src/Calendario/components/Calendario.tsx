@@ -66,7 +66,7 @@ export const Calendario = () => {
   maxTime.setHours(21, 45, 0);
 
   return (
-    <div className="text-black text-md p-12" style={{ height: "80%", width: "100%" }}>
+    <div className="calendario-container text-black">
       <Calendar
         localizer={localizer}
         events={events}

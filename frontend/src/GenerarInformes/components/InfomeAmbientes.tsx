@@ -64,12 +64,20 @@ export const InformeAmbientes = () => {
   const renderChart = () => {
     switch (currentPage) {
       case 1:
-        return <Bars data={datos} />;
+        return (
+          <div className="w-full h-full" style={{ height: "80vh" }}>
+            <Bars data={datos} />
+          </div>
+        );
       case 2:
-        return <LineChart datos={datosL} />;
+        return (
+          <div className="w-full h-full" style={{ height: "80vh" }}>
+            <LineChart datos={datosL} />
+          </div>
+        );
       case 3:
         return (
-          <div className="w-full " style={{height:'80vh'}}>
+          <div className="w-full " style={{ height: "80vh" }}>
             <Pies datos={datos} />
           </div>
         );

@@ -3,7 +3,7 @@ import { NotificarCanUbi } from '../components/NotificarCanUbi'
 
 export const NotificarCancelacionesUbi = () => {
     return (
-        <div style={{width:'100%'}}>
+        <div className='w-full' style={{overflowY:'auto'}}>
           <Toaster
           position="top-right"
           richColors
