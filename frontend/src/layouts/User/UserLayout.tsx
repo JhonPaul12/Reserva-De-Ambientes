@@ -26,7 +26,7 @@ export const UserLayout = () => {
 
   return (
     <div>
-      <HeaderUsers/>
+      <HeaderUsers />
       <SideMenu sideMenuOptions={sideMenuOptionsUser} />
     </div>
   );

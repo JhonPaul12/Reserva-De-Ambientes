@@ -31,7 +31,7 @@ export const Lista_Ambientes = () => {
       </label>
       <section style={{ margin: "5% 15%" }}>
         <Table
-        hideHeader 
+          hideHeader
           className="custom-table"
           aria-label="Example table with dynamic content"
         >
@@ -54,7 +54,7 @@ export const Lista_Ambientes = () => {
                   <EditPeriodosModal ambiente={ambiente} />
                 </TableCell>
                 <TableCell>
-                  <EditAmbienteModal ambiente={ambiente}/>
+                  <EditAmbienteModal ambiente={ambiente} />
                   {/*<DeleteAmbienteModal ambiente={ambiente}/>*/}
                 </TableCell>
               </TableRow>

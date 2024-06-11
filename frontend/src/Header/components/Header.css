@@ -23,3 +23,11 @@
   margin: 0;
   font-size: 14px;
 }
+
+.notification-list {
+  position: absolute;
+  top: auto;
+  right: 80px;
+  overflow-y: auto;
+  max-height: calc(100vh - 30px);
+}

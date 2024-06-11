@@ -24,6 +24,9 @@ import { DarDeBaja } from "../DarDeBajaDocente/DarDeBaja";
 import { NotificarCancelaciones } from "../NotificarCancelacion";
 import { NotificarCancelacionesUbi } from "../NotificarCacelacionUbicacion";
 import { CalendarioUser } from "../Calendario";
+import { Feriados } from "../RegistrarFeriados/Feriados";
+import { GInformeAmbientes } from "../GenerarInformes";
+import { GenerarInfoDocente } from "../GenerarInformeDocente";
 
 export const router = createBrowserRouter([
   {
@@ -72,8 +75,12 @@ export const router = createBrowserRouter([
         element: <CancelarReservasAdmin />,
       },
       {
-        path: "reglas-ambientes",
+        path: "gestion-ambientes",
         element: <ReglasAmbientes />,
+      },
+      {
+        path: "crear-feriados",
+        element: <Feriados />,
       },
       {
         path: "modificar-docentes",
@@ -88,13 +95,21 @@ export const router = createBrowserRouter([
         element: <DarDeBaja />,
       },
       {
-        path: "notificar-ambiente",
+        path: "cancelacion-ambiente",
         element: <NotificarCancelaciones />,
       },
       {
-        path: "notificar-ubicacion",
-        element: <NotificarCancelacionesUbi />
-      }
+        path: "cancelacion-ubicacion",
+        element: <NotificarCancelacionesUbi />,
+      },
+      {
+        path: "informe-ambiente",
+        element: <GInformeAmbientes />,
+      },
+      {
+        path: "informe-docente",
+        element: <GenerarInfoDocente />,
+      },
     ],
   },
   //Rutas Usuario

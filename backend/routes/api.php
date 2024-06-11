@@ -234,3 +234,23 @@ Route::post('/cambiarEstadoPorUbicacionAmbienteYHorario/{ubicacion}/{fechaSolici
 
 //DE LAS RESERVAS, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN => MUESTRA LOS ID_USER Y ID_SOLICITUD
 Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'mostrarSolicitudPorNombreAmbienteYHorario']);
+
+//Cambio de Contrasenias
+Route::put('/user/change-password/{id}', [UserController::class, 'changePassword']);
+Route::get('/informeAmbientes', [SolicitudController::class, 'informeAmbientes']);
+
+Route::get('/informeAmbientes_v2', [SolicitudController::class, 'informeAmbientes_v2']);
+
+Route::get('/informeAmbientes2', [SolicitudController::class, 'informeAmbientes2']);
+
+Route::get('/informeAmbientes2_v2', [SolicitudController::class, 'informeAmbientes2_v2']);
+
+Route::get('/informeAmbientesTable', [SolicitudController::class, 'informeAmbientesTable']);
+
+Route::get('/informeAmbientesTableID/{id}', [SolicitudController::class, 'informeAmbientesTableID']);
+
+Route::get('/informeAmbientes_v2ID/{id}', [SolicitudController::class, 'informeAmbientes_v2ID']);
+
+Route::get('/informeAmbientes2_v2ID/{id}', [SolicitudController::class, 'informeAmbientes2_v2ID']);
+
+Route::get('/datosDocente', [SolicitudController::class, 'datosDocente']);

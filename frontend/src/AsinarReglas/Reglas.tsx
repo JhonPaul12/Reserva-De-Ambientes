@@ -112,6 +112,7 @@ export const Reglas = () => {
           if (response.data.success !== undefined) {
             resetValues();
             toast.success("Guardado con exito");
+            console.log(response.data);
           } else {
             console.log(response.data);
             toast.error("Los peridos seleccionados ya estan asignados");

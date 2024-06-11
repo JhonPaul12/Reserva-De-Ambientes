@@ -48,7 +48,7 @@ export const VerReservaAdmin = () => {
       const response = await axios.get(
         `http://localhost:8000/api/solicitudID/${solicitudId}`
       );
-      setModalText(response.data); // Establecer el texto de la solicitud en el estado
+      setModalText(response.data);
     } catch (error) {
       console.error("Error al obtener el texto de la solicitud:", error);
       setModalText("Error al obtener el texto de la solicitud");
@@ -57,11 +57,14 @@ export const VerReservaAdmin = () => {
 
   const solicitudesFiltradas = solicitudes.filter((solicitud) => {
     if (filtroEstado === "Todos") return true;
+    if (filtroEstado === "Cancelado") {
+      return solicitud.solicitud.estado === "Cancelado" || solicitud.solicitud.estado === "Rechazado";
+    }
     return solicitud.solicitud.estado === filtroEstado;
   });
   const statusColorMap: Record<string, ChipProps["color"]> = {
     Aceptada: "success",
-    Cancelada: "danger",
+    Cancelado: "warning",
     Rechazado: "danger",
     Pendiente: "danger",
   };
@@ -92,9 +95,6 @@ export const VerReservaAdmin = () => {
             </SelectItem>
             <SelectItem key={"Cancelado"} value="Cancelado">
               Cancelado
-            </SelectItem>
-            <SelectItem key={"Rechazado"} value="Rechazado">
-              Rechazado
             </SelectItem>
           </Select>
         </div>
@@ -180,7 +180,7 @@ export const VerReservaAdmin = () => {
                         handleRechazadoClick(solicitud.solicitud.id.toString())
                       }
                     >
-                      {solicitud.solicitud.estado}
+                      Cancelado
                     </Chip>
                     <Link
                       className="text-xs"
