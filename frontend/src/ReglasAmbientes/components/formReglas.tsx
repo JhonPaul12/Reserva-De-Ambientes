@@ -71,7 +71,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
 
   const guardarRegla = async () => {
     if (!selectedRegla || !fechaInicio || !fechaFinal) {
-      console.log("Por favor, seleccione una regla y fechas válidas");
+      console.log("Por favor, seleccione una gestión y fechas válidas");
       return;
     }
 
@@ -119,7 +119,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
         toast.error(result.message);
       }
       if (response.ok) {
-        toast.success("Regla guardada correctamente");
+        toast.success("Gestión guardada correctamente");
         cancelar();
         actualizar();
       }

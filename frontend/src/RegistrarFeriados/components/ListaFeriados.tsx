@@ -73,6 +73,7 @@ export const ListaFeriados = ({ refresh }: { refresh: boolean }) => {
       </Table>
       <div className="flex justify-center mt-4">
         <Pagination
+          showControls
           total={Math.ceil(feriados.length / itemsPerPage)}
           initialPage={1}
           page={currentPage}
