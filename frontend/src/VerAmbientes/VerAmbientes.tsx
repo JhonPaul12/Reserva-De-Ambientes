@@ -161,18 +161,21 @@ export const VerAmbientes = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setFiltroNombre(event.target.value);
+    setCurrentPage(1);
   };
 
   const handleFiltroCapacidadChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setFiltroCapacidad(event.target.value);
+    setCurrentPage(1);
   };
 
   const handleFiltroTipoChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setFiltroTipo(event.target.value);
+    setCurrentPage(1);
   };
 
   // Filtrar ambientes según los filtros
@@ -280,6 +283,7 @@ export const VerAmbientes = () => {
       {/* Pagination component */}
       <div className="flex justify-center mt-4">
         <Pagination
+          key={totalPages}
           total={totalPages}
           initialPage={1}
           onChange={(page) => setCurrentPage(page)}
