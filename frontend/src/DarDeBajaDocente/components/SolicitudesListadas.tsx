@@ -6,37 +6,82 @@ import {
   TableRow,
   TableCell,
   Button,
+  ModalContent,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   Pagination,
 } from "@nextui-org/react";
 import "./estilosBusq.css";
 import { ISimpleDocente } from "../interfaces/simple-deocente";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-interface Props {
-  solicitudes: ISimpleDocente[];
-}
-
-export const TablaSolicitudes = ({ solicitudes }: Props) => {
+export const TablaSolicitudes = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [solicitudId, setSolicitudId] = useState<number | null>(null);
+  const [solicitudes, setSolicitudes] = useState<ISimpleDocente[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Puedes ajustar este valor según tus necesidades
+  const itemsPerPage = 7; // Define aquí la cantidad de elementos por página
 
-  // Calculate total number of pages
-  const totalPages = Math.ceil(solicitudes.length / itemsPerPage);
+  useEffect(() => {
+    getSolicitudes();
+  }, []);
 
-  // Get current items
+  const getSolicitudes = async () => {
+    const respuesta = await axios.get(
+      `http://127.0.0.1:8000/api/usuario/docentes`
+    );
+    console.log(respuesta.data);
+    setSolicitudes(respuesta.data);
+  };
+
+  const openModal = (solicitud: ISimpleDocente) => {
+    setSolicitudId(solicitud.id);
+    setModalOpen(true);
+  };
+
+  const cancelarSolicitud = async () => {
+    if (solicitudId) {
+      try {
+        await axios.get(
+          `http://127.0.0.1:8000/api/deshabilitarDocente/${solicitudId}`
+        );
+        setModalOpen(false);
+        // Actualizar la lista de solicitudes después de deshabilitar
+        getSolicitudes();
+      } catch (error) {
+        console.error("Error al deshabilitar docente:", error);
+      }
+    }
+  };
+
+  const solicitudesOrdenAlfabetico = [...solicitudes].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
+  // Calcular el número total de páginas
+  const totalPages = Math.ceil(
+    solicitudesOrdenAlfabetico.length / itemsPerPage
+  );
+
+  // Obtener los elementos de la página actual
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentSolicitudes = solicitudes.slice(
+  const currentSolicitudes = solicitudesOrdenAlfabetico.slice(
     startIndex,
     startIndex + itemsPerPage
   );
 
-  // Change page
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   return (
-    <div className="mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
+    <div className="mx-6 space-y-4 mt-4 sm:mx-auto w-full max-w-screen-md text-center">
+      <label className="ml-10  text-3xl font-bold text-center text-gray-900">
+        LISTA DE DOCENTES{" "}
+      </label>
       <Table
         className="custom-table"
         aria-label="Example table with dynamic content"
@@ -80,13 +125,19 @@ export const TablaSolicitudes = ({ solicitudes }: Props) => {
                 {solicitud.codigo_sis}
               </TableCell>
               <TableCell>
-                <Button>Deshabilitar</Button>
+                <Button
+                  color="danger"
+                  size="sm"
+                  onClick={() => openModal(solicitud)}
+                  variant="shadow"
+                >
+                  Deshabilitar
+                </Button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {/* Pagination */}
       <div className="flex justify-center mt-4">
         <Pagination
           showControls
@@ -95,6 +146,20 @@ export const TablaSolicitudes = ({ solicitudes }: Props) => {
           onChange={handlePageChange}
         />
       </div>
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+        <ModalContent className="">
+          <ModalHeader>Confirme la acción</ModalHeader>
+          <ModalBody>
+            <p>¿Está seguro de deshabilitar al docente?</p>
+          </ModalBody>
+          <ModalFooter className="">
+            <Button color="danger" variant="shadow" onClick={cancelarSolicitud}>
+              Sí, deshabilitar
+            </Button>
+            <Button onClick={() => setModalOpen(false)}>No</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

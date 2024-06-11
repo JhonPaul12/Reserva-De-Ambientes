@@ -22,16 +22,17 @@ export const ListaDocentesBaja = () => {
     setSolicitudes(respuesta.data);
   };
 
-  const solicitudesOrdenAlfabetico = [...solicitudes].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
   return (
     <div className=" contenedor-table text-center">
       <label className="ml-10 text-3xl font-bold text-center text-gray-900">
         ELIMINAR DOCENTES{" "}
       </label>
 
-      <TablaSolicitudes solicitudes={solicitudesOrdenAlfabetico} />
+      <TablaSolicitudes />
     </div>
   );
 };
+
+{
+  /* <TablaSolicitudes solicitudes={solicitudesOrdenAlfabetico} /> */
+}
