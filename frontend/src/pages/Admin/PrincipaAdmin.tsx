@@ -2,21 +2,22 @@ import { Button } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../Login/stores/auth.store";
 
-export const PrincipalPage = () => {
+export const PrincipalAdmin = () => {
   const user = useAuthStore((state) => state.user);
 
   const navigate = useNavigate();
   
     const handleAction = async () => {
-        navigate("/user/solicitar-reserva");
+        navigate("/admin/reservas");
       };
   return (
     <>
     
     <div className="text-center sm:mx-auto sm:w-full sm:max-w-sm">
-      <div className="mt-20">
+      <div className="mt-10">
       <h1 className="text-azul text-4xl mb-3 font-bold">¡Bienvenido {user?.name}! </h1>
-      <h1 className="text-lg text-azul font-semibold"> Aqui encontrarás el espacio perfecto para tus actividades académicas</h1>
+      <h1 className="text-lg text-azul font-semibold"> Mantén la organización al máximo</h1>
+      <h1 className="text-lg text-azul" >Revisa las reservas realizadas y gestiona los horarios de los ambientes</h1>
       <div className="relative inset-0">
       <img
         src="/images/310595.svg"
@@ -30,11 +31,12 @@ export const PrincipalPage = () => {
           className="mt-10 mb-10"
           onClick={handleAction}
         >
-          Reservar ahora
+          Revisar ahora
         </Button>
       </div>
     </div>
-      <h1 className="text-lg text-azul" > ¡Haz tu reserva de forma rápida y sencilla!</h1>
+      <h1 className="text-lg text-azul" > ¡Tu gestión hace la diferencia!</h1>
+      
 
       </div>
       
