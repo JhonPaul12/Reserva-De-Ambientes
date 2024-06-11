@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { TablaSolicitudes } from "./SolicitudesListadas";
 import axios from "axios";
 import { ISimpleDocente } from "../interfaces/simple-deocente";
+import { Pagination, Input } from "@nextui-org/react";
+import { FaSearch } from "react-icons/fa";
 
 export const ListaReservas = () => {
-const [solicitudes, setSolicitudes] = useState<ISimpleDocente[]>([]);
-  const [estado, setEstado] = useState("");
+  const [solicitudes, setSolicitudes] = useState<ISimpleDocente[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const itemsPerPage = 9; // Puedes ajustar este valor según tus necesidades
 
   useEffect(() => {
     const fetchSolicitudes = async () => {
@@ -15,50 +19,64 @@ const [solicitudes, setSolicitudes] = useState<ISimpleDocente[]>([]);
     fetchSolicitudes();
   }, [solicitudes]);
 
-  const onInputChangeFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target as HTMLInputElement;
-    setEstado(inputValue.value);
-  };
-
   const getSolicitudes = async () => {
     const respuesta = await axios.get(
       `http://127.0.0.1:8000/api/usuario/docentes`
     );
     console.log(respuesta.data);
     setSolicitudes(respuesta.data);
-  }
+  };
 
-  const solicitudesOrdenAlfabetico = [...solicitudes].sort((a, b) =>
-    a.name.localeCompare(b.name)
-);
+  // Calculate total number of pages
+  const totalPages = Math.ceil(solicitudes.length / itemsPerPage);
 
-/*
-  const solicitudesFiltrados = solicitudes.filter((solicitud) => {
-    console.log(estado);
-    const estadoMatch = solicitud.nombre ? solicitud.nombre.includes(estado) : false;
-    return estadoMatch;
-  });*/
+  // Get current items
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentSolicitudes = solicitudes
+    .filter((solicitud) =>
+      solicitud.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(startIndex, startIndex + itemsPerPage);
+
+  // Change page
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Handle search term change
+  const handleSearchTermChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   return (
-    <div className=" contenedor-table ">
-      <label className="ml-10 text-3xl font-bold text-center text-gray-900">
-        LISTA DE DOCENTES{" "}
+    <div className="mx-6 my-2 text-center text-negro">
+      <label className="text-4xl font-bold text-gray-900">
+        LISTA DE DOCENTES
       </label>
-      {/*<div className="flex flex-row  justify-center items-center my-10">
-        <div className="mb-4 mx-4 ">
-          <label className="ml-10 text-1xl font-bold text-center text-gray-900">
-            Nombre:
-          </label>
-          <input
-            id="estado"
-            value={estado}
-            onChange={onInputChangeFilter}
-            className="mt-3 text-gray-900 block w-full rounded-md border border-black shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 "
-          >
-          </input>
-        </div>
-  </div>*/}
-      <TablaSolicitudes solicitudes={solicitudesOrdenAlfabetico} />
+
+      {/* Filtro de búsqueda */}
+      <div className="mt-4  w-1/2 mx-auto flex items-center">
+        <FaSearch />
+        <Input
+          placeholder="Buscar por nombre"
+          value={searchTerm}
+          onChange={handleSearchTermChange}
+          className="ml-2"
+        />
+      </div>
+      <TablaSolicitudes solicitudes={currentSolicitudes} />
+      {/* Pagination */}
+      <div className="flex justify-center mt-4">
+        <Pagination
+          showControls
+          total={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

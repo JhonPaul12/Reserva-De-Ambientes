@@ -14,17 +14,16 @@ interface Props {
 }
 export const TablaAmbientes = ({ ambientes }: Props) => {
   return (
-    <div className="mt-10 sm:mx-auto w-full max-w-screen-md">
-      <label className='ml-10 text-3xl font-bold text-center text-gray-900'>LISTA DE AMBIENTES</label>
+    <div className="mt-4 sm:mx-auto w-full max-w-screen-md">
       <section className="mx-6 my-4  ">
         <Table
           className="custom-table"
           aria-label="Example table with dynamic content"
         >
           <TableHeader>
-            <TableColumn className="text-center text-sm bg-slate-300">
+            {/* <TableColumn className="text-center text-sm bg-slate-300">
               ID
-            </TableColumn>
+            </TableColumn> */}
             <TableColumn className="text-center text-sm bg-slate-300">
               NOMBRE
             </TableColumn>
@@ -41,14 +40,10 @@ export const TablaAmbientes = ({ ambientes }: Props) => {
           <TableBody>
             {ambientes.map((ambiente) => (
               <TableRow key={ambiente.id}>
-                <TableCell className=" text-xs">{ambiente.id}</TableCell>
+                {/* <TableCell className=" text-xs">{ambiente.id}</TableCell> */}
                 <TableCell className=" text-xs">{ambiente.nombre}</TableCell>
-                <TableCell className=" text-xs">
-                  {ambiente.ubicacion}
-                </TableCell>
-                <TableCell className=" text-xs">
-                  {ambiente.capacidad}
-                </TableCell>
+                <TableCell className=" text-xs">{ambiente.ubicacion}</TableCell>
+                <TableCell className=" text-xs">{ambiente.capacidad}</TableCell>
                 <TableCell className="text-xs">{ambiente.tipo}</TableCell>
               </TableRow>
             ))}

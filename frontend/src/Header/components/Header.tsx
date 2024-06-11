@@ -145,10 +145,10 @@ export const HeaderU = () => {
         </Dropdown>
       </div>
       {showNotifications && (
-          <NotificationList
-            notifications={notificaciones}
-            refreshNotifications={getNotificaciones}
-          />
+        <NotificationList
+          notifications={notificaciones}
+          refreshNotifications={getNotificaciones}
+        />
       )}
     </div>
   );

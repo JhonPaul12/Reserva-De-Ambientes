@@ -8,6 +8,10 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { ModificarDocenteModal } from "./ModificarDocenteModal";
+import { Pagination } from "@nextui-org/react";
+import { FaSearch } from "react-icons/fa";
+import { Input } from "@nextui-org/react";
+
 interface Docente {
   id: number;
   name: string;
@@ -19,6 +23,9 @@ interface Docente {
 
 export const ListaDocentes = () => {
   const [docentes, setDocentes] = useState<Docente[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const itemsPerPage = 5; // Puedes ajustar este valor según tus necesidades
 
   const fetchDocentes = async () => {
     try {
@@ -34,6 +41,7 @@ export const ListaDocentes = () => {
       console.error("Error:", error);
     }
   };
+
   useEffect(() => {
     fetchDocentes();
   }, []);
@@ -42,17 +50,50 @@ export const ListaDocentes = () => {
     await fetchDocentes(); // Actualizar la lista de docentes
   };
 
+  // Calculate total number of pages
+  const totalPages = Math.ceil(docentes.length / itemsPerPage);
+
+  // Get current items
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentDocentes = docentes
+    .filter((docente) =>
+      docente.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(startIndex, startIndex + itemsPerPage);
+
+  // Change page
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Handle search term change
+  const handleSearchTermChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
   return (
-    <div className="mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
+    <div className="mx-6 mt-4 sm:mx-auto w-full max-w-screen-md">
       <h2 className="text-3xl font-bold text-center text-gray-900">
         Editar Docentes
       </h2>
+      <div className="mt-4 mb-4 w-1/2 mx-auto flex items-center">
+        <FaSearch />
+        <Input
+          placeholder="Buscar por nombre"
+          value={searchTerm}
+          onChange={handleSearchTermChange}
+          className="ml-2"
+        />
+      </div>
       <Table
         className="custom-table"
         aria-label="Example table with dynamic content"
       >
         <TableHeader>
-          <TableColumn className="text-center  text-sm bg-slate-300">
+          <TableColumn className="text-center text-sm bg-slate-300">
             NOMBRE
           </TableColumn>
           <TableColumn className="text-center text-sm bg-slate-300">
@@ -72,7 +113,7 @@ export const ListaDocentes = () => {
           </TableColumn>
         </TableHeader>
         <TableBody>
-          {docentes.map((docente) => (
+          {currentDocentes.map((docente) => (
             <TableRow key={docente.id}>
               <TableCell className="text-gray-900 text-xs">
                 {docente.name}
@@ -99,6 +140,15 @@ export const ListaDocentes = () => {
           ))}
         </TableBody>
       </Table>
+      {/* Pagination */}
+      <div className="flex justify-center mt-4">
+        <Pagination
+          showControls
+          total={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };
