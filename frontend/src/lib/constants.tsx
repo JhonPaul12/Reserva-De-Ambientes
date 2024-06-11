@@ -147,6 +147,19 @@ export const sideMenuOptions = [
   },
 ];
 
+export const sideMenuOptionsIni= [
+  {
+    path: "inicio",
+    name: "Inicio",
+    icon: <LuHome />,
+  },
+  {
+    path: "visualizar-ambientes",
+    name: "Ver Ambientes",
+    icon: <LuLayers />,
+  },
+];
+
 export const sideMenuOptionsUser = [
   {
     path: "inicio",

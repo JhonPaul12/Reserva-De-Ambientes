@@ -118,6 +118,10 @@ export const router = createBrowserRouter([
     element: <UserLayout />,
     children: [
       {
+        path: "inicio",
+        element: <PrincipalPage />,
+      },
+      {
         path: "solicitar-reserva",
         element: <CreacionSolicitud />,
       },
