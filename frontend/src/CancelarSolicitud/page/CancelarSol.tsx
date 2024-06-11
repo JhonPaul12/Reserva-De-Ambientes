@@ -2,7 +2,7 @@ import { CancelarS } from "../components/CancelarS";
 
 export const CancelarSol = () => {
   return (
-    <div className="mt-10 w-full  pr-12 pl-12" style={{overflowX:'auto'}}>
+    <div className="mt-10 w-full " style={{overflowX:'auto'}}>
       <CancelarS />
     </div>
   );

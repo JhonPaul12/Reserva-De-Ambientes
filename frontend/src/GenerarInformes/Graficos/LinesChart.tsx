@@ -74,6 +74,8 @@ const LineChart = ({ datos }: { datos: AmbienteLineas[] }) => {
   const mesMinReservas = meses[reservasPorMes.indexOf(minReservas)];
 
   const misOptions: ChartOptions<"line"> = {
+    responsive: true,
+    maintainAspectRatio: false,
     scales: {
       x: {
         title: {
@@ -150,10 +152,10 @@ const LineChart = ({ datos }: { datos: AmbienteLineas[] }) => {
   return (
     <div className="w-full h-full">
       <div
-        className="print-container w-full h-full d-flex justify-content-center align-items-center"
+        className="print-container w-full h-full"
         ref={componentRef}
       >
-        <div className="chart-container">
+        <div className="chart-container w-full h-full">
           <Line data={data} options={misOptions} />
         </div>
       </div>

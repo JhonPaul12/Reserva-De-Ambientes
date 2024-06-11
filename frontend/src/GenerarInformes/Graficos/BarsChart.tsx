@@ -50,6 +50,8 @@ const Bars = ({ data }: { data: AmbientesCont[] }) => {
   };
 
   const misOptions: ChartOptions<"bar"> = {
+    responsive: true,
+    maintainAspectRatio: false,
     scales: {
       x: {
         title: {
@@ -127,10 +129,10 @@ const Bars = ({ data }: { data: AmbientesCont[] }) => {
   return (
     <div className="w-full h-full">
       <div
-        className="print-container w-full h-full d-flex justify-content-center align-items-center"
+        className="print-container w-full h-full"
         ref={componentRef}
       >
-        <div className="chart-container">
+        <div className="chart-container w-full h-full">
           <Bar data={chartData} options={misOptions} />
         </div>
       </div>

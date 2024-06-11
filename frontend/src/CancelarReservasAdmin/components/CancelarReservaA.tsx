@@ -14,10 +14,11 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Pagination,
 } from "@nextui-org/react";
 import axios from "axios";
 import { CReservaA } from "../interfaces/Reserva";
-import "./estilosCancelar.css";
+
 export const CancelarReservaA = () => {
   const [solicitudes, setSolicitudes] = useState<CReservaA[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -25,9 +26,14 @@ export const CancelarReservaA = () => {
   const [cancelReason, setCancelReason] = useState<string>("");
   const [tituloNotificacion, setTituloNotificacion] = useState<string>("");
   const [usuarioId, setUsuarioId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     getSolicitudes();
+    calculateItemsPerPage();
+    window.addEventListener("resize", calculateItemsPerPage);
+    return () => window.removeEventListener("resize", calculateItemsPerPage);
   }, []);
 
   const getSolicitudes = async () => {
@@ -38,6 +44,14 @@ export const CancelarReservaA = () => {
       (solicitud) => solicitud.solicitud.estado === "Aceptada"
     );
     setSolicitudes(solicitudesPendientes);
+  };
+
+  const calculateItemsPerPage = () => {
+    const headerHeight = 35;
+    const rowHeight = 90;
+    const availableHeight = window.innerHeight - headerHeight;
+    const items = Math.floor(availableHeight / rowHeight);
+    setItemsPerPage(items);
   };
 
   const openModal = (id: number, usuarioId: number) => {
@@ -72,135 +86,160 @@ export const CancelarReservaA = () => {
     }
   };
 
+  const paginatedSolicitudes = solicitudes.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="contenedor-table my-5">
-      <label className="ml-10 text-3xl font-bold text-gray-900">
-        CANCELAR RESERVA
-      </label>
-      <section className="mx-6 my-4">
-        <Table className="custom-table text-center" aria-label="Tabla de datos">
-          <TableHeader>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              Ambiente
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              Docente
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              Materia
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              Inicio
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              Fin
-            </TableColumn>
-            <TableColumn className=" text-center text-sm bg-slate-300">
-              Fecha
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              Personas
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              Estado
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              Opción
-            </TableColumn>
-          </TableHeader>
-          <TableBody>
-            {solicitudes.map((solicitud) => (
-              <TableRow key={solicitud.solicitud_id}>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.ambiente.nombre}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.users.map((user, index) => (
-                    <div key={index}>
-                      *{user.name} {user.apellidos}
-                    </div>
-                  ))}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.materia.nombre_materia}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.periodos[0].periodo.horario.hora_inicio}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {
-                    solicitud.periodos[solicitud.periodos.length - 1].periodo
-                      .horario.hora_fin
-                  }
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.periodos[0].periodo.fecha}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.numero_estudiantes}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.estado}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  <Button
-                    color="danger"
-                    variant="shadow"
-                    size="sm"
-                    onClick={() =>
-                      openModal(
-                        solicitud.solicitud.id,
-                        solicitud.solicitud.users[0].id
-                      )
+    <div className="w-full px-4 sm:px-8 mt-10">
+      <div>
+        <label className="block text-2xl sm:text-3xl font-bold text-gray-900 ">
+          CANCELAR RESERVA
+        </label>
+        <div className="overflow-x-auto">
+          <Table
+            className="custom-table text-center"
+            aria-label="Tabla de datos"
+          >
+            <TableHeader>
+              <TableColumn className="text-xs text-center sm:text-sm bg-slate-300">
+                Ambiente
+              </TableColumn>
+              <TableColumn className="text-xs text-center sm:text-sm bg-slate-300">
+                Docente
+              </TableColumn>
+              <TableColumn className="text-xs text-center sm:text-sm bg-slate-300">
+                Materia
+              </TableColumn>
+              <TableColumn className="text-xs text-center sm:text-sm bg-slate-300">
+                Inicio
+              </TableColumn>
+              <TableColumn className="text-xs text-center sm:text-sm bg-slate-300">
+                Fin
+              </TableColumn>
+              <TableColumn className="text-xs text-center sm:text-sm bg-slate-300">
+                Fecha
+              </TableColumn>
+              <TableColumn className="text-xs text-center sm:text-sm bg-slate-300">
+                Personas
+              </TableColumn>
+              <TableColumn className="text-xs text-center sm:text-sm bg-slate-300">
+                Estado
+              </TableColumn>
+              <TableColumn className="text-xs text-center sm:text-sm bg-slate-300">
+                Opción
+              </TableColumn>
+            </TableHeader>
+            <TableBody>
+              {paginatedSolicitudes.map((solicitud) => (
+                <TableRow key={solicitud.solicitud_id}>
+                  <TableCell className="text-xs sm:text-sm text-black">
+                    {solicitud.solicitud.ambiente.nombre}
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm text-black">
+                    {solicitud.solicitud.users.map((user, index) => (
+                      <div key={index}>
+                        *{user.name} {user.apellidos}
+                      </div>
+                    ))}
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm text-black">
+                    {solicitud.solicitud.materia.nombre_materia}
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm text-black">
+                    {solicitud.periodos[0].periodo.horario.hora_inicio}
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm text-black">
+                    {
+                      solicitud.periodos[solicitud.periodos.length - 1].periodo
+                        .horario.hora_fin
                     }
-                  >
-                    Cancelar
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </section>
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} size="3xl">
-        <ModalContent className="modal-content-large">
-          <ModalHeader>
-            <h2 className="text-lg">
-              Por favor, ingrese el motivo para cancelar la reserva:
-            </h2>
-          </ModalHeader>
-          <ModalBody className="">
-            <div>
-              <Input
-                labelPlacement="outside"
-                fullWidth
-                value={tituloNotificacion}
-                onChange={(e) => setTituloNotificacion(e.target.value)}
-                label="Motivo"
-                className="my-2"
-              />
-            </div>
-            <div className="textArea">
-              <Textarea
-                fullWidth
-                labelPlacement="outside"
-                value={cancelReason}
-                onChange={(e) => setCancelReason(e.target.value)}
-                label="Descripcion del motivo"
-                className=""
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="danger" variant="shadow" onClick={cancelarSolicitud}>
-              Cancelar
-            </Button>
-            <Button variant="shadow" onClick={() => setModalOpen(false)}>
-              No
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm text-black">
+                    {solicitud.periodos[0].periodo.fecha}
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm text-black">
+                    {solicitud.solicitud.numero_estudiantes}
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm text-black">
+                    {solicitud.solicitud.estado}
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm text-black">
+                    <Button
+                      color="danger"
+                      variant="shadow"
+                      size="sm"
+                      onClick={() =>
+                        openModal(
+                          solicitud.solicitud.id,
+                          solicitud.solicitud.users[0].id
+                        )
+                      }
+                    >
+                      Cancelar
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex justify-center my-4">
+          <Pagination
+            showControls
+            total={Math.ceil(solicitudes.length / itemsPerPage)}
+            initialPage={currentPage}
+            onChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+        <Modal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          size="3xl"
+        >
+          <ModalContent className="modal-content-large">
+            <ModalHeader>
+              <h2 className="text-lg">
+                Por favor, ingrese el motivo para cancelar la reserva:
+              </h2>
+            </ModalHeader>
+            <ModalBody>
+              <div>
+                <Input
+                  labelPlacement="outside"
+                  fullWidth
+                  value={tituloNotificacion}
+                  onChange={(e) => setTituloNotificacion(e.target.value)}
+                  label="Motivo"
+                  className="my-2"
+                />
+              </div>
+              <div className="textArea">
+                <Textarea
+                  fullWidth
+                  labelPlacement="outside"
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  label="Descripción del motivo"
+                />
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="danger"
+                variant="shadow"
+                onClick={cancelarSolicitud}
+              >
+                Cancelar
+              </Button>
+              <Button variant="shadow" onClick={() => setModalOpen(false)}>
+                No
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </div>
     </div>
   );
 };

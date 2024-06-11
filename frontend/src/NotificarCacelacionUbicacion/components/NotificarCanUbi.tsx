@@ -124,52 +124,59 @@ export const NotificarCanUbi = () => {
   }, [horaInicio, horaFin, fecha]);
 
   return (
-    <div className="container p-8">
-      <div className="m-5">
+    <div className="p-5">
+      <div className="">
         <h2 className="text-3xl font-bold text-gray-900">
           Descripcion de la Notificacion
         </h2>
-        <form action="">
-          <Input
-            fullWidth
-            labelPlacement="outside"
-            label="Motivo"
-            className="my-2 p-2"
-            value={tituloNotificacion}
-            onChange={(e) => setTituloNotificacion(e.target.value)}
-          />
-          <Textarea
-            labelPlacement="outside"
-            fullWidth
-            placeholder=""
-            label="Descripcion del motivo"
-            className="p-2"
-            value={descripcionNotificacion}
-            onChange={(e) => setDescripcionNotificacion(e.target.value)}
-          />
-        </form>
+        <Input
+          fullWidth
+          labelPlacement="outside"
+          label="Motivo"
+          className={`my-5 px-5 ${window.innerWidth > 768 ? "" : "p-3"}`}
+          value={tituloNotificacion}
+          onChange={(e) => setTituloNotificacion(e.target.value)}
+        />
+        <Textarea
+          labelPlacement="outside"
+          fullWidth
+          label="Descripcion del motivo"
+          className={`my-5 px-5 ${window.innerWidth > 768 ? "" : "p-3"}`}
+          value={descripcionNotificacion}
+          onChange={(e) => setDescripcionNotificacion(e.target.value)}
+        />
       </div>
-      <div className="m-5">
+      <div className="my-2">
         <h2 className="text-3xl font-bold text-gray-900">
           Seleccionar Ubicaciones
         </h2>
-        <div className="container-aulas">
+        <div
+         className={`flex flex-wrap justify-between items-center ${
+          window.innerWidth > 768 ? "" : "px-2"
+        }`}
+        >
           <TimeInput
-            className="m-5"
+            className={`p-3 ${
+              window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
+            }`}
             labelPlacement="outside"
             label="Hora Inicio"
             value={horaInicio}
             onChange={setHoraInicio}
           />
           <TimeInput
-            className="m-5"
+            className={`p-3 ${
+              window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
+            }`}
             labelPlacement="outside"
             label="Hora Fin"
             value={horaFin}
             onChange={setHoraFin}
           />
           <DatePicker
-            className="m-5"
+            className={`p-3 ${
+              window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
+            }`}
             labelPlacement="outside"
             label="Fecha"
             fullWidth
@@ -177,31 +184,32 @@ export const NotificarCanUbi = () => {
             onChange={setFecha}
           />
         </div>
-        <Select
-          className="m-5"
-          labelPlacement="outside"
-          fullWidth
-          label="Ubicaciones"
-          placeholder="Seleccione las ubicaciones"
-          selectionMode="multiple"
-          onSelectionChange={setUbicacionesSeleccionadas}
-        >
-          {ubicaciones.length > 0
-            ? ubicaciones.map((ubicacion: any) => (
-                <SelectItem key={ubicacion}>{String(ubicacion)}</SelectItem>
-              ))
-            : null}
-        </Select>
-        <div className="dbtn">
-          <Button
-            color="primary"
-            variant="shadow"
-            onClick={() => setModalOpen(true)}
+        <div className="">
+          <Select
+            className={`p-5 ${window.innerWidth > 768 ? "" : "p-3"}`}
+            labelPlacement="outside"
             fullWidth
+            label="Ubicaciones"
+            placeholder="Seleccione las ubicaciones"
+            selectionMode="multiple"
+            onSelectionChange={setUbicacionesSeleccionadas}
           >
-            Notificar Ubicaciones
-          </Button>
+            {ubicaciones.length > 0
+              ? ubicaciones.map((ubicacion: any) => (
+                  <SelectItem key={ubicacion}>{String(ubicacion)}</SelectItem>
+                ))
+              : null}
+          </Select>
         </div>
+        <Button
+          className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"}`}
+          color="primary"
+          variant="shadow"
+          onClick={() => setModalOpen(true)}
+          fullWidth
+        >
+          Notificar Ubicaciones
+        </Button>
       </div>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent className="">
