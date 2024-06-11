@@ -5,7 +5,6 @@ import { ISimpleDocente } from "../interfaces/simple-deocente";
 
 export const ListaReservas = () => {
 const [solicitudes, setSolicitudes] = useState<ISimpleDocente[]>([]);
-  const [estado, setEstado] = useState("");
 
   useEffect(() => {
     const fetchSolicitudes = async () => {
@@ -14,11 +13,6 @@ const [solicitudes, setSolicitudes] = useState<ISimpleDocente[]>([]);
 
     fetchSolicitudes();
   }, [solicitudes]);
-
-  const onInputChangeFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target as HTMLInputElement;
-    setEstado(inputValue.value);
-  };
 
   const getSolicitudes = async () => {
     const respuesta = await axios.get(
