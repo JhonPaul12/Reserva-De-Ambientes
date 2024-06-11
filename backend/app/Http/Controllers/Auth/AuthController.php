@@ -40,6 +40,8 @@ class AuthController extends Controller
 
         
         $user->rols()->attach(2);
+        $user->load('rols');
+
 
         return response()->json([
             'message' => 'Usuario registrado',
@@ -54,7 +56,8 @@ class AuthController extends Controller
 
         $user = User::create($credentials);
 
-        $user->rols()->attach(1); 
+        $user->rols()->attach(1);
+        $user->load('rols'); 
 
         return response()->json([
             'message' => 'Administrador registrado',

@@ -24,7 +24,7 @@ class AuthRegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => "required|min:4",
+            "name" => "required|min:4", 
             'apellidos' => 'nullable|string|max:50',
             'telefono' => 'nullable|string|max:15',
             'codigo_sis' => 'required|string|max:10|unique:users,codigo_sis',
