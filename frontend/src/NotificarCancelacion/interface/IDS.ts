@@ -1,4 +1,4 @@
 export interface IDS{
     id_solicitud:number
-    id_usuario:[number]
+    usuarios:[id_usuario:number,email:string]
 }

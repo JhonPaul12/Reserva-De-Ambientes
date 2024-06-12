@@ -188,7 +188,7 @@ export const VerReservaAdmin = () => {
                   ].periodo.horario.hora_fin.slice(0, -3)}
                 </TableCell>
                 <TableCell className="text-xs sm:text-sm text-black">
-                  <small>{solicitud.periodos[0].periodo.fecha}</small>
+                  <small>{solicitud.solicitud.fecha_solicitud}</small>
                 </TableCell>
                 <TableCell className="text-xs sm:text-sm text-black">
                   {solicitud.solicitud.numero_estudiantes}
