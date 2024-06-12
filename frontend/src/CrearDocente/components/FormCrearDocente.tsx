@@ -25,10 +25,10 @@ export const FormCrearDocente = () => {
       setInputName(inputValue.value);
     } else {
       toast.error(
-        "El nombre del ambiente debe tener como maximo 30 caracteres"
+        "El nombre del docente debe tener como maximo 30 caracteres"
       );
       console.log(
-        "El nombre del ambiente debe tener como maximo 30 caracteres"
+        "El nombre del docente debe tener como maximo 30 caracteres"
       );
     }
   };
@@ -39,10 +39,10 @@ export const FormCrearDocente = () => {
         setInputApellidos(inputValue.value);
     } else {
       toast.error(
-        "El nombre del ambiente debe tener como maximo 30 caracteres"
+        "El apellido del docente debe tener como maximo 30 caracteres"
       );
       console.log(
-        "El nombre del ambiente debe tener como maximo 30 caracteres"
+        "El apellido del docente debe tener como maximo 30 caracteres"
       );
     }
   };
@@ -73,15 +73,15 @@ export const FormCrearDocente = () => {
 
   const onInputChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
-    if (inputValue.value,length <=20) {
+    if (inputValue.value.length <=30) {
       console.log(inputValue.value);
       setInputEmail(inputValue.value);
     } else {
       toast.error(
-        "Ingrese un email válido"
+        "El email del docente debe tener como maximo 40 caracteres"
       );
       console.log(
-        "Ingrese un email válido"
+        "El email del docente debe tener como maximo 40 caracteres"
       );
     }
   };
@@ -180,7 +180,8 @@ export const FormCrearDocente = () => {
       inputApellidos !== "" &&
       inputTel !== "" &&
       inputEmail !== "" &&
-      inputCod !== ""
+      inputCod !== ""&&
+      inputMaterias.length !== 0
     ) {
       console.log(typeof inputName);
       console.log(inputName);
@@ -221,7 +222,7 @@ export const FormCrearDocente = () => {
             toast.success("Guardado");*/
           } catch (error) {
             if (isAxiosError(error)) {
-              toast.error("El docente ya existe");
+              toast.error("Error al crear el docente");
             }
           }
 
@@ -348,7 +349,7 @@ export const FormCrearDocente = () => {
           <div className="flex gap-5 items-center">
             <Button
               onClick={onInputChangeCancelar}
-              color="primary"
+              color="danger" variant="light"
               className="w-full mb-10"
             >
               Cancelar

@@ -208,9 +208,12 @@ export const MenuCheckBox = ({
           ))}
         </tbody>
       </table>
-      <Button className="bg-primary text-white " onClick={resetCheckboxes}>
+      <div className="flex justify-end">
+        
+      <Button color="warning" className=" mt-5 text-white ml-auto" onClick={resetCheckboxes}>
         Limpiar
       </Button>
+      </div>
     </div>
   );
 };

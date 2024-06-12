@@ -40,7 +40,8 @@ interface DocenteState {
         }, 1000);
       } catch (error) {
         if (isAxiosError(error)) {
-          toast.error("El docente ya existe", { description: error.message });
+          //toast.error("El docente ya existe", { description: error.message });
+          toast.error("Error al crear el docente");
         }
       }
     },

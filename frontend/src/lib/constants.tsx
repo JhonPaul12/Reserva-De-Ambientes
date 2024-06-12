@@ -42,6 +42,11 @@ export const sideMenuOptions = [
     icon: <LuUserCircle2 />,
     subMenuOptions: [
       {
+        path: "crear-docente",
+        name: "Crear Docente ",
+        icon: <LuLayers />,
+      },
+      {
         path: "lista-docentes",
         name: "Ver Docentes",
         icon: <LuLayers />,
@@ -49,11 +54,6 @@ export const sideMenuOptions = [
       {
         path: "modificar-docentes",
         name: "Modificar Docentes",
-        icon: <LuLayers />,
-      },
-      {
-        path: "crear-docente",
-        name: "Crear Docente ",
         icon: <LuLayers />,
       },
       {

@@ -17,6 +17,7 @@ import "./estilosBusq.css";
 import { ISimpleDocente } from "../interfaces/simple-deocente";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export const TablaSolicitudes = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -48,6 +49,7 @@ export const TablaSolicitudes = () => {
         await axios.get(
           `http://127.0.0.1:8000/api/deshabilitarDocente/${solicitudId}`
         );
+        toast.success("Docente deshabilitado")
         setModalOpen(false);
         // Actualizar la lista de solicitudes después de deshabilitar
         getSolicitudes();

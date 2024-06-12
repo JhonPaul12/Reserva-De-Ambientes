@@ -202,8 +202,8 @@ export const FormRA = () => {
           <div className="flex gap-5 items-center">
             <Button
               onClick={onInputChangeCancel}
-              color="primary"
               className="w-full mb-10"
+              color="danger" variant="light"
             >
               Cancelar
             </Button>

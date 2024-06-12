@@ -500,6 +500,24 @@ export const FormOrdenado = () => {
             inputHFin
           );
         }
+/*
+
+        try {
+          await axios.post(
+            `http://127.0.0.1:8000/api/notificacion`,
+            {
+              id_usuario: user?.id,
+              id_solicitud: id_solicitud,
+              titulo: tituloNotificacion,
+              contenido: descripcionNotificacion,
+              visto: 1,
+            }
+          );
+        } catch (error) {
+          console.error(
+            `Error al enviar notificaciones ${id_solicitud}: ${error}`
+          );
+        }*/
         setTimeout(() => {
           window.location.reload();
         }, 2000);
@@ -690,7 +708,7 @@ export const FormOrdenado = () => {
             <Button
               size="lg"
               className="w-full  mb-10"
-              color="primary"
+              color="danger" variant="light"
               onClick={onInputChangeCancelar}
             >
               Cancelar

@@ -15,7 +15,7 @@ export const PrincipalAdmin = () => {
     
     <div className="text-center sm:mx-auto sm:w-full sm:max-w-sm">
       <div className="mt-10">
-      <h1 className="text-azul text-4xl mb-3 font-bold">¡Bienvenido {user?.name}! </h1>
+      <h1 className="text-azul text-4xl mb-3 font-bold">¡Bienvenid@ {user?.name}! </h1>
       <h1 className="text-lg text-azul font-semibold"> Mantén la organización al máximo</h1>
       <h1 className="text-lg text-azul" >Revisa las reservas realizadas y gestiona los horarios de los ambientes</h1>
       <div className="relative inset-0">

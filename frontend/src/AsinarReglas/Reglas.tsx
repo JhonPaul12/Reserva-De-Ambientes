@@ -201,12 +201,14 @@ export const Reglas = () => {
           reset={resetCheckboxes}
           selectedAmbiente={selectedAmbiente}
         />
+        <div className="flex justify-end">
         <Button
-          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-primary mt-2 mb-10 text-white ml-auto"
           onClick={guardar}
         >
           Guardar
         </Button>
+      </div>
       </div>
     </div>
   );

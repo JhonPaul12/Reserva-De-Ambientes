@@ -197,15 +197,16 @@ export const NotificarCan = () => {
               : null}
           </Select>
         </div>
+        <div className="flex justify-end">
         <Button
-          className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"}`}
+          className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"} ml-auto`}
           color="primary"
           variant="shadow"
           onClick={() => setModalOpen(true)}
-          fullWidth
         >
           Notificar Aulas
         </Button>
+      </div>
       </div>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent className="">

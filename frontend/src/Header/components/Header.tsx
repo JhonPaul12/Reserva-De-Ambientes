@@ -136,8 +136,8 @@ export const HeaderU = () => {
               <p className="font-semibold">{user?.name}</p>
               <p className="font-semibold">{user?.email}</p>
             </DropdownItem>
-            <DropdownItem key="settings">Editar perfil</DropdownItem>
-            <DropdownItem key="configurations">Configuraciones</DropdownItem>
+            {/*<DropdownItem key="settings">Editar perfil</DropdownItem>
+            <DropdownItem key="configurations">Configuraciones</DropdownItem>*/}
             <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
             </DropdownItem>
