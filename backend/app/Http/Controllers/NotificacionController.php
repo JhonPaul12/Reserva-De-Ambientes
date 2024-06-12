@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WelcomeMail;
 use App\Models\Notificacion;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class NotificacionController extends Controller
 {
@@ -90,6 +93,21 @@ class NotificacionController extends Controller
 
         $contenidos = $query->pluck('titulo');
         return response()->json($contenidos, 200);
+    }
+    public function store2(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'title' => 'required',
+            'description' => 'required',
+        ]);
+
+        $title = $request->title;
+        $description = $request->description;
+
+        Mail::to($request->email)->send(new WelcomeMail($title, $description));
+
+        return response()->json(['message' => 'Correo enviado!']);
     }
     public function notificacionSinVista($idUsuario = null)
     {

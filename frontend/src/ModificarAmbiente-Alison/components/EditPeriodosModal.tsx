@@ -277,17 +277,6 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
                 <Button color="primary" onPress={guardar}>
                   Guardar
                 </Button>
-                <Button
-                  onClick={() => {
-                    console.log(regla);
-                    console.log(fechaInicio);
-                    console.log(fechaFinal);
-                    console.log(cretedItems);
-                    console.log(deleteItems);
-                  }}
-                >
-                  Prueba
-                </Button>
               </ModalFooter>
             </>
           )}

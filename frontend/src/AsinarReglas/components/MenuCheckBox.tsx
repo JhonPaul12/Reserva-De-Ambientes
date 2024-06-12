@@ -208,12 +208,15 @@ export const MenuCheckBox = ({
           ))}
         </tbody>
       </table>
-      <Button
-        className="bg-indigo-500 hover:bg-indigo-700 text-white w-full "
-        onClick={resetCheckboxes}
-      >
-        Limpiar
-      </Button>
+      <div className="flex justify-end">
+        <Button
+          color="warning"
+          className=" mt-5 text-white ml-auto"
+          onClick={resetCheckboxes}
+        >
+          Limpiar
+        </Button>
+      </div>
     </div>
   );
 };

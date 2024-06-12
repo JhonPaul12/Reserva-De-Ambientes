@@ -17,7 +17,10 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import { toast } from "sonner";
-import { IDS } from "../interface/IDS";
+interface IDS{
+  id_solicitud:number
+  usuarios:[id_usuario:number,email:string]
+}
 
 export const NotificarCan = () => {
   const [horaInicio, setHoraInicio] = useState<TimeInputValue | null>(null);
@@ -74,16 +77,24 @@ export const NotificarCan = () => {
             await Promise.all(
               idsActualizados.map(async (id: any) => {
                 await Promise.all(
-                  id.id_usuario.map(async (usuario: any) => {
+                  id.usuarios.map(async (usuario: any) => {
                     try {
                       await axios.post(
                         `http://127.0.0.1:8000/api/notificacion`,
                         {
-                          id_usuario: usuario,
+                          id_usuario: usuario.id_usuario,
                           id_solicitud: id.id_solicitud,
                           titulo: tituloNotificacion,
                           contenido: descripcionNotificacion,
                           visto: 1,
+                        }
+                      );
+                      await axios.post(
+                        `http://127.0.0.1:8000/api/enviarEmail`,
+                        {
+                          email: usuario.email,
+                          title: tituloNotificacion,
+                          description: descripcionNotificacion,
                         }
                       );
                     } catch (error) {
@@ -197,20 +208,21 @@ export const NotificarCan = () => {
               : null}
           </Select>
         </div>
+        <div className="flex justify-end">
         <Button
-          className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"}`}
+          className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"} ml-auto`}
           color="primary"
           variant="shadow"
           onClick={() => setModalOpen(true)}
-          fullWidth
         >
           Notificar Aulas
         </Button>
       </div>
+      </div>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent className="">
           <ModalHeader>¿Esta seguro de cancelar las reservas?</ModalHeader>
-          <ModalBody>Se cancelaran</ModalBody>
+          <ModalBody>Se cancelaran las reservas de las aulas seleccionadas</ModalBody>
           <ModalFooter className="">
             <Button color="danger" variant="shadow" onClick={cambiarEstado}>
               Sí, cancelar

@@ -149,7 +149,7 @@ export const TodasSol = () => {
                     ].periodo.horario.hora_fin.slice(0, -3)}
                   </TableCell>
                   <TableCell className="text-xs sm:text-sm text-black">
-                    {solicitud.periodos[0].periodo.fecha}
+                    {solicitud.solicitud.fecha_solicitud}
                   </TableCell>
                   <TableCell className="text-xs sm:text-sm text-black">
                     {solicitud.solicitud.numero_estudiantes}

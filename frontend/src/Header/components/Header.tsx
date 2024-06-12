@@ -1,3 +1,7 @@
+import React, { useEffect, useRef, useState } from "react";
+import { IoLogoPolymer } from "react-icons/io";
+import { MdNotificationsActive } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Badge,
@@ -10,13 +14,9 @@ import {
   Dropdown,
 } from "@nextui-org/react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { MdNotificationsActive } from "react-icons/md";
-import { useAuthStore } from "../../Login/stores/auth.store";
-import "./Header.css"; // Asegúrate de que este archivo no esté causando problemas
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { IoLogoPolymer } from "react-icons/io";
+import { useAuthStore } from "../../Login/stores/auth.store";
+import "./Header.css";
 
 interface Notificacion {
   id: number;
@@ -62,15 +62,33 @@ const NotificationList: React.FC<{
     </div>
   );
 };
+
 export const HeaderU = () => {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const notificationsRef = useRef<HTMLDivElement>(null);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
   };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      notificationsRef.current &&
+      !notificationsRef.current.contains(event.target as Node)
+    ) {
+      setShowNotifications(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     getNotificaciones();
@@ -107,28 +125,38 @@ export const HeaderU = () => {
       </div>
 
       {/* iconos */}
-      <div className="ml-auto flex items-center space-x-4">
-        <Badge
-          content={notificaciones.length}
-          isInvisible={notificaciones.length === 0}
-          shape="circle"
-          color="success"
-          size="sm"
-        >
-          <Button
-            className="my-auto"
-            onClick={toggleNotifications}
-            radius="full"
-            isIconOnly
-            color="primary"
+      <div className="ml-auto flex items-center space-x-4 relative">
+        <div>
+          <Badge
+            content={notificaciones.length}
+            isInvisible={notificaciones.length === 0}
+            shape="circle"
+            color="success"
+            size="sm"
           >
-            <MdNotificationsActive className="text-2xl md:text-3xl" />
-          </Button>
-        </Badge>
+            <Button
+              className="butn my-auto"
+              onClick={toggleNotifications}
+              radius="full"
+              isIconOnly
+              color="primary"
+            >
+              <MdNotificationsActive className="text-2xl md:text-3xl" />
+            </Button>
+          </Badge>
+          {showNotifications && (
+            <div className="absolute right-0 mt-2" ref={notificationsRef}>
+              <NotificationList
+                notifications={notificaciones}
+                refreshNotifications={getNotificaciones}
+              />
+            </div>
+          )}
+        </div>
         <Dropdown>
           <DropdownTrigger>
             <div className="transition-transform text-sm md:text-md">
-              <Avatar as="button" color="primary" size="md" />
+              <Avatar className="butn" as="button" color="primary" size="md" />
             </div>
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -136,20 +164,14 @@ export const HeaderU = () => {
               <p className="font-semibold">{user?.name}</p>
               <p className="font-semibold">{user?.email}</p>
             </DropdownItem>
-            <DropdownItem key="settings">Editar perfil</DropdownItem>
-            <DropdownItem key="configurations">Configuraciones</DropdownItem>
+            {/*<DropdownItem key="settings">Editar perfil</DropdownItem>
+            <DropdownItem key="configurations">Configuraciones</DropdownItem>*/}
             <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </div>
-      {showNotifications && (
-        <NotificationList
-          notifications={notificaciones}
-          refreshNotifications={getNotificaciones}
-        />
-      )}
     </div>
   );
 };

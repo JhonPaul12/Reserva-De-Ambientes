@@ -133,13 +133,6 @@ export const ModificarDocenteModal = ({
       onClose();
     }
   };
-  // const imprimir = () => {
-  //   console.log(inputName);
-  //   console.log(inputApellidos);
-  //   console.log(inputTel);
-  //   console.log(inputEmail);
-  //   console.log(inputCod);
-  // };
 
   return (
     <>
@@ -230,7 +223,6 @@ export const ModificarDocenteModal = ({
                 <Button color="primary" onPress={guardar}>
                   Guardar
                 </Button>
-                {/* <Button onPress={imprimir}> prueba</Button> */}
               </ModalFooter>
             </>
           )}

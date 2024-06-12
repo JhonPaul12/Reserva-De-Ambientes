@@ -157,7 +157,7 @@ export const CancelarS = () => {
                   ].periodo.horario.hora_fin.slice(0, -3)}
                 </TableCell>
                 <TableCell className="text-xs text-black">
-                  {solicitud.periodos[0].periodo.fecha}
+                  {solicitud.solicitud.fecha_solicitud}
                 </TableCell>
                 <TableCell className="text-xs text-black">
                   {solicitud.solicitud.numero_estudiantes}
