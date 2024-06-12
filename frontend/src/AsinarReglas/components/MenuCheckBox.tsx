@@ -208,7 +208,10 @@ export const MenuCheckBox = ({
           ))}
         </tbody>
       </table>
-      <Button className="bg-primary text-white " onClick={resetCheckboxes}>
+      <Button
+        className="bg-indigo-500 hover:bg-indigo-700 text-white w-full "
+        onClick={resetCheckboxes}
+      >
         Limpiar
       </Button>
     </div>

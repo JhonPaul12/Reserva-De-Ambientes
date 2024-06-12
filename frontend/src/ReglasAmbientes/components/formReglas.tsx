@@ -71,7 +71,9 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
 
   const guardarRegla = async () => {
     if (!selectedRegla || !fechaInicio || !fechaFinal) {
-      console.log("Por favor, seleccione una gestión y fechas válidas");
+      toast.error(
+        "Por favor, seleccione una período academico y fechas válidas"
+      );
       return;
     }
 
@@ -93,7 +95,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
       // Invierno o verano
       diffMonths = fechaFinal.diff(fechaInicio, "month");
       if (diffMonths !== 0) {
-        toast.error("La duración debe ser de un mes");
+        toast.error("La duración debe ser de maximo de un mes");
         return;
       }
     }
@@ -119,7 +121,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
         toast.error(result.message);
       }
       if (response.ok) {
-        toast.success("Gestión guardada correctamente");
+        toast.success("Periodo academico guardado correctamente");
         cancelar();
         actualizar();
       }
@@ -136,24 +138,28 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
   };
 
   return (
-    <div className="flex justify-center items-center  text-negro w-full my-14">
+    <div className="flex justify-center items-center  text-negro w-full my-8">
       <div className="shadow-lg rounded-lg p-6 w-full">
-        <h1 className="text-2xl font-bold my-5 text-center ">Crear Gestión</h1>
-        <form className="flex flex-col items-center space-y-4">
+        <h1 className="text-2xl font-bold my-5 text-center ">
+          Crear Periodo Academico
+        </h1>
+        <form className="flex flex-col items-center space-y-2">
           <Select
             key={selectKey}
             items={data}
-            label="Seleccione una gestión"
+            label="Seleccione un periodo académico"
             placeholder=""
             className="w-full"
             onChange={handleSelectChange}
           >
             {(data) => <SelectItem key={data.value}>{data.label}</SelectItem>}
           </Select>
+          <p>Fecha inicial:</p>
           <Calendario
             initialDate={fechaInicio}
             onDateChange={guardarFechaInicio}
           />
+          <p>Fecha final:</p>
           <Calendario
             initialDate={fechaFinal}
             onDateChange={guardarFechaFinal}

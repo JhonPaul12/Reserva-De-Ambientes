@@ -36,7 +36,7 @@ export const ListaGestiones = ({ refresh }: { refresh: boolean }) => {
   return (
     <div className="mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
       <h2 className="text-3xl font-bold text-center text-gray-900">
-        Lista de Gestiones
+        Lista de peridos académicos
       </h2>
       <Table
         className="custom-table"
