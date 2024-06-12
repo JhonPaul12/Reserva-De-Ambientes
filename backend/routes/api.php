@@ -254,3 +254,5 @@ Route::get('/informeAmbientes_v2ID/{id}', [SolicitudController::class, 'informeA
 Route::get('/informeAmbientes2_v2ID/{id}', [SolicitudController::class, 'informeAmbientes2_v2ID']);
 
 Route::get('/datosDocente', [SolicitudController::class, 'datosDocente']);
+
+Route::post('/enviarEmail', [NotificacionController::class, 'store2']);

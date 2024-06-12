@@ -17,7 +17,10 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import { toast } from "sonner";
-import { IDS } from "../interfaces/IDS";
+interface IDS{
+  id_solicitud:number
+  usuarios:[id_usuario:number,email:string]
+}
 
 export const NotificarCanUbi = () => {
   const [horaInicio, setHoraInicio] = useState<TimeInputValue | null>(null);
@@ -76,16 +79,24 @@ export const NotificarCanUbi = () => {
             await Promise.all(
               idsActualizados.map(async (id: any) => {
                 await Promise.all(
-                  id.id_usuario.map(async (usuario: any) => {
+                  id.usuarios.map(async (usuario: any) => {
                     try {
                       await axios.post(
                         `http://127.0.0.1:8000/api/notificacion`,
                         {
-                          id_usuario: usuario,
+                          id_usuario: usuario.id_usuario,
                           id_solicitud: id.id_solicitud,
                           titulo: tituloNotificacion,
                           contenido: descripcionNotificacion,
                           visto: 1,
+                        }
+                      );
+                      await axios.post(
+                        `http://127.0.0.1:8000/api/enviarEmail`,
+                        {
+                          email: usuario.email,
+                          title: tituloNotificacion,
+                          description: descripcionNotificacion,
                         }
                       );
                     } catch (error) {
@@ -214,7 +225,7 @@ export const NotificarCanUbi = () => {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent className="">
           <ModalHeader>¿Esta seguro de cancelar las reservas?</ModalHeader>
-          <ModalBody>Se cancelaran</ModalBody>
+          <ModalBody>Se cancelaran las reservas de las ubicaciones seleccionadas</ModalBody>
           <ModalFooter className="">
             <Button color="danger" variant="shadow" onClick={cambiarEstado}>
               Sí, cancelar

@@ -26,6 +26,7 @@ export const CancelarReservaA = () => {
   const [cancelReason, setCancelReason] = useState<string>("");
   const [tituloNotificacion, setTituloNotificacion] = useState<string>("");
   const [usuarioId, setUsuarioId] = useState<number | null>(null);
+  const [usuarioEmail, setUsuarioEmail] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -44,6 +45,7 @@ export const CancelarReservaA = () => {
       (solicitud) => solicitud.solicitud.estado === "Aceptada"
     );
     setSolicitudes(solicitudesPendientes);
+    console.log(solicitudesPendientes);
   };
 
   const calculateItemsPerPage = () => {
@@ -54,14 +56,15 @@ export const CancelarReservaA = () => {
     setItemsPerPage(items);
   };
 
-  const openModal = (id: number, usuarioId: number) => {
+  const openModal = (id: number, usuarioId: number,usuarioEmail:string) => {
     setSolicitudId(id);
     setUsuarioId(usuarioId);
+    setUsuarioEmail(usuarioEmail)
     setModalOpen(true);
   };
 
   const cancelarSolicitud = async () => {
-    if (solicitudId && usuarioId) {
+    if (solicitudId && usuarioId && usuarioEmail) {
       try {
         await axios.post(
           `http://127.0.0.1:8000/api/cambiarEstadoAdmin/${solicitudId}`,
@@ -75,6 +78,15 @@ export const CancelarReservaA = () => {
           contenido: cancelReason,
           visto: 1,
         });
+
+        await axios.post(
+          `http://127.0.0.1:8000/api/enviarEmail`,
+          {
+            email: usuarioEmail,
+            title: tituloNotificacion,
+            description: cancelReason,
+          }
+        );
 
         getSolicitudes();
         setModalOpen(false);
@@ -157,7 +169,7 @@ export const CancelarReservaA = () => {
                     }
                   </TableCell>
                   <TableCell className="text-xs sm:text-sm text-black">
-                    {solicitud.periodos[0].periodo.fecha}
+                    {solicitud.solicitud.fecha_solicitud}
                   </TableCell>
                   <TableCell className="text-xs sm:text-sm text-black">
                     {solicitud.solicitud.numero_estudiantes}
@@ -173,7 +185,8 @@ export const CancelarReservaA = () => {
                       onClick={() =>
                         openModal(
                           solicitud.solicitud.id,
-                          solicitud.solicitud.users[0].id
+                          solicitud.solicitud.users[0].id,
+                          solicitud.solicitud.users[0].email
                         )
                       }
                     >
