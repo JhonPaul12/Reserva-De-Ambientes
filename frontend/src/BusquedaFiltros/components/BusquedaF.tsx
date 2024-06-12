@@ -83,8 +83,8 @@ export const BusquedaF = () => {
   const handleHoraModalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFiltroHoraModal(e.target.value);
   };
-  const statusColorMap: Record<string, ChipProps["color"]>  = {
-    libre: "success"
+  const statusColorMap: Record<string, ChipProps["color"]> = {
+    libre: "success",
   };
 
   return (
@@ -95,53 +95,65 @@ export const BusquedaF = () => {
       <div className="flex flex-row justify-center items-center my-4">
         {/* Componentes de filtros */}
         <div className="mb-3 mx-4 ">
-          <label htmlFor="filtroNombre" className="block text-gray-700 text-bold">
+          <label
+            htmlFor="filtroNombre"
+            className="block text-gray-700 text-bold"
+          >
             <b> Filtrar por nombre: </b>
           </label>
-        <Input
-          type="text"
-          placeholder="Ej: 690A"
-          className="mt-3 block"
+          <Input
+            type="text"
+            placeholder="Ej: 690A"
+            className="mt-3 block"
             style={{
               fontSize: "15px",
               padding: "10px",
             }}
-          value={filtroAula}
-          onChange={(e) => setFiltroAula(e.target.value)}
-        />
+            value={filtroAula}
+            onChange={(e) => setFiltroAula(e.target.value)}
+          />
         </div>
         <div className="mb-3 mx-4 ">
-          <label htmlFor="filtroNombre" className="block text-gray-700 text-bold">
+          <label
+            htmlFor="filtroNombre"
+            className="block text-gray-700 text-bold"
+          >
             <b> Filtrar por capacidad: </b>
           </label>
-        <Input
-          type="number"
-          placeholder="Ej: 100"
-          className="mt-3 block"
+          <Input
+            type="number"
+            placeholder="Ej: 100"
+            className="mt-3 block"
             style={{
               fontSize: "15px",
               padding: "10px",
             }}
-          value={filtroCapacidad || ""}
-          onChange={(e) => setFiltroCapacidad(parseInt(e.target.value))}
-        />
+            value={filtroCapacidad?.toString() || ""}
+            onChange={(e) => setFiltroCapacidad(parseInt(e.target.value))}
+          />
         </div>
         <div className="mb-3 mx-4 ">
-          <label htmlFor="filtroNombre" className="block text-gray-700 text-bold">
+          <label
+            htmlFor="filtroNombre"
+            className="block text-gray-700 text-bold"
+          >
             <b> Filtrar por tipo: &nbsp; &nbsp; </b>
           </label>
-        <Select
-          placeholder='Todos'
-          className="mt-3 block"
+          <Select
+            aria-label="Filtrar por tipo"
+            placeholder="Todos"
+            className="mt-3 block"
             style={{
               fontSize: "15px",
               padding: "10px",
             }}
-          value={filtroTipo}
-          onChange={(e) => setFiltroTipo(e.target.value)}
-        >
-          <SelectItem key={''} value="">Todos</SelectItem>
-          <SelectItem key={"Multifuncional"} value="Multifuncional">
+            value={filtroTipo}
+            onChange={(e) => setFiltroTipo(e.target.value)}
+          >
+            <SelectItem key={""} value="">
+              Todos
+            </SelectItem>
+            <SelectItem key={"Multifuncional"} value="Multifuncional">
               Multifuncional
             </SelectItem>
             <SelectItem key={"Aula"} value="Aula">
@@ -150,7 +162,7 @@ export const BusquedaF = () => {
             <SelectItem key={"Laboratorio"} value="Laboratorio">
               Laboratorio
             </SelectItem>
-        </Select>
+          </Select>
         </div>
       </div>
       <div className="mx-6 my-4 sm:mx-auto w-full max-w-screen-md">
@@ -202,80 +214,82 @@ export const BusquedaF = () => {
             })}
           </TableBody>
         </Table>
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        className="custom-modal"
-      >
-        <ModalHeader>Horario de Aula</ModalHeader>
-        <ModalContent>
-          <h2 className="p-2 text-center">
-            Horarios para {aulaSeleccionada[0]?.ambiente.nombre}
-          </h2>
-          <div className="p-5 w-full">
-            <Input
-              type="text"
-              placeholder="Filtrar por hora"
-              className="mt-3 block"
+        <Modal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          className="custom-modal"
+        >
+          <ModalHeader>Horario de Aula</ModalHeader>
+          <ModalContent>
+            <h2 className="p-2 text-center">
+              Horarios para {aulaSeleccionada[0]?.ambiente.nombre}
+            </h2>
+            <div className="p-5 w-full">
+              <Input
+                type="text"
+                placeholder="Filtrar por hora"
+                className="mt-3 block"
                 style={{
                   fontSize: "15px",
                   padding: "10px",
                 }}
-              value={filtroHoraModal}
-              onChange={handleHoraModalChange}
-            />
-          </div>
-          <div className="modal-table">
-            <Table className="custom-table text-center">
-              <TableHeader>
-                <TableColumn className="text-center text-sm bg-slate-300">
-                  FECHA
-                </TableColumn>
-                <TableColumn className="text-center text-sm bg-slate-300">
-                  INICIO
-                </TableColumn>
-                <TableColumn className="text-center text-sm bg-slate-300">
-                  FIN
-                </TableColumn>
-                <TableColumn className="text-center text-sm bg-slate-300">
-                  ESTADO
-                </TableColumn>
-              </TableHeader>
-              <TableBody>
-                {filtrarPeriodosModal().map((periodo, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="text-xs text-black">
-                      {periodo.fecha}
-                    </TableCell>
-                    <TableCell className="text-xs text-black">
-                      {periodo.horario.hora_inicio.slice(0, -3)}
-                    </TableCell>
-                    <TableCell className="text-xs text-black">
-                      {periodo.horario.hora_fin.slice(0, -3)}
-                    </TableCell>
-                    <TableCell className="text-xs text-black">
-                          <Chip className="capitalize" color={statusColorMap[periodo.estado]} size="sm" variant="flat"
-                          >
-                            {periodo.estado}
-                          </Chip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          <ModalFooter>
-          <Button
-            className="m-2 p-5 bg-danger text-white"
-            onClick={() => setModalOpen(false)}
-          >
-            Cerrar
-          </Button>
-          </ModalFooter>
-          
-        </ModalContent>
-      </Modal>
-      
+                value={filtroHoraModal}
+                onChange={handleHoraModalChange}
+              />
+            </div>
+            <div className="modal-table">
+              <Table className="custom-table text-center">
+                <TableHeader>
+                  <TableColumn className="text-center text-sm bg-slate-300">
+                    FECHA
+                  </TableColumn>
+                  <TableColumn className="text-center text-sm bg-slate-300">
+                    INICIO
+                  </TableColumn>
+                  <TableColumn className="text-center text-sm bg-slate-300">
+                    FIN
+                  </TableColumn>
+                  <TableColumn className="text-center text-sm bg-slate-300">
+                    ESTADO
+                  </TableColumn>
+                </TableHeader>
+                <TableBody>
+                  {filtrarPeriodosModal().map((periodo, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="text-xs text-black">
+                        {periodo.fecha}
+                      </TableCell>
+                      <TableCell className="text-xs text-black">
+                        {periodo.horario.hora_inicio.slice(0, -3)}
+                      </TableCell>
+                      <TableCell className="text-xs text-black">
+                        {periodo.horario.hora_fin.slice(0, -3)}
+                      </TableCell>
+                      <TableCell className="text-xs text-black">
+                        <Chip
+                          className="capitalize"
+                          color={statusColorMap[periodo.estado]}
+                          size="sm"
+                          variant="flat"
+                        >
+                          {periodo.estado}
+                        </Chip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <ModalFooter>
+              <Button
+                className="m-2 p-5 bg-danger text-white"
+                onClick={() => setModalOpen(false)}
+              >
+                Cerrar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
     </div>
   );

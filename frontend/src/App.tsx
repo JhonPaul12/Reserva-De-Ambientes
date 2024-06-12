@@ -1,19 +1,16 @@
-import { Button } from "@nextui-org/react";
+
 import "./App.css";
+import { HeaderIni } from "./layouts/ini/components/HeaderIni";
+import { Inicio } from "./layouts/ini/components/Inicio";
 
 function App() {
-  const login = () => {
-    console.log("Login");
-    window.location.href = "/login";
-  };
 
   return (
     <>
-      <div className="fondo">Esta Es la panta Principal</div>
-      <Button className="bg-primary text-2xl text-white mx-10" onClick={login}>
-        {" "}
-        Iniciar Sesion{" "}
-      </Button>
+    
+      <HeaderIni />
+      <Inicio/>
+      
     </>
   );
 }

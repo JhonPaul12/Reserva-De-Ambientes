@@ -242,11 +242,12 @@ export const FormCrearDocente = () => {
 
   return (
     <div>
-      <label className="text-3xl font-bold text-center text-gray-900">
+      <label className="text-3xl font-bold text-center text-gray-900 ml-5">
         CREAR DOCENTE
       </label>
-      <form className="mt-5 space-y-6">
-        <div className="columnaR">
+      <form className="mt-5 space-y-6 md:space-y-0 md:space-x-6">
+        <div className="flex flex-col md:flex-row">
+        <div className="w-full md:w-1/2 mb-6 md:mb-0 mr-5 ml-5">
           <label className="text-ms text-gray-900">Nombre*:</label>
           <br />
           <Input
@@ -304,7 +305,8 @@ export const FormCrearDocente = () => {
             }}
           />
           <br />
-
+          </div>
+          <div className="w-full md:w-1/2 ml-5">
           <label className="text-ms text-gray-900">Email*:</label>
           <br />
           <Input
@@ -360,6 +362,9 @@ export const FormCrearDocente = () => {
             </Button>
           </div>
         </div>
+
+        </div>
+        
       </form>
     </div>
   )

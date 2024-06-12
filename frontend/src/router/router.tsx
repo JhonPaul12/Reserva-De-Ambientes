@@ -27,6 +27,7 @@ import { CalendarioUser } from "../Calendario";
 import { Feriados } from "../RegistrarFeriados/Feriados";
 import { GInformeAmbientes } from "../GenerarInformes";
 import { GenerarInfoDocente } from "../GenerarInformeDocente";
+import { PrincipalAdmin } from "../pages/Admin/PrincipaAdmin";
 
 export const router = createBrowserRouter([
   {
@@ -44,7 +45,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "inicio",
-        element: <PrincipalPage />,
+        element: <PrincipalAdmin />,
       },
       {
         path: "asignar-reglas",
@@ -117,6 +118,10 @@ export const router = createBrowserRouter([
     path: "user",
     element: <UserLayout />,
     children: [
+      {
+        path: "inicio",
+        element: <PrincipalPage />,
+      },
       {
         path: "solicitar-reserva",
         element: <CreacionSolicitud />,

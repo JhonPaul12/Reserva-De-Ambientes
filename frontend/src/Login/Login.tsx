@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Toaster, toast } from "sonner";
 import { useAuthStore } from "./stores/auth.store";
 import { Navigate } from "react-router-dom";
+import { HeaderIni } from "../layouts/ini/components/HeaderIni";
 
 export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,9 +22,9 @@ export const Login = () => {
     toast.success("Bienvenido");
     console.log(user?.roles);
     if (user?.roles.includes("Admin")) {
-      return <Navigate to="/admin" />;
+      return <Navigate to="/admin/inicio" />;
     }
-    return <Navigate to="/user" />;
+    return <Navigate to="/user/inicio" />;
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -51,7 +52,8 @@ export const Login = () => {
         closeButton
         style={{ position: "absolute" }}
       />
-      <section className="container flex mt-[15%] text-blanco ">
+      <HeaderIni />
+      <section className="container flex mt-[10%] text-blanco ">
         {/* Formulario */}
         <div className="login__form">
           <h3 className="font-bold text-2xl mb-4"> Inicio Sesion</h3>

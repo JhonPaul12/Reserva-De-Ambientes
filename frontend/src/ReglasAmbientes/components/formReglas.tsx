@@ -25,7 +25,7 @@ const data = [
   },
 ];
 
-export const FormReglas = () => {
+export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
   const [selectedRegla, setSelectedRegla] = useState<string | null>(null);
   const [fechaInicio, setFechaInicio] = useState<Dayjs | null>(null);
   const [fechaFinal, setFechaFinal] = useState<Dayjs | null>(null);
@@ -71,11 +71,11 @@ export const FormReglas = () => {
 
   const guardarRegla = async () => {
     if (!selectedRegla || !fechaInicio || !fechaFinal) {
-      console.log("Por favor, seleccione una regla y fechas válidas");
+      console.log("Por favor, seleccione una gestión y fechas válidas");
       return;
     }
 
-    //Verificamos que la fecha final sea posterior a la fecha inicial
+    // Verificamos que la fecha final sea posterior a la fecha inicial
     if (fechaFinal.isBefore(fechaInicio)) {
       toast.error("La fecha final debe ser posterior a la fecha inicial");
       return;
@@ -119,8 +119,9 @@ export const FormReglas = () => {
         toast.error(result.message);
       }
       if (response.ok) {
-        toast.success("Regla guardada correctamente");
+        toast.success("Gestión guardada correctamente");
         cancelar();
+        actualizar();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -135,33 +136,38 @@ export const FormReglas = () => {
   };
 
   return (
-    <div className="my-10 text-center text-negro">
-      <h1 className="text-2xl font-bold my-5">Crear Gestion </h1>
-      <form className="flex flex-col items-center space-y-4">
-        <Select
-          key={selectKey}
-          items={data}
-          label="Seleccione una gestion"
-          placeholder=""
-          className="max-w-xs"
-          onChange={handleSelectChange}
-        >
-          {(data) => <SelectItem key={data.value}>{data.label}</SelectItem>}
-        </Select>
-        <Calendario
-          initialDate={fechaInicio}
-          onDateChange={guardarFechaInicio}
-        />
-        <Calendario initialDate={fechaFinal} onDateChange={guardarFechaFinal} />
-        <div className="flex space-x-4">
-          <Button onClick={guardarRegla} className="bg-primary text-white">
-            Registrar
-          </Button>
-          <Button onClick={cancelar} className="bg-primary text-white">
-            Cancelar
-          </Button>
-        </div>
-      </form>
+    <div className="flex justify-center items-center  text-negro w-full my-14">
+      <div className="shadow-lg rounded-lg p-6 w-full">
+        <h1 className="text-2xl font-bold my-5 text-center ">Crear Gestión</h1>
+        <form className="flex flex-col items-center space-y-4">
+          <Select
+            key={selectKey}
+            items={data}
+            label="Seleccione una gestión"
+            placeholder=""
+            className="w-full"
+            onChange={handleSelectChange}
+          >
+            {(data) => <SelectItem key={data.value}>{data.label}</SelectItem>}
+          </Select>
+          <Calendario
+            initialDate={fechaInicio}
+            onDateChange={guardarFechaInicio}
+          />
+          <Calendario
+            initialDate={fechaFinal}
+            onDateChange={guardarFechaFinal}
+          />
+          <div className="flex space-x-4">
+            <Button onClick={guardarRegla} className="bg-primary text-white">
+              Registrar
+            </Button>
+            <Button onClick={cancelar} className="bg-danger text-white">
+              Cancelar
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

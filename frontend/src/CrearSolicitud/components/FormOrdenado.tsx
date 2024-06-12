@@ -515,11 +515,12 @@ export const FormOrdenado = () => {
   };
   return (
     <div>
-      <label className="text-3xl font-bold text-center text-gray-900">
+      <label className="text-3xl font-bold text-center text-gray-900 ml-5">
         SOLICITAR RESERVA
       </label>
-      <form className="flex mt-5 space-y-6">
-        <div className="mt-5 ml-5 mx-auto w-full sm:w-1/2 p-5">
+      <form className="mt-5 space-y-6 md:space-y-0 md:space-x-6">
+        <div className="flex flex-col md:flex-row">
+        <div className="w-full md:w-1/2 mb-6 md:mb-0 mr-5 ml-5">
           {/*DOCENTES */}
 
           <label className="text-ms text-gray-900">Docente:</label>
@@ -567,56 +568,9 @@ export const FormOrdenado = () => {
           </Select>
           <br />
 
-          {/*MOTIVO */}
-
-          <label className="text-ms text-gray-900">Motivo*:</label>
-          <br />
-          <Select
-            value={inputMotivo}
-            className="w-full"
-            aria-label="Selecciona una motivo"
-            placeholder="Seleccione una opcion..."
-            onChange={onInputChangeMotivo}
-          >
-            {motivosReserva.map((motivo) => (
-              <SelectItem key={motivo} value={motivo}>
-                {motivo}
-              </SelectItem>
-            ))}
-          </Select>
-          <br />
-
-          {/*NUMERO DE ESTUDIANTES */}
-
-          <label className="text-ms text-gray-900">Nro de personas*:</label>
-          <Input
-            type="text"
-            value={inputNEst}
-            placeholder="Ingrese un número..."
-            onChange={onInputChangeNEst}
-            onKeyPress={handleKeyPress}
-            style={{
-              fontSize: "13px",
-            }}
-          />
-          <br />
-
           {/*GRUPO */}
 
           <label className="text-ms text-gray-900">Grupo*:</label>
-          {/*<Select
-            value={inputGrupo}
-            onChange={onInputChangeGrupo}
-            className="w-full text-gray-900"
-            aria-label="Selecciona una grupo"
-            placeholder="Seleccione una opcion..."
-          >
-            {grupos.map((grup) => (
-              <SelectItem key={grup.id} textValue={grup.grupo}>
-                {grup.grupo}
-              </SelectItem>
-            ))}
-          </Select>*/}
           <Select
             label="Seleccione los grupos asociados a la materia "
             selectionMode="multiple"
@@ -637,9 +591,43 @@ export const FormOrdenado = () => {
             ))}
           </Select>
           <br />
+
+          {/*MOTIVO */}
+
+          <label className="text-ms text-gray-900">Motivo*:</label>
+          <br />
+          <Select
+            value={inputMotivo}
+            className="w-full"
+            aria-label="Selecciona una motivo"
+            placeholder="Seleccione una opcion..."
+            onChange={onInputChangeMotivo}
+          >
+            {motivosReserva.map((motivo) => (
+              <SelectItem key={motivo} value={motivo}>
+                {motivo}
+              </SelectItem>
+            ))}
+          </Select>
+          <br />
         </div>
 
-        <div className="mt-10 ml-5 mx-auto w-full sm:w-1/2 p-5">
+        <div className="w-full md:w-1/2 ml-5">
+
+          {/*NUMERO DE ESTUDIANTES */}
+
+          <label className="text-ms text-gray-900">Nro de personas*:</label>
+            <Input
+              type="text"
+              value={inputNEst}
+              placeholder="Ingrese un número..."
+              onChange={onInputChangeNEst}
+              onKeyPress={handleKeyPress}
+              style={{
+                fontSize: "13px",
+              }}
+            />
+          <br />
           {/*AMBIENTE */}
 
           <label className="text-ms text-gray-900">Ambiente*:</label>
@@ -719,6 +707,9 @@ export const FormOrdenado = () => {
             </Button>
           </div>
         </div>
+
+        </div>
+        
       </form>
     </div>
   );
