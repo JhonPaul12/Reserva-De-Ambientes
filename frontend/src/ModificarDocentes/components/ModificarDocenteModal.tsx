@@ -94,6 +94,13 @@ export const ModificarDocenteModal = ({
       toast.error("El código SIS debe ser de 9 dígitos.");
       return;
     }
+
+    // Validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(inputEmail)) {
+      toast.error("El formato del email es incorrecto.");
+      return;
+    }
     if (
       inputName === docente.name &&
       inputApellidos === docente.apellidos &&
@@ -153,6 +160,7 @@ export const ModificarDocenteModal = ({
                   name="nombre"
                   className="w-full"
                   placeholder={docente.name}
+                  value={inputName}
                   style={{
                     textAlign: "center",
                     fontSize: "14px",
@@ -165,6 +173,7 @@ export const ModificarDocenteModal = ({
                 <Input
                   type="text"
                   name="apellidos"
+                  value={inputApellidos}
                   className="w-full"
                   placeholder={docente.apellidos}
                   style={{
@@ -179,6 +188,7 @@ export const ModificarDocenteModal = ({
                 <Input
                   type="number"
                   name="telefono"
+                  value={inputTel}
                   className="w-full"
                   placeholder={docente.telefono}
                   style={{
@@ -192,6 +202,7 @@ export const ModificarDocenteModal = ({
                 <Input
                   type="email"
                   name="email"
+                  value={inputEmail}
                   className="w-full"
                   placeholder={docente.email}
                   style={{
@@ -206,6 +217,7 @@ export const ModificarDocenteModal = ({
                 <Input
                   type="number"
                   name="codigo SIS"
+                  value={inputCod}
                   className="w-full"
                   placeholder={docente.codigo_sis}
                   style={{

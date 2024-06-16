@@ -100,11 +100,28 @@ export const MenuCheckBox = ({
   //Seleccionamos todos checkboxs por dias
   const handleSelectAll = (dia: string) => {
     const updatedCheckedItems = { ...checkedItems };
+    const allChecked = periodos
+      .filter(
+        (periodo) => periodo.dia === dia && !checkedItems[periodo.id]?.fijo // Excluir los elementos fijos
+      )
+      .every((periodo) => !!updatedCheckedItems[periodo.id]);
+
     periodos
       .filter((periodo) => periodo.dia === dia)
       .forEach((periodo) => {
-        updatedCheckedItems[periodo.id] = { id: periodo.id, dia: periodo.dia };
+        if (!checkedItems[periodo.id]?.fijo) {
+          // Excluir los elementos fijos
+          if (allChecked) {
+            delete updatedCheckedItems[periodo.id];
+          } else {
+            updatedCheckedItems[periodo.id] = {
+              id: periodo.id,
+              dia: periodo.dia,
+            };
+          }
+        }
       });
+
     setCheckedItems(updatedCheckedItems);
   };
 

@@ -471,10 +471,11 @@ export const FormOrdenado = () => {
       const fechaSeleccionada = new Date(inputFecha);
 
       if (fechaSeleccionada > fechaActual) {
-        console.log(listOficial.concat(listdocentes));
-        console.log("lsita grupoa");
+        // console.log(listOficial.concat(listdocentes));
+        // console.log("lsita grupoa");
+        // console.log(listGrupos);
+        // console.log(listGrupos.length);
         console.log(listGrupos);
-        console.log(listGrupos.length);
         if (listdocentes.length === 0 || listdocentes[0] === "") {
           await createSolicitud(
             inputMotivo,
@@ -500,7 +501,7 @@ export const FormOrdenado = () => {
             inputHFin
           );
         }
-/*
+        /*
 
         try {
           await axios.post(
@@ -518,9 +519,9 @@ export const FormOrdenado = () => {
             `Error al enviar notificaciones ${id_solicitud}: ${error}`
           );
         }*/
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -538,103 +539,102 @@ export const FormOrdenado = () => {
       </label>
       <form className="mt-5 space-y-6 md:space-y-0 md:space-x-6">
         <div className="flex flex-col md:flex-row">
-        <div className="w-full md:w-1/2 mb-6 md:mb-0 mr-5 ml-5">
-          {/*DOCENTES */}
+          <div className="w-full md:w-1/2 mb-6 md:mb-0 mr-5 ml-5">
+            {/*DOCENTES */}
 
-          <label className="text-ms text-gray-900">Docente:</label>
-          <br />
-          <span
-            style={{ marginRight: "50px" }}
-            className="text-ms text-gray-900"
-          >
-            {user?.name} {user?.apellidos}
-          </span>
+            <label className="text-ms text-gray-900">Docente:</label>
+            <br />
+            <span
+              style={{ marginRight: "50px" }}
+              className="text-ms text-gray-900"
+            >
+              {user?.name} {user?.apellidos}
+            </span>
 
-          <Select
-            label="Docentes asociados a la reserva"
-            selectionMode="multiple"
-            placeholder="Seleccione docente..."
-            selectedKeys={valuesDocentes}
-            className="mb-5 mt-5 w-full"
-            onChange={handleSelectionChangeDocentes}
-            onClick={verificarMateriaDoc}
-          >
-            {optionsDocentes.map((docente) => (
-              <SelectItem key={docente.value} value={docente.label}>
-                {docente.label}
-              </SelectItem>
-            ))}
-          </Select>
-          <br />
+            <Select
+              label="Docentes asociados a la reserva"
+              selectionMode="multiple"
+              placeholder="Seleccione docente..."
+              selectedKeys={valuesDocentes}
+              className="mb-5 mt-5 w-full"
+              onChange={handleSelectionChangeDocentes}
+              onClick={verificarMateriaDoc}
+            >
+              {optionsDocentes.map((docente) => (
+                <SelectItem key={docente.value} value={docente.label}>
+                  {docente.label}
+                </SelectItem>
+              ))}
+            </Select>
+            <br />
 
-          {/*MATERIA */}
+            {/*MATERIA */}
 
-          <label className="text-ms text-gray-900">Materia*:</label>
-          <br />
-          <Select
-            value={inputMateria}
-            className="w-full"
-            aria-label="Selecciona una materia"
-            placeholder="Seleccione una opcion..."
-            onChange={onInputChangeMateria}
-          >
-            {materias.map((materia) => (
-              <SelectItem key={materia.id} value={materia.id}>
-                {materia.nombre_materia}
-              </SelectItem>
-            ))}
-          </Select>
-          <br />
+            <label className="text-ms text-gray-900">Materia*:</label>
+            <br />
+            <Select
+              value={inputMateria}
+              className="w-full"
+              aria-label="Selecciona una materia"
+              placeholder="Seleccione una opcion..."
+              onChange={onInputChangeMateria}
+            >
+              {materias.map((materia) => (
+                <SelectItem key={materia.id} value={materia.id}>
+                  {materia.nombre_materia}
+                </SelectItem>
+              ))}
+            </Select>
+            <br />
 
-          {/*GRUPO */}
+            {/*GRUPO */}
 
-          <label className="text-ms text-gray-900">Grupo*:</label>
-          <Select
-            label="Seleccione los grupos asociados a la materia "
-            selectionMode="multiple"
-            placeholder="Seleccione grupo"
-            selectedKeys={valuesGrupos}
-            className="mb-5 mt-5 w-full text-gray-900"
-            onChange={handleSelectionChangeGrupos}
-            onClick={verificarMateria}
-          >
-            {grupos.map((grupo) => (
-              <SelectItem
-                key={grupo.id}
-                value={grupo.grupo}
-                textValue={grupo.grupo}
-              >
-                {grupo.grupo}
-              </SelectItem>
-            ))}
-          </Select>
-          <br />
+            <label className="text-ms text-gray-900">Grupo*:</label>
+            <Select
+              label="Seleccione los grupos asociados a la materia "
+              selectionMode="multiple"
+              placeholder="Seleccione grupo"
+              selectedKeys={valuesGrupos}
+              className="mb-5 mt-5 w-full text-gray-900"
+              onChange={handleSelectionChangeGrupos}
+              onClick={verificarMateria}
+            >
+              {grupos.map((grupo) => (
+                <SelectItem
+                  key={grupo.id}
+                  value={grupo.grupo}
+                  textValue={grupo.grupo}
+                >
+                  {grupo.grupo}
+                </SelectItem>
+              ))}
+            </Select>
+            <br />
 
-          {/*MOTIVO */}
+            {/*MOTIVO */}
 
-          <label className="text-ms text-gray-900">Motivo*:</label>
-          <br />
-          <Select
-            value={inputMotivo}
-            className="w-full"
-            aria-label="Selecciona una motivo"
-            placeholder="Seleccione una opcion..."
-            onChange={onInputChangeMotivo}
-          >
-            {motivosReserva.map((motivo) => (
-              <SelectItem key={motivo} value={motivo}>
-                {motivo}
-              </SelectItem>
-            ))}
-          </Select>
-          <br />
-        </div>
+            <label className="text-ms text-gray-900">Motivo*:</label>
+            <br />
+            <Select
+              value={inputMotivo}
+              className="w-full"
+              aria-label="Selecciona una motivo"
+              placeholder="Seleccione una opcion..."
+              onChange={onInputChangeMotivo}
+            >
+              {motivosReserva.map((motivo) => (
+                <SelectItem key={motivo} value={motivo}>
+                  {motivo}
+                </SelectItem>
+              ))}
+            </Select>
+            <br />
+          </div>
 
-        <div className="w-full md:w-1/2 ml-5">
+          <div className="w-full md:w-1/2 ml-5">
+            {/*NUMERO DE ESTUDIANTES */}
 
-          {/*NUMERO DE ESTUDIANTES */}
-
-          <label className="text-ms text-gray-900">Nro de personas*:</label>
+            <label className="text-ms text-gray-900">Nro de personas*:</label>
             <Input
               type="text"
               value={inputNEst}
@@ -645,89 +645,88 @@ export const FormOrdenado = () => {
                 fontSize: "13px",
               }}
             />
-          <br />
-          {/*AMBIENTE */}
+            <br />
+            {/*AMBIENTE */}
 
-          <label className="text-ms text-gray-900">Ambiente*:</label>
-          <br />
-          <Select
-            value={inputAmbiente}
-            onChange={onInputChangeAmbiente}
-            onClick={verificarCapacidad}
-            className="w-full"
-            aria-label="Selecciona una ambiente"
-            placeholder="Seleccione una opcion..."
-          >
-            {optionsAmbiente.map((ambiente) => (
-              <SelectItem
-                className="text-smtext-xs"
-                key={ambiente.value}
-                value={ambiente.label}
+            <label className="text-ms text-gray-900">Ambiente*:</label>
+            <br />
+            <Select
+              value={inputAmbiente}
+              onChange={onInputChangeAmbiente}
+              onClick={verificarCapacidad}
+              className="w-full"
+              aria-label="Selecciona una ambiente"
+              placeholder="Seleccione una opcion..."
+            >
+              {optionsAmbiente.map((ambiente) => (
+                <SelectItem
+                  className="text-smtext-xs"
+                  key={ambiente.value}
+                  value={ambiente.label}
+                >
+                  {ambiente.label}
+                </SelectItem>
+              ))}
+            </Select>
+            <br />
+
+            {/*FECHA */}
+
+            <label className="text-ms text-gray-900">Fecha de reserva*:</label>
+            <br />
+            <DatePicker
+              className="p-2 border w-full border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              aria-label="Selecciona una fecha"
+              onChange={handleDateChange}
+            />
+            <br />
+            <label className="text-ms text-gray-900">Periodo/s*:</label>
+            <br />
+
+            {/*PERIODO */}
+
+            <Select
+              label="Periodos de reserva"
+              selectionMode="multiple"
+              placeholder="Seleccione periodo..."
+              selectedKeys={values}
+              className="mt-2 mb-5 w-full"
+              onChange={handleSelectionChange}
+              onClick={verificar}
+            >
+              {options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </Select>
+            <br />
+
+            {/*BOTONES */}
+
+            <div className="flex gap-5 items-center">
+              <Button
+                size="lg"
+                className="w-full  mb-10"
+                color="danger"
+                variant="light"
+                onClick={onInputChangeCancelar}
               >
-                {ambiente.label}
-              </SelectItem>
-            ))}
-          </Select>
-          <br />
-
-          {/*FECHA */}
-
-          <label className="text-ms text-gray-900">Fecha de reserva*:</label>
-          <br />
-          <DatePicker
-            className="p-2 border w-full border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            aria-label="Selecciona una fecha"
-            onChange={handleDateChange}
-          />
-          <br />
-          <label className="text-ms text-gray-900">Periodo/s*:</label>
-          <br />
-
-          {/*PERIODO */}
-
-          <Select
-            label="Periodos de reserva"
-            selectionMode="multiple"
-            placeholder="Seleccione periodo..."
-            selectedKeys={values}
-            className="mt-2 mb-5 w-full"
-            onChange={handleSelectionChange}
-            onClick={verificar}
-          >
-            {options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </Select>
-          <br />
-
-          {/*BOTONES */}
-
-          <div className="flex gap-5 items-center">
-            <Button
-              size="lg"
-              className="w-full  mb-10"
-              color="danger" variant="light"
-              onClick={onInputChangeCancelar}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={onInputChangeSave}
-              size="lg"
-              className="w-full mb-10"
-              color="primary"
-              disabled={isButtonDisabled}
-            >
-              {" "}
-              {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
-            </Button>
+                Cancelar
+              </Button>
+              <Button
+                onClick={onInputChangeSave}
+                size="lg"
+                className="w-full mb-10"
+                color="primary"
+                disabled={isButtonDisabled}
+              >
+                {" "}
+                {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
+              </Button>
+            </div>
           </div>
         </div>
-
-        </div>
-        
       </form>
     </div>
   );
