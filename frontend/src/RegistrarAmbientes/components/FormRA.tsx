@@ -94,7 +94,7 @@ export const FormRA = () => {
   };
 
   const onInputChangeSave = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
 
@@ -131,7 +131,7 @@ export const FormRA = () => {
       <label className="text-3xl font-bold text-center text-gray-900">
         REGISTRO DE AMBIENTE
       </label>
-      <form className="mt-5 space-y-6">
+      <form className="mt-5 space-y-6" onSubmit={onInputChangeSave}>
         <div className="columnaR">
           <label className="text-ms text-gray-900">Nombre*:</label>
           <br />
@@ -208,6 +208,7 @@ export const FormRA = () => {
               Cancelar
             </Button>
             <Button
+              type="submit"
               onClick={onInputChangeSave}
               color="primary"
               className="w-full mb-10"
