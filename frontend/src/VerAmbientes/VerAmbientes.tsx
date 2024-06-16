@@ -1,15 +1,153 @@
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect } from "react";
+// import { useAmbienteStore } from "./store/Ambientes.store";
+// import { TablaAmbientes } from "./components/TablaAmbientes";
+// import { Input, Select, SelectItem } from "@nextui-org/react";
+
+// export const VerAmbientes = () => {
+//   const ambientes = useAmbienteStore((state) => state.ambientes);
+//   const getAmbientes = useAmbienteStore((state) => state.getAmbientes);
+
+//   // Estados para almacenar los valores de los filtros
+//   const [filtroNombre, setFiltroNombre] = useState("");
+//   const [filtroCapacidad, setFiltroCapacidad] = useState("");
+//   const [filtroTipo, setFiltroTipo] = useState("");
+
+//   useEffect(() => {
+//     const fetchAmbientes = async () => {
+//       if (ambientes.length === 0) await getAmbientes();
+//     };
+
+//     fetchAmbientes();
+//   }, [ambientes, getAmbientes]);
+
+//   // Funciones para manejar cambios en los filtros
+//   const handleFiltroNombreChange = (
+//     event: React.ChangeEvent<HTMLInputElement>
+//   ) => {
+//     setFiltroNombre(event.target.value);
+//   };
+
+//   const handleFiltroCapacidadChange = (
+//     event: React.ChangeEvent<HTMLInputElement>
+//   ) => {
+//     setFiltroCapacidad(event.target.value);
+//   };
+
+//   const handleFiltroTipoChange = (
+//     event: React.ChangeEvent<HTMLSelectElement>
+//   ) => {
+//     setFiltroTipo(event.target.value);
+//   };
+
+//   // Filtrar ambientes según los filtros
+//   const ambientesFiltrados = ambientes.filter((ambiente) => {
+//     const nombreMatch = ambiente.nombre
+//       .toLowerCase()
+//       .includes(filtroNombre.toLowerCase());
+//     const capacidadMatch =
+//       filtroCapacidad === "" || ambiente.capacidad >= parseInt(filtroCapacidad);
+//     const tipoMatch =
+//       filtroTipo === "" ||
+//       ambiente.tipo.toLowerCase() === filtroTipo.toLowerCase();
+//     return nombreMatch && capacidadMatch && tipoMatch;
+//   });
+
+//   return (
+//     <div className="text-negro w-full m-10">
+//       <div className="flex flex-row justify-center items-center my-4">
+//         {/* Componentes de filtros */}
+//         <div className="mb-3 mx-4 ">
+//           <label
+//             htmlFor="filtroNombre"
+//             className="block text-gray-700 text-bold"
+//           >
+//             <b> Filtrar por nombre: </b>
+//           </label>
+//           <Input
+//             type="text"
+//             id="filtroNombre"
+//             value={filtroNombre}
+//             onChange={handleFiltroNombreChange}
+//             placeholder="Ej: 691A"
+//             className="mt-3 block"
+//             style={{
+//               fontSize: "15px",
+//               padding: "10px",
+//             }}
+//           />
+//         </div>
+//         <div className="mb-3 mx-4">
+//           <label
+//             htmlFor="filtroCapacidad"
+//             className="block text-gray-700 text-bold"
+//           >
+//             <b>Filtrar por capacidad:</b>
+//           </label>
+//           <Input
+//             type="number"
+//             id="filtroCapacidad"
+//             value={filtroCapacidad}
+//             placeholder="Ej:100"
+//             onChange={handleFiltroCapacidadChange}
+//             className="mt-3 block w-full "
+//             style={{
+//               fontSize: "15px",
+//               padding: "10px",
+//             }}
+//           />
+//         </div>
+//         <div className="mb-3 mx-4">
+//           <label htmlFor="filtroTipo" className="block text-gray-700 text-bold">
+//             <b>Filtrar por tipo:&nbsp; &nbsp; &nbsp; &nbsp;</b>
+//           </label>
+//           <Select
+//             id="filtroTipo"
+//             value={filtroTipo}
+//             onChange={handleFiltroTipoChange}
+//             placeholder="Todos"
+//             className="mt-3 block w-full "
+//             style={{
+//               fontSize: "15px",
+//               padding: "10px",
+//             }}
+//           >
+//             <SelectItem key={""} value="">
+//               Todos
+//             </SelectItem>
+//             <SelectItem key={"Multifuncional"} value="Multifuncional">
+//               Multifuncional
+//             </SelectItem>
+//             <SelectItem key={"Aula"} value="Aula">
+//               Aula
+//             </SelectItem>
+//             <SelectItem key={"Laboratorio"} value="Laboratorio">
+//               Laboratorio
+//             </SelectItem>
+//           </Select>
+//         </div>
+//       </div>
+//       {/* Tabla de ambientes con datos filtrados */}
+//       <TablaAmbientes ambientes={ambientesFiltrados} />
+//     </div>
+//   );
+// };
+
+import { useState, useEffect } from "react";
 import { useAmbienteStore } from "./store/Ambientes.store";
 import { TablaAmbientes } from "./components/TablaAmbientes";
+import { Input, Select, SelectItem, Pagination } from "@nextui-org/react";
 
 export const VerAmbientes = () => {
   const ambientes = useAmbienteStore((state) => state.ambientes);
   const getAmbientes = useAmbienteStore((state) => state.getAmbientes);
 
-  // Estados para almacenar los valores de los filtros
   const [filtroNombre, setFiltroNombre] = useState("");
   const [filtroCapacidad, setFiltroCapacidad] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // You can adjust this value
 
   useEffect(() => {
     const fetchAmbientes = async () => {
@@ -19,8 +157,6 @@ export const VerAmbientes = () => {
     fetchAmbientes();
   }, [ambientes, getAmbientes]);
 
-
-  // Funciones para manejar cambios en los filtros
   const handleFiltroNombreChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -52,53 +188,103 @@ export const VerAmbientes = () => {
     return nombreMatch && capacidadMatch && tipoMatch;
   });
 
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(ambientesFiltrados.length / itemsPerPage);
+
+  // Get the items to display for the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentAmbientes = ambientesFiltrados.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
   return (
     <div className="text-negro w-full m-10">
-      <div className="flex flex-row justify-center items-center my-10">
+      <div className="flex flex-row justify-center items-center my-4">
         {/* Componentes de filtros */}
-        <div className="mb-4 mx-4 ">
-          <label htmlFor="filtroNombre" className="block text-gray-700">
-            Filtrar por nombre:
+        <div className="mb-3 mx-4 ">
+          <label
+            htmlFor="filtroNombre"
+            className="block text-gray-700 text-bold"
+          >
+            <b> Filtrar por nombre: </b>
           </label>
-          <input
+          <Input
             type="text"
             id="filtroNombre"
             value={filtroNombre}
             onChange={handleFiltroNombreChange}
-            className="mt-3 block w-full rounded-md border border-black shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            placeholder="Ej: 691A"
+            className="mt-3 block"
+            style={{
+              fontSize: "15px",
+              padding: "10px",
+            }}
+            aria-label="Filtrar por nombre"
           />
         </div>
-        <div className="mb-4 mx-4">
-          <label htmlFor="filtroCapacidad" className="block text-gray-700">
-            Filtrar por capacidad:
+        <div className="mb-3 mx-4">
+          <label
+            htmlFor="filtroCapacidad"
+            className="block text-gray-700 text-bold"
+          >
+            <b>Filtrar por capacidad:</b>
           </label>
-          <input
+          <Input
             type="number"
             id="filtroCapacidad"
             value={filtroCapacidad}
+            placeholder="Ej:100"
             onChange={handleFiltroCapacidadChange}
-            className="mt-3 block w-full rounded-md border border-black shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-3 block w-full "
+            style={{
+              fontSize: "15px",
+              padding: "10px",
+            }}
+            aria-label="Filtrar por capacidad"
           />
         </div>
-        <div className="mb-4 mx-4">
-          <label htmlFor="filtroTipo" className="block text-gray-700">
-            Filtrar por tipo:
+        <div className="mb-3 mx-4">
+          <label htmlFor="filtroTipo" className="block text-gray-700 text-bold">
+            <b>Filtrar por tipo:&nbsp; &nbsp; &nbsp; &nbsp;</b>
           </label>
-          <select
+          <Select
             id="filtroTipo"
             value={filtroTipo}
             onChange={handleFiltroTipoChange}
-            className="mt-3 block w-full rounded-md border border-black shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            placeholder="Todos"
+            className="mt-3 block w-full "
+            style={{
+              fontSize: "15px",
+              padding: "10px",
+            }}
+            aria-label="Filtrar por tipo"
           >
-            <option value="">Todos</option>
-            <option value="Aula">Aula</option>
-            <option value="Laboratorio">Laboratorio</option>
-            <option value="Multifuncional">Multifuncional</option>
-          </select>
+            <SelectItem key={""} value="">
+              Todos
+            </SelectItem>
+            <SelectItem key={"Multifuncional"} value="Multifuncional">
+              Multifuncional
+            </SelectItem>
+            <SelectItem key={"Aula"} value="Aula">
+              Aula
+            </SelectItem>
+            <SelectItem key={"Laboratorio"} value="Laboratorio">
+              Laboratorio
+            </SelectItem>
+          </Select>
         </div>
       </div>
       {/* Tabla de ambientes con datos filtrados */}
-      <TablaAmbientes ambientes={ambientesFiltrados} />
+      <TablaAmbientes ambientes={currentAmbientes} />
+      {/* Pagination component */}
+      <div className="flex justify-center mt-4">
+        <Pagination
+          total={totalPages}
+          initialPage={1}
+          onChange={(page) => setCurrentPage(page)}
+        />
+      </div>
     </div>
   );
 };

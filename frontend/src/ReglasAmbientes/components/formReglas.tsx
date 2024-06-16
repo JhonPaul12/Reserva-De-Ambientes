@@ -4,6 +4,7 @@ import { Calendario } from "./Calendario";
 import { Button } from "@nextui-org/react";
 import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+import { toast } from "sonner";
 
 const data = [
   {
@@ -51,20 +52,20 @@ export const FormReglas = () => {
     const currentYear = dayjs().year();
     if (event.target.value === "1") {
       // Primer semestre
-      setFechaInicio(dayjs(`${currentYear}-01-01`));
-      setFechaFinal(dayjs(`${currentYear}-06-30`));
+      setFechaInicio(dayjs(`${currentYear}-02-15`));
+      setFechaFinal(dayjs(`${currentYear}-07-06`));
     } else if (event.target.value === "2") {
       // Segundo semestre
-      setFechaInicio(dayjs(`${currentYear}-07-01`));
-      setFechaFinal(dayjs(`${currentYear}-12-31`));
+      setFechaInicio(dayjs(`${currentYear}-08-10`));
+      setFechaFinal(dayjs(`${currentYear}-12-30`));
     } else if (event.target.value === "3") {
       // Invierno
-      setFechaInicio(dayjs(`${currentYear}-12-01`));
-      setFechaFinal(dayjs(`${currentYear}-12-31`));
+      setFechaInicio(dayjs(`${currentYear}-07-10`));
+      setFechaFinal(dayjs(`${currentYear}-08-05`));
     } else if (event.target.value === "4") {
       // Verano
-      setFechaInicio(dayjs(`${currentYear}-06-01`));
-      setFechaFinal(dayjs(`${currentYear}-06-30`));
+      setFechaInicio(dayjs(`${currentYear}-01-15`));
+      setFechaFinal(dayjs(`${currentYear}-02-10`));
     }
   };
 
@@ -74,11 +75,34 @@ export const FormReglas = () => {
       return;
     }
 
+    //Verificamos que la fecha final sea posterior a la fecha inicial
+    if (fechaFinal.isBefore(fechaInicio)) {
+      toast.error("La fecha final debe ser posterior a la fecha inicial");
+      return;
+    }
+    // Validar duración de la regla según el tipo seleccionado
+    let diffMonths = 0;
+    if (selectedRegla === "1" || selectedRegla === "2") {
+      // Primer semestre o segundo semestre
+      diffMonths = fechaFinal.diff(fechaInicio, "month");
+      if (diffMonths > 5) {
+        toast.error("La diferencia es mayor a 6 meses");
+        return;
+      }
+    } else if (selectedRegla === "3" || selectedRegla === "4") {
+      // Invierno o verano
+      diffMonths = fechaFinal.diff(fechaInicio, "month");
+      if (diffMonths !== 0) {
+        toast.error("La duración debe ser de un mes");
+        return;
+      }
+    }
+
     const reglaData = {
       nombre: data[Number(selectedRegla) - 1].label,
       fecha_inicial: fechaInicio.format("YYYY-MM-DD"),
       fecha_final: fechaFinal.format("YYYY-MM-DD"),
-      activa: 0,
+      activa: 1,
     };
 
     try {
@@ -91,12 +115,13 @@ export const FormReglas = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Error al guardar la regla");
+        const result = await response.json();
+        toast.error(result.message);
       }
-
-      const result = await response.json();
-      console.log("Regla guardada exitosamente:", result);
-      cancelar();
+      if (response.ok) {
+        toast.success("Regla guardada correctamente");
+        cancelar();
+      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -110,8 +135,8 @@ export const FormReglas = () => {
   };
 
   return (
-    <div className="mt-10">
-      <h1>Formulario de Reglas</h1>
+    <div className="my-10 text-center text-negro">
+      <h1 className="text-2xl font-bold my-5">Crear Gestion </h1>
       <form className="flex flex-col items-center space-y-4">
         <Select
           key={selectKey}

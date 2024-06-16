@@ -15,8 +15,8 @@ class CreateGrupoSolicitudTable extends Migration
     {
         Schema::create('grupo_solicitud', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('grupo_id')->constrained('grupos')->onDelete('cascade');
-            $table->foreignId('solicitud_id')->constrained('solicitudes')->onDelete('cascade');
+            $table->foreignId('grupo_id')->references('id')->on('grupos')->onDelete('cascade');
+            $table->foreignId('solicitud_id')->references('id')->on('solicitudes')->onDelete('cascade');
             $table->timestamps();
         });
     }

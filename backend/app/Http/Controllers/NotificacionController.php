@@ -20,7 +20,7 @@ class NotificacionController extends Controller
         $validator = Validator::make($request->all(), [
             'id_usuario' => 'required|exists:users,id',
             'id_solicitud' => 'nullable|exists:solicitudes,id',
-            'titulo'=>'required',
+            'titulo' => 'required',
             'contenido' => 'required',
             'visto' => 'required|boolean',
         ]);
@@ -65,18 +65,21 @@ class NotificacionController extends Controller
         return response()->json($notificacion, 200);
     }
 
-    public function nombre_usuario_Notificacion($nombreUsuario = null)
+    public function nombre_usuario_Notificacion($idUsuario = null)
     {
         $query = Notificacion::with('user', 'solicitud.materia', 'solicitud.ambiente');
 
-        if ($nombreUsuario) {
-            $query->whereHas('user', function ($query) use ($nombreUsuario) {
-                $query->where('name', $nombreUsuario);
+        if ($idUsuario) {
+            $query->whereHas('user', function ($query) use ($idUsuario) {
+                $query->where('id', $idUsuario);
             });
         }
         $notificaciones = $query->get();
         return response()->json($notificaciones, 200);
     }
+
+
+
     public function solicitudID($idSolicitud = null)
     {
         $query = Notificacion::query()->select('titulo');
@@ -87,5 +90,44 @@ class NotificacionController extends Controller
 
         $contenidos = $query->pluck('titulo');
         return response()->json($contenidos, 200);
+    }
+    public function notificacionSinVista($idUsuario = null)
+    {
+        $query = Notificacion::with(['solicitud' => function ($query) {
+            $query->select('id', 'estado');
+        }])
+            ->where('visto', 1)
+            ->select('id', 'titulo', 'contenido', 'id_solicitud');
+
+        if ($idUsuario) {
+            $query->whereHas('user', function ($query) use ($idUsuario) {
+                $query->where('id', $idUsuario);
+            });
+        }
+
+        $notificaciones = $query->get()->map(function ($notificacion) {
+            return [
+                'id' => $notificacion->id,
+                'titulo' => $notificacion->titulo,
+                'contenido' => $notificacion->contenido,
+                'estado' => $notificacion->solicitud->estado,
+            ];
+        });
+
+        return response()->json($notificaciones, 200);
+    }
+    public function cambiarEstadoNotificacion($idNotificacion)
+    {
+        $notificacion = Notificacion::find($idNotificacion);
+
+        if (!$notificacion) {
+            return response()->json(['message' => 'Notificación no encontrada'], 404);
+        }
+
+        $notificacion->visto = 0;
+
+        $notificacion->save();
+
+        return response()->json(['message' => 'Estado de notificación actualizado correctamente'], 200);
     }
 }

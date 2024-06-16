@@ -3,6 +3,7 @@ import { reservasDB } from "../api";
 import { ISimpleSolicitud } from "../interfaces/simple-solicitud";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
+import { ISolicitudesResponse } from "../interfaces/solicitudes-response";
 
 
 interface SolicitudState {
@@ -17,10 +18,10 @@ interface SolicitudState {
     estado: string,
     numero_estudiantes: number,
     id_materia:number, 
-    grupos:number[], 
+    grupos:string[], 
     ambiente_id:number,
-    docentes:number[],
-    periodos:number[]
+    docentes:string[],
+    periodos:string[]
     ) => Promise<void>;
   }
   
@@ -46,6 +47,18 @@ interface SolicitudState {
         console.log( motivo);
         console.log(typeof fecha_solicitud);
         console.log(fecha_solicitud);
+        
+        console.log(typeof estado);
+        console.log(estado);
+        console.log(typeof numero_estudiantes);
+        console.log(numero_estudiantes);
+        
+        console.log(typeof id_materia);
+        console.log(id_materia);
+        console.log(typeof grupos[0]);
+        console.log(grupos);
+        console.log(typeof ambiente_id);
+        console.log(ambiente_id);
         console.log(typeof docentes);
         console.log( docentes);
         console.log(typeof periodos);
@@ -56,10 +69,10 @@ interface SolicitudState {
           fecha_solicitud,
           estado,
           numero_estudiantes,
-          id_materia, 
-          grupos, 
           ambiente_id,
           docentes,
+          id_materia, 
+          grupos, 
           periodos
 
         });
@@ -70,6 +83,7 @@ interface SolicitudState {
           estado: 'Reservado',
         };
         const { data } = await reservasDB.put<{ message: string }>("/updateEstado", dataToSend);
+        console.log(data);
       }
   
         toast.success("Su reserva fue creada exitosamente", { description: data.message });

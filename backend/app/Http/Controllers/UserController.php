@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Rol;
 use App\Models\Materia;
+use App\Models\Grupo;
+use Illuminate\Support\Facades\Hash;
+
 class UserController extends Controller
 {
     
@@ -25,7 +28,9 @@ class UserController extends Controller
             'telefono' => 'required|string',
             'codigo_sis' => 'required|string|unique:users,codigo_sis',
             'email' => 'required|email|unique:users,email',
-            'materias' => 'required|array',
+            'materias_grupos' => 'required|array',
+            'materias_grupos.*' => 'required|array|size:2',
+            'materias_grupos.*.*' => 'required|integer|exists:materias,id|exists:grupos,id',
         ]);
 
         // Crea un nuevo rol
@@ -38,13 +43,35 @@ class UserController extends Controller
         $user->telefono = $request->input('telefono');
         $user->codigo_sis = $request->input('codigo_sis');
         $user->email = $request->input('email');
+        $user->password = bcrypt($request->input('codigo_sis'));
         $user->save();
+        // Obtiene los pares de IDs de materia y grupo
+         $materias_grupos = $request->input('materias_grupos');
 
         // Crea un nuevo UsuarioRol
         $rol->users()->attach($user->id);
-        // Asocia las materias al usuario
-        $materias = $request->input('materias');
-        $user->materias()->attach($materias);
+       
+        foreach ($materias_grupos as $materia_grupo) {
+            $materia_id = $materia_grupo[0];
+            $grupoNumber = $materia_grupo[1];
+    
+            // Encuentra el grupo con el mismo id de materia y grupo
+            $grupo = Grupo::where('materia_id', $materia_id)
+                          ->where('grupo', $grupoNumber)
+                          ->whereNull('user_id')
+                          ->first();
+    
+            // Si el grupo existe, actualiza el user_id
+            if ($grupo) {
+                $grupo->user_id = $user->id;
+                $grupo->save();
+            }else{
+                $user->delete();
+                return response()->json(['message' => 'Materia y grupo ya tienen un usuario asignado'], 400);
+            }
+        }
+
+
         // Devuelve la respuesta
         return response()->json(['message' => 'Usuario, rol y materias creados correctamente'], 201);
     }
@@ -69,8 +96,7 @@ class UserController extends Controller
     {
         // Obtiene todos los usuarios que tienen el rol "docente"
         $docentes = User::whereHas('rols', function ($query) {
-            $query->where('nombre', 'Docente')
-                  ->where('estado', 'Habilitado');
+            $query->where('nombre_rol', 'User');
         })->get();
 
         // Devuelve la lista de docentes
@@ -94,55 +120,33 @@ class UserController extends Controller
     }
 
         
+   
+  
     public function showMaterias($id)
     {
         // Encuentra el usuario por ID
         $user = User::find($id);
-
+    
         // Si el usuario no existe, devuelve un error
         if (!$user) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
-
-        // Obtiene las materias del usuario
-        $materias = $user->materias;
-
+    
+        // Obtiene los grupos del usuario
+        $grupos = $user->grupos;
+    
+        // Obtiene las materias de los grupos
+        $materias = $grupos->map(function ($grupo) {
+            return $grupo->materia;
+        });
+    
+        // Elimina las materias duplicadas
+        $materias = $materias->unique('id');
+    
         // Devuelve las materias
-        return response()->json($materias, 200);
+        return response()->json($materias->values(), 200);
     }
-
-
-        
-    public function getGruposDeMateriaDeDocente($docente_id, $materia_id)
-    {
-        // Encuentra el docente por su ID
-        $docente = User::find($docente_id);
-
-        // Si el docente no existe, devuelve un error
-        if (!$docente) {
-            return response()->json(['message' => 'Docente no encontrado'], 404);
-        }
-
-        // Encuentra la materia por su ID
-        $materia = Materia::find($materia_id);
-
-        // Si la materia no existe, devuelve un error
-        if (!$materia) {
-            return response()->json(['message' => 'Materia no encontrada'], 404);
-        }
-
-        // Si la materia no pertenece al docente, devuelve un error
-        if ($materia->user_id != $docente->id) {
-            return response()->json(['message' => 'La materia no pertenece al docente'], 400);
-        }
-
-        // Obtiene los grupos de la materia
-        $grupos = $materia->grupos;
-
-        // Devuelve los grupos
-        return response()->json($grupos, 200);
-    }
-
+    
 
     public function showSolicitudes($id)
 {
@@ -164,19 +168,77 @@ class UserController extends Controller
 
 public function showGrupos($id)
 {
-    // Encuentra la materia por ID
-    $materia = Materia::find($id);
+    // Encuentra el usuario por ID
+    $user = User::find($id);
 
-    // Si la materia no existe, devuelve un error
-    if (!$materia) {
-        return response()->json(['message' => 'Materia no encontrada'], 404);
+    // Si el usuario no existe, devuelve un error
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
     }
 
-    // Obtiene los grupos de la materia
-    $grupos = $materia->grupos;
+    // Obtiene los grupos del usuario
+    $grupos = $user->grupos;
 
     // Devuelve los grupos
     return response()->json($grupos, 200);
 }
+
+public function changePassword(Request $request, $id)
+{
+    // Encuentra el usuario por su ID
+    $user = User::find($id);
+
+    // Si el usuario no existe, devuelve un error
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    // Valida los datos del formulario
+    $request->validate([
+        'contra_actual' => 'required|string',
+        'contra_nueva' => 'required|string|min:8',
+    ]);
+
+    // Verifica que la contraseña actual sea correcta
+    if (!Hash::check($request->input('contra_actual'), $user->password)) {
+        return response()->json(['message' => 'La contraseña actual es incorrecta'], 400);
+    }
+
+    // Cambia la contraseña del usuario
+    $user->password = bcrypt($request->input('contra_nueva'));
+    $user->save();
+
+    // Devuelve una respuesta
+    return response()->json(['message' => 'Contraseña actualizada correctamente'], 200);
+}
+
+public function deshabilitarDocente($id)
+{
+    // Busca el usuario por su ID
+    $user = User::find($id);
+
+    // Si no se encuentra el usuario, devuelve un error 404
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    // Elimina el rol de usuario
+    $user->rols()->detach();
+
+    // Cambia el estado de las reservas de "Aceptado" a "Rechazado"
+    // solo si el usuario es el único docente en la reserva
+    $user->solicitudes()->where('estado', 'Aceptada')
+                     ->whereDoesntHave('users', function ($query) use ($id) {
+                         $query->where('users.id', '<>', $id);
+                     })
+                     ->update(['estado' => 'Rechazado']);
+
+    // Elimina el campo docente_id de la tabla grupos
+    $user->grupos()->update(['user_id' => null]);
+
+    // Devuelve una respuesta
+    return response()->json(['message' => 'Docente deshabilitado correctamente'], 200);
+}
+
 
 }

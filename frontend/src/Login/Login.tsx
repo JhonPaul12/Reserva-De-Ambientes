@@ -9,13 +9,21 @@ export const Login = () => {
 
   const authStatus = useAuthStore((state) => state.authStatus);
   const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
+  const user = useAuthStore((state) => state.user);
 
   const login = useAuthStore((state) => state.login);
   if (authStatus === "pending") {
     checkAuthStatus();
   }
+
+  //Valido si el usuario ya es este autenticado lleva a admin por defecto
   if (authStatus === "auth") {
-    return <Navigate to="/admin" />;
+    toast.success("Bienvenido");
+    console.log(user?.roles);
+    if (user?.roles.includes("Admin")) {
+      return <Navigate to="/admin" />;
+    }
+    return <Navigate to="/user" />;
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

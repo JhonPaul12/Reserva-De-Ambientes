@@ -2,6 +2,8 @@ import { TodasSol } from '../components/TodasSol'
 
 export const TodasSolicitudes = () => {
   return (
-    <TodasSol/>
+    <div className="w-full" style={{overflowX:'auto'}}>
+      <TodasSol/>
+    </div>
   )
 }

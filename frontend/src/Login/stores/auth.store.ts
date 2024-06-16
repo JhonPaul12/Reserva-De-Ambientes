@@ -10,9 +10,14 @@ interface IloginResponse {
 interface IUser {
   id: number;
   name: string;
+  apellidos: string;
+  telefono: string;
+  codigo_sis: string;
   email: string;
+  email_verified_at: null;
   created_at: string;
   updated_at: string;
+  roles: string[];
 }
 //Guardamos estados
 interface authState {
@@ -25,6 +30,7 @@ interface authState {
 interface Actions {
   login: (email: string, password: string) => Promise<void>;
   checkAuthStatus: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const storeApi: StateCreator<authState & Actions> = (set, get) => ({
@@ -54,7 +60,7 @@ const storeApi: StateCreator<authState & Actions> = (set, get) => ({
         token: undefined,
         authStatus: "not-auth",
       }));
-      console.log(error);
+      toast.error("Error al iniciar sesión");
     }
   },
 
@@ -91,6 +97,30 @@ const storeApi: StateCreator<authState & Actions> = (set, get) => ({
         authStatus: "not-auth",
       }));
       return;
+    }
+  },
+
+  logout: async () => {
+    const token = get().token;
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      set(() => ({
+        user: undefined,
+        token: undefined,
+        authStatus: "not-auth",
+      }));
+      console.log(data);
+      toast.success("Sesión cerrada con exito");
+    } catch (error) {
+      toast.error("Error al cerrar sesión" + error);
     }
   },
 });

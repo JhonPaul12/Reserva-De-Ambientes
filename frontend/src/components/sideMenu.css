@@ -1,1 +1,40 @@
+/* Estilos básicos del menú */
+.sidemenu__link {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  text-decoration: none;
+  color: white;
+}
 
+.sidemenu__link--active {
+  background-color: #1a1a1a;
+}
+
+/* Icono de menú hamburguesa */
+.mobile-menu-icon {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #1741cc;
+  background: none;
+  border: none;
+  outline: none;
+  z-index: 1000; /* Ensure the button is above other elements */
+}
+
+/* Estilos para pantallas pequeñas */
+@media (max-width: 640px) {
+  .mobile-menu-icon {
+    display: block;
+  }
+  .bg-azul {
+    display: none;
+  }
+  .bg-azul.block {
+    display: block;
+  }
+}

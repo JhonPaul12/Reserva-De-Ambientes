@@ -10,9 +10,11 @@ import axios from "axios";
 import { Toaster, toast } from "sonner";
 
 export const Reglas = () => {
-  const [checkedItems, setCheckedItems] = useState({});
+  const [checkedItems, setCheckedItems] = useState<{
+    [key: string]: { id: number; dia: string; fijo?: boolean };
+  }>({});
   const [selectedAmbiente, setSelectedAmbiente] = useState("");
-  const [selectedRegla, setSelectedRegla] = useState(null);
+  const [selectedRegla, setSelectedRegla] = useState("");
   const [fechaInicial, setFechainicial] = useState<Dayjs | null>(null);
   const [fechafinal, setFechafinal] = useState<Dayjs | null>(null);
 
@@ -21,10 +23,11 @@ export const Reglas = () => {
   const [resetRegla, setResetRegla] = useState(false);
   const [resetCheckboxes, setResetCheckboxes] = useState(false);
 
+  //Para resetear los valores
   const resetValues = () => {
     setCheckedItems({});
     setSelectedAmbiente("");
-    setSelectedRegla(null);
+    setSelectedRegla("");
     setFechainicial(null);
     setFechafinal(null);
     setResetAmbiente((prev) => !prev);
@@ -32,22 +35,28 @@ export const Reglas = () => {
     setResetCheckboxes((prev) => !prev);
   };
 
-  //Lsita de checkbox
-  const handleCheckboxChange = (checkedItems) => {
+  //Lista de checkbox
+  const handleCheckboxChange = (
+    checkedItems: Record<string, { id: number; dia: string; fijo?: boolean }>
+  ) => {
     setCheckedItems(checkedItems);
   };
 
-  //Lsita de Ambientes
+  //Lista de Ambientes
   const handleSelectChange = (selectedValue: string) => {
     setSelectedAmbiente(selectedValue);
+    if (selectedValue === "") {
+      setCheckedItems({});
+      setResetCheckboxes((prev) => !prev);
+    }
   };
 
-  //Lsita de Reglas
+  //Lista de Reglas
   const handleReglaChange = (selectedValue: string) => {
     setSelectedRegla(selectedValue);
   };
 
-  //Obtengo rela
+  //Obtengo reglas
   const obtenerRegla = useCallback(async () => {
     try {
       const response = await fetch(
@@ -70,8 +79,8 @@ export const Reglas = () => {
     }
   }, [selectedRegla, obtenerRegla]);
 
+  //Funcion para crear los periodos
   const guardar = async () => {
-    await obtenerRegla();
     if (
       fechaInicial &&
       fechafinal &&
@@ -79,6 +88,8 @@ export const Reglas = () => {
       selectedAmbiente &&
       Object.keys(checkedItems).length !== 0
     ) {
+      //Creamos la regla asociada al ambiente
+      await crearReglaAmbiente();
       const startDate = dayjs(fechaInicial);
       const endDate = dayjs(fechafinal);
       const datos = {
@@ -98,8 +109,14 @@ export const Reglas = () => {
           periodos: datos.periodos,
         });
         if (response.data.errores !== undefined) {
-          console.log(response.data.errores);
-          toast.error("Ya existen periodos con este ambiente y horario");
+          if (response.data.success !== undefined) {
+            resetValues();
+            toast.success("Guardado con exito");
+            console.log(response.data);
+          } else {
+            console.log(response.data);
+            toast.error("Los peridos seleccionados ya estan asignados");
+          }
         } else {
           resetValues();
           toast.success("Guardado con exito");
@@ -109,16 +126,16 @@ export const Reglas = () => {
       }
     } else {
       if (!selectedRegla) {
-        toast.error("Debe seleccionar una regla");
+        toast.error("Debe seleccionar una Gestion");
       } else if (!selectedAmbiente) {
         toast.error("Debe seleccionar un ambiente");
       } else if (Object.keys(checkedItems).length === 0) {
         toast.error("Debe seleccionar al menos un horario");
       }
     }
-
-    // Crear el objeto de datos
   };
+
+  //Funcion para obtener la fecha
   const obtenerFecha = (day: string, startDate: Dayjs, endDate: Dayjs) => {
     const daysOfWeek: { [key: string]: number } = {
       domingo: 0,
@@ -140,6 +157,25 @@ export const Reglas = () => {
     return null;
   };
 
+  //Creamos la conexion de regla con el ambiente que se necesita para asignar horarios
+  const crearReglaAmbiente = async () => {
+    //Verficamos si tiene regla
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/ambiente-regla",
+        {
+          id_ambiente: selectedAmbiente,
+          id_regla: selectedRegla,
+        }
+      );
+      if (response.status !== 200) {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log("Error al guardar:", error);
+    }
+  };
+
   return (
     <div className="reglas-container">
       <Toaster
@@ -152,7 +188,7 @@ export const Reglas = () => {
       <div className="mt-10 mx-10 text-negro flex flex-col text-center">
         <h1 className="text-3xl font-bold"> Asignar Horarios</h1>
         <div className="flex flex-row ">
-          <p className="text-2xl font-bold m-auto my-9">Seleccionar Regla</p>
+          <p className="text-2xl font-bold m-auto my-9">Gestion Actual</p>
           <ListaReglas onSelectChange={handleReglaChange} reset={resetRegla} />
           <p className="text-2xl font-bold mx-5 mt-9">Seleccionar Ambiente</p>
           <ListaAmbientes
@@ -160,7 +196,11 @@ export const Reglas = () => {
             reset={resetAmbiente}
           />
         </div>
-        <MenuCheckBox prueba={handleCheckboxChange} reset={resetCheckboxes} />
+        <MenuCheckBox
+          prueba={handleCheckboxChange}
+          reset={resetCheckboxes}
+          selectedAmbiente={selectedAmbiente}
+        />
         <Button
           className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={guardar}

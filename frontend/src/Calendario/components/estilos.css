@@ -1,0 +1,46 @@
+.rbc-toolbar button {
+  background-color: #0d1b47;
+  color: white;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.rbc-toolbar button:hover {
+  background-color: #8eacd8;
+  color: black;
+}
+
+.rbc-header{
+    background-color: #0d1b47;
+    color: white;
+}
+
+.calendario-container {
+  height: 90%;
+  width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .calendario-container {
+    height: 400px; 
+    width: 100%;
+    font-size: 10px;
+  }
+  
+  .rbc-toolbar button{
+    font-size: 12px;
+  }
+
+  .rbc-event-label {
+    font-size: 8px; 
+  }
+  
+  .rbc-time-slot {
+    font-size: 8px; 
+    line-height: 1.2;
+  }
+}
+
+

@@ -9,7 +9,7 @@ class Excepcion extends Model
 {
     use HasFactory;
 
-    protected $filleable=[
+    protected $fillable=[
         "fecha_excepcion",
         "motivo"
     ];

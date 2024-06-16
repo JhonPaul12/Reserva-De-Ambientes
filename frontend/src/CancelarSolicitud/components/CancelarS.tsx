@@ -9,32 +9,59 @@ import {
   TableRow,
   Modal,
   ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Pagination,
 } from "@nextui-org/react";
 import axios from "axios";
-import { CReservaD} from "../interfaces/Solicitud";
-import "./estilos.css";
+import { CReservaD } from "../interfaces/Solicitud";
+import { useAuthStore } from "../../Login/stores/auth.store";
 
 export const CancelarS = () => {
   const [solicitudes, setSolicitudes] = useState<CReservaD[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [solicitudId, setSolicitudId] = useState<number | null>(null);
+  const [solicitudDetalles, setSolicitudDetalles] = useState<{
+    materia: string;
+    motivo: string;
+  } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     getSolicitudes();
+    calculateItemsPerPage();
+    window.addEventListener("resize", calculateItemsPerPage);
+    return () => window.removeEventListener("resize", calculateItemsPerPage);
   }, []);
+
+  const user = useAuthStore((state) => state.user?.id);
 
   const getSolicitudes = async () => {
     const respuesta = await axios.get<CReservaD[]>(
-      `http://127.0.0.1:8000/api/nombre_usuario/Vladimir Abel`
+      `http://127.0.0.1:8000/api/nombre_usuario/${user}`
     );
     const solicitudesPendientes = respuesta.data.filter(
-      (solicitud) => solicitud.solicitud.estado === "Aceptado"
+      (solicitud) => solicitud.solicitud.estado === "Aceptada"
     );
     setSolicitudes(solicitudesPendientes);
   };
 
-  const openModal = (id: number) => {
-    setSolicitudId(id);
+  const calculateItemsPerPage = () => {
+    const headerHeight = 35;
+    const rowHeight = 90;
+    const availableHeight = window.innerHeight - headerHeight;
+    const items = Math.floor(availableHeight / rowHeight);
+    setItemsPerPage(items);
+  };
+
+  const openModal = (solicitud: CReservaD) => {
+    setSolicitudId(solicitud.solicitud.id);
+    setSolicitudDetalles({
+      materia: solicitud.solicitud.materia.nombre_materia,
+      motivo: solicitud.solicitud.motivo,
+    });
     setModalOpen(true);
   };
 
@@ -52,73 +79,98 @@ export const CancelarS = () => {
     }
   };
 
+  const paginatedSolicitudes = solicitudes.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="contenedor-table">
-      <label className="ml-10 text-3xl font-bold text-center text-gray-900">
-        CANCELAR RESERVA
-      </label>
-      <section className="mx-6 my-4">
-        <Table className="custom-table" aria-label="Tabla de datos">
+    <div className="w-full px-4 sm:px-8">
+      <div>
+        <label className="block text-3xl font-bold text-gray-900">
+          CANCELAR RESERVA
+        </label>
+        <Table
+          className="w-full mt-5 mb-8 text-center"
+          aria-label="Tabla de datos"
+        >
           <TableHeader>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Ambiente
+            <TableColumn className="text-xs text-center bg-slate-300">
+              AMBIENTE
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Docente
+            <TableColumn className="text-xs text-center bg-slate-300">
+              DOCENTE
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Materia
+            <TableColumn className="text-xs text-center bg-slate-300">
+              MATERIA
             </TableColumn>
-             <TableColumn className="text-center text-3xl bg-slate-300">
-              H. Inicio
+            <TableColumn className="text-xs text-center bg-slate-300">
+              MOTIVO
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              H. Final
-            </TableColumn> 
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Fecha
+            <TableColumn className="text-xs text-center bg-slate-300">
+              INICIO
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Nro. Est.
+            <TableColumn className="text-xs text-center bg-slate-300">
+              FIN
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Estado
+            <TableColumn className="text-xs text-center bg-slate-300">
+              FECHA
             </TableColumn>
-            <TableColumn className="text-center text-3xl bg-slate-300">
-              Opcion
+            <TableColumn className="text-xs text-center bg-slate-300">
+              PERSONAS
+            </TableColumn>
+            <TableColumn className="text-xs text-center bg-slate-300">
+              ESTADO
+            </TableColumn>
+            <TableColumn className="text-xs text-center bg-slate-300">
+              OPCIÓN
             </TableColumn>
           </TableHeader>
-          <TableBody>
-            {solicitudes.map((solicitud) => (
+          <TableBody emptyContent={"No Tiene reservas para cancelar"}>
+            {paginatedSolicitudes.map((solicitud) => (
               <TableRow key={solicitud.solicitud_id}>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.solicitud.ambiente.nombre}
                 </TableCell>
-                <TableCell className="text-base text-black">
-                  {solicitud.solicitud.materia.user.name + " " + solicitud.solicitud.materia.user.apellidos}
+                <TableCell className="text-xs text-black">
+                  {solicitud.solicitud.users.map((user, index) => (
+                    <div key={index}>
+                      *{user.name} {user.apellidos}
+                    </div>
+                  ))}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.solicitud.materia.nombre_materia}
                 </TableCell>
-                <TableCell className="text-base text-black">
-                    {solicitud.periodos[0].periodo.horario.hora_inicio}
-                  </TableCell>
-                  <TableCell className="text-base text-black">
-                    {solicitud.periodos[solicitud.periodos.length-1].periodo.horario.hora_fin}
+                <TableCell className="text-xs text-black">
+                  {solicitud.solicitud.motivo}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
+                  {solicitud.periodos[0].periodo.horario.hora_inicio.slice(
+                    0,
+                    -3
+                  )}
+                </TableCell>
+                <TableCell className="text-xs text-black">
+                  {solicitud.periodos[
+                    solicitud.periodos.length - 1
+                  ].periodo.horario.hora_fin.slice(0, -3)}
+                </TableCell>
+                <TableCell className="text-xs text-black">
                   {solicitud.periodos[0].periodo.fecha}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.solicitud.numero_estudiantes}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   {solicitud.solicitud.estado}
                 </TableCell>
-                <TableCell className="text-base text-black">
+                <TableCell className="text-xs text-black">
                   <Button
-                    className="bg-danger text-white"
-                    onClick={() => openModal(solicitud.solicitud.id)}
+                    color="danger"
+                    size="sm"
+                    onClick={() => openModal(solicitud)}
+                    variant="shadow"
                   >
                     Cancelar
                   </Button>
@@ -127,25 +179,34 @@ export const CancelarS = () => {
             ))}
           </TableBody>
         </Table>
-      </section>
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        className="p-10 bg-white"
-      >
-        <ModalContent className="">
-          ¿Estás seguro de que quieres cancelar su reserva?
-          <Button
-            className="bg-danger m-2 text-white"
-            onClick={cancelarSolicitud}
-          >
-            Sí, cancelar
-          </Button>
-          <Button className="m-2" onClick={() => setModalOpen(false)}>
-            No
-          </Button>
-        </ModalContent>
-      </Modal>
+        <div className="flex justify-center my-4">
+          <Pagination
+            showControls
+            total={Math.ceil(solicitudes.length / itemsPerPage)}
+            initialPage={currentPage}
+            onChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+          <ModalContent>
+            <ModalHeader>¿Está seguro de cancelar su reserva?</ModalHeader>
+            <ModalBody>
+              <p>Materia: {solicitudDetalles?.materia}</p>
+              <p>Motivo: {solicitudDetalles?.motivo}</p>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="danger"
+                variant="shadow"
+                onClick={cancelarSolicitud}
+              >
+                Sí, cancelar
+              </Button>
+              <Button onClick={() => setModalOpen(false)}>No</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </div>
     </div>
   );
 };

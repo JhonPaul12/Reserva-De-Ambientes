@@ -18,6 +18,15 @@ import { ReglasAmbientes } from "../ReglasAmbientes/ReglasAmbientes";
 import { VerTodasReservasAdmin } from "../ReservasAdmin2/indes";
 import { Login } from "../Login/Login";
 import { NotificacionesUsuario } from "../Notificaciones";
+import { ModificarDocentes } from "../ModificarDocentes/ModificarDocentes";
+import { CrearDocente } from "../CrearDocente/CrearDocente";
+import { DarDeBaja } from "../DarDeBajaDocente/DarDeBaja";
+import { NotificarCancelaciones } from "../NotificarCancelacion";
+import { NotificarCancelacionesUbi } from "../NotificarCacelacionUbicacion";
+import { CalendarioUser } from "../Calendario";
+import { Feriados } from "../RegistrarFeriados/Feriados";
+import { GInformeAmbientes } from "../GenerarInformes";
+import { GenerarInfoDocente } from "../GenerarInformeDocente";
 
 export const router = createBrowserRouter([
   {
@@ -66,8 +75,40 @@ export const router = createBrowserRouter([
         element: <CancelarReservasAdmin />,
       },
       {
-        path: "reglas-ambientes",
+        path: "gestion-ambientes",
         element: <ReglasAmbientes />,
+      },
+      {
+        path: "crear-feriados",
+        element: <Feriados />,
+      },
+      {
+        path: "modificar-docentes",
+        element: <ModificarDocentes />,
+      },
+      {
+        path: "crear-docente",
+        element: <CrearDocente />,
+      },
+      {
+        path: "dar-baja-docente",
+        element: <DarDeBaja />,
+      },
+      {
+        path: "cancelacion-ambiente",
+        element: <NotificarCancelaciones />,
+      },
+      {
+        path: "cancelacion-ubicacion",
+        element: <NotificarCancelacionesUbi />,
+      },
+      {
+        path: "informe-ambiente",
+        element: <GInformeAmbientes />,
+      },
+      {
+        path: "informe-docente",
+        element: <GenerarInfoDocente />,
       },
     ],
   },
@@ -83,6 +124,10 @@ export const router = createBrowserRouter([
       {
         path: "visualizar-ambientes",
         element: <BusquedaFil />,
+      },
+      {
+        path: "calendario",
+        element: <CalendarioUser />,
       },
       //{
       //  path: "modificar-solicitud",

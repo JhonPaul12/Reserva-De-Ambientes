@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ambiente;
+use App\Models\Periodo;
 use Illuminate\Validation\ValidationException;
 
 
@@ -62,5 +63,21 @@ class AmbienteController extends Controller
             'success'=>true,
             'data'=> $ambiente
         ],200);
+    }
+
+    public function libres()
+    {
+        try {
+            // Recuperar los id_ambiente de los periodos que tienen estado 'libre'
+            $idAmbientesLibres = Periodo::where('estado', 'libre')
+                ->pluck('id_ambiente')
+                ->unique();
+
+            $ambiente = Ambiente::find($idAmbientesLibres);
+            return response()->json($ambiente, 200);
+        } catch (\Exception $e) {
+            // Captura cualquier excepción y devuelve un error
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

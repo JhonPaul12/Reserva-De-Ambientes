@@ -16,52 +16,58 @@ import { ISimpleAmbiente } from "../../VerAmbientes/interfaces/simple-ambientes"
 import React from "react";
 import { ISimplePeriodo } from "../interfaces/simple-periodo";
 import { ISimpleExcepcion } from "../interfaces/simple-exception";
+import { useAuthStore } from "../../Login/stores/auth.store";
 
 export const FormOrdenado = () => {
+  const user = useAuthStore((state) => state.user);
+
   useEffect(() => {
-    const id = 2;
-    getUsuario(id);
-    getDocentes();
-    getMaterias(id);
+    // getUsuario(user?.id);
+    getMaterias();
     getExcepciones();
     if (listOficial.length === 0) {
-      setListOficial([`${id}`]);
+      setListOficial([`${user?.id}`]);
     }
   }, []);
 
   //DOCENTES
-  const instanciaInicial: ISimpleDocente = {
-    id: 0, // Pon el valor que necesites aquí
-    name: "",
-    apellidos: "",
-    telefono: "",
-    codigo_sis: "",
-    email: "",
-    email_verified_at: null,
-  };
-  const [usuario, setUsuario] = useState(instanciaInicial);
+  //const [usuario, setUsuario] = useState(instanciaInicial);
+
+  type Selection = Set<string>;
   const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
   const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(
-    new Set([])
+    new Set<string>([])
   );
-  const [listOficial, setListOficial] = useState([]);
-  const [listdocentes, setListDocentes] = useState([]);
+  const [listOficial, setListOficial] = useState<string[]>([]);
+  const [listdocentes, setListDocentes] = React.useState<string[]>([]);
 
-  const getUsuario = async (id: number) => {
+  /*const getUsuario = async (id: number) => {
     const respuesta = await axios.get(
       `http://127.0.0.1:8000/api/usuario/${id}`
     );
     console.log(respuesta.data);
     setUsuario(respuesta.data);
-    console.log(usuario);
-  };
+    console.log(user);
+  };*/
 
-  const docentesOrdenAlfabetico = [...docentes].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-  const getDocentes = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
-    setDocentes(respuesta.data);
+  const docentesOrdenAlfabetico = [...docentes].sort((a, b) => {
+    // Si a es null, lo ponemos al final
+    if (a === null) return 1;
+    // Si b es null, lo ponemos al final
+    if (b === null) return -1;
+    // Comparar por el campo 'name'
+    return a.name.localeCompare(b.name);
+  });
+
+  const getDocentes = async (id: number) => {
+    const respuesta = await axios.get(
+      `http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`
+    );
+    const docentesArray = Object.values(respuesta.data).map(
+      (item) => item as ISimpleDocente
+    );
+    console.log(docentesArray);
+    setDocentes(docentesArray);
   };
 
   const handleSelectionChangeDocentes = (
@@ -74,21 +80,24 @@ export const FormOrdenado = () => {
     console.log(listOficial);
     console.log(listdocentes);
     setValuesDocentes(new Set(e.target.value.split(",")));
+    getGrupos(parseInt(inputMateria), arrayNumeros);
   };
 
-  const optionsDocentes = docentesOrdenAlfabetico.map((docente) => ({
-    label: `${docente.name} ${docente.apellidos}`,
-    value: docente.id,
-  }));
+  const optionsDocentes = docentesOrdenAlfabetico
+    .filter((docente) => docente !== null) // Filtrar los valores null
+    .map((docente) => ({
+      label: `${docente.name} ${docente.apellidos}`,
+      value: docente.id,
+    }));
 
   //MATERIA
 
   const [inputMateria, setInputMateria] = useState("");
   const [materias, setMaterias] = useState<ISimpleMateria[]>([]);
 
-  const getMaterias = async (id: number) => {
+  const getMaterias = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/materias/${id}/`
+      `http://127.0.0.1:8000/api/usuario/materias/${user?.id}/`
     );
     setMaterias(respuesta.data);
   };
@@ -99,7 +108,12 @@ export const FormOrdenado = () => {
     const { value } = e.target as HTMLSelectElement;
     console.log(value);
     setInputMateria(value);
-    getGrupos(parseInt(value));
+    getDocentes(parseInt(value));
+    getGrupos(parseInt(value), listdocentes);
+  };
+  const verificarMateriaDoc = async () => {
+    if (inputMateria === "")
+      toast.error("Seleccione una materia para ver a los docentes asociados");
   };
 
   //MOTIVO
@@ -144,19 +158,25 @@ export const FormOrdenado = () => {
 
   const [inputNEst, setInputNEst] = useState("");
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const charCode = event.charCode;
+    // Allow only numbers (charCode 48-57)
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  };
+
   const onInputChangeNEst = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
+
     if (inputValue.value.length < 6) {
-      if (!isNaN(parseInt(inputValue.value))) {
-        setInputNEst(inputValue.value);
-        getAmbientes(inputValue.value);
-      } else {
-        setInputNEst("");
-        toast.error("El numero de estudiantes debe expresarse numericamente");
-        console.log("El numero de estudiantes debe expresarse numericamente");
+      if (inputValue.value === "0") {
+        e.preventDefault();
+        return;
       }
+      setInputNEst(inputValue.value);
+      getAmbientes(inputValue.value);
     } else {
-      setInputNEst("");
       toast.error("El numero de estudiantes no debe superar los 5 caracteres");
       console.log("El numero de estudiantes no debe superar los 5 caracteres");
     }
@@ -164,20 +184,58 @@ export const FormOrdenado = () => {
 
   //GRUPO
 
-  const [inputGrupo, setInputGrupo] = useState("");
   const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
-  const [listGrupos, setListGrupos] = useState([]);
+  const [listGrupos, setListGrupos] = useState<string[]>([]);
   const [valuesGrupos, setValuesGrupos] = React.useState<Selection>(
     new Set([])
   );
 
-  const getGrupos = async (materia_id: number) => {
+  /*const getGrupos = async (materia_id: number) => {
     try {
       // Obtener los grupos para el docente principal
       const respuestaPrincipal = await axios.get(
         `http://127.0.0.1:8000/api/gruposMateria/${materia_id}`
       );
       setGrupos(respuestaPrincipal.data);
+    } catch (error) {
+      console.error("Error al obtener los grupos:", error);
+    }
+  };*/
+
+  const getGrupos = async (materia_id: number, docente_id: string[]) => {
+    try {
+      // Obtener los grupos para el docente principal
+      const respuestaPrincipal = await axios.get(
+        `http://127.0.0.1:8000/api/docentes/${user?.id}/${materia_id}`
+      );
+      setGrupos(respuestaPrincipal.data);
+      let gruposTem = respuestaPrincipal.data;
+
+      console.log("Grupos del docente principal:", gruposTem);
+
+      console.log(docente_id.length);
+      if (docente_id.length !== 0) {
+        const solicitudes = docente_id.map((docente) =>
+          axios.get<ISimpleGrupo[]>(
+            `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
+          )
+        );
+
+        //Esperar a que todas las solicitudes se completen
+        const respuestas = await Promise.all(solicitudes);
+        console.log(respuestas);
+
+        //Extraer los datos de cada respuesta y unirlos a la lista de grupos
+        respuestas.forEach((respuesta) => {
+          gruposTem = [...gruposTem, ...respuesta.data];
+        });
+
+        console.log("Grupos de todos los docentes:", gruposTem);
+      }
+
+      // Actualizar el estado con la lista unida de grupos
+      setGrupos(gruposTem);
+      console.log("Estado actualizado con los grupos:", gruposTem);
     } catch (error) {
       console.error("Error al obtener los grupos:", error);
     }
@@ -202,7 +260,9 @@ export const FormOrdenado = () => {
   const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
 
   const getAmbientes = async (num: string) => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
+    const respuesta = await axios.get(
+      `http://127.0.0.1:8000/api/ambientesLibres`
+    );
     const filteredAmbientes = respuesta.data.filter(
       (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
     );
@@ -252,7 +312,7 @@ export const FormOrdenado = () => {
       );
     if (inputNEst != "" && ambientes.length === 0)
       toast.error(
-        "No existen ambientes que con capacidad apta para el numero de personas requerido"
+        "No existen ambientes DISPONIBLES con capacidad apta para el numero de personas requerido"
       );
     console.log(ambientes);
   };
@@ -262,12 +322,18 @@ export const FormOrdenado = () => {
   const [inputFecha, setInputFecha] = useState("");
   const [excepciones, setExcepciones] = useState<ISimpleExcepcion[]>([]);
 
+  interface DateObject {
+    year: number;
+    month: number;
+    day: number;
+  }
+
   const getExcepciones = async () => {
     const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
     setExcepciones(respuesta.data);
     console.log(respuesta.data);
   };
-  const handleDateChange = async (date) => {
+  const handleDateChange = async (date: DateObject) => {
     console.log(date);
 
     const fecha = `${date.year.toString()}-${date.month.toString()}-${date.day.toString()}`;
@@ -311,7 +377,7 @@ export const FormOrdenado = () => {
   //PERIODO
 
   const [inputHIni, setInputHIni] = useState<ISimplePeriodo[]>([]);
-  const [inputHFin, setInputHFin] = useState([]);
+  const [inputHFin, setInputHFin] = React.useState<string[]>([]);
   const [values, setValues] = React.useState<Selection>(new Set([]));
 
   const options = inputHIni.map((inputHIn) => ({
@@ -373,8 +439,6 @@ export const FormOrdenado = () => {
 
   const createSolicitud = useSolicitudStore((state) => state.createSolicitud);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  const [oficial, setOficial] = useState([]);
   const onInputChangeSave = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -415,7 +479,7 @@ export const FormOrdenado = () => {
           await createSolicitud(
             inputMotivo,
             inputFecha,
-            "Aceptado",
+            "Aceptada",
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
@@ -427,7 +491,7 @@ export const FormOrdenado = () => {
           await createSolicitud(
             inputMotivo,
             inputFecha,
-            "Aceptado",
+            "Aceptada",
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
@@ -446,8 +510,7 @@ export const FormOrdenado = () => {
       }
     }
   };
-  const onInputChangeCancelar = async (
-  ) => {
+  const onInputChangeCancelar = async () => {
     window.location.reload();
   };
   return (
@@ -465,16 +528,17 @@ export const FormOrdenado = () => {
             style={{ marginRight: "50px" }}
             className="text-ms text-gray-900"
           >
-            {usuario.name} {usuario.apellidos}
+            {user?.name} {user?.apellidos}
           </span>
 
           <Select
             label="Docentes asociados a la reserva"
             selectionMode="multiple"
-            placeholder="Seleccione docente"
+            placeholder="Seleccione docente..."
             selectedKeys={valuesDocentes}
             className="mb-5 mt-5 w-full"
             onChange={handleSelectionChangeDocentes}
+            onClick={verificarMateriaDoc}
           >
             {optionsDocentes.map((docente) => (
               <SelectItem key={docente.value} value={docente.label}>
@@ -526,15 +590,14 @@ export const FormOrdenado = () => {
 
           <label className="text-ms text-gray-900">Nro de personas*:</label>
           <Input
-            type="number"
+            type="text"
             value={inputNEst}
-            className="w-full"
-            style={{
-              fontSize: "10px",
-              padding: "20px",
-            }}
+            placeholder="Ingrese un número..."
             onChange={onInputChangeNEst}
-            min="1"
+            onKeyPress={handleKeyPress}
+            style={{
+              fontSize: "13px",
+            }}
           />
           <br />
 
@@ -636,7 +699,12 @@ export const FormOrdenado = () => {
           {/*BOTONES */}
 
           <div className="flex gap-5 items-center">
-            <Button size="lg" className="w-full  mb-10" color="primary" onClick={onInputChangeCancelar}>
+            <Button
+              size="lg"
+              className="w-full  mb-10"
+              color="primary"
+              onClick={onInputChangeCancelar}
+            >
               Cancelar
             </Button>
             <Button

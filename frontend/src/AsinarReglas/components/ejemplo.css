@@ -7,7 +7,7 @@
 }
 
 /* Estilo de los encabezados de la tabla */
-th {
+.th {
   font-size: 22px;
   font-weight: bold;
   color: #333;
@@ -22,7 +22,7 @@ th {
 }
 
 /* Estilo de las celdas de la tabla */
-td {
+.td {
   width: 100px;
   padding: 15px;
   border: 1px solid black;
@@ -30,7 +30,7 @@ td {
 }
 
 /* Estilo de las filas pares */
-tr:nth-child(even) {
+.tr:nth-child(even) {
   background-color: #f9f9f9;
   text-align: center;
 }

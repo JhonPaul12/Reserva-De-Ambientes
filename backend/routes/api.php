@@ -15,6 +15,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\AmbientereglaController;
 use App\Http\Controllers\Periodo_SolicitudController;
+use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\MateriaController;
 use App\Models\Periodo;
 use App\Models\Solicitud;
 
@@ -27,6 +29,7 @@ Route::resource('/periodo',PeriodoController::class);*/
 //regla
 Route::get('/regla',[ReglaController::class,'index']);
 Route::get('/regla/{id}',[ReglaController::class,'show']);
+Route::get('/reglaActiva',[ReglaController::class,'getReglasActivas']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
 Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
@@ -44,6 +47,7 @@ Route::get('/ambiente/{id}',[AmbienteController::class,'show']);
 Route::post('/ambiente',[AmbienteController::class,'store']);
 Route::put('/ambiente/{id}',[AmbienteController::class,'update']);
 Route::delete('/ambiente/{id}',[AmbienteController::class,'destroy']);
+Route::get('/ambientesLibres',[AmbienteController::class,'libres']);
 
 //periodo
 Route::get('/periodo',[PeriodoController::class,'index']);
@@ -58,6 +62,11 @@ Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
 Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
+Route::delete('/eliminarPeriodo',[PeriodoController::class,'EliminarPorSemestre']);
+Route::get('/reasignacion',[PeriodoController::class,'verificarReasignacion']);
+Route::get('/reasignacion',[PeriodoController::class,'verificarReasignacion']);
+
+
 //Excepción
 Route::get('/excepcion',[ExcepcionController::class,'index']);
 Route::get('/excepcion/{id}',[ExcepcionController::class,'show']);
@@ -70,6 +79,9 @@ Route::get('/regla/{id}',[ReglaController::class,'show']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
 Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
+
+
+
 //regla-Ambiente
 Route::get('/ambiente-regla',[AmbientereglaController::class,'index']);
 //Route::get('/regla/{id}',[ReglaController::class,'show']);
@@ -99,6 +111,9 @@ Route::get('/notificacion',[NotificacionController::class,'index']);
 Route::post('/notificacion',[NotificacionController::class,'store']);
 Route::get('/notificacion/{id}',[NotificacionController::class,'show']);
 Route::delete('/notificacion/{id}',[NotificacionController::class,'destroy']);
+Route::get('/notificacionSinVista/{id}',[NotificacionController::class,'notificacionSinVista']);
+Route::put('/cambiarEstadoNotificacion/{id}', [NotificacionController::class, 'cambiarEstadoNotificacion']);
+
 //reserva
 
 Route::post('/reserva', [ReservaController::class, 'store']);
@@ -110,7 +125,7 @@ Route::delete('/reserva/{id}', [ReservaController::class, 'destroy']);
 //lista de todos los usuario
 Route::get('/usuario', [UserController::class, 'index']);
 // guardar usuario
-Route::post('/usuario', [UserController::class, 'store']);
+Route::post('/docente', [UserController::class, 'store']);
 //mostrar docentes
 Route::get('/usuario/docentes', [UserController::class, 'getDocentes']);
 // actualizar usuario
@@ -121,9 +136,20 @@ Route::get('/usuario/{id}', [UserController::class, 'show']);
 Route::get('/usuario/materias/{id}', [UserController::class, 'showMaterias']);
 //mostrar grupos de materia de docente
 Route::get('/docentes/solicitudes/{id}', [UserController::class, 'showSolicitudes']);
-Route::get('/docentes/{docente_id}/{materia_id}', [UserController::class, 'getGruposDeMateriaDeDocente']);
 //ruta para devolver grupos dado un id materia
+
 Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
+//GRUPOS
+//ruta para devolver grupos dado un id docente y un id materia
+Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getGruposPorUsuarioYMateria']);
+//ruta para devolver docentes de una materia y un id docente
+Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
+//ruta para deshabilitar docente 
+Route::get('/deshabilitarDocente/{id}', [UserController::class, 'deshabilitarDocente']);
+
+Route::get('/Materias',[MateriaController::class,'index']);
+
+Route::get('/MateriasLibres',[GrupoController::class,'getNullUserGroups']);
 
 
 
@@ -137,6 +163,7 @@ Route::get('/AllDocentes', [SolicitudController::class, 'AllDocentes']);
 
 Route::post('/periodos',[PeriodoController::class,'stores']);
 Route::get('/allPeriodos', [PeriodoController::class, 'allPeriodos']);
+Route::get('/allPeriodosLibres', [PeriodoController::class, 'allPeriodosLibres']);
 
 Route::put('/solicitud/editar/{id}', [SolicitudController::class, 'editar']);
 
@@ -151,7 +178,7 @@ Route::middleware(['auth:sanctum'])->group(function (){
     Route::get('/solicitud',[SolicitudController::class,'index']);
     Route::post('/auth/logout',[ AuthController::class,'logout']);
     Route::get('/auth/checkToken',[AuthController::class,'checkToken']);
-    
+
 });
 
 
@@ -179,3 +206,51 @@ Route::get('/notificacion2',[NotificacionController::class,'index2']);
 Route::get('/nombre_usuario_Notificacion/{nombre}',[NotificacionController::class,'nombre_usuario_Notificacion']);
 
 Route::get('/solicitudID/{nombre}',[NotificacionController::class,'solicitudID']);
+
+
+
+
+
+// Obtienes la regla pasando un ambiente
+Route::get('/regla-ambientes/{id_ambiente}', [AmbientereglaController::class, 'getReglaByAmbiente']);
+
+
+
+
+
+
+//DE LAS RESERVAS ACEPTADAS (MUESTRA LAS AULAS) EN LA FECHA-HORAINICIO-HORAFIN(SIN REPETICIONES)
+Route::get('/obtenerSolicitudesPorFechaYHorario2/{fecha}/{inicio}/{fin}', [Periodo_SolicitudController::class, 'obtenerSolicitudesPorFechaYHorario2']);
+
+//DE LAS RESERVAS ACEPTADAS (muestra las ubicaciones ) en la fecha-horainicio-horafin(sin repeticiones)
+Route::get('/obtenerUbicacionDeSolicitudesAceptadas/{fecha}/{inicio}/{fin}', [Periodo_SolicitudController::class, 'obtenerUbicacionDeSolicitudesAceptadas']);
+
+//CAMBIA EL ESTADO DE LAS RESERVA, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN
+Route::post('/cambiarEstadoPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorNombreAmbienteYHorario']);
+
+//CAMBIA El ESTADO DE LAS RESERVAS ,POR UBICACION FECHA HORA
+Route::post('/cambiarEstadoPorUbicacionAmbienteYHorario/{ubicacion}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'cambiarEstadoPorUbicacionAmbienteYHorario']);
+
+
+//DE LAS RESERVAS, POR NOMBRE AMBIENTE EN UNA FECHA-HORAINICIO-HORAFIN => MUESTRA LOS ID_USER Y ID_SOLICITUD
+Route::get('/mostrarSolicitudPorNombreAmbienteYHorario/{aula}/{fechaSolicitud}/{horaInicio}/{horaFin}',[Periodo_SolicitudController::class,'mostrarSolicitudPorNombreAmbienteYHorario']);
+
+//Cambio de Contrasenias
+Route::put('/user/change-password/{id}', [UserController::class, 'changePassword']);
+Route::get('/informeAmbientes', [SolicitudController::class, 'informeAmbientes']);
+
+Route::get('/informeAmbientes_v2', [SolicitudController::class, 'informeAmbientes_v2']);
+
+Route::get('/informeAmbientes2', [SolicitudController::class, 'informeAmbientes2']);
+
+Route::get('/informeAmbientes2_v2', [SolicitudController::class, 'informeAmbientes2_v2']);
+
+Route::get('/informeAmbientesTable', [SolicitudController::class, 'informeAmbientesTable']);
+
+Route::get('/informeAmbientesTableID/{id}', [SolicitudController::class, 'informeAmbientesTableID']);
+
+Route::get('/informeAmbientes_v2ID/{id}', [SolicitudController::class, 'informeAmbientes_v2ID']);
+
+Route::get('/informeAmbientes2_v2ID/{id}', [SolicitudController::class, 'informeAmbientes2_v2ID']);
+
+Route::get('/datosDocente', [SolicitudController::class, 'datosDocente']);

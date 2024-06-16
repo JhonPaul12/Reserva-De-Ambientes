@@ -11,21 +11,19 @@ interface Solicitud {
   estado: string;
   numero_estudiantes: number;
   id_materia: number;
-  id_grupo: number;
   ambiente_id: number;
   created_at: string;
   updated_at: string;
   materia: Materia;
+  users: User[];
   ambiente: Ambiente;
 }
 
 interface Materia {
   id: number;
   nombre_materia: string;
-  user_id: number;
   created_at: string;
   updated_at: string;
-  user: User;
 }
 
 interface User {
