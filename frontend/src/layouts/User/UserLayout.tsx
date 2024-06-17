@@ -8,7 +8,7 @@ import { HeaderUsers } from "../../Header";
 export const UserLayout = () => {
   const authStatus = useAuthStore((state) => state.authStatus);
   const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
-  //const user = useAuthStore((state) => state.user);
+  // const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (authStatus === "pending") {
@@ -21,7 +21,7 @@ export const UserLayout = () => {
   }
 
   // if (!user?.roles.includes("User")) {
-  //   return <Navigate to="/admin" />;
+  //   return <Navigate to="/admin/inicio" />;
   // }
 
   return (

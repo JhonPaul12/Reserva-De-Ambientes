@@ -14,9 +14,9 @@ interface Docente {
 export const InformeDocente = () => {
   const [docentes, setDocentes] = useState<Docente[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-  const [datosT, setDatosT] = useState<any[]>([]);
-  const [datos, setDatos] = useState<any[]>([]);
-  const [datosL, setDatosL] = useState<any[]>([]);
+  const [datosT, setDatosT] = useState([]);
+  const [datos, setDatos] = useState([]);
+  const [datosL, setDatosL] = useState([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const InformeDocente = () => {
 
   const getTable = async (userId: number) => {
     try {
-      const response = await axios.get<any[]>(
+      const response = await axios.get(
         `http://127.0.0.1:8000/api/informeAmbientesTableID/${userId}`
       );
       setDatosT(response.data);
@@ -54,7 +54,7 @@ export const InformeDocente = () => {
 
   const getAmbientes = async (userId: number) => {
     try {
-      const response = await axios.get<any[]>(
+      const response = await axios.get(
         `http://127.0.0.1:8000/api/informeAmbientes_v2ID/${userId}`
       );
       setDatos(response.data);
@@ -65,7 +65,7 @@ export const InformeDocente = () => {
 
   const getAmbientesLineas = async (userId: number) => {
     try {
-      const response = await axios.get<any[]>(
+      const response = await axios.get(
         `http://127.0.0.1:8000/api/informeAmbientes2_v2ID/${userId}`
       );
       setDatosL(response.data);
