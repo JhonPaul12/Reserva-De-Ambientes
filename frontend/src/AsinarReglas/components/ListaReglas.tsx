@@ -18,8 +18,9 @@ export const ListaReglas: React.FC<ListaReglasProps> = ({
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
 
+  console.log(import.meta.env.VITE_API_URL + "/regla/");
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/regla/")
+    fetch(import.meta.env.VITE_API_URL + "/regla/")
       .then((response) => response.json())
       .then((data) => {
         const opcionesActivas = data.filter(
