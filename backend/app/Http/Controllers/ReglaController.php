@@ -106,6 +106,25 @@ class ReglaController extends Controller
         }
     }
 
+    public function activarRegla(Request $request){
+        $request->validate([
+            'id_regla' => 'required|exists:reglas,id',
+        ]);
+
+        Regla::where('activa', true)->update(['activa' => false]);
+
+
+        $regla = Regla::find($request->id_regla);
+        $regla->activa = true;
+        $regla->save();
+
+        return response()->json([
+            'success' => true,
+            //'data' => $regla,
+            'message' => 'Regla activada con éxito'
+        ], 200);
+    }
+
 
 }
 
