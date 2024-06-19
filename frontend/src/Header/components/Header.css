@@ -2,7 +2,6 @@
   position: absolute;
   background-color: white;
   width: 300px;
-  max-height: 400px;
   border-radius: 10px;
 }
 
@@ -15,7 +14,7 @@
   position: absolute;
   right: 10px;
   overflow-y: auto;
-  max-height: calc(100vh - 30px);
+  max-height: 250px;
 }
 .butn:hover {
   background: linear-gradient(to top right, #007bff, #6610f2);

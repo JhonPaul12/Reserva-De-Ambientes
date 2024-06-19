@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -13,8 +12,10 @@ import {
   ModalBody,
   ModalFooter,
   Pagination,
+  Spinner, // Importa el componente Spinner
 } from "@nextui-org/react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { CReservaD } from "../interfaces/Solicitud";
 import { useAuthStore } from "../../Login/stores/auth.store";
 
@@ -28,6 +29,7 @@ export const CancelarS = () => {
   } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     getSolicitudes();
@@ -39,13 +41,20 @@ export const CancelarS = () => {
   const user = useAuthStore((state) => state.user?.id);
 
   const getSolicitudes = async () => {
-    const respuesta = await axios.get<CReservaD[]>(
-      `http://127.0.0.1:8000/api/nombre_usuario/${user}`
-    );
-    const solicitudesPendientes = respuesta.data.filter(
-      (solicitud) => solicitud.solicitud.estado === "Aceptada"
-    );
-    setSolicitudes(solicitudesPendientes);
+    setLoading(true); 
+    try {
+      const respuesta = await axios.get<CReservaD[]>(
+        `http://127.0.0.1:8000/api/nombre_usuario/${user}`
+      );
+      const solicitudesPendientes = respuesta.data.filter(
+        (solicitud) => solicitud.solicitud.estado === "Aceptada"
+      );
+      setSolicitudes(solicitudesPendientes);
+    } catch (error) {
+      console.error("Error al obtener las solicitudes:", error);
+    } finally {
+      setLoading(false); 
+    }
   };
 
   const calculateItemsPerPage = () => {
@@ -90,95 +99,101 @@ export const CancelarS = () => {
         <label className="block text-3xl font-bold text-gray-900">
           CANCELAR RESERVA
         </label>
-        <Table
-          className="w-full mt-5 mb-8 text-center"
-          aria-label="Tabla de datos"
-        >
-          <TableHeader>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              AMBIENTE
-            </TableColumn>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              DOCENTE
-            </TableColumn>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              MATERIA
-            </TableColumn>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              MOTIVO
-            </TableColumn>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              INICIO
-            </TableColumn>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              FIN
-            </TableColumn>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              FECHA
-            </TableColumn>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              PERSONAS
-            </TableColumn>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              ESTADO
-            </TableColumn>
-            <TableColumn className="text-xs text-center bg-slate-300">
-              OPCIÓN
-            </TableColumn>
-          </TableHeader>
-          <TableBody emptyContent={"No Tiene reservas para cancelar"}>
-            {paginatedSolicitudes.map((solicitud) => (
-              <TableRow key={solicitud.solicitud_id}>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.ambiente.nombre}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.users.map((user, index) => (
-                    <div key={index}>
-                      *{user.name} {user.apellidos}
-                    </div>
-                  ))}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.materia.nombre_materia}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.motivo}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.periodos[0].periodo.horario.hora_inicio.slice(
-                    0,
-                    -3
-                  )}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.periodos[
-                    solicitud.periodos.length - 1
-                  ].periodo.horario.hora_fin.slice(0, -3)}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.fecha_solicitud}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.numero_estudiantes}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  {solicitud.solicitud.estado}
-                </TableCell>
-                <TableCell className="text-xs text-black">
-                  <Button
-                    color="danger"
-                    size="sm"
-                    onClick={() => openModal(solicitud)}
-                    variant="shadow"
-                  >
-                    Cancelar
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Spinner size="lg" /> 
+          </div>
+        ) : (
+          <Table
+            className="w-full mt-5 mb-8 text-center"
+            aria-label="Tabla de datos"
+          >
+            <TableHeader>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                AMBIENTE
+              </TableColumn>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                DOCENTE
+              </TableColumn>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                MATERIA
+              </TableColumn>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                MOTIVO
+              </TableColumn>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                INICIO
+              </TableColumn>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                FIN
+              </TableColumn>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                FECHA
+              </TableColumn>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                PERSONAS
+              </TableColumn>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                ESTADO
+              </TableColumn>
+              <TableColumn className="text-xs text-center bg-slate-300">
+                OPCIÓN
+              </TableColumn>
+            </TableHeader>
+            <TableBody emptyContent={"No Tiene reservas para cancelar"}>
+              {paginatedSolicitudes.map((solicitud) => (
+                <TableRow key={solicitud.solicitud_id}>
+                  <TableCell className="text-xs text-black">
+                    {solicitud.solicitud.ambiente.nombre}
+                  </TableCell>
+                  <TableCell className="text-xs text-black">
+                    {solicitud.solicitud.users.map((user, index) => (
+                      <div key={index}>
+                        *{user.name} {user.apellidos}
+                      </div>
+                    ))}
+                  </TableCell>
+                  <TableCell className="text-xs text-black">
+                    {solicitud.solicitud.materia.nombre_materia}
+                  </TableCell>
+                  <TableCell className="text-xs text-black">
+                    {solicitud.solicitud.motivo}
+                  </TableCell>
+                  <TableCell className="text-xs text-black">
+                    {solicitud.periodos[0].periodo.horario.hora_inicio.slice(
+                      0,
+                      -3
+                    )}
+                  </TableCell>
+                  <TableCell className="text-xs text-black">
+                    {solicitud.periodos[
+                      solicitud.periodos.length - 1
+                    ].periodo.horario.hora_fin.slice(0, -3)}
+                  </TableCell>
+                  <TableCell className="text-xs text-black">
+                    {solicitud.solicitud.fecha_solicitud}
+                  </TableCell>
+                  <TableCell className="text-xs text-black">
+                    {solicitud.solicitud.numero_estudiantes}
+                  </TableCell>
+                  <TableCell className="text-xs text-black">
+                    {solicitud.solicitud.estado}
+                  </TableCell>
+                  <TableCell className="text-xs text-black">
+                    <Button
+                      color="danger"
+                      size="sm"
+                      onClick={() => openModal(solicitud)}
+                      variant="shadow"
+                    >
+                      Cancelar
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
         <div className="flex justify-center my-4">
           <Pagination
             showControls

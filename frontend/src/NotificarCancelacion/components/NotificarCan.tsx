@@ -29,10 +29,10 @@ export const NotificarCan = () => {
   const [aulas, setAulas] = useState<any>([]);
   const [aulasSeleccionadas, setAulasSeleccionadas] = useState<any>([]);
   const [ids, setIDS] = useState<IDS[]>([]);
-  const [descripcionNotificacion, setDescripcionNotificacion] =
-    useState<string>("");
+  const [descripcionNotificacion, setDescripcionNotificacion] = useState<string>("");
   const [tituloNotificacion, setTituloNotificacion] = useState<string>("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [cancelando, setCancelando] = useState(false);
 
   const handleChange = async () => {
     const horaInicioStr = horaInicio ? horaInicio.toString() : "";
@@ -60,20 +60,21 @@ export const NotificarCan = () => {
     const horaInicioStr = horaInicio ? horaInicio.toString() : "";
     const horaFinStr = horaFin ? horaFin.toString() : "";
     const fechaStr = fecha ? fecha.toString() : "";
-    console.log(aulasSeleccionadas);
+
     const aulasArray = Array.from(aulasSeleccionadas);
-    console.log(aulasArray);
+
     if (aulasArray.length > 0) {
-      await Promise.all(
-        aulasArray.map(async (aula: any) => {
-          try {
+      try {
+        setCancelando(true);
+
+        await Promise.all(
+          aulasArray.map(async (aula: any) => {
             const response = await axios.post(
               `http://127.0.0.1:8000/api/cambiarEstadoPorNombreAmbienteYHorario/${aula}/${fechaStr}/${horaInicioStr}/${horaFinStr}`
             );
-            console.log(ids);
             const idsActualizados = response.data;
             setIDS(idsActualizados);
-            console.log(idsActualizados);
+            console.log(ids)
             await Promise.all(
               idsActualizados.map(async (id: any) => {
                 await Promise.all(
@@ -106,15 +107,21 @@ export const NotificarCan = () => {
                 );
               })
             );
-          } catch (error) {
-            console.error(`Error al cambiar estado del aula ${aula}: ${error}`);
-          }
-        })
-      );
-      toast.success("Notificaciones Enviadas");
+          })
+        );
+
+        toast.success("Notificaciones Enviadas");
+      } catch (error) {
+        toast.error("Error al cambiar estado de las aulas seleccionadas");
+        console.error("Error al cambiar estado:", error);
+      } finally {
+        setCancelando(false);
+      }
     }
+
     limpiarCampos();
   };
+
 
   const limpiarCampos = () => {
     setHoraInicio(null);
@@ -135,11 +142,11 @@ export const NotificarCan = () => {
   return (
     <div className="p-5">
       <div className="">
-        <h2 className="text-3xl font-bold text-gray-900">
-          Descripcion de la Notificacion
+        <h2 className="text-xl sm:text-3xl font-bold text-gray-900">
+          Descripcion de la Notificación
         </h2>
         <Input
-          className={`my-5 px-5 ${window.innerWidth > 768 ? "" : "p-3"}`}
+          className={`my-5 sm:px-5 `}
           labelPlacement="outside"
           fullWidth
           label="Motivo"
@@ -147,7 +154,7 @@ export const NotificarCan = () => {
           onChange={(e) => setTituloNotificacion(e.target.value)}
         />
         <Textarea
-          className={`my-5 px-5 ${window.innerWidth > 768 ? "" : "p-3"}`}
+          className={`my-5 sm:px-5 `}
           labelPlacement="outside"
           fullWidth
           label="Descripcion del motivo"
@@ -156,14 +163,14 @@ export const NotificarCan = () => {
         />
       </div>
       <div className="my-2">
-        <h2 className="text-3xl font-bold text-gray-900">Seleccionar Aulas</h2>
+        <h2 className="text-xl sm:text-3xl font-bold text-gray-900">Seleccionar Aulas</h2>
         <div
           className={`flex flex-wrap justify-between items-center ${
             window.innerWidth > 768 ? "" : "px-2"
           }`}
         >
           <TimeInput
-            className={`p-3 ${
+            className={`sm:p-3 ${
               window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
             }`}
             labelPlacement="outside"
@@ -172,7 +179,7 @@ export const NotificarCan = () => {
             onChange={setHoraInicio}
           />
           <TimeInput
-            className={`p-3 ${
+            className={`sm:p-3 ${
               window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
             }`}
             labelPlacement="outside"
@@ -181,8 +188,8 @@ export const NotificarCan = () => {
             onChange={setHoraFin}
           />
           <DatePicker
-            className={`p-3 ${
-              window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
+            className={`sm:p-3 ${
+              window.innerWidth > 768 ? "lg:w-1/4" : "md:w-md"
             }`}
             labelPlacement="outside"
             label="Fecha"
@@ -193,7 +200,7 @@ export const NotificarCan = () => {
         </div>
         <div className="">
           <Select
-            className={`p-5 ${window.innerWidth > 768 ? "" : "p-3"}`}
+            className={`sm:p-5 p-2`}
             labelPlacement="outside"
             fullWidth
             label="Aulas"
@@ -214,8 +221,9 @@ export const NotificarCan = () => {
           color="primary"
           variant="shadow"
           onClick={() => setModalOpen(true)}
+          isLoading={cancelando}
         >
-          Notificar Aulas
+           {cancelando ? "Notificando..." : "Notificar Aulas"}
         </Button>
       </div>
       </div>

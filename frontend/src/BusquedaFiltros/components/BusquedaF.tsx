@@ -17,6 +17,7 @@ import {
   ModalFooter,
   Chip,
   ChipProps,
+  Spinner
 } from "@nextui-org/react";
 import axios from "axios";
 import { Periodo } from "../../BusquedaFiltros/interfaces/Ambiente";
@@ -29,17 +30,25 @@ export const BusquedaF = () => {
   const [aulaSeleccionada, setAulaSeleccionada] = useState<Periodo[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [filtroHoraModal, setFiltroHoraModal] = useState<string>("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getPeriodos();
   }, []);
 
   const getPeriodos = async () => {
-    const respuesta = await axios.get<Periodo[]>(
-      `http://127.0.0.1:8000/api/allPeriodos`
-    );
-    const Libres = respuesta.data;
-    setPeriodo(Libres);
+    setLoading(true); 
+    try {
+      const respuesta = await axios.get<Periodo[]>(
+        `http://127.0.0.1:8000/api/allPeriodos`
+      );
+      const Libres = respuesta.data;
+      setPeriodo(Libres);
+    } catch (error) {
+      console.error("Error al obtener los periodos:", error);
+    } finally {
+      setLoading(false); 
+    }
   };
 
   const filtrarPeriodos = () => {
@@ -166,6 +175,11 @@ export const BusquedaF = () => {
         </div>
       </div>
       <div className="mx-6 my-4 sm:mx-auto w-full max-w-screen-md">
+      {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Spinner size="lg" /> {/* Muestra el Spinner mientras carga */}
+          </div>
+        ) : (
         <Table className="custom-table text-center" aria-label="Tabla de datos">
           <TableHeader>
             <TableColumn className="text-center text-sm bg-slate-300">
@@ -184,7 +198,7 @@ export const BusquedaF = () => {
               HORARIOS
             </TableColumn>
           </TableHeader>
-          <TableBody>
+          <TableBody  emptyContent={"Los ambientes no tiene periodos asignados"}>
             {uniqueAulas.map((aula, index) => {
               const periodosAula = periodosFiltrados.filter(
                 (periodo) => periodo.ambiente.nombre === aula
@@ -213,7 +227,7 @@ export const BusquedaF = () => {
               );
             })}
           </TableBody>
-        </Table>
+        </Table>)}
         <Modal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
