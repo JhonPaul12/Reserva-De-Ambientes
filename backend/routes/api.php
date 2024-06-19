@@ -33,6 +33,7 @@ Route::get('/reglaActiva',[ReglaController::class,'getReglasActivas']);
 Route::post('/regla',[ReglaController::class,'store']);
 Route::put('/regla/{id}',[ReglaController::class,'update']);
 Route::delete('/regla/{id}',[ReglaController::class,'destroy']);
+Route::post('/activarRegla',[ReglaController::class,'activarRegla']);
 //horario
 Route::get('/horario',[HorarioController::class,'index']);
 Route::get('/horario/{id}',[HorarioController::class,'show']);
@@ -144,7 +145,7 @@ Route::get('/gruposMateria/{id}', [UserController::class, 'showGrupos']);
 Route::get('/docentes/{docente_id}/{materia_id}', [GrupoController::class, 'getGruposPorUsuarioYMateria']);
 //ruta para devolver docentes de una materia y un id docente
 Route::get('/docentesMismaMateria/{docente_id}/{materia_id}', [GrupoController::class, 'getOtrosUsuariosConMismaMateria']);
-//ruta para deshabilitar docente 
+//ruta para deshabilitar docente
 Route::get('/deshabilitarDocente/{id}', [UserController::class, 'deshabilitarDocente']);
 
 Route::get('/Materias',[MateriaController::class,'index']);

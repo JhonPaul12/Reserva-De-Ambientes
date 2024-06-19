@@ -1,22 +1,21 @@
-import {
-  Modal,
-  ModalContent,
-  Button
-} from "@nextui-org/react";
+import { Modal, ModalContent, Button } from "@nextui-org/react";
 import { useAmbienteStore } from "../../RegistrarAmbientes/store/ambientes.store";
 import { useState } from "react";
 
-export const DeleteAmbienteModal = ({ambiente}) => {
+interface Ambiente {
+  id: string;
+}
+
+export const DeleteAmbienteModal = ({ ambiente }: { ambiente: Ambiente }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const deleteAmbiente = useAmbienteStore( state => state.deleteAmbiente);
-  
-  const openModal = async() => {
+  const deleteAmbiente = useAmbienteStore((state) => state.deleteAmbiente);
+
+  const openModal = async () => {
     setModalOpen(true);
   };
   const eliminarAmbiente = async () => {
     await deleteAmbiente(parseInt(ambiente.id));
-        setModalOpen(false);
-        
+    setModalOpen(false);
   };
 
   return (

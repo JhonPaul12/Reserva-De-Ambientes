@@ -171,7 +171,7 @@ export const FormCrearDocente = () => {
   const createDocente = useDocenteStore((state) => state.createDocente);
 
   const onInputChangeSave = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
 
@@ -246,7 +246,7 @@ export const FormCrearDocente = () => {
       <label className="text-3xl font-bold text-center text-gray-900 ml-5">
         CREAR DOCENTE
       </label>
-      <form className="mt-5 space-y-6 md:space-y-0 md:space-x-6">
+      <form className="mt-5 space-y-6 md:space-y-0 md:space-x-6" onSubmit={onInputChangeSave}>
         <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-1/2 mb-6 md:mb-0 mr-5 ml-5">
           <label className="text-ms text-gray-900">Nombre*:</label>
@@ -355,6 +355,7 @@ export const FormCrearDocente = () => {
               Cancelar
             </Button>
             <Button
+            type='submit'
               onClick={onInputChangeSave}
               color="primary"
               className="w-full mb-10"

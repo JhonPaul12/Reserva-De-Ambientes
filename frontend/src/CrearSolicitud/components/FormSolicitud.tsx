@@ -45,6 +45,7 @@ export const FormSolicitud = () => {
     codigo_sis: "",
     email: "",
     email_verified_at: null,
+    materias_grupos: {},
   };
   const [inputMateria, setInputMateria] = useState("");
   const [inputMotivo, setInputMotivo] = useState("");
@@ -54,14 +55,17 @@ export const FormSolicitud = () => {
   const [inputFecha, setInputFecha] = useState("");
   /*const [inputHIni, setInputHIni] = useState('06:45');*/
   const [inputHIni, setInputHIni] = useState<ISimplePeriodo[]>([]);
-  const [inputHFin, setInputHFin] = useState([]);
+
+  // const [inputHFin, setInputHFin] = useState([]);
+  const [inputHFin, setInputHFin] = useState<string[]>([]);
   const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
   const [materias, setMaterias] = useState<ISimpleMateria[]>([]);
   const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
   const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
   const [usuario, setUsuario] = useState(instanciaInicial);
-  const [selects, setSelects] = useState([]);
-  const [listdocentes, setListDocentes] = useState([]);
+  // const [selects, setSelects] = useState([]);
+  const [selects, setSelects] = useState<{ id: number; value: string }[]>([]);
+  const [listdocentes, setListDocentes] = useState<string[]>([]);
 
   const createSolicitud = useSolicitudStore((state) => state.createSolicitud);
 
@@ -74,31 +78,80 @@ export const FormSolicitud = () => {
       setListDocentes([...listdocentes, id]);
       console.log("ID añadido:", id);
     } else {
-      toast.error("El docente ya está presente en la lista:", id);
+      toast.error("El docente ya está presente en la lista:", { id });
     }
   };
-  const handleDateChange = (date) => {
-    console.log(date);
 
-    const fecha = `${date.year.toString()}-${date.month.toString()}-${date.day.toString()}`;
+  // const handleDateChange = (date: Date) => {
+  //   console.log(date);
+
+  //   const fecha = `${date.getFullYear()}-${(date.getMonth() + 1)
+  //     .toString()
+  //     .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+  //   const fechaActual = new Date();
+
+  //   const fechaSeleccionada = new Date(fecha);
+  //   if (fechaSeleccionada > fechaActual) {
+  //     setInputFecha(fecha);
+  //     console.log(fecha);
+  //     console.log(inputFecha);
+  //     getRangos(fecha);
+  //   } else {
+  //     toast.error(
+  //       "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
+  //     );
+  //     console.log(
+  //       "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
+  //     );
+  //     setInputFecha(fecha);
+  //   }
+  // };
+
+  interface DateValue {
+    year: number;
+    month: number;
+    day: number;
+  }
+
+  const handleDateChange = (value: DateValue) => {
+    const date = new Date(value.year, value.month - 1, value.day); // Create Date object
+
+    const fecha = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+
     const fechaActual = new Date();
-
     const fechaSeleccionada = new Date(fecha);
+
     if (fechaSeleccionada > fechaActual) {
       setInputFecha(fecha);
-      console.log(fecha);
-      console.log(inputFecha);
-      getRangos(fecha);
+      // ...
     } else {
-      toast.error(
-        "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
-      );
-      console.log(
-        "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
-      );
-      setInputFecha(fecha);
+      // ...
     }
   };
+  // const handleDateChange = (date:Date) => {
+  //   console.log(date);
+
+  //   const fecha = `${date.year.toString()}-${date.month.toString()}-${date.day.toString()}`;
+  //   const fechaActual = new Date();
+
+  //   const fechaSeleccionada = new Date(fecha);
+  //   if (fechaSeleccionada > fechaActual) {
+  //     setInputFecha(fecha);
+  //     console.log(fecha);
+  //     console.log(inputFecha);
+  //     getRangos(fecha);
+  //   } else {
+  //     toast.error(
+  //       "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
+  //     );
+  //     console.log(
+  //       "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
+  //     );
+  //     setInputFecha(fecha);
+  //   }
+  // };
 
   const handleClick = async () => {
     const limiteSelects = 5;
@@ -114,7 +167,7 @@ export const FormSolicitud = () => {
 
   const handleSelectChange = async (
     event: React.ChangeEvent<HTMLSelectElement>,
-    selectId
+    selectId: number
   ) => {
     const { value } = event.target as HTMLSelectElement;
 
@@ -127,7 +180,8 @@ export const FormSolicitud = () => {
       );
       anadir(value);
     } else {
-      toast.error("El docente ya está presente en la lista:", value);
+      // toast.error("El docente ya está presente en la lista:", value);
+      toast.error(`El docente ya está presente en la lista: ${value}`);
     }
     console.log(value);
   };
@@ -216,16 +270,26 @@ export const FormSolicitud = () => {
     getRangos(inputFecha);
   };
 
-  const [values, setValues] = React.useState<Selection>(new Set([]));
+  const [values, setValues] = React.useState<Set<string>>(new Set([]));
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
     const valores = e.target.value;
     const arrayNumeros = valores.split(",").map((numero) => numero.trim());
     setInputHFin(arrayNumeros);
-    setValues(new Set(e.target.value.split(",")));
+    setValues(new Set<string>(e.target.value.split(",")));
     console.log(values);
   };
+  // const [values, setValues] = React.useState<Selection>(new Set([]));
+
+  // const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   console.log(e.target.value);
+  //   const valores = e.target.value;
+  //   const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+  //   setInputHFin(arrayNumeros);
+  //   setValues(new Set(e.target.value.split(",")));
+  //   console.log(values);
+  // };
 
   const onInputChangeMotivo = async (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -267,7 +331,7 @@ export const FormSolicitud = () => {
       inputMateria !== "" &&
       inputGrupo !== "" &&
       inputAmbiente !== "" &&
-      inputHFin !== ""
+      inputHFin.length > 0
     ) {
       const fechaActual = new Date();
       const fechaSeleccionada = new Date(inputFecha);
@@ -280,7 +344,7 @@ export const FormSolicitud = () => {
           "Pendiente",
           parseInt(inputNEst),
           parseInt(inputMateria),
-          parseInt(inputGrupo),
+          [String(inputGrupo)],
           parseInt(inputAmbiente),
           listdocentes,
           inputHFin

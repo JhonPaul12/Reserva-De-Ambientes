@@ -1,9 +1,24 @@
 import { StateCreator, create } from "zustand";
 import { reservasDB } from "../api";
 import { toast } from "sonner";
-import axios, { isAxiosError } from "axios";
-import { ISolicitudesResponse } from "../interfaces/solicitudes-response";
-import { ISimpleDocente } from "../interfaces/simple-deocente";
+import { isAxiosError } from "axios";
+// import { ISolicitudesResponse } from "../interfaces/solicitudes-response";
+// import { ISimpleDocente } from "../interfaces/simple-deocente";
+interface ISimpleDocente {
+  id: number;
+  name: string;
+  apellidos: string;
+  telefono: string;
+  codigo_sis: string;
+  email: string;
+  email_verified_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface ISolicitudesResponse {
+  solicitudes: ISimpleDocente[];
+}
 
 interface SolicitudState {
   solicitudes: ISimpleDocente[];
@@ -27,7 +42,9 @@ const storeApi: StateCreator<SolicitudState & Actions> = (set) => ({
 
   getSolicitudes: async () => {
     try {
-      const { data } = await reservasDB.get<ISolicitudesResponse>("/usuario/docentes");
+      const { data } = await reservasDB.get<ISolicitudesResponse>(
+        "/usuario/docentes"
+      );
 
       console.log(data.solicitudes);
       set(() => ({
