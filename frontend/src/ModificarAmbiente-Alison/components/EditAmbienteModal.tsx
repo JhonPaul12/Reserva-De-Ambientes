@@ -145,11 +145,12 @@ export const EditAmbienteModal = ({ ambiente }: Props) => {
         inputUbi,
         parseInt(inputCap)
       );
-      setTimeout(() => {
+      /*setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 2000);*/
       setInputSave(true);
       console.log(buttonSave);
+      onOpenChange();
     } else {
       toast.error("Todos los campos deben tener datos para registrar");
       console.log("Todos los campos deben tener datos para registrar");
@@ -180,6 +181,7 @@ export const EditAmbienteModal = ({ ambiente }: Props) => {
                     <label className="text-ms text-gray-900">Nombre:</label>
                     <br />
                     <Input
+                      value={inputName}
                       type="text"
                       name="nombre"
                       className="w-full"

@@ -17,9 +17,12 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import { toast } from "sonner";
-interface IDS{
-  id_solicitud:number
-  usuarios:[id_usuario:number,email:string]
+import { I18nProvider } from "@react-aria/i18n";
+import { AiFillClockCircle } from "react-icons/ai";
+
+interface IDS {
+  id_solicitud: number;
+  usuarios: [id_usuario: number, email: string];
 }
 
 export const NotificarCan = () => {
@@ -29,7 +32,8 @@ export const NotificarCan = () => {
   const [aulas, setAulas] = useState<any>([]);
   const [aulasSeleccionadas, setAulasSeleccionadas] = useState<any>([]);
   const [ids, setIDS] = useState<IDS[]>([]);
-  const [descripcionNotificacion, setDescripcionNotificacion] = useState<string>("");
+  const [descripcionNotificacion, setDescripcionNotificacion] =
+    useState<string>("");
   const [tituloNotificacion, setTituloNotificacion] = useState<string>("");
   const [modalOpen, setModalOpen] = useState(false);
   const [cancelando, setCancelando] = useState(false);
@@ -46,7 +50,6 @@ export const NotificarCan = () => {
       setAulas(response.data);
     } catch (error) {
       setAulas([]);
-      toast.error("No hay Aulas en la fecha");
     }
   };
 
@@ -74,7 +77,7 @@ export const NotificarCan = () => {
             );
             const idsActualizados = response.data;
             setIDS(idsActualizados);
-            console.log(ids)
+            console.log(ids);
             await Promise.all(
               idsActualizados.map(async (id: any) => {
                 await Promise.all(
@@ -122,7 +125,6 @@ export const NotificarCan = () => {
     limpiarCampos();
   };
 
-
   const limpiarCampos = () => {
     setHoraInicio(null);
     setHoraFin(null);
@@ -163,7 +165,9 @@ export const NotificarCan = () => {
         />
       </div>
       <div className="my-2">
-        <h2 className="text-xl sm:text-3xl font-bold text-gray-900">Seleccionar Aulas</h2>
+        <h2 className="text-xl sm:text-3xl font-bold text-gray-900">
+          Seleccionar Aulas
+        </h2>
         <div
           className={`flex flex-wrap justify-between items-center ${
             window.innerWidth > 768 ? "" : "px-2"
@@ -173,30 +177,43 @@ export const NotificarCan = () => {
             className={`sm:p-3 ${
               window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
             }`}
+            hourCycle={24}
+            size="lg"
             labelPlacement="outside"
             label="Hora Inicio"
             value={horaInicio}
             onChange={setHoraInicio}
+            endContent={(
+              <AiFillClockCircle className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
+            )}
           />
           <TimeInput
             className={`sm:p-3 ${
               window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
             }`}
+            hourCycle={24}
+            size="lg"
             labelPlacement="outside"
             label="Hora Fin"
             value={horaFin}
             onChange={setHoraFin}
+            endContent={(
+              <AiFillClockCircle className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
+            )}
           />
-          <DatePicker
-            className={`sm:p-3 ${
-              window.innerWidth > 768 ? "lg:w-1/4" : "md:w-md"
-            }`}
-            labelPlacement="outside"
-            label="Fecha"
-            fullWidth
-            value={fecha}
-            onChange={setFecha}
-          />
+          <I18nProvider locale="es-GB">
+            <DatePicker
+              className={`sm:p-3 ${
+                window.innerWidth > 768 ? "lg:w-1/4" : "md:w-md"
+              }`}
+              size="lg"
+              labelPlacement="outside"
+              label="Fecha"
+              fullWidth
+              value={fecha}
+              onChange={setFecha}
+            />
+          </I18nProvider>
         </div>
         <div className="">
           <Select
@@ -207,6 +224,11 @@ export const NotificarCan = () => {
             placeholder="Seleccione las aulas"
             selectionMode="multiple"
             onSelectionChange={setAulasSeleccionadas}
+            onClick={() => {
+              if (aulas.length === 0) {
+                toast.error("No hay aulas en la fecha seleccionada");
+              }
+            }}
           >
             {aulas.length > 0
               ? aulas.map((aula: any) => (
@@ -216,21 +238,23 @@ export const NotificarCan = () => {
           </Select>
         </div>
         <div className="flex justify-end">
-        <Button
-          className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"} ml-auto`}
-          color="primary"
-          variant="shadow"
-          onClick={() => setModalOpen(true)}
-          isLoading={cancelando}
-        >
-           {cancelando ? "Notificando..." : "Notificar Aulas"}
-        </Button>
-      </div>
+          <Button
+            className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"} ml-auto`}
+            color="primary"
+            variant="shadow"
+            onClick={() => setModalOpen(true)}
+            isLoading={cancelando}
+          >
+            {cancelando ? "Notificando..." : "Notificar Aulas"}
+          </Button>
+        </div>
       </div>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent className="">
           <ModalHeader>¿Esta seguro de cancelar las reservas?</ModalHeader>
-          <ModalBody>Se cancelaran las reservas de las aulas seleccionadas</ModalBody>
+          <ModalBody>
+            Se cancelaran las reservas de las aulas seleccionadas
+          </ModalBody>
           <ModalFooter className="">
             <Button color="danger" variant="shadow" onClick={cambiarEstado}>
               Sí, cancelar
