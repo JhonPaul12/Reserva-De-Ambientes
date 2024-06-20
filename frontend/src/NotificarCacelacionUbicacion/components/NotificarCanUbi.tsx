@@ -35,6 +35,7 @@ export const NotificarCanUbi = () => {
     useState<string>("");
   const [tituloNotificacion, setTituloNotificacion] = useState<string>("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [cancelando, setCancelando] = useState(false);
 
   const handleChange = async () => {
     const horaInicioStr = horaInicio ? horaInicio.toString() : "";
@@ -75,6 +76,7 @@ export const NotificarCanUbi = () => {
     const aulasArray = Array.from(ubicacionesSeleccionadas);
     console.log(aulasArray);
     if (aulasArray.length > 0) {
+      setCancelando(true);
       await Promise.all(
         aulasArray.map(async (aula: any) => {
           try {
@@ -137,6 +139,7 @@ export const NotificarCanUbi = () => {
       );
       toast.success("Notificaciones Enviadas");
     }
+    setCancelando(false);
     limpiarCampos();
   };
 
@@ -159,14 +162,14 @@ export const NotificarCanUbi = () => {
   return (
     <div className="p-5">
       <div className="">
-        <h2 className="text-3xl font-bold text-gray-900">
-          Descripcion de la Notificacion
+        <h2 className="text-xl sm:text-3xl font-bold text-gray-900">
+          Descripcion de la Notificación
         </h2>
         <Input
           fullWidth
           labelPlacement="outside"
           label="Motivo"
-          className={`my-5 px-5 ${window.innerWidth > 768 ? "" : "p-3"}`}
+          className={`my-5 sm:px-5 `}
           value={tituloNotificacion}
           onChange={(e) => setTituloNotificacion(e.target.value)}
         />
@@ -174,22 +177,18 @@ export const NotificarCanUbi = () => {
           labelPlacement="outside"
           fullWidth
           label="Descripcion del motivo"
-          className={`my-5 px-5 ${window.innerWidth > 768 ? "" : "p-3"}`}
+          className={`my-5 sm:px-5`}
           value={descripcionNotificacion}
           onChange={(e) => setDescripcionNotificacion(e.target.value)}
         />
       </div>
       <div className="my-2">
-        <h2 className="text-3xl font-bold text-gray-900">
+        <h2 className="text-xl sm:text-3xl font-bold text-gray-900">
           Seleccionar Ubicaciones
         </h2>
-        <div
-          className={`flex flex-wrap justify-between items-center ${
-            window.innerWidth > 768 ? "" : "px-2"
-          }`}
-        >
+        <div className={`flex flex-wrap justify-between items-center `}>
           <TimeInput
-            className={`p-3 ${
+            className={`sm:p-3 ${
               window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
             }`}
             labelPlacement="outside"
@@ -198,7 +197,7 @@ export const NotificarCanUbi = () => {
             onChange={setHoraInicio}
           />
           <TimeInput
-            className={`p-3 ${
+            className={`sm:p-3 ${
               window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
             }`}
             labelPlacement="outside"
@@ -207,7 +206,7 @@ export const NotificarCanUbi = () => {
             onChange={setHoraFin}
           />
           <DatePicker
-            className={`p-3 ${
+            className={`sm:p-3 ${
               window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
             }`}
             labelPlacement="outside"
@@ -219,7 +218,7 @@ export const NotificarCanUbi = () => {
         </div>
         <div className="">
           <Select
-            className={`p-5 ${window.innerWidth > 768 ? "" : "p-3"}`}
+            className={`sm:p-5 p-2`}
             labelPlacement="outside"
             fullWidth
             label="Ubicaciones"
@@ -240,8 +239,9 @@ export const NotificarCanUbi = () => {
             color="primary"
             variant="shadow"
             onClick={() => setModalOpen(true)}
+            isLoading={cancelando}
           >
-            Notificar Ubicaciones
+            {cancelando ? "Notificando..." : "Notificar Ubicaciones"}
           </Button>
         </div>
       </div>

@@ -173,7 +173,7 @@ export const sideMenuOptionsUser = [
   },
   {
     path: "calendario",
-    name: "Ver Calendario",
+    name: "Calendario de Ambientes Libres",
     icon: <FaCalendarDays />,
   },
   {

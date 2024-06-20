@@ -17,6 +17,7 @@ import {
   ModalFooter,
   Chip,
   ChipProps,
+  Spinner,
 } from "@nextui-org/react";
 import axios from "axios";
 import { Periodo } from "../../BusquedaFiltros/interfaces/Ambiente";
@@ -29,17 +30,28 @@ export const BusquedaF = () => {
   const [aulaSeleccionada, setAulaSeleccionada] = useState<Periodo[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [filtroHoraModal, setFiltroHoraModal] = useState<string>("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getPeriodos();
   }, []);
 
   const getPeriodos = async () => {
-    const respuesta = await axios.get<Periodo[]>(
-      import.meta.env.VITE_API_URL + "/api/allPeriodos"
-    );
-    const Libres = respuesta.data;
-    setPeriodo(Libres);
+    setLoading(true);
+    try {
+      // const respuesta = await axios.get<Periodo[]>(
+      //   `http://127.0.0.1:8000/api/allPeriodos`
+      // );
+      const respuesta = await axios.get<Periodo[]>(
+        import.meta.env.VITE_API_URL + "/api/allPeriodos"
+      );
+      const Libres = respuesta.data;
+      setPeriodo(Libres);
+    } catch (error) {
+      console.error("Error al obtener los periodos:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filtrarPeriodos = () => {
@@ -166,54 +178,65 @@ export const BusquedaF = () => {
         </div>
       </div>
       <div className="mx-6 my-4 sm:mx-auto w-full max-w-screen-md">
-        <Table className="custom-table text-center" aria-label="Tabla de datos">
-          <TableHeader>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              AMBIENTE
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              TIPO
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              CAPACIDAD
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              UBICACIÓN
-            </TableColumn>
-            <TableColumn className="text-center text-sm bg-slate-300">
-              HORARIOS
-            </TableColumn>
-          </TableHeader>
-          <TableBody>
-            {uniqueAulas.map((aula, index) => {
-              const periodosAula = periodosFiltrados.filter(
-                (periodo) => periodo.ambiente.nombre === aula
-              );
-              return (
-                <TableRow key={index}>
-                  <TableCell className="text-xs text-black">{aula}</TableCell>
-                  <TableCell className="text-xs text-black">
-                    {periodosAula[0]?.ambiente.tipo}
-                  </TableCell>
-                  <TableCell className="text-xs text-black">
-                    {periodosAula[0]?.ambiente.capacidad}
-                  </TableCell>
-                  <TableCell className="text-xs text-black">
-                    {periodosAula[0]?.ambiente.ubicacion}
-                  </TableCell>
-                  <TableCell className="text-xs text-black">
-                    <Button
-                      className="bg-primary text-white"
-                      onClick={() => handleAulaClick(aula)}
-                    >
-                      Horarios
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Spinner size="lg" /> {/* Muestra el Spinner mientras carga */}
+          </div>
+        ) : (
+          <Table
+            className="custom-table text-center"
+            aria-label="Tabla de datos"
+          >
+            <TableHeader>
+              <TableColumn className="text-center text-sm bg-slate-300">
+                AMBIENTE
+              </TableColumn>
+              <TableColumn className="text-center text-sm bg-slate-300">
+                TIPO
+              </TableColumn>
+              <TableColumn className="text-center text-sm bg-slate-300">
+                CAPACIDAD
+              </TableColumn>
+              <TableColumn className="text-center text-sm bg-slate-300">
+                UBICACIÓN
+              </TableColumn>
+              <TableColumn className="text-center text-sm bg-slate-300">
+                HORARIOS
+              </TableColumn>
+            </TableHeader>
+            <TableBody
+              emptyContent={"Los ambientes no tiene periodos asignados"}
+            >
+              {uniqueAulas.map((aula, index) => {
+                const periodosAula = periodosFiltrados.filter(
+                  (periodo) => periodo.ambiente.nombre === aula
+                );
+                return (
+                  <TableRow key={index}>
+                    <TableCell className="text-xs text-black">{aula}</TableCell>
+                    <TableCell className="text-xs text-black">
+                      {periodosAula[0]?.ambiente.tipo}
+                    </TableCell>
+                    <TableCell className="text-xs text-black">
+                      {periodosAula[0]?.ambiente.capacidad}
+                    </TableCell>
+                    <TableCell className="text-xs text-black">
+                      {periodosAula[0]?.ambiente.ubicacion}
+                    </TableCell>
+                    <TableCell className="text-xs text-black">
+                      <Button
+                        className="bg-primary text-white"
+                        onClick={() => handleAulaClick(aula)}
+                      >
+                        Horarios
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
         <Modal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
