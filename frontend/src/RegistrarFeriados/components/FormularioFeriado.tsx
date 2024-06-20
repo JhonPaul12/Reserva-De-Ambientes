@@ -26,7 +26,7 @@ export const FormularioFeriado = ({
 
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/excepcion`,
+          import.meta.env.VITE_API_URL + "/api/excepcion",
           {
             method: "POST",
             headers: {

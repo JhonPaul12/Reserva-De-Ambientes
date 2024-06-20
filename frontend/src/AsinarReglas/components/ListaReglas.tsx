@@ -18,9 +18,8 @@ export const ListaReglas: React.FC<ListaReglasProps> = ({
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
 
-  console.log(import.meta.env.VITE_API_URL + "/regla/");
   useEffect(() => {
-    fetch(import.meta.env.VITE_API_URL + "/regla/")
+    fetch(import.meta.env.VITE_API_URL + "/api/regla/")
       .then((response) => response.json())
       .then((data) => {
         const opcionesActivas = data.filter(
@@ -31,6 +30,7 @@ export const ListaReglas: React.FC<ListaReglasProps> = ({
       .catch((error) => {
         console.error("Error al obtener la lista de elementos:", error);
       });
+    console.log(import.meta.env.VITE_API_URL + "/regla/");
   }, []);
 
   useEffect(() => {

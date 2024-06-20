@@ -27,7 +27,7 @@ Route::resource('/excepcion',ExcepcionController::class);
 Route::resource('/reglaExc',RegexcCotroller::class);
 Route::resource('/periodo',PeriodoController::class);*/
 //regla
-Route::get('/regla',[ReglaController::class,'index']);
+Route::get('/regla ',[ReglaController::class,'index']);
 Route::get('/regla/{id}',[ReglaController::class,'show']);
 Route::get('/reglaActiva',[ReglaController::class,'getReglasActivas']);
 Route::post('/regla',[ReglaController::class,'store']);

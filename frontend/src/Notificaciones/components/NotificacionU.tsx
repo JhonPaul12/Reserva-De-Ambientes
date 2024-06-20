@@ -20,14 +20,17 @@ export const NotificacionU = () => {
   const user = useAuthStore((state) => state.user?.id);
 
   const getNotificaciones = async () => {
+    // const respuesta = await axios.get<Notificacion[]>(
+    //   `http://127.0.0.1:8000/api/nombre_usuario_Notificacion/${user}`
+    // );
     const respuesta = await axios.get<Notificacion[]>(
-      `http://127.0.0.1:8000/api/nombre_usuario_Notificacion/${user}`
+      import.meta.env.VITE_API_URL + "/api/nombre_usuario_Notificacion/" + user
     );
     setNotificaciones(respuesta.data);
   };
 
   const calculateItemsPerPage = () => {
-    const headerHeight = 60; 
+    const headerHeight = 60;
     const itemHeight = 120;
     const availableHeight = window.innerHeight - headerHeight;
     const items = Math.floor(availableHeight / itemHeight);
@@ -48,7 +51,10 @@ export const NotificacionU = () => {
           {paginatedNotificaciones.map((notificacion) => (
             <AccordionItem
               startContent={
-                <IoInformationCircleOutline size={30} className="text-warning" />
+                <IoInformationCircleOutline
+                  size={30}
+                  className="text-warning"
+                />
               }
               className="sm:m-3 md:m-5"
               key={notificacion.id}

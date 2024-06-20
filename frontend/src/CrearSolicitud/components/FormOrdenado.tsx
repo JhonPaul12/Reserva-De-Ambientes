@@ -55,7 +55,12 @@ export const FormOrdenado = () => {
 
   const getDocentes = async (id: number) => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`
+      import.meta.env.VITE_API_URL +
+        // `/api/docentesMismaMateria/${user?.id}/${id}`
+        "/api/docentesMismaMateria/" +
+        user?.id +
+        "/" +
+        id
     );
     const docentesArray = Object.values(respuesta.data).map(
       (item) => item as ISimpleDocente
@@ -91,7 +96,8 @@ export const FormOrdenado = () => {
 
   const getMaterias = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/materias/${user?.id}/`
+      // import.meta.env.VITE_API_URL + `/api/usuario/materias/${user?.id}/`
+      import.meta.env.VITE_API_URL + "/api/usuario/materias/" + user?.id
     );
     setMaterias(respuesta.data);
   };
@@ -200,7 +206,12 @@ export const FormOrdenado = () => {
     try {
       // Obtener los grupos para el docente principal
       const respuestaPrincipal = await axios.get(
-        `http://127.0.0.1:8000/api/docentes/${user?.id}/${materia_id}`
+        // import.meta.env.VITE_API_URL + `/api/docentes/${user?.id}/${materia_id}`
+        import.meta.env.VITE_API_URL +
+          "/api/docentes/" +
+          user?.id +
+          "/" +
+          materia_id
       );
       setGrupos(respuestaPrincipal.data);
       let gruposTem = respuestaPrincipal.data;
@@ -211,7 +222,12 @@ export const FormOrdenado = () => {
       if (docente_id.length !== 0) {
         const solicitudes = docente_id.map((docente) =>
           axios.get<ISimpleGrupo[]>(
-            `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
+            import.meta.env.VITE_API_URL +
+              // `/api/docentes/${docente}/${materia_id}`
+              "/api/docentes/" +
+              docente +
+              "/" +
+              materia_id
           )
         );
 
@@ -255,7 +271,8 @@ export const FormOrdenado = () => {
 
   const getAmbientes = async (num: string) => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/ambientesLibres`
+      // import.meta.env.VITE_API_URL + `/api/ambientesLibres`
+      import.meta.env.VITE_API_URL + "/api/ambientesLibres"
     );
     const filteredAmbientes = respuesta.data.filter(
       (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
@@ -317,7 +334,10 @@ export const FormOrdenado = () => {
   const [excepciones, setExcepciones] = useState<ISimpleExcepcion[]>([]);
 
   const getExcepciones = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+    // const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+    const respuesta = await axios.get(
+      import.meta.env.VITE_API_URL + "/api/excepcion"
+    );
     setExcepciones(respuesta.data);
     console.log(respuesta.data);
   };
@@ -396,18 +416,32 @@ export const FormOrdenado = () => {
           fecha: fecha,
         };
         console.log(dataToSend);
-        const respuesta = await axios.post<ISimplePeriodo[]>(
-          "http://127.0.0.1:8000/api/disposicion/",
+        // const respuesta = await fetch(
+        //   // "http://127.0.0.1:8000/api/disposicion/",
+        //   import.meta.env.VITE_API_URL + "/api/disposicion/",
+        //   {
+        //     method: "POST",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify(dataToSend),
+        //   }
+        // );
+        const respuesta = await axios.post(
+          // "http://127.0.0.1:8000/api/disposicion/",
+          import.meta.env.VITE_API_URL + "/api/disposicion/",
           dataToSend
         );
-        const responseData = respuesta.data;
+        const responseData = await respuesta.data;
         const rangosHorario: string[] = [];
         console.log(responseData);
-        responseData.forEach((objeto) => {
-          const { hora_inicio, hora_fin } = objeto;
-          const rangoHorario = `${hora_inicio} - ${hora_fin}`;
-          rangosHorario.push(rangoHorario);
-        });
+        responseData.forEach(
+          (objeto: { hora_inicio: string; hora_fin: string }) => {
+            const { hora_inicio, hora_fin } = objeto;
+            const rangoHorario = `${hora_inicio} - ${hora_fin}`;
+            rangosHorario.push(rangoHorario);
+          }
+        );
 
         setInputHIni(responseData);
         console.log(responseData);

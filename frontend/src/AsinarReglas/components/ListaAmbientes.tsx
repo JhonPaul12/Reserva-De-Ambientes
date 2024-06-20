@@ -17,11 +17,14 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
   useEffect(() => {
-    fetch(import.meta.env.VITE_API_URL + "/ambiente/", { method: "GET" })
+    fetch(import.meta.env.VITE_API_URL + "/api/ambiente", {
+      method: "GET",
+    })
       .then((response) => response.json())
       .then((data) => {
         setOptions(data);
       })
+
       .catch((error) => {
         console.error("Error al obtener la lista de elementos:", error);
       });

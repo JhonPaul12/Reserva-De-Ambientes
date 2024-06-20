@@ -39,7 +39,7 @@ export const CancelarReservaA = () => {
 
   const getSolicitudes = async () => {
     const respuesta = await axios.get<CReservaA[]>(
-      `http://127.0.0.1:8000/api/periodoSolicitud2`
+      import.meta.env.VITE_API_URL + "/api/periodoSolicitud2"
     );
     const solicitudesPendientes = respuesta.data.filter(
       (solicitud) => solicitud.solicitud.estado === "Aceptada"
@@ -56,10 +56,10 @@ export const CancelarReservaA = () => {
     setItemsPerPage(items);
   };
 
-  const openModal = (id: number, usuarioId: number,usuarioEmail:string) => {
+  const openModal = (id: number, usuarioId: number, usuarioEmail: string) => {
     setSolicitudId(id);
     setUsuarioId(usuarioId);
-    setUsuarioEmail(usuarioEmail)
+    setUsuarioEmail(usuarioEmail);
     setModalOpen(true);
   };
 
@@ -67,11 +67,13 @@ export const CancelarReservaA = () => {
     if (solicitudId && usuarioId && usuarioEmail) {
       try {
         await axios.post(
-          `http://127.0.0.1:8000/api/cambiarEstadoAdmin/${solicitudId}`,
+          import.meta.env.VITE_API_URL +
+            "/api/cambiarEstadoAdmin/" +
+            solicitudId,
           { reason: cancelReason }
         );
 
-        await axios.post(`http://127.0.0.1:8000/api/notificacion`, {
+        await axios.post(import.meta.env.VITE_API_URL + "/api/notificacion", {
           id_usuario: usuarioId,
           id_solicitud: solicitudId,
           titulo: tituloNotificacion,
@@ -79,14 +81,11 @@ export const CancelarReservaA = () => {
           visto: 1,
         });
 
-        await axios.post(
-          `http://127.0.0.1:8000/api/enviarEmail`,
-          {
-            email: usuarioEmail,
-            title: tituloNotificacion,
-            description: cancelReason,
-          }
-        );
+        await axios.post(import.meta.env.VITE_API_URL + "/api/enviarEmail", {
+          email: usuarioEmail,
+          title: tituloNotificacion,
+          description: cancelReason,
+        });
 
         getSolicitudes();
         setModalOpen(false);

@@ -60,8 +60,10 @@ export const Reglas = () => {
   const obtenerRegla = useCallback(async () => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/regla/${selectedRegla}`
+        import.meta.env.VITE_API_URL + "/api/regla/" + selectedRegla
+        // `http://127.0.0.1:8000/api/regla/${selectedRegla}`
       );
+      console.log(selectedRegla);
       if (!response.ok) {
         throw new Error("No se pudo obtener la fecha inicial");
       }
@@ -105,9 +107,13 @@ export const Reglas = () => {
       };
 
       try {
-        const response = await axios.post("http://127.0.0.1:8000/api/periodo", {
-          periodos: datos.periodos,
-        });
+        const response = await axios.post(
+          // "http://127.0.0.1:8000/api/periodo",
+          import.meta.env.VITE_API_URL + "/api/periodo",
+          {
+            periodos: datos.periodos,
+          }
+        );
         if (response.data.errores !== undefined) {
           if (response.data.success !== undefined) {
             resetValues();
@@ -162,7 +168,8 @@ export const Reglas = () => {
     //Verficamos si tiene regla
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/ambiente-regla",
+        // "http://127.0.0.1:8000/api/ambiente-regla",
+        import.meta.env.VITE_API_URL + "/api/ambiente-regla",
         {
           id_ambiente: selectedAmbiente,
           id_regla: selectedRegla,

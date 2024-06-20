@@ -15,8 +15,6 @@ import { toast } from "sonner";
 import { useAmbienteStore } from "../../RegistrarAmbientes/store/ambientes.store";
 import { ISimpleAmbiente } from "../interfaces/simple-ambientes";
 
-
-
 interface Props {
   ambiente: ISimpleAmbiente;
 }
@@ -145,9 +143,11 @@ export const EditAmbienteModal = ({ ambiente }: Props) => {
         inputUbi,
         parseInt(inputCap)
       );
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000);
+
+      onOpenChange();
       setInputSave(true);
       console.log(buttonSave);
     } else {

@@ -40,7 +40,7 @@ export const CancelarS = () => {
 
   const getSolicitudes = async () => {
     const respuesta = await axios.get<CReservaD[]>(
-      `http://127.0.0.1:8000/api/nombre_usuario/${user}`
+      import.meta.env.VITE_API_URL + "/api/nombre_usuario/" + user
     );
     const solicitudesPendientes = respuesta.data.filter(
       (solicitud) => solicitud.solicitud.estado === "Aceptada"
@@ -69,7 +69,7 @@ export const CancelarS = () => {
     if (solicitudId) {
       try {
         await axios.post(
-          `http://127.0.0.1:8000/api/cambiarEstadoUser/${solicitudId}`
+          import.meta.env.VITE_API_URL + "/api/cambiarEstadoUser/" + solicitudId
         );
         getSolicitudes();
         setModalOpen(false);

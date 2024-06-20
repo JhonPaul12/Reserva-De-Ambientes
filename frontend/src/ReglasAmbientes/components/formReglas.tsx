@@ -6,7 +6,7 @@ import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { toast } from "sonner";
 
-const data = [
+const values = [
   {
     value: "1",
     label: "Primer semestre",
@@ -100,21 +100,25 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
       }
     }
 
-    const reglaData = {
-      nombre: data[Number(selectedRegla) - 1].label,
+    const data = {
+      nombre: values[Number(selectedRegla) - 1].label,
       fecha_inicial: fechaInicio.format("YYYY-MM-DD"),
       fecha_final: fechaFinal.format("YYYY-MM-DD"),
       activa: 1,
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/regla/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reglaData),
-      });
+      // const response = await fetch("http://127.0.0.1:8000/api/regla/", {
+      const response = await fetch(
+        import.meta.env.VITE_API_URL + "/api/regla/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!response.ok) {
         const result = await response.json();
@@ -146,7 +150,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
         <form className="flex flex-col items-center space-y-2">
           <Select
             key={selectKey}
-            items={data}
+            items={values}
             label="Seleccione un periodo académico"
             placeholder=""
             className="w-full"

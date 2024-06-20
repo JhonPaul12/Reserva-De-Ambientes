@@ -23,7 +23,9 @@ export const ListaFeriados = ({ refresh }: { refresh: boolean }) => {
   useEffect(() => {
     const fetchGestiones = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/excepcion/");
+        const response = await fetch(
+          import.meta.env.VITE_API_URL + "/api/excepcion/"
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

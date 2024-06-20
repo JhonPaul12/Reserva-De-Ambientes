@@ -10,19 +10,19 @@ import "./estilos.css";
 dayjs.locale("es");
 
 const messages = {
-  allDay: 'Todo el día',
-  previous: 'Anterior',
-  next: 'Siguiente',
-  today: 'Hoy',
-  month: 'Mes',
-  week: 'Semana',
-  day: 'Día',
-  agenda: 'Agenda',
-  date: 'Fecha',
-  time: 'Hora',
-  event: 'Evento',
-  noEventsInRange: 'No hay eventos en este rango.',
-  showMore: (total: number) => `+ Ver más (${total})`
+  allDay: "Todo el día",
+  previous: "Anterior",
+  next: "Siguiente",
+  today: "Hoy",
+  month: "Mes",
+  week: "Semana",
+  day: "Día",
+  agenda: "Agenda",
+  date: "Fecha",
+  time: "Hora",
+  event: "Evento",
+  noEventsInRange: "No hay eventos en este rango.",
+  showMore: (total: number) => `+ Ver más (${total})`,
 };
 
 interface CalendarEvent {
@@ -41,7 +41,7 @@ export const Calendario = () => {
   const getSolicitudes = async () => {
     try {
       const respuesta = await axios.get(
-        `http://127.0.0.1:8000/api/allPeriodosLibres`
+        import.meta.env.VITE_API_URL + "/api/allPeriodosLibres"
       );
       const transformedEvents = transformEvents(respuesta.data);
       setEvents(transformedEvents);
@@ -51,17 +51,19 @@ export const Calendario = () => {
   };
 
   const transformEvents = (solicitudes: Reserva[]): CalendarEvent[] => {
-    return solicitudes.flatMap(solicitud => ({
-      start: dayjs(solicitud.fecha + "T" + solicitud.horario.hora_inicio).toDate(),
+    return solicitudes.flatMap((solicitud) => ({
+      start: dayjs(
+        solicitud.fecha + "T" + solicitud.horario.hora_inicio
+      ).toDate(),
       end: dayjs(solicitud.fecha + "T" + solicitud.horario.hora_fin).toDate(),
       title: solicitud.ambiente.nombre,
     }));
   };
 
   const localizer = dayjsLocalizer(dayjs);
-  
+
   const minTime = new Date();
-  minTime.setHours(6, 45, 0); 
+  minTime.setHours(6, 45, 0);
   const maxTime = new Date();
   maxTime.setHours(21, 45, 0);
 
@@ -74,15 +76,15 @@ export const Calendario = () => {
         endAccessor="end"
         min={minTime}
         max={maxTime}
-        step={45} 
+        step={45}
         timeslots={2}
         messages={messages}
         style={{
           border: "1px solid #ddd",
-          borderRadius: "8px", 
-          padding: "16px", 
+          borderRadius: "8px",
+          padding: "16px",
           backgroundColor: "#fff",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)"
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         }}
         className="striped hoverable"
       />

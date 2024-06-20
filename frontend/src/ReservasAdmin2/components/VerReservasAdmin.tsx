@@ -39,7 +39,8 @@ export const VerReservaAdmin = () => {
 
   const getSolicitudes = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/periodoSolicitud2`
+      // `http://127.0.0.1:8000/api/periodoSolicitud2`
+      import.meta.env.VITE_API_URL + "/api/periodoSolicitud2"
     );
     setSolicitudes(respuesta.data);
     console.log(respuesta.data);
@@ -47,7 +48,7 @@ export const VerReservaAdmin = () => {
 
   const calculateItemsPerPage = () => {
     const headerHeight = 35;
-    const rowHeight = 90; 
+    const rowHeight = 90;
     const availableHeight = window.innerHeight - headerHeight;
     const items = Math.floor(availableHeight / rowHeight);
     setItemsPerPage(items);
@@ -62,7 +63,8 @@ export const VerReservaAdmin = () => {
     setModalSolicitudId(solicitudId);
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/solicitudID/${solicitudId}`
+        // `http://localhost:8000/api/solicitudID/${solicitudId}`
+        import.meta.env.VITE_API_URL + "/api/solicitudID/" + solicitudId
       );
       setModalText(response.data);
     } catch (error) {

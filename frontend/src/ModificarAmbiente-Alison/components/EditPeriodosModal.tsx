@@ -61,7 +61,10 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
 
   //Obtenemos los periodos de el ambiente
   const getAmbiente = useCallback(async () => {
-    fetch(`http://127.0.0.1:8000/api/periodosAsignados/${ambiente.id}`)
+    // fetch(`http://127.0.0.1:8000/api/periodosAsignados/${ambiente.id}`)
+    fetch(
+      import.meta.env.VITE_API_URL + "/api/periodosAsignados/" + ambiente.id
+    )
       .then((response) => response.json())
       .then((data) => {
         setPeriodos(data);
@@ -120,9 +123,15 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
       };
       console.log(datos);
       try {
-        const response = await axios.post("http://127.0.0.1:8000/api/periodo", {
-          periodos: datos.periodos,
-        });
+        // const response = await axios.post("http://127.0.0.1:8000/api/periodo", {
+        //   periodos: datos.periodos,
+        // });
+        const response = await axios.post(
+          import.meta.env.VITE_API_URL + "/api/periodo",
+          {
+            periodos: datos.periodos,
+          }
+        );
         if (response.data.errores !== undefined) {
           if (response.data.success !== undefined) {
             //salir
@@ -156,8 +165,14 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
         })),
       };
       try {
+        // const response = await axios.delete(
+        //   "http://127.0.0.1:8000/api/eliminarPeriodo",
+        //   {
+        //     data: datos1,
+        //   }
+        // );
         const response = await axios.delete(
-          "http://127.0.0.1:8000/api/eliminarPeriodo",
+          import.meta.env.VITE_API_URL + "/api/eliminarPeriodo",
           {
             data: datos1,
           }
@@ -187,8 +202,15 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
 
   const reglaAmbiente = async () => {
     try {
+      // const response = await axios.post(
+      //   "http://127.0.0.1:8000/api/ambiente-regla",
+      //   {
+      //     id_ambiente: ambiente.id,
+      //     id_regla: regla,
+      //   }
+      // );
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/ambiente-regla",
+        import.meta.env.VITE_API_URL + "/api/ambiente-regla",
         {
           id_ambiente: ambiente.id,
           id_regla: regla,
@@ -231,7 +253,8 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
     //     setFechaInicio(data.fecha_inicio);
     //     setFechaFinal(data.fecha_fin);
     //   });
-    fetch("http://127.0.0.1:8000/api/reglaActiva/")
+    // fetch("http://127.0.0.1:8000/api/reglaActiva/")
+    fetch(import.meta.env.VITE_API_URL + "/api/reglaActiva/")
       .then((response) => response.json())
       .then((data) => {
         setRegla(data.id);

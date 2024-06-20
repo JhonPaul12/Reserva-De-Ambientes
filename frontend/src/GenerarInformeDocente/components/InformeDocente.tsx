@@ -25,8 +25,11 @@ export const InformeDocente = () => {
 
   const getDocentes = async () => {
     try {
+      // const response = await axios.get<Docente[]>(
+      //   "http://127.0.0.1:8000/api/datosDocente"
+      // );
       const response = await axios.get<Docente[]>(
-        "http://127.0.0.1:8000/api/datosDocente"
+        import.meta.env.VITE_API_URL + "/api/datosDocente"
       );
       setDocentes(response.data);
     } catch (error) {

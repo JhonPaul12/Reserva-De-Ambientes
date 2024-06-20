@@ -41,6 +41,7 @@ export const Login = () => {
     } else {
       setIsLoading(false);
       console.log("Autenticado");
+      console.log("Probando nueva rutas de env");
       await login(email, password);
     }
   };

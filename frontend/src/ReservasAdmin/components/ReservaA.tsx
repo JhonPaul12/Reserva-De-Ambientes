@@ -19,7 +19,10 @@ export const ReservaA = () => {
   }, []);
 
   const getSolicitudes = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/AllDocentes`);
+    // const respuesta = await axios.get(`http://127.0.0.1:8000/api/AllDocentes`);
+    const respuesta = await axios.get(
+      import.meta.env.VITE_API_URL + "/api/AllDocentes"
+    );
     setSolicitudes(respuesta.data);
     console.log(respuesta.data);
   };

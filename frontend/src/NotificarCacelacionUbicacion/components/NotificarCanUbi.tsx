@@ -17,9 +17,9 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import { toast } from "sonner";
-interface IDS{
-  id_solicitud:number
-  usuarios:[id_usuario:number,email:string]
+interface IDS {
+  id_solicitud: number;
+  usuarios: [id_usuario: number, email: string];
 }
 
 export const NotificarCanUbi = () => {
@@ -42,8 +42,17 @@ export const NotificarCanUbi = () => {
     const fechaStr = fecha ? fecha.toString() : "";
 
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/obtenerUbicacionDeSolicitudesAceptadas/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/obtenerUbicacionDeSolicitudesAceptadas/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+        import.meta.env.VITE_API_URL +
+          "/api/obtenerUbicacionDeSolicitudesAceptadas/" +
+          fechaStr +
+          "/" +
+          horaInicioStr +
+          "/" +
+          horaFinStr
       );
       setUbicaciones(response.data);
     } catch (error) {
@@ -69,8 +78,19 @@ export const NotificarCanUbi = () => {
       await Promise.all(
         aulasArray.map(async (aula: any) => {
           try {
+            // const response = await axios.post(
+            //   `http://127.0.0.1:8000/api/cambiarEstadoPorUbicacionAmbienteYHorario/${aula}/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+            // );
             const response = await axios.post(
-              `http://127.0.0.1:8000/api/cambiarEstadoPorUbicacionAmbienteYHorario/${aula}/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+              import.meta.env.VITE_API_URL +
+                "/api/cambiarEstadoPorUbicacionAmbienteYHorario/" +
+                aula +
+                "/" +
+                fechaStr +
+                "/" +
+                horaInicioStr +
+                "/" +
+                horaFinStr
             );
             console.log(ids);
             const idsActualizados = response.data;
@@ -82,7 +102,8 @@ export const NotificarCanUbi = () => {
                   id.usuarios.map(async (usuario: any) => {
                     try {
                       await axios.post(
-                        `http://127.0.0.1:8000/api/notificacion`,
+                        // `http://127.0.0.1:8000/api/notificacion`,
+                        import.meta.env.VITE_API_URL + "/api/notificacion",
                         {
                           id_usuario: usuario.id_usuario,
                           id_solicitud: id.id_solicitud,
@@ -92,7 +113,8 @@ export const NotificarCanUbi = () => {
                         }
                       );
                       await axios.post(
-                        `http://127.0.0.1:8000/api/enviarEmail`,
+                        // `http://127.0.0.1:8000/api/enviarEmail`,
+                        import.meta.env.VITE_API_URL + "/api/enviarEmail",
                         {
                           email: usuario.email,
                           title: tituloNotificacion,
@@ -162,9 +184,9 @@ export const NotificarCanUbi = () => {
           Seleccionar Ubicaciones
         </h2>
         <div
-         className={`flex flex-wrap justify-between items-center ${
-          window.innerWidth > 768 ? "" : "px-2"
-        }`}
+          className={`flex flex-wrap justify-between items-center ${
+            window.innerWidth > 768 ? "" : "px-2"
+          }`}
         >
           <TimeInput
             className={`p-3 ${
@@ -213,20 +235,22 @@ export const NotificarCanUbi = () => {
           </Select>
         </div>
         <div className="flex justify-end">
-        <Button
-          className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"} ml-auto`}
-          color="primary"
-          variant="shadow"
-          onClick={() => setModalOpen(true)}
-        >
-          Notificar Ubicaciones
-        </Button>
-      </div>
+          <Button
+            className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"} ml-auto`}
+            color="primary"
+            variant="shadow"
+            onClick={() => setModalOpen(true)}
+          >
+            Notificar Ubicaciones
+          </Button>
+        </div>
       </div>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent className="">
           <ModalHeader>¿Esta seguro de cancelar las reservas?</ModalHeader>
-          <ModalBody>Se cancelaran las reservas de las ubicaciones seleccionadas</ModalBody>
+          <ModalBody>
+            Se cancelaran las reservas de las ubicaciones seleccionadas
+          </ModalBody>
           <ModalFooter className="">
             <Button color="danger" variant="shadow" onClick={cambiarEstado}>
               Sí, cancelar

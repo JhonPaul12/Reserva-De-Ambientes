@@ -39,7 +39,8 @@ export const TodasSol = () => {
 
   const getSolicitudes = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/nombre_usuario/${user}`
+      import.meta.env.VITE_API_URL + "/api/nombre_usuario/" + user
+      // `http://127.0.0.1:8000/api/nombre_usuario/${user}`
     );
     setSolicitudes(respuesta.data);
     console.log(respuesta.data);
@@ -56,8 +57,11 @@ export const TodasSol = () => {
   const handleRechazadoClick = async (solicitudId: string) => {
     setModalSolicitudId(solicitudId);
     try {
+      // const response = await axios.get(
+      //   `http://localhost:8000/api/solicitudID/${solicitudId}`
+      // );
       const response = await axios.get(
-        `http://localhost:8000/api/solicitudID/${solicitudId}`
+        import.meta.env.VITE_API_URL + "/api/solicitudID/" + solicitudId
       );
       setModalText(response.data);
     } catch (error) {

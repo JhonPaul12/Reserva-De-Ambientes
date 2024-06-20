@@ -32,8 +32,13 @@ const NotificationList: React.FC<{
   const navigate = useNavigate();
 
   const handleAction = async (notificacionID: number) => {
+    // await axios.put(
+    //   `http://127.0.0.1:8000/api/cambiarEstadoNotificacion/${notificacionID}`
+    // );
     await axios.put(
-      `http://127.0.0.1:8000/api/cambiarEstadoNotificacion/${notificacionID}`
+      import.meta.env.VITE_API_URL +
+        "/api/cambiarEstadoNotificacion/" +
+        notificacionID
     );
     refreshNotifications();
     navigate("/user/notificaciones");
@@ -96,8 +101,11 @@ export const HeaderU = () => {
 
   const getNotificaciones = async () => {
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/notificacionSinVista/${user?.id}`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/notificacionSinVista/${user?.id}`
+        import.meta.env.VITE_API_URL + "/api/notificacionSinVista/" + user?.id
       );
       setNotificaciones(response.data);
       if (response.data.length > 0) {

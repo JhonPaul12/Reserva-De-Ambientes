@@ -17,9 +17,9 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import { toast } from "sonner";
-interface IDS{
-  id_solicitud:number
-  usuarios:[id_usuario:number,email:string]
+interface IDS {
+  id_solicitud: number;
+  usuarios: [id_usuario: number, email: string];
 }
 
 export const NotificarCan = () => {
@@ -40,8 +40,17 @@ export const NotificarCan = () => {
     const fechaStr = fecha ? fecha.toString() : "";
 
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/obtenerSolicitudesPorFechaYHorario2/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/obtenerSolicitudesPorFechaYHorario2/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+        import.meta.env.VITE_API_URL +
+          "/api/obtenerSolicitudesPorFechaYHorario2/" +
+          fechaStr +
+          "/" +
+          horaInicioStr +
+          "/" +
+          horaFinStr
       );
       setAulas(response.data);
     } catch (error) {
@@ -67,8 +76,19 @@ export const NotificarCan = () => {
       await Promise.all(
         aulasArray.map(async (aula: any) => {
           try {
+            // const response = await axios.post(
+            //   `http://127.0.0.1:8000/api/cambiarEstadoPorNombreAmbienteYHorario/${aula}/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+            // );
             const response = await axios.post(
-              `http://127.0.0.1:8000/api/cambiarEstadoPorNombreAmbienteYHorario/${aula}/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+              import.meta.env.VITE_API_URL +
+                "/api/cambiarEstadoPorNombreAmbienteYHorario/" +
+                aula +
+                "/" +
+                fechaStr +
+                "/" +
+                horaInicioStr +
+                "/" +
+                horaFinStr
             );
             console.log(ids);
             const idsActualizados = response.data;
@@ -80,7 +100,8 @@ export const NotificarCan = () => {
                   id.usuarios.map(async (usuario: any) => {
                     try {
                       await axios.post(
-                        `http://127.0.0.1:8000/api/notificacion`,
+                        // `http://127.0.0.1:8000/api/notificacion`,
+                        import.meta.env.VITE_API_URL + "/api/notificacion",
                         {
                           id_usuario: usuario.id_usuario,
                           id_solicitud: id.id_solicitud,
@@ -90,7 +111,8 @@ export const NotificarCan = () => {
                         }
                       );
                       await axios.post(
-                        `http://127.0.0.1:8000/api/enviarEmail`,
+                        // `http://127.0.0.1:8000/api/enviarEmail`,
+                        import.meta.env.VITE_API_URL + "/api/enviarEmail",
                         {
                           email: usuario.email,
                           title: tituloNotificacion,
@@ -209,20 +231,22 @@ export const NotificarCan = () => {
           </Select>
         </div>
         <div className="flex justify-end">
-        <Button
-          className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"} ml-auto`}
-          color="primary"
-          variant="shadow"
-          onClick={() => setModalOpen(true)}
-        >
-          Notificar Aulas
-        </Button>
-      </div>
+          <Button
+            className={`my-2 ${window.innerWidth > 768 ? "" : "p-3"} ml-auto`}
+            color="primary"
+            variant="shadow"
+            onClick={() => setModalOpen(true)}
+          >
+            Notificar Aulas
+          </Button>
+        </div>
       </div>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <ModalContent className="">
           <ModalHeader>¿Esta seguro de cancelar las reservas?</ModalHeader>
-          <ModalBody>Se cancelaran las reservas de las aulas seleccionadas</ModalBody>
+          <ModalBody>
+            Se cancelaran las reservas de las aulas seleccionadas
+          </ModalBody>
           <ModalFooter className="">
             <Button color="danger" variant="shadow" onClick={cambiarEstado}>
               Sí, cancelar

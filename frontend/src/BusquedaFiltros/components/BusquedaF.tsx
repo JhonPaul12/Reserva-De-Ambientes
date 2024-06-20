@@ -36,7 +36,7 @@ export const BusquedaF = () => {
 
   const getPeriodos = async () => {
     const respuesta = await axios.get<Periodo[]>(
-      `http://127.0.0.1:8000/api/allPeriodos`
+      import.meta.env.VITE_API_URL + "/api/allPeriodos"
     );
     const Libres = respuesta.data;
     setPeriodo(Libres);

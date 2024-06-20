@@ -26,7 +26,7 @@ export const MenuCheckBox = ({
   //Cargamos los horarios de la base de datos
   const getPeriodos = useCallback(() => {
     if (periodos.length === 0) {
-      fetch(`http://127.0.0.1:8000/api/horario`)
+      fetch(import.meta.env.VITE_API_URL + "/api/horario")
         .then((response) => response.json())
         .then((data) => {
           setPeriodos(data);
@@ -38,8 +38,13 @@ export const MenuCheckBox = ({
     if (selectedAmbiente) {
       const fetchData = async () => {
         try {
+          // const response = await fetch(
+          //   `http://127.0.0.1:8000/api/periodosAsignados/${selectedAmbiente}`
+          // );
           const response = await fetch(
-            `http://127.0.0.1:8000/api/periodosAsignados/${selectedAmbiente}`
+            import.meta.env.VITE_API_URL +
+              "/api/periodosAsignados/" +
+              selectedAmbiente
           );
           if (!response.ok) {
             throw new Error("Failed to fetch data");
