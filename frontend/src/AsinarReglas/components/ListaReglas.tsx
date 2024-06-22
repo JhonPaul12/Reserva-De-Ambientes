@@ -48,7 +48,7 @@ export const ListaReglas: React.FC<ListaReglasProps> = ({
   };
 
   return (
-    <div className="mt-8 mx-auto">
+    <div className="text-xs sm:text-lg mx-6 mr-12">
       <select
         value={selectedOption}
         onChange={handleChange}

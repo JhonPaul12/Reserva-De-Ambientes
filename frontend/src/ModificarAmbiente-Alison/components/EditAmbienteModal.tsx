@@ -143,13 +143,12 @@ export const EditAmbienteModal = ({ ambiente }: Props) => {
         inputUbi,
         parseInt(inputCap)
       );
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
-
-      onOpenChange();
+      /*setTimeout(() => {
+        window.location.reload();
+      }, 2000);*/
       setInputSave(true);
       console.log(buttonSave);
+      onOpenChange();
     } else {
       toast.error("Todos los campos deben tener datos para registrar");
       console.log("Todos los campos deben tener datos para registrar");

@@ -202,7 +202,7 @@ export const Reglas = () => {
   };
 
   return (
-    <div className="reglas-container">
+    <div className="reglas-container" style={{ overflowX: "auto" }}>
       <Toaster
         position="top-right"
         richColors
@@ -210,16 +210,23 @@ export const Reglas = () => {
         style={{ position: "absolute" }}
       />
 
-      <div className="mt-10 mx-10 text-negro flex flex-col text-center">
-        <h1 className="text-3xl font-bold"> Asignar Horarios</h1>
-        <div className="flex flex-row ">
-          <p className="text-2xl font-bold m-auto my-9">Gestion Actual</p>
-          <ListaReglas onSelectChange={handleReglaChange} reset={resetRegla} />
-          <p className="text-2xl font-bold mx-5 mt-9">Seleccionar Ambiente</p>
-          <ListaAmbientes
-            onSelectChange={handleSelectChange}
-            reset={resetAmbiente}
-          />
+      <div className="mt-3 mx-3 sm:mt-10 sm:mx-10 text-negro flex flex-col ">
+        <h1 className="text-2xl sm:text-3xl font-bold"> Asignar Horarios</h1>
+        <div className="sm:flex flex-row m-3 sm:m-5">
+          <div className="flex flex-row items-center">
+            <p className="text-sm sm:text-2xl font-bold ">Gestion Actual</p>
+            <ListaReglas
+              onSelectChange={handleReglaChange}
+              reset={resetRegla}
+            />
+          </div>
+          <div className="flex flex-row items-center">
+            <p className="text-sm sm:text-2xl font-bold">Seleccionar Ambiente</p>
+            <ListaAmbientes
+              onSelectChange={handleSelectChange}
+              reset={resetAmbiente}
+            />
+          </div>
         </div>
         <MenuCheckBox
           prueba={handleCheckboxChange}

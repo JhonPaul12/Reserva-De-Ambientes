@@ -88,7 +88,7 @@ export const TablaSolicitudes = () => {
   };
 
   return (
-    <div className="mx-6 space-y-4 mt-4 sm:mx-auto w-full max-w-screen-md text-center">
+    <div className="mx-6 space-y-4 mt-4 mx-auto w-full max-w-screen-md text-center">
       <label className="ml-10  text-3xl font-bold text-center text-gray-900">
         LISTA DE DOCENTES{" "}
       </label>

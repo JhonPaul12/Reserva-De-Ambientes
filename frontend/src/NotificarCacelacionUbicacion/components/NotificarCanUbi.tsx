@@ -17,6 +17,9 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import { toast } from "sonner";
+import { I18nProvider } from "@react-aria/i18n";
+import { AiFillClockCircle } from "react-icons/ai";
+
 interface IDS {
   id_solicitud: number;
   usuarios: [id_usuario: number, email: string];
@@ -58,7 +61,6 @@ export const NotificarCanUbi = () => {
       setUbicaciones(response.data);
     } catch (error) {
       setUbicaciones([]);
-      toast.error("No hay Aulas en la fecha");
     }
   };
 
@@ -191,30 +193,43 @@ export const NotificarCanUbi = () => {
             className={`sm:p-3 ${
               window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
             }`}
+            hourCycle={24}
+            size="lg"
             labelPlacement="outside"
             label="Hora Inicio"
             value={horaInicio}
             onChange={setHoraInicio}
+            endContent={
+              <AiFillClockCircle className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
+            }
           />
           <TimeInput
             className={`sm:p-3 ${
               window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
             }`}
+            hourCycle={24}
+            size="lg"
             labelPlacement="outside"
             label="Hora Fin"
             value={horaFin}
             onChange={setHoraFin}
+            endContent={
+              <AiFillClockCircle className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
+            }
           />
-          <DatePicker
-            className={`sm:p-3 ${
-              window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
-            }`}
-            labelPlacement="outside"
-            label="Fecha"
-            fullWidth
-            value={fecha}
-            onChange={setFecha}
-          />
+          <I18nProvider locale="en-GB">
+            <DatePicker
+              className={`sm:p-3 ${
+                window.innerWidth > 768 ? "lg:w-1/4" : "md:w-auto"
+              }`}
+              size="lg"
+              labelPlacement="outside"
+              label="Fecha"
+              fullWidth
+              value={fecha}
+              onChange={setFecha}
+            />
+          </I18nProvider>
         </div>
         <div className="">
           <Select
@@ -225,6 +240,11 @@ export const NotificarCanUbi = () => {
             placeholder="Seleccione las ubicaciones"
             selectionMode="multiple"
             onSelectionChange={setUbicacionesSeleccionadas}
+            onClick={() => {
+              if (ubicaciones.length === 0) {
+                toast.error("No hay aulas en la fecha seleccionada");
+              }
+            }}
           >
             {ubicaciones.length > 0
               ? ubicaciones.map((ubicacion: any) => (

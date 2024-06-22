@@ -127,11 +127,11 @@ export const FormRA = () => {
   const onInputChangeCancel = () => {
     window.location.reload();};
   return (
-    <div>
-      <label className="text-3xl font-bold text-center text-gray-900">
+    <div >
+      <label className="text-xl  ml-5 sm:ml-0 sm:text-3xl font-bold text-center text-gray-900">
         REGISTRO DE AMBIENTE
       </label>
-      <form className="mt-5 space-y-6" onSubmit={onInputChangeSave}>
+      <form className=" m-5 space-y-6" onSubmit={onInputChangeSave}>
         <div className="columnaR">
           <label className="text-ms text-gray-900">Nombre*:</label>
           <br />

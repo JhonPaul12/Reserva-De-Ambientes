@@ -78,7 +78,7 @@ export const ListaDocentes = () => {
   };
 
   return (
-    <div className="mx-6 mt-4 sm:mx-auto w-full max-w-screen-md">
+    <div className="mx-6 mt-4 mx-auto w-full max-w-screen-md">
       <h2 className="text-3xl font-bold text-center text-gray-900">
         Editar Docentes
       </h2>

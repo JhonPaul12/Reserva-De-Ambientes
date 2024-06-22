@@ -57,12 +57,12 @@ export const ListaReservas = () => {
 
   return (
     <div className="mx-6 my-2 text-center text-negro">
-      <label className="text-4xl font-bold text-gray-900">
+      <label className="text-xl sm:text-4xl font-bold text-gray-900">
         LISTA DE DOCENTES
       </label>
 
       {/* Filtro de búsqueda */}
-      <div className="mt-4  w-1/2 mx-auto flex items-center">
+      <div className="mt-4  sm:w-1/2 mx-auto flex items-center">
         <FaSearch />
         <Input
           placeholder="Buscar por nombre"

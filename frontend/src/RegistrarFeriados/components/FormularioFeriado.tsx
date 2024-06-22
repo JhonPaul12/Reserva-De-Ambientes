@@ -59,9 +59,9 @@ export const FormularioFeriado = ({
   };
 
   return (
-    <div className="flex justify-center items-center  text-negro w-full my-14 ">
-      <div className="shadow-lg rounded-lg p-6 w-full">
-        <h1 className="text-2xl font-bold my-5 text-center ">
+    <div className="flex justify-center items-center  text-negro  mx-auto w-full max-w-screen-md sm:my-14 ">
+      <div className="shadow-lg rounded-lg p-3 sm:p-6 w-full">
+        <h1 className="text-2xl font-bold sm:my-5 text-center ">
           Registrar Feriado
         </h1>
         <form className="space-y-4">
@@ -84,12 +84,14 @@ export const FormularioFeriado = ({
             value={motivo}
             onChange={guardarmotivo}
           ></Input>
-          <Button className="bg-primary  text-white mx-5" onPress={guardar}>
-            Registrar
-          </Button>
-          <Button className="bg-danger  text-white " onPress={limpiar}>
-            Cancelar
-          </Button>
+          <div className="flex justify-end">
+            <Button className="bg-primary  text-white mx-5" onPress={guardar}>
+              Registrar
+            </Button>
+            <Button className="bg-danger  text-white " onPress={limpiar}>
+              Cancelar
+            </Button>
+          </div>
         </form>
       </div>
     </div>

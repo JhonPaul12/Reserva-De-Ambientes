@@ -44,8 +44,8 @@ export const ListaFeriados = ({ refresh }: { refresh: boolean }) => {
   const currentFeriados = feriados.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div className="mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
-      <h2 className="text-3xl font-bold text-center text-gray-900">
+    <div className="sm:mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
+      <h2 className="text-2xl font-bold text-center text-gray-900">
         Lista de Feriados
       </h2>
       <Table
@@ -63,10 +63,10 @@ export const ListaFeriados = ({ refresh }: { refresh: boolean }) => {
         <TableBody>
           {currentFeriados.map((feriado) => (
             <TableRow key={feriado.id}>
-              <TableCell className="text-gray-900 text-xs text-center">
+              <TableCell className="text-gray-900 text-md text-center">
                 {feriado.motivo}
               </TableCell>
-              <TableCell className="text-gray-900 text-xs text-center">
+              <TableCell className="text-gray-900 text-md text-center">
                 {feriado.fecha_excepcion}
               </TableCell>
             </TableRow>

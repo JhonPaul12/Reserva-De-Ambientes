@@ -144,6 +144,9 @@ export const FormCrearDocente = () => {
 
   const getMaterias = async () => {
     try {
+      // const respuesta = await axios.get(
+      //   `http://127.0.0.1:8000/api/MateriasLibres`
+      // );
       const respuesta = await axios.get(
         import.meta.env.VITE_API_URL + "/api/MateriasLibres"
       );
@@ -235,7 +238,7 @@ export const FormCrearDocente = () => {
 
   return (
     <div>
-      <label className="text-3xl font-bold text-center text-gray-900 ml-5">
+      <label className="text-xl sm:text-3xl font-bold text-center text-gray-900 ml-5">
         CREAR DOCENTE
       </label>
       <form
@@ -252,10 +255,6 @@ export const FormCrearDocente = () => {
               placeholder="Ingrese el nombre del docente..."
               className="w-full"
               value={inputName}
-              style={{
-                fontSize: "15px",
-                padding: "10px",
-              }}
               onChange={onInputChangeName}
             />
             <br />
@@ -266,10 +265,6 @@ export const FormCrearDocente = () => {
               value={inputApellidos}
               placeholder="Ingrese los apellidos..."
               onChange={onInputChangeApe}
-              style={{
-                fontSize: "15px",
-                padding: "10px",
-              }}
             />
             <br />
 
@@ -281,10 +276,6 @@ export const FormCrearDocente = () => {
               placeholder="Ingrese un número..."
               onChange={onInputChangeTele}
               onKeyPress={handleKeyPress}
-              style={{
-                fontSize: "15px",
-                padding: "10px",
-              }}
             />
             <br />
             <label className="text-ms text-gray-900">CódigoSIS*:</label>
@@ -295,10 +286,6 @@ export const FormCrearDocente = () => {
               placeholder="Ingrese un número..."
               onChange={onInputChangeCodigo}
               onKeyPress={handleKeyPress}
-              style={{
-                fontSize: "15px",
-                padding: "10px",
-              }}
             />
             <br />
           </div>
@@ -314,10 +301,6 @@ export const FormCrearDocente = () => {
               startContent={
                 <MdEmail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
               }
-              style={{
-                fontSize: "15px",
-                padding: "10px",
-              }}
             />
             <br />
 

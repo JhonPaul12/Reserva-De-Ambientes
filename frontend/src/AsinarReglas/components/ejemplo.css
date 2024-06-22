@@ -1,30 +1,20 @@
 .table {
-  border: 1px solid black;
+  border: 1px solid rgb(120, 112, 112);
   border-collapse: collapse;
   width: 100%;
-  margin: 20px auto;
-  table-layout: fixed;
 }
 
 /* Estilo de los encabezados de la tabla */
 .th {
-  font-size: 22px;
   font-weight: bold;
   color: #333;
   background-color: #f2f2f2;
-  padding: 10px;
-  text-align: left;
-  border: 1px solid black;
+  border: 1px solid #333;
   width: 300px;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Estilo de las celdas de la tabla */
 .td {
-  width: 100px;
-  padding: 15px;
   border: 1px solid black;
   text-align: center;
 }
@@ -37,22 +27,23 @@
 
 /* Estilo de los casilleros de verificación */
 .input[type="checkbox"] {
-  margin: 2px; /* Reduce el margen a 2px */
   color: #ffffff;
   min-width: 20px; /* Asegura un tamaño mínimo constante */
   min-height: 20px; /* Asegura un tamaño mínimo constante */
 }
-
+@media (max-width: 600px) {
+  .input[type="checkbox"] {
+    min-width: 15px; /* Ajusta el tamaño para pantallas pequeñas */
+    min-height: 15px; /* Ajusta el tamaño para pantallas pequeñas */
+  }
+}
 /* Estilo de la sección de casilleros seleccionados */
 .contenedor {
   width: 100%;
-  margin: 20px auto;
 }
 
 .contenedor h2 {
-  font-size: 18px;
   font-weight: bold;
-  margin-bottom: 10px;
 }
 
 .contenedor ul {
@@ -61,8 +52,6 @@
 }
 
 .contenedor li {
-  margin-bottom: 5px;
-  padding: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }

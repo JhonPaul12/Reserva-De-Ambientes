@@ -69,12 +69,11 @@ export const VerAmbientes = () => {
 
   return (
     <div className="text-negro w-full text-center mt-2">
-      <label className="ml-10 text-3xl font-bold text-gray-900">
+      <label className="text-xl sm:text-3xl font-bold text-gray-900">
         LISTA DE AMBIENTES
       </label>
-      <div className="flex flex-row justify-center items-center mt-10">
-        {/* Componentes de filtros */}
-        <div className="mb-3 mx-4 ">
+      <div className="flex flex-row justify-center items-center mt-2 sm:mt-10">
+        <div className="text-xs sm:text-xl mb-3 sm:mx-4 ">
           <label
             htmlFor="filtroNombre"
             className="block text-gray-700 text-bold"
@@ -87,15 +86,11 @@ export const VerAmbientes = () => {
             value={filtroNombre}
             onChange={handleFiltroNombreChange}
             placeholder="Ej: 691A"
-            className="mt-3 block"
-            style={{
-              fontSize: "15px",
-              padding: "10px",
-            }}
+            className="mt-3 block w-24 sm:w-48 lg:w-64"
             aria-label="Filtrar por nombre"
           />
         </div>
-        <div className="mb-3 mx-4">
+        <div className="mb-3 sm:mx-4 text-xs sm:text-xl">
           <label
             htmlFor="filtroCapacidad"
             className="block text-gray-700 text-bold"
@@ -108,15 +103,11 @@ export const VerAmbientes = () => {
             value={filtroCapacidad}
             placeholder="Ej:100"
             onChange={handleFiltroCapacidadChange}
-            className="mt-3 block w-full "
-            style={{
-              fontSize: "15px",
-              padding: "10px",
-            }}
+            className="mt-3 block mx-7 sm:mx-0 w-24 sm:w-48 lg:w-64 "
             aria-label="Filtrar por capacidad"
           />
         </div>
-        <div className="mb-3 mx-4">
+        <div className="mb-3 sm:mx-4 text-xs sm:text-xl">
           <label htmlFor="filtroTipo" className="block text-gray-700 text-bold">
             <b>Filtrar por tipo:&nbsp; &nbsp; &nbsp; &nbsp;</b>
           </label>
@@ -125,11 +116,7 @@ export const VerAmbientes = () => {
             value={filtroTipo}
             onChange={handleFiltroTipoChange}
             placeholder="Todos"
-            className="mt-3 block w-full "
-            style={{
-              fontSize: "15px",
-              padding: "10px",
-            }}
+            className="mt-3 block w-24 sm:w-48 lg:w-64"
             aria-label="Filtrar por tipo"
           >
             <SelectItem key={""} value="">
