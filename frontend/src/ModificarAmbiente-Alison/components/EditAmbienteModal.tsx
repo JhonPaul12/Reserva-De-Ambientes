@@ -180,6 +180,7 @@ export const EditAmbienteModal = ({ ambiente }: Props) => {
                     <label className="text-ms text-gray-900">Nombre:</label>
                     <br />
                     <Input
+                      value={inputName}
                       type="text"
                       name="nombre"
                       className="w-full"

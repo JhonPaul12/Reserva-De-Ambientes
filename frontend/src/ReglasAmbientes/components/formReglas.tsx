@@ -110,7 +110,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
     try {
       // const response = await fetch("http://127.0.0.1:8000/api/regla/", {
       const response = await fetch(
-        import.meta.env.VITE_API_URL + "/api/regla/",
+        "http://steelcode.tis.cs.umss.edu.bo/api/regla",
         {
           method: "POST",
           headers: {

@@ -23,6 +23,7 @@ interface ModalMenuCheckBoxProps {
   Periodos: Periodo[];
   checkboxCreated: (newCreatedItems: CheckedItems) => void;
   checkboxDeleted: (newDeleteItems: number[]) => void;
+  limpiar: boolean;
 }
 
 type CreatedItems = {
@@ -32,6 +33,7 @@ export const ModalMenuCheckBox = ({
   Periodos,
   checkboxCreated,
   checkboxDeleted,
+  limpiar,
 }: ModalMenuCheckBoxProps) => {
   const [periodos, setPeriodos] = useState<Periodo[]>([]);
   const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
@@ -43,6 +45,13 @@ export const ModalMenuCheckBox = ({
   useEffect(() => {
     getPeriodos();
   }, []);
+
+  useEffect(() => {
+    setCreatedItems({});
+    setDeleteItems([]);
+    setCheckedItems({});
+  }, [limpiar]);
+
   useEffect(() => {
     checkboxCreated(createdItems);
     checkboxDeleted(deleteItems);

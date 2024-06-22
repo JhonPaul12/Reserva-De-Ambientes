@@ -44,16 +44,28 @@ export const Reglas = () => {
 
   //Lista de Ambientes
   const handleSelectChange = (selectedValue: string) => {
-    setSelectedAmbiente(selectedValue);
-    if (selectedValue === "") {
-      setCheckedItems({});
-      setResetCheckboxes((prev) => !prev);
+    //Verificar antes la gestion
+    if (selectedRegla !== "") {
+      setSelectedAmbiente(selectedValue);
+      if (selectedValue === "") {
+        setCheckedItems({});
+        setResetCheckboxes((prev) => !prev);
+      }
+    } else {
+      toast.error("Primero debes seleccionar una gestion");
+      //Resetear campo ambiente
+      setSelectedAmbiente("");
+      setResetAmbiente((prev) => !prev);
     }
   };
 
   //Lista de Reglas
   const handleReglaChange = (selectedValue: string) => {
     setSelectedRegla(selectedValue);
+    setSelectedAmbiente("");
+    setResetAmbiente((prev) => !prev);
+    setResetCheckboxes((prev) => !prev);
+    setCheckedItems({});
   };
 
   //Obtengo reglas
@@ -68,6 +80,7 @@ export const Reglas = () => {
         throw new Error("No se pudo obtener la fecha inicial");
       }
       const data = await response.json();
+      console.log(data);
       setFechainicial(data.fecha_inicial);
       setFechafinal(data.fecha_final);
     } catch (error) {
@@ -90,6 +103,11 @@ export const Reglas = () => {
       selectedAmbiente &&
       Object.keys(checkedItems).length !== 0
     ) {
+      console.log("fecha inicial:", fechaInicial);
+      console.log("fecha final:", fechafinal);
+      console.log("selectedRegla:", selectedRegla);
+      console.log("selectedAmbiente:", selectedAmbiente);
+      console.log("checkedItems:", checkedItems);
       //Creamos la regla asociada al ambiente
       await crearReglaAmbiente();
       const startDate = dayjs(fechaInicial);
@@ -207,10 +225,17 @@ export const Reglas = () => {
           prueba={handleCheckboxChange}
           reset={resetCheckboxes}
           selectedAmbiente={selectedAmbiente}
+          selectedRegla={selectedRegla}
         />
-        <div className="flex justify-end">
+        <div className="flex justify-end ">
           <Button
-            className="bg-primary mt-2 mb-10 text-white ml-auto"
+            className="bg-danger  mt-2 mb-10 text-white mr-5"
+            onClick={resetValues}
+          >
+            limpiar
+          </Button>
+          <Button
+            className="bg-primary mt-2 mb-10 text-white"
             onClick={guardar}
           >
             Guardar
