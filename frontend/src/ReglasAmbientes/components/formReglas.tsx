@@ -138,12 +138,12 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
   };
 
   return (
-    <div className="flex justify-center items-center  text-negro w-full my-8">
-      <div className="shadow-lg rounded-lg p-6 w-full">
-        <h1 className="text-2xl font-bold my-5 text-center ">
+    <div className="sm:flex justify-center items-center  text-negro mx-auto w-full max-w-screen-md  sm:my-8">
+      <div className="shadow-lg rounded-lg sm:p-6 w-full">
+        <h1 className="text-2xl font-bold sm:my-5 text-center ">
           Crear Periodo Academico
         </h1>
-        <form className="flex flex-col items-center space-y-2">
+        <form className="sm:flex flex-col w-full items-center space-y-2">
           <Select
             key={selectKey}
             items={data}
@@ -164,7 +164,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
             initialDate={fechaFinal}
             onDateChange={guardarFechaFinal}
           />
-          <div className="flex space-x-4">
+          <div className="flex justify-end py-2 space-x-4">
             <Button onClick={guardarRegla} className="bg-primary text-white">
               Registrar
             </Button>

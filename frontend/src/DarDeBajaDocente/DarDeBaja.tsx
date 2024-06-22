@@ -3,7 +3,7 @@ import { TablaSolicitudes } from "./components/SolicitudesListadas";
 
 export const DarDeBaja = () => {
   return (
-    <div className="mt-10 sm:mx-auto sm:w-full">
+    <div className="mt-10 mx-auto w-full">
       <Toaster position="top-right" richColors closeButton />
       <TablaSolicitudes />
     </div>

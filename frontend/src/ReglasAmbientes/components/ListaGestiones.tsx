@@ -34,8 +34,8 @@ export const ListaGestiones = ({ refresh }: { refresh: boolean }) => {
     fetchGestiones();
   }, [refresh]);
   return (
-    <div className="mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
-      <h2 className="text-3xl font-bold text-center text-gray-900">
+    <div className="sm:mx-6 sm:my-4 mt-10 mx-auto w-full max-w-screen-md">
+      <h2 className="text-2xl font-bold text-center text-gray-900">
         Lista de peridos académicos
       </h2>
       <Table
@@ -59,16 +59,16 @@ export const ListaGestiones = ({ refresh }: { refresh: boolean }) => {
         <TableBody>
           {gestion.map((gestion) => (
             <TableRow key={gestion.id}>
-              <TableCell className="text-gray-900 text-xs text-center">
+              <TableCell className="text-gray-900 text-md text-center">
                 {gestion.nombre}
               </TableCell>
-              <TableCell className="text-gray-900 text-xs text-center">
+              <TableCell className="text-gray-900 text-md text-center">
                 {gestion.fecha_inicial}
               </TableCell>
-              <TableCell className="text-gray-900 text-xs text-center">
+              <TableCell className="text-gray-900 text-md text-center">
                 {gestion.fecha_final}
               </TableCell>
-              <TableCell className="text-gray-900 text-xs text-center">
+              <TableCell className="text-gray-900 text-md text-center">
                 {gestion.activa}
               </TableCell>
             </TableRow>

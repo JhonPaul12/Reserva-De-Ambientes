@@ -3,7 +3,7 @@ import { FormRA } from "./components/FormRA";
 
 export const RegistroAmbiente = () => {
   return (
-    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <div className="mt-10 mx-auto w-full max-w-sm">
       <Toaster
         position="top-right"
         richColors

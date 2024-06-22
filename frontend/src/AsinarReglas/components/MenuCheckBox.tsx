@@ -164,25 +164,41 @@ export const MenuCheckBox = ({
           console.log(checkedItems);
         }}
       ></Button> */}
-      <table>
-        <thead>
+      <table className="text-xs sm:text-xl">
+        <thead className="sm:text-xl">
           <tr className="tr">
-            <th className="th" style={{ width: "25%" }}>
-              Horario
+            <th className="th p-2">Horario</th>
+            <th className="th">
+              <span className="block sm:hidden">Lun</span>
+              <span className="hidden sm:block">Lunes</span>
             </th>
-            <th className="th">Lunes</th>
-            <th className="th">Martes</th>
-            <th className="th">Miercoles</th>
-            <th className="th">Jueves</th>
-            <th className="th">Viernes</th>
-            <th className="th">Sabado</th>
+            <th className="th">
+              <span className="block sm:hidden">Mar</span>
+              <span className="hidden sm:block">Martes</span>
+            </th>
+            <th className="th">
+              <span className="block sm:hidden">Mié</span>
+              <span className="hidden sm:block">Miércoles</span>
+            </th>
+            <th className="th">
+              <span className="block sm:hidden">Jue</span>
+              <span className="hidden sm:block">Jueves</span>
+            </th>
+            <th className="th">
+              <span className="block sm:hidden">Vie</span>
+              <span className="hidden sm:block">Viernes</span>
+            </th>
+            <th className="th">
+              <span className="block sm:hidden">Sáb</span>
+              <span className="hidden sm:block">Sábado</span>
+            </th>
           </tr>
           <tr className="tr">
             <th className="th">Seleccionar todo</th>
             {dias.map((dia) => (
-              <th className="th" key={`select-all-${dia}`}>
+              <th className="th pl-4 " key={`select-all-${dia}`}>
                 <RiCheckboxMultipleFill
-                  className="mx-12"
+                  className="sm:mx-12 cursor-pointer transform transition-transform duration-200 hover:scale-110 hover:shadow-lg"
                   onClick={() => handleSelectAll(dia)}
                 />
               </th>
@@ -192,7 +208,7 @@ export const MenuCheckBox = ({
         <tbody>
           {horarios.map(([horaInicio, horaFin]) => (
             <tr className="tr" key={horaInicio}>
-              <td className="td">
+              <td className="td p-2">
                 {horaInicio} - {horaFin}
               </td>
               {dias.map((dia) => (
@@ -227,7 +243,7 @@ export const MenuCheckBox = ({
       </table>
       <div className="flex justify-end">
         <Button
-          color="warning"
+          color="danger"
           className=" mt-5 text-white ml-auto"
           onClick={resetCheckboxes}
         >

@@ -114,12 +114,12 @@ export const HeaderU = () => {
       style={{ backgroundColor: "#0d1b47" }}
     >
       {/* Logo */}
-      <div className="flex items-center text-white pl-10 sm:pl-12">
+      <div className="flex items-center text-white pl-10 sm:pl-2">
         <div>
-          <IoLogoPolymer className="text-7xl md:text-7xl" />
+          <IoLogoPolymer className="text-5xl md:text-7xl" />
         </div>
         <div className="ml-3">
-          <h1 className="font-bold text-xl md:text-4xl">Steel Code</h1>
+          <h1 className="font-bold text-md sm:text-4xl">Steel Code</h1>
           <p className="text-xs md:text-sm">Gestión de Ambientes</p>
         </div>
       </div>
@@ -130,9 +130,9 @@ export const HeaderU = () => {
           <Badge
             content={notificaciones.length}
             isInvisible={notificaciones.length === 0}
-            shape="circle"
             color="success"
             size="sm"
+            className="border-none"
           >
             <Button
               className="butn my-auto"

@@ -41,7 +41,7 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
     setSelectedOption("");
   };
   return (
-    <div className="mt-8 mx-auto">
+    <div className="text-xs sm:text-lg ml-4 ">
       <select
         value={selectedOption}
         onChange={handleChange}

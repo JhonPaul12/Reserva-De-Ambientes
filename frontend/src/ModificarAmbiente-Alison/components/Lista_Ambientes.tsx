@@ -45,10 +45,10 @@ export const Lista_Ambientes = () => {
 
   return (
     <div className="text-center">
-      <label className="ml-10 text-4xl font-bold text-gray-900">
+      <label className="ml-10 text-3xl sm:text-4xl font-bold text-gray-900">
         EDITAR AMBIENTES
       </label>
-      <section className="mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
+      <section className="mx-6 my-4 mt-10 mx-auto w-full max-w-screen-md">
         <Table
           className="custom-table"
           aria-label="Example table with dynamic content"
@@ -67,7 +67,7 @@ export const Lista_Ambientes = () => {
           <TableBody>
             {currentAmbientes.map((ambiente) => (
               <TableRow key={ambiente.id}>
-                <TableCell className="text-base" style={{ width: "33%" }}>
+                <TableCell className="text-base" >
                   {ambiente.nombre}
                 </TableCell>
                 <TableCell className="text-base">
