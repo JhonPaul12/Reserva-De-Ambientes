@@ -22,7 +22,6 @@ class CreateSolicitudesTable extends Migration
             $table->foreignId('id_materia')->references('id')->on('materias')->onDelete('cascade');
            
             
-            $table->foreignId('ambiente_id')->references('id')->on('ambientes')->onDelete('cascade');
             $table->timestamps();
 
         });

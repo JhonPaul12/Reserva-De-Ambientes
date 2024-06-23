@@ -81,6 +81,12 @@ class AmbientereglaController extends Controller
         }
     }
 
+    public function capacidadTotal(){
+
+        //recibir un conjunto de aulas y devolver capacidad total.
+
+    }
+
 
 }
 

@@ -24,8 +24,10 @@ class Ambiente extends Model
     {
         return $this->hasMany(Ambiente_regla::class);
     }
-    public function solicitud(){
-        return $this->hasMany(Solicitud::class);
+  
+    public function solicitudes()
+    {
+        return $this->belongsToMany(Solicitud::class, 'ambiente_solicitud');
     }
 
 }

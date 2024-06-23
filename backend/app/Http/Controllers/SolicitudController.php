@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\FuncCall;
 use Symfony\Contracts\Service\Attribute\Required;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudController extends Controller
 {
@@ -94,7 +95,8 @@ class SolicitudController extends Controller
             'periodos.*' => 'exists:periodos,id', // Asegúrate de que cada ID de periodo existe en la tabla de periodos
             'estado' => 'required|in:Cancelada,Aceptada',
             'numero_estudiantes' => 'required',
-            'ambiente_id' => 'required|exists:ambientes,id',
+            'ambiente_ids' => 'required|array', // Modificado para aceptar un array de IDs
+            'ambiente_ids.*' => 'exists:ambientes,id', // Asegura que cada ID exista
             'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
             'docentes.*' => 'exists:users,id', // Asegúrate de que cada ID de docente existe en la tabla de usuarios
             'id_materia' => 'required|exists:materias,id',
@@ -117,11 +119,11 @@ class SolicitudController extends Controller
             'estado' => $request->estado,
             'numero_estudiantes' => $request->numero_estudiantes,
             'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
-            'ambiente_id' => $request->ambiente_id, // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
+             // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
 
         ]);
 
-        $solicitud->load('ambiente');
+        $solicitud->load('ambientes');
 
 
         // Asocia los docentes con la solicitud
@@ -133,6 +135,7 @@ class SolicitudController extends Controller
         // Asocia los periodos con la solicitud
         $periodos = $request->input('periodos');
         $solicitud->periodos()->attach($periodos);
+        $solicitud->ambientes()->attach($request->ambiente_ids);
 
 
         if (!$solicitud) {
@@ -226,11 +229,14 @@ class SolicitudController extends Controller
             'hora_fin' => 'required',
             'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
             'numero_estudiantes' => 'required',
-            'ambiente_id' => 'required|exists:ambientes,id|unique:solicitudes,ambiente_id,' . $id, // Agrega la validación de unicidad, excluyendo el ID actual
+            //'ambiente_id' => 'required|exists:ambientes,id|unique:solicitudes,ambiente_id,' . $id, // Agrega la validación de unicidad, excluyendo el ID actual
             'docentes' => 'required|array',
             'docentes.*' => 'exists:users,id',
             'id_materia' => 'required|exists:materias,id',
-            'id_grupo' => 'required|exists:grupos,id'
+            'id_grupo' => 'required|exists:grupos,id',
+            'ambientes' => 'required|array', // Añadido para validar 'ambientes'
+            'ambientes.*' => 'exists:ambientes,id', // Añadido para asegurar que cada ID de ambiente exista
+        
         ]);
 
         if ($validador->fails()) {
@@ -425,7 +431,7 @@ class SolicitudController extends Controller
     {
         $users = User::where('name', $nombreDocente)
             ->with(['solicitudes' => function ($query) {
-                $query->with(['materia', 'ambiente']);
+                $query->with(['materia', 'ambientes']);
             }])
             ->get();
         if ($users->isEmpty()) {
@@ -448,7 +454,7 @@ class SolicitudController extends Controller
     public function AllDocentes()
     {
         $users = User::with(['solicitudes' => function ($query) {
-            $query->with(['materia', 'ambiente']);
+            $query->with(['materia', 'ambientes']);
         }])->get();
 
         if ($users->isEmpty()) {
@@ -902,5 +908,104 @@ class SolicitudController extends Controller
         $formatoResultado = array_values($usuariosConReserva);
 
         return response()->json($formatoResultado, 200);
+    }
+
+    public function LibresUnAula(Request $request)
+    {
+
+        $validador = Validator::make($request->all(), [
+            'fecha' => 'required|date',
+            'aula' => 'required|string',
+        ]);
+
+        if ($validador->fails()) {
+            return response()->json(['errors' => $validador->errors()], 422);
+        }
+
+
+        $idAmbiente = DB::table('ambientes')
+            ->where('nombre', $request->aula)
+            ->value('id');
+
+        if ($idAmbiente === null) {
+            return response()->json(['message' => 'Aula no encontrada'], 404);
+        }
+
+
+        $libresID = DB::table('periodos')
+            ->where('fecha', $request->fecha)
+            ->where('id_ambiente', $idAmbiente)
+            ->where('estado', 'libre')
+            ->pluck('id_horario');
+
+
+        $horariosLibres = DB::table('horarios')
+            ->whereIn('id', $libresID)
+            ->pluck('hora_inicio');
+
+        return response()->json(['horarios_libres' => $horariosLibres]);
+    }
+
+
+    public function LibresComunes(Request $request)
+    {
+        // Validar los datos de entrada
+        $validador = Validator::make($request->all(), [
+            'fecha' => 'required|date',
+            'aulas' => 'required|array|min:1',
+            'aulas.*' => 'required|string'
+        ]);
+
+        if ($validador->fails()) {
+            return response()->json(['errors' => $validador->errors()], 422);
+        }
+
+        // Obtener los datos validados
+        $fecha = $request->input('fecha');
+        $nombresAulas = $request->input('aulas');
+
+        // Obtener los IDs de las aulas
+        $idsAmbientes = DB::table('ambientes')
+            ->whereIn('nombre', $nombresAulas)
+            ->pluck('id');
+
+        if ($idsAmbientes->isEmpty()) {
+            return response()->json(['message' => 'Aulas no encontradas'], 404);
+        }
+
+        // Obtener los IDs de horarios libres para cada aula en la fecha dada
+        $horariosLibresPorAula = [];
+
+        foreach ($idsAmbientes as $idAmbiente) {
+            $libresID = DB::table('periodos')
+                ->where('fecha', $fecha)
+                ->where('id_ambiente', $idAmbiente)
+                ->where('estado', 'libre')
+                ->pluck('id_horario');
+
+            $horariosLibresPorAula[] = $libresID->toArray();
+        }
+
+        // Encontrar los periodos libres comunes entre todas las aulas
+        if (count($horariosLibresPorAula) > 1) {
+            $horariosLibresComunes = array_intersect(...$horariosLibresPorAula);
+        } else {
+            $horariosLibresComunes = $horariosLibresPorAula[0];
+        }
+
+        if (empty($horariosLibresComunes)) {
+            return response()->json(['message' => 'No hay horarios libres comunes'], 404);
+        }
+
+        // Obtener la información completa de los periodos libres comunes junto con los horarios y el nombre del ambiente
+        $periodosLibres = DB::table('periodos')
+            ->join('horarios', 'periodos.id_horario', '=', 'horarios.id')
+            ->join('ambientes', 'periodos.id_ambiente', '=', 'ambientes.id')
+            ->whereIn('periodos.id_horario', $horariosLibresComunes)
+            ->where('periodos.fecha', $fecha)
+            ->select('periodos.*', 'horarios.hora_inicio', 'horarios.hora_fin', 'ambientes.nombre as nombre')
+            ->get();
+
+        return response()->json(['periodos_libres' => $periodosLibres]);
     }
 }
