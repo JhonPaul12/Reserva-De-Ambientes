@@ -19,7 +19,7 @@ interface SolicitudState {
     numero_estudiantes: number,
     id_materia:number, 
     grupos:string[], 
-    ambiente_id:number,
+    ambiente_id:string[],
     docentes:string[],
     periodos:string[]
     ) => Promise<void>;
