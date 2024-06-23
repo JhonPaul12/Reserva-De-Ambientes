@@ -94,7 +94,8 @@ class SolicitudController extends Controller
             'periodos.*' => 'exists:periodos,id', // Asegúrate de que cada ID de periodo existe en la tabla de periodos
             'estado' => 'required|in:Cancelada,Aceptada',
             'numero_estudiantes' => 'required',
-            'ambiente_id' => 'required|exists:ambientes,id',
+            'ambiente_ids' => 'required|array', // Modificado para aceptar un array de IDs
+            'ambiente_ids.*' => 'exists:ambientes,id', // Asegura que cada ID exista
             'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
             'docentes.*' => 'exists:users,id', // Asegúrate de que cada ID de docente existe en la tabla de usuarios
             'id_materia' => 'required|exists:materias,id',
@@ -117,11 +118,11 @@ class SolicitudController extends Controller
             'estado' => $request->estado,
             'numero_estudiantes' => $request->numero_estudiantes,
             'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
-            'ambiente_id' => $request->ambiente_id, // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
+             // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
 
         ]);
 
-        $solicitud->load('ambiente');
+        $solicitud->load('ambientes');
 
 
         // Asocia los docentes con la solicitud
@@ -133,6 +134,7 @@ class SolicitudController extends Controller
         // Asocia los periodos con la solicitud
         $periodos = $request->input('periodos');
         $solicitud->periodos()->attach($periodos);
+        $solicitud->ambientes()->attach($request->ambiente_ids);
 
 
         if (!$solicitud) {
