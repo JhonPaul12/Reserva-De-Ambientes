@@ -13,12 +13,12 @@ class Periodo_SolicitudController extends Controller
 {
     public function index()
     {
-        $periodo_solicitudes = Periodo_Solicitud::with('periodo.horario', 'solicitud.users', 'solicitud.ambiente')->get();
+        $periodo_solicitudes = Periodo_Solicitud::with('periodo.horario', 'solicitud.users', 'solicitud.ambientes')->get();
         return response()->json($periodo_solicitudes, 200);
     }
     public function index2()
     {
-        $periodo_solicitudes = Periodo_Solicitud::with('periodo.horario', 'solicitud.materia', 'solicitud.users', 'solicitud.ambiente')->get();
+        $periodo_solicitudes = Periodo_Solicitud::with('periodo.horario', 'solicitud.materia', 'solicitud.users', 'solicitud.ambientes')->get();
 
         $grouped = $periodo_solicitudes->groupBy('solicitud_id')->map(function ($items, $key) {
             return [
@@ -37,7 +37,7 @@ class Periodo_SolicitudController extends Controller
     }
     public function nombre_usuario($idUsuario)
     {
-        $query = Periodo_Solicitud::with('periodo.horario', 'solicitud.materia', 'solicitud.users', 'solicitud.ambiente');
+        $query = Periodo_Solicitud::with('periodo.horario', 'solicitud.materia', 'solicitud.users', 'solicitud.ambientes');
 
         if ($idUsuario) {
             $users = User::where('id', $idUsuario)->get();
@@ -98,7 +98,7 @@ class Periodo_SolicitudController extends Controller
         })->whereHas('periodo.horario', function ($query) use ($horaInicio, $horaFin) {
             $query->where('hora_inicio', '>=', $horaInicio)
                 ->where('hora_fin', '<=', $horaFin);
-        })->with(['solicitud.ambiente' => function ($query) {
+        })->with(['solicitud.ambientes' => function ($query) {
             $query->select('id', 'nombre');
         }])->get();
 
@@ -133,8 +133,8 @@ class Periodo_SolicitudController extends Controller
         })->whereHas('periodo.horario', function ($query) use ($horaInicio, $horaFin) {
             $query->where('hora_inicio', '>=', $horaInicio)
                 ->where('hora_fin', '<=', $horaFin);
-        })->with(['solicitud.ambiente' => function ($query) {
-            $query->select('id', 'ubicacion');
+        })->with(['solicitud.ambientes' => function ($query) {
+            $query->select('ambientes.id', 'ambientes.ubicacion');
         }])->get();
 
         if ($periodoSolicitudes->isEmpty()) {
@@ -142,9 +142,10 @@ class Periodo_SolicitudController extends Controller
         }
 
         $result = $periodoSolicitudes->map(function ($periodoSolicitud) {
-            return [
-                $periodoSolicitud->solicitud->ambiente->ubicacion
-            ];
+            return $periodoSolicitud->solicitud->ambientes->map(function ($ambiente) {
+                    return $ambiente->ubicacion;
+                });
+            
         })->unique()->values()->all();
 
         return response()->json($result, 200);
