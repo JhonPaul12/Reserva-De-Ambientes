@@ -163,11 +163,14 @@ class SolicitudController extends Controller
             'hora_fin' => 'required',
             'estado' => 'required|in:Rechazado,Aceptado,Pendiente',
             'numero_estudiantes' => 'required',
-            'ambiente_id' => 'required|exists:ambientes,id|unique:solicitudes,ambiente_id,' . $id, // Agrega la validación de unicidad, excluyendo el ID actual
+            //'ambiente_id' => 'required|exists:ambientes,id|unique:solicitudes,ambiente_id,' . $id, // Agrega la validación de unicidad, excluyendo el ID actual
             'docentes' => 'required|array',
             'docentes.*' => 'exists:users,id',
             'id_materia' => 'required|exists:materias,id',
-            'id_grupo' => 'required|exists:grupos,id'
+            'id_grupo' => 'required|exists:grupos,id',
+            'ambientes' => 'required|array', // Añadido para validar 'ambientes'
+            'ambientes.*' => 'exists:ambientes,id', // Añadido para asegurar que cada ID de ambiente exista
+        
         ]);
 
         if ($validador->fails()) {
@@ -362,7 +365,7 @@ class SolicitudController extends Controller
     {
         $users = User::where('name', $nombreDocente)
             ->with(['solicitudes' => function ($query) {
-                $query->with(['materia', 'ambiente']);
+                $query->with(['materia', 'ambientes']);
             }])
             ->get();
         if ($users->isEmpty()) {
@@ -385,7 +388,7 @@ class SolicitudController extends Controller
     public function AllDocentes()
     {
         $users = User::with(['solicitudes' => function ($query) {
-            $query->with(['materia', 'ambiente']);
+            $query->with(['materia', 'ambientes']);
         }])->get();
 
         if ($users->isEmpty()) {
