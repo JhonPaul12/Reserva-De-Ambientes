@@ -108,7 +108,7 @@ Route::get('/solicitud/guardar',[SolicitudController::class,'mostrarGuardado']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
 Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
 Route::get('/verAulasDisponibles',[SolicitudController::class, 'LibresUnAula']);
-Route::get('/libresComunes',[SolicitudController::class,'LibresComunes']);
+Route::post('/libresComunes',[SolicitudController::class,'LibresComunes']);
 
 //NOTIFICACIONES(NUEVO)
 Route::get('/notificacion',[NotificacionController::class,'index']);
