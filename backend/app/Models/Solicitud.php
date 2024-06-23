@@ -28,8 +28,11 @@ class Solicitud extends Model
     {
         return $this->belongsToMany(Grupo::class, 'grupo_solicitud');
     }
-    public function ambiente(){
-        return $this->belongsTo(Ambiente::class);
+    
+
+    public function ambientes()
+    {
+        return $this->belongsToMany(Ambiente::class, 'ambiente_solicitud');
     }
     use HasFactory;
     public function users()
