@@ -878,7 +878,7 @@ class SolicitudController extends Controller
 
     public function LibresComunes(Request $request)
     {
-
+        // Validar los datos de entrada
         $validador = Validator::make($request->all(), [
             'fecha' => 'required|date',
             'aulas' => 'required|array|min:1',
@@ -889,11 +889,11 @@ class SolicitudController extends Controller
             return response()->json(['errors' => $validador->errors()], 422);
         }
 
-
+        // Obtener los datos validados
         $fecha = $request->input('fecha');
         $nombresAulas = $request->input('aulas');
 
-
+        // Obtener los IDs de las aulas
         $idsAmbientes = DB::table('ambientes')
             ->whereIn('nombre', $nombresAulas)
             ->pluck('id');
@@ -902,7 +902,7 @@ class SolicitudController extends Controller
             return response()->json(['message' => 'Aulas no encontradas'], 404);
         }
 
-
+        // Obtener los IDs de horarios libres para cada aula en la fecha dada
         $horariosLibresPorAula = [];
 
         foreach ($idsAmbientes as $idAmbiente) {
@@ -915,7 +915,7 @@ class SolicitudController extends Controller
             $horariosLibresPorAula[] = $libresID->toArray();
         }
 
-
+        // Encontrar los periodos libres comunes entre todas las aulas
         if (count($horariosLibresPorAula) > 1) {
             $horariosLibresComunes = array_intersect(...$horariosLibresPorAula);
         } else {
@@ -926,11 +926,15 @@ class SolicitudController extends Controller
             return response()->json(['message' => 'No hay horarios libres comunes'], 404);
         }
 
-        // Obtener las horas de inicio de los horarios libres comunes
-        $horariosLibres = DB::table('horarios')
-            ->whereIn('id', $horariosLibresComunes)
-            ->pluck('hora_inicio');
+        // Obtener la información completa de los periodos libres comunes junto con los horarios y el nombre del ambiente
+        $periodosLibres = DB::table('periodos')
+            ->join('horarios', 'periodos.id_horario', '=', 'horarios.id')
+            ->join('ambientes', 'periodos.id_ambiente', '=', 'ambientes.id')
+            ->whereIn('periodos.id_horario', $horariosLibresComunes)
+            ->where('periodos.fecha', $fecha)
+            ->select('periodos.*', 'horarios.hora_inicio', 'horarios.hora_fin', 'ambientes.nombre as nombre')
+            ->get();
 
-        return response()->json(['horarios_libres' => $horariosLibres]);
+        return response()->json(['periodos_libres' => $periodosLibres]);
     }
 }
