@@ -31,6 +31,9 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
   const [fechaFinal, setFechaFinal] = useState<Dayjs | null>(null);
   const [selectKey, setSelectKey] = useState(0);
 
+  //Para cargar el boton de registrar
+  const [loading, setLoading] = useState(false);
+
   const guardarFechaInicio = (value: Dayjs | null) => {
     setFechaInicio(value);
   };
@@ -76,6 +79,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
       );
       return;
     }
+    setLoading(true);
 
     // Verificamos que la fecha final sea posterior a la fecha inicial
     if (fechaFinal.isBefore(fechaInicio)) {
@@ -110,7 +114,8 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
     try {
       // const response = await fetch("http://127.0.0.1:8000/api/regla/", {
       const response = await fetch(
-        "http://steelcode.tis.cs.umss.edu.bo/api/regla",
+        // "http://steelcode.tis.cs.umss.edu.bo/api/regla",
+        import.meta.env.VITE_API_URL + "/api/regla",
         {
           method: "POST",
           headers: {
@@ -132,6 +137,8 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
     } catch (error) {
       console.error("Error:", error);
     }
+
+    setLoading(false);
   };
 
   const cancelar = () => {
@@ -169,10 +176,19 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
             onDateChange={guardarFechaFinal}
           />
           <div className="flex justify-end py-2 space-x-4">
-            <Button onClick={guardarRegla} className="bg-primary text-white">
-              Registrar
+            <Button
+              onClick={guardarRegla}
+              className="bg-primary text-white"
+              isLoading={loading}
+            >
+              {loading ? "Guardando..." : "Guardar"}
             </Button>
-            <Button onClick={cancelar} className="bg-danger text-white">
+            <Button
+              onClick={cancelar}
+              className=" text-red-500"
+              color="danger"
+              variant="light"
+            >
               Cancelar
             </Button>
           </div>

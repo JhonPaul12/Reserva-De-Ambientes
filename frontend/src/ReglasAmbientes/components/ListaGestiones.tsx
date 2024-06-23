@@ -36,6 +36,15 @@ export const ListaGestiones = ({ refresh }: { refresh: boolean }) => {
     };
     fetchGestiones();
   }, [refresh]);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
   return (
     <div className="sm:mx-6 sm:my-4 mt-10 mx-auto w-full max-w-screen-md">
       <h2 className="text-2xl font-bold text-center text-gray-900">
@@ -66,10 +75,12 @@ export const ListaGestiones = ({ refresh }: { refresh: boolean }) => {
                 {gestion.nombre}
               </TableCell>
               <TableCell className="text-gray-900 text-md text-center">
-                {gestion.fecha_inicial}
+                {formatDate(gestion.fecha_inicial)}
+                {/* {gestion.fecha_inicial} */}
               </TableCell>
               <TableCell className="text-gray-900 text-md text-center">
-                {gestion.fecha_final}
+                {formatDate(gestion.fecha_final)}
+                {/* {gestion.fecha_final} */}
               </TableCell>
               <TableCell className="text-gray-900 text-md text-center">
                 {gestion.activa}

@@ -1,17 +1,21 @@
-import { Button, Input } from "@nextui-org/react";
+import { Button, DatePicker, DateValue, Input } from "@nextui-org/react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { I18nProvider } from "@react-aria/i18n";
 
 export const FormularioFeriado = ({
   actualizar,
 }: {
   actualizar: () => void;
 }) => {
-  const [fecha, setFecha] = useState("");
+  const [fecha, setFecha] = useState<DateValue | null>(null);
   const [motivo, setMotivo] = useState("");
 
-  const guardarfecha = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFecha(e.target.value);
+  //Para la carga del boton
+  const [loading, setLoading] = useState(false);
+
+  const guardarfecha = (value: DateValue) => {
+    setFecha(value);
   };
   const guardarmotivo = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMotivo(e.target.value);
@@ -19,8 +23,10 @@ export const FormularioFeriado = ({
 
   const guardar = async () => {
     if (fecha && motivo) {
+      setLoading(true);
       const data = {
-        fecha_excepcion: fecha,
+        // cambiamos la fecha a yyyy-mm-dd
+        fecha_excepcion: new Date(fecha.toString()).toISOString().split("T")[0],
         motivo: motivo,
       };
 
@@ -51,10 +57,12 @@ export const FormularioFeriado = ({
     } else {
       toast.error("Por favor, rellene todos los campos");
     }
+
+    setLoading(false);
   };
 
   const limpiar = () => {
-    setFecha("");
+    setFecha(null);
     setMotivo("");
   };
 
@@ -65,15 +73,16 @@ export const FormularioFeriado = ({
           Registrar Feriado
         </h1>
         <form className="space-y-4">
-          <Input
-            name="fecha feriado"
-            type="date"
-            fullWidth
-            size="lg"
-            label="Fecha"
-            value={fecha}
-            onChange={guardarfecha}
-          ></Input>
+          <I18nProvider locale="es-GB">
+            <DatePicker
+              labelPlacement="outside"
+              size="lg"
+              label="Fecha"
+              fullWidth={true}
+              value={fecha}
+              onChange={guardarfecha}
+            />
+          </I18nProvider>
 
           <Input
             name="motivo feriado"
@@ -84,11 +93,20 @@ export const FormularioFeriado = ({
             value={motivo}
             onChange={guardarmotivo}
           ></Input>
-          <div className="flex justify-end">
-            <Button className="bg-primary  text-white mx-5" onPress={guardar}>
-              Registrar
+          <div className="flex justify-center">
+            <Button
+              className="bg-primary  text-white mx-5"
+              onPress={guardar}
+              isLoading={loading}
+            >
+              {loading ? "Guardando..." : "Guardar"}
             </Button>
-            <Button className="bg-danger  text-white " onPress={limpiar}>
+            <Button
+              className="text-red-500"
+              color="danger"
+              variant="light"
+              onPress={limpiar}
+            >
               Cancelar
             </Button>
           </div>

@@ -43,6 +43,15 @@ export const ListaFeriados = ({ refresh }: { refresh: boolean }) => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentFeriados = feriados.slice(indexOfFirstItem, indexOfLastItem);
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
   return (
     <div className="sm:mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
       <h2 className="text-2xl font-bold text-center text-gray-900">
@@ -67,7 +76,9 @@ export const ListaFeriados = ({ refresh }: { refresh: boolean }) => {
                 {feriado.motivo}
               </TableCell>
               <TableCell className="text-gray-900 text-md text-center">
-                {feriado.fecha_excepcion}
+                {/* que me muestre en formato dia/mes/anio */}
+                {/* {feriado.fecha_excepcion} */}
+                {formatDate(feriado.fecha_excepcion)}
               </TableCell>
             </TableRow>
           ))}

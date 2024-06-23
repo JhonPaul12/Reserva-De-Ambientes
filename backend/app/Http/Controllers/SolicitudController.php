@@ -151,6 +151,72 @@ class SolicitudController extends Controller
     }
 
 
+    public function guardarNuevo(Request $request)
+{
+    $validador = Validator::make($request->all(), [
+        'motivo' => 'required|max:250',
+        'fecha_solicitud' => 'required',
+        'periodos' => 'required|array', // Asegúrate de que 'periodos' es un array
+        'periodos.*' => 'exists:periodos,id', // Asegúrate de que cada ID de periodo existe en la tabla de periodos
+        'estado' => 'required|in:Cancelada,Aceptada',
+        'numero_estudiantes' => 'required',
+        'ambientes' => 'required|array', // Asegúrate de que 'ambientes' es un array de IDs
+        'ambientes.*' => 'exists:ambientes,id', // Asegúrate de que cada ID de ambiente existe en la tabla de ambientes
+        'docentes' => 'required|array', // Asegúrate de que 'docentes' es un array
+        'docentes.*' => 'exists:users,id', // Asegúrate de que cada ID de docente existe en la tabla de usuarios
+        'id_materia' => 'required|exists:materias,id',
+        'grupos' => 'required|array',
+        'grupos.*' => 'exists:grupos,id'
+    ]);
+
+    if ($validador->fails()) {
+        $data = [
+            'message' => 'Error en la validacion de datos',
+            'errors' => $validador->errors(),
+            'status' => 400
+        ];
+        return response()->json($data, 400);
+    }
+
+    // Obtener los IDs de ambientes del request
+    $ambientesIds = $request->input('ambientes');
+
+    // Iterar sobre los IDs de ambientes y crear una solicitud para cada uno
+    foreach ($ambientesIds as $ambienteId) {
+        $solicitud = Solicitud::create([
+            'motivo' => $request->motivo,
+            'fecha_solicitud' => $request->fecha_solicitud,
+            'estado' => $request->estado,
+            'numero_estudiantes' => $request->numero_estudiantes,
+            'id_materia' => $request->id_materia,
+            'ambiente_id' => $ambienteId,
+        ]);
+
+        // Asociar los docentes con la solicitud
+        $docentes = $request->input('docentes');
+        $solicitud->users()->attach($docentes);
+
+        // Asociar los grupos con la solicitud
+        $grupos = $request->input('grupos');
+        $solicitud->grupos()->attach($grupos);
+
+        // Asociar los periodos con la solicitud
+        $periodos = $request->input('periodos');
+        $solicitud->periodos()->attach($periodos);
+    }
+
+    $data = [
+        'message' => 'Solicitudes creadas exitosamente para todos los ambientes',
+        'status' => 201
+    ];
+
+    return response()->json($data, 201);
+}
+
+    
+
+
+
     public function editar(Request $request, $id)
     {
         $validador = Validator::make($request->all(), [
@@ -521,8 +587,8 @@ class SolicitudController extends Controller
             $mesesEnEspañol = [
                 "January" => "Enero", "February" => "Febrero", "March" => "Marzo",
                 "April" => "Abril", "May" => "Mayo", "June" => "Junio",
-                "July" => "Julio"/*, "August" => "Agosto", "September" => "Septiembre",
-                "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"*/
+                "July" => "Julio", "August" => "Agosto", "September" => "Septiembre",
+                "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"
             ];
 
             foreach ($mesesEnEspañol as $mes => $mesEnEspañol) {
@@ -550,8 +616,8 @@ class SolicitudController extends Controller
         $mesesEnEspañol = [
             "January" => "Enero", "February" => "Febrero", "March" => "Marzo",
             "April" => "Abril", "May" => "Mayo", "June" => "Junio",
-            "July" => "Julio"/*, "August" => "Agosto", "September" => "Septiembre",
-        "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"*/
+            "July" => "Julio", "August" => "Agosto", "September" => "Septiembre",
+        "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"
         ];
 
         foreach ($solicitudes as $solicitud) {

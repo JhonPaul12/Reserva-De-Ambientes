@@ -105,6 +105,7 @@ Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
 Route::get('/solicitud/guardar',[SolicitudController::class,'mostrarGuardado']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
+Route::post('/solicitud/guardarnuevo',[SolicitudController::class,'guardarNuevo']);
 Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
 
 //NOTIFICACIONES(NUEVO)
@@ -190,7 +191,7 @@ Route::middleware(['auth:sanctum','rol.admin'])->group(function(){
 
 
 
-Route::get('/periodosAsignados/{id}',[PeriodoController::class,'listarPeriodos']);
+Route::get('/periodosAsignados/{id}/{id2}',[PeriodoController::class,'listarPeriodos']);
 
 Route::post('/cambiarEstadoUser/{id}',[SolicitudController::class,'cambiarEstadoUser']);
 Route::post('/cambiarEstadoAdmin/{id}',[SolicitudController::class,'cambiarEstadoAdmin']);

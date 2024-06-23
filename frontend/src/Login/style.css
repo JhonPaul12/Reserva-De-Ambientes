@@ -1,0 +1,38 @@
+/* styles.css */
+.background-image {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-image: url("/images/depositphotos_38461143-stock-photo-bright-white-hall-with-windows.jpg");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login__form-container {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* Semi-transparent white background */
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+.login__form h3 {
+  color: #333; /* Change text color for better readability */
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-blanco {
+  color: #fff;
+}

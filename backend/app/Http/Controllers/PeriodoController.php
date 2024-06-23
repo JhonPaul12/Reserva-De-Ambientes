@@ -169,6 +169,7 @@ class PeriodoController extends Controller
             if ($est === 'libre') {
                 $existingPeriodo = Periodo::where('id_ambiente', $periodoData['id_ambiente'])
                     ->where('id_horario', $periodoData['id_horario'])
+                    ->where('fecha', $periodoData['fecha'])
                     ->exists();
 
                 if ($existingPeriodo) {
@@ -501,47 +502,97 @@ class PeriodoController extends Controller
         }
     }
 
-    public function listarPeriodos($id)
-    {
-        // Validar el ID del ambiente
-        $validator = Validator::make(['id_ambiente' => $id], [
-            'id_ambiente' => 'required|exists:ambientes,id',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
-        }
+    // public function listarPeriodos($id)
+    // {
+    //     // Validar el ID del ambiente
+    //     $validator = Validator::make(['id_ambiente' => $id], [
+    //         'id_ambiente' => 'required|exists:ambientes,id',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         return response()->json(['error' => $validator->errors()], 400);
+    //     }
 
-        try {
-            // Buscar todos los períodos para el ambiente específico
-            $periodos = Periodo::with('horario') // Cargar la relación 'horario'
-                ->where('id_ambiente', $id)
-                ->get();
+    //     try {
+    //         // Buscar todos los períodos para el ambiente específico
+    //         $periodos = Periodo::with('horario') // Cargar la relación 'horario'
+    //             ->where('id_ambiente', $id)
+    //             ->get();
 
-            if ($periodos->isEmpty()) {
-                return response()->json(['error' => 'No se encontraron períodos para el ambiente especificado'], 404);
-            }
+    //         if ($periodos->isEmpty()) {
+    //             return response()->json(['error' => 'No se encontraron períodos para el ambiente especificado'], 404);
+    //         }
 
-            // Utilizar una colección de Laravel para agrupar los períodos por ID de horario
-            $periodosAgrupados = $periodos->groupBy('id_horario');
+    //         // Utilizar una colección de Laravel para agrupar los períodos por ID de horario
+    //         $periodosAgrupados = $periodos->groupBy('id_horario');
 
-            // Construir un arreglo de respuesta con el primer período de cada grupo
-            $response = [];
-            foreach ($periodosAgrupados as $grupo) {
-                $primerPeriodo = $grupo->first(); // Obtener el primer período del grupo
-                $response[] = [
-                    'id_horario' => $primerPeriodo->id_horario,
-                    'hora_inicio' => $primerPeriodo->horario->hora_inicio,
-                    'hora_fin' => $primerPeriodo->horario->hora_fin,
-                    'dia' => $primerPeriodo->horario->dia,
-                    'estado' => $primerPeriodo->estado,
-                ];
-            }
+    //         // Construir un arreglo de respuesta con el primer período de cada grupo
+    //         $response = [];
+    //         foreach ($periodosAgrupados as $grupo) {
+    //             $primerPeriodo = $grupo->first(); // Obtener el primer período del grupo
+    //             $response[] = [
+    //                 'id_horario' => $primerPeriodo->id_horario,
+    //                 'hora_inicio' => $primerPeriodo->horario->hora_inicio,
+    //                 'hora_fin' => $primerPeriodo->horario->hora_fin,
+    //                 'dia' => $primerPeriodo->horario->dia,
+    //                 'estado' => $primerPeriodo->estado,
+    //             ];
+    //         }
 
-            return response()->json($response, 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error al buscar períodos para el ambiente: ' . $e->getMessage()], 500);
-        }
+    //         return response()->json($response, 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Error al buscar períodos para el ambiente: ' . $e->getMessage()], 500);
+    //     }
+    // }
+    public function listarPeriodos($id_ambiente, $id_regla)
+{
+    // Validar el ID del ambiente y el ID de la regla
+    $validator = Validator::make(['id_ambiente' => $id_ambiente, 'id_regla' => $id_regla], [
+        'id_ambiente' => 'required|exists:ambientes,id',
+        'id_regla' => 'required|exists:reglas,id',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 400);
     }
+
+    try {
+        // Obtener las fechas inicial y final de la regla
+        $regla = Regla::find($id_regla);
+        $fecha_inicial = $regla->fecha_inicial;
+        $fecha_final = $regla->fecha_final;
+
+        // Buscar todos los períodos para el ambiente específico dentro del rango de fechas
+        $periodos = Periodo::with('horario') // Cargar la relación 'horario'
+            ->where('id_ambiente', $id_ambiente)
+            ->whereBetween('fecha', [$fecha_inicial, $fecha_final])
+            ->get();
+
+        if ($periodos->isEmpty()) {
+            return response()->json(['error' => 'No se encontraron períodos para el ambiente especificado en el rango de fechas'], 404);
+        }
+
+        // Utilizar una colección de Laravel para agrupar los períodos por ID de horario
+        $periodosAgrupados = $periodos->groupBy('id_horario');
+
+        // Construir un arreglo de respuesta con el primer período de cada grupo
+        $response = [];
+        foreach ($periodosAgrupados as $grupo) {
+            $primerPeriodo = $grupo->first(); // Obtener el primer período del grupo
+            $response[] = [
+                'id_horario' => $primerPeriodo->id_horario,
+                'hora_inicio' => $primerPeriodo->horario->hora_inicio,
+                'hora_fin' => $primerPeriodo->horario->hora_fin,
+                'dia' => $primerPeriodo->horario->dia,
+                'estado' => $primerPeriodo->estado,
+            ];
+        }
+
+        return response()->json($response, 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al buscar períodos para el ambiente: ' . $e->getMessage()], 500);
+    }
+}
+
 
     public function updateEstado(Request $request)
     {

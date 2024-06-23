@@ -51,6 +51,9 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
 
   const [limpiar, setLimpiar] = useState(false);
 
+  //Cargando en el boton
+  const [loading, setLoading] = useState(false);
+
   const onSelectChange = async (selectedValue: string) => {
     if (selectedValue === "") {
       console.log("No hay regla seleccionada");
@@ -124,6 +127,7 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
       ambiente.id &&
       Object.keys(createdItems).length !== 0
     ) {
+      setLoading(true);
       await reglaAmbiente();
 
       const startDate = dayjs(fechaInicio);
@@ -219,7 +223,7 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
     setCreatedItems({});
     setDeleteItems([]);
     setLimpiar(!limpiar);
-
+    setLoading(false);
     onOpenChange();
   };
 
@@ -295,8 +299,8 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
                 <Button color="danger" variant="light" onPress={onClose}>
                   Cancelar
                 </Button>
-                <Button color="primary" onPress={guardar}>
-                  Guardar
+                <Button color="primary" onPress={guardar} isLoading={loading}>
+                  {loading ? "Guardando..." : "Guardar"}
                 </Button>
               </ModalFooter>
             </>

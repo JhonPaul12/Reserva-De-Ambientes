@@ -23,6 +23,9 @@ export const Reglas = () => {
   const [resetRegla, setResetRegla] = useState(false);
   const [resetCheckboxes, setResetCheckboxes] = useState(false);
 
+  //Cargando del boton
+  const [loading, setLoading] = useState(false);
+
   //Para resetear los valores
   const resetValues = () => {
     setCheckedItems({});
@@ -103,6 +106,7 @@ export const Reglas = () => {
       selectedAmbiente &&
       Object.keys(checkedItems).length !== 0
     ) {
+      setLoading(true);
       console.log("fecha inicial:", fechaInicial);
       console.log("fecha final:", fechafinal);
       console.log("selectedRegla:", selectedRegla);
@@ -157,6 +161,8 @@ export const Reglas = () => {
         toast.error("Debe seleccionar al menos un horario");
       }
     }
+
+    setLoading(false);
   };
 
   //Funcion para obtener la fecha
@@ -211,17 +217,22 @@ export const Reglas = () => {
       />
 
       <div className="mt-3 mx-3 sm:mt-10 sm:mx-10 text-negro flex flex-col ">
-        <h1 className="text-2xl sm:text-3xl font-bold"> Asignar Horarios</h1>
-        <div className="sm:flex flex-row m-3 sm:m-5">
+        <h1 className="text-2xl sm:text-3xl font-bold text-center">
+          {" "}
+          Asignar Horarios
+        </h1>
+        <div className="sm:flex flex-row m-3 sm:m-5 justify-between">
           <div className="flex flex-row items-center">
-            <p className="text-sm sm:text-2xl font-bold ">Gestion Actual</p>
+            <p className="text-sm sm:text-2xl font-bold mr-5 ">Gestiones</p>
             <ListaReglas
               onSelectChange={handleReglaChange}
               reset={resetRegla}
             />
           </div>
-          <div className="flex flex-row items-center">
-            <p className="text-sm sm:text-2xl font-bold">Seleccionar Ambiente</p>
+          <div className="flex flex-row items-center ">
+            <p className="text-sm sm:text-2xl font-bold mr-5">
+              Seleccionar Ambiente
+            </p>
             <ListaAmbientes
               onSelectChange={handleSelectChange}
               reset={resetAmbiente}
@@ -244,8 +255,9 @@ export const Reglas = () => {
           <Button
             className="bg-primary mt-2 mb-10 text-white"
             onClick={guardar}
+            isLoading={loading}
           >
-            Guardar
+            {loading ? "Guardando..." : "Guardar"}
           </Button>
         </div>
       </div>
