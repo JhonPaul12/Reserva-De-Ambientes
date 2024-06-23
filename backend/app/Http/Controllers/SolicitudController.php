@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\FuncCall;
 use Symfony\Contracts\Service\Attribute\Required;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudController extends Controller
 {
@@ -836,5 +837,100 @@ class SolicitudController extends Controller
         $formatoResultado = array_values($usuariosConReserva);
 
         return response()->json($formatoResultado, 200);
+    }
+
+    public function LibresUnAula(Request $request)
+    {
+
+        $validador = Validator::make($request->all(), [
+            'fecha' => 'required|date',
+            'aula' => 'required|string',
+        ]);
+
+        if ($validador->fails()) {
+            return response()->json(['errors' => $validador->errors()], 422);
+        }
+
+
+        $idAmbiente = DB::table('ambientes')
+            ->where('nombre', $request->aula)
+            ->value('id');
+
+        if ($idAmbiente === null) {
+            return response()->json(['message' => 'Aula no encontrada'], 404);
+        }
+
+
+        $libresID = DB::table('periodos')
+            ->where('fecha', $request->fecha)
+            ->where('id_ambiente', $idAmbiente)
+            ->where('estado', 'libre')
+            ->pluck('id_horario');
+
+
+        $horariosLibres = DB::table('horarios')
+            ->whereIn('id', $libresID)
+            ->pluck('hora_inicio');
+
+        return response()->json(['horarios_libres' => $horariosLibres]);
+    }
+
+
+    public function LibresComunes(Request $request)
+    {
+
+        $validador = Validator::make($request->all(), [
+            'fecha' => 'required|date',
+            'aulas' => 'required|array|min:1',
+            'aulas.*' => 'required|string'
+        ]);
+
+        if ($validador->fails()) {
+            return response()->json(['errors' => $validador->errors()], 422);
+        }
+
+
+        $fecha = $request->input('fecha');
+        $nombresAulas = $request->input('aulas');
+
+
+        $idsAmbientes = DB::table('ambientes')
+            ->whereIn('nombre', $nombresAulas)
+            ->pluck('id');
+
+        if ($idsAmbientes->isEmpty()) {
+            return response()->json(['message' => 'Aulas no encontradas'], 404);
+        }
+
+
+        $horariosLibresPorAula = [];
+
+        foreach ($idsAmbientes as $idAmbiente) {
+            $libresID = DB::table('periodos')
+                ->where('fecha', $fecha)
+                ->where('id_ambiente', $idAmbiente)
+                ->where('estado', 'libre')
+                ->pluck('id_horario');
+
+            $horariosLibresPorAula[] = $libresID->toArray();
+        }
+
+
+        if (count($horariosLibresPorAula) > 1) {
+            $horariosLibresComunes = array_intersect(...$horariosLibresPorAula);
+        } else {
+            $horariosLibresComunes = $horariosLibresPorAula[0];
+        }
+
+        if (empty($horariosLibresComunes)) {
+            return response()->json(['message' => 'No hay horarios libres comunes'], 404);
+        }
+
+        // Obtener las horas de inicio de los horarios libres comunes
+        $horariosLibres = DB::table('horarios')
+            ->whereIn('id', $horariosLibresComunes)
+            ->pluck('hora_inicio');
+
+        return response()->json(['horarios_libres' => $horariosLibres]);
     }
 }

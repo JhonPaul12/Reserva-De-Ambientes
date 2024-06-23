@@ -66,6 +66,7 @@ Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'Obtene
 Route::delete('/eliminarPeriodo',[PeriodoController::class,'EliminarPorSemestre']);
 Route::get('/reasignacion',[PeriodoController::class,'verificarReasignacion']);
 Route::get('/reasignacion',[PeriodoController::class,'verificarReasignacion']);
+//Route::get('/verAulasDisponibles',[SolicitudController::class,'probando']);
 
 
 //Excepción
@@ -106,6 +107,8 @@ Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes
 Route::get('/solicitud/guardar',[SolicitudController::class,'mostrarGuardado']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
 Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
+Route::get('/verAulasDisponibles',[SolicitudController::class, 'LibresUnAula']);
+Route::get('/libresComunes',[SolicitudController::class,'LibresComunes']);
 
 //NOTIFICACIONES(NUEVO)
 Route::get('/notificacion',[NotificacionController::class,'index']);
