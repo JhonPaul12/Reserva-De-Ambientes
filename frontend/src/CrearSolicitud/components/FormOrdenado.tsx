@@ -447,6 +447,7 @@ export const FormOrdenado = () => {
           periodos_libres: ISimplePeriodo[];
         }>("http://127.0.0.1:8000/api/libresComunes/", dataToSend);
         const periodosLibres = respuesta.data.periodos_libres;
+        console.log(periodosLibres);
         const rangosHorario: string[] = [];
         console.log(periodosLibres);
         periodosLibres.forEach((objeto) => {
