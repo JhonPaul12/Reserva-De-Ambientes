@@ -505,11 +505,9 @@ export const FormOrdenado = () => {
     const idsPeriodosConHorariosFiltrados = periodosConHorariosFiltrados.map(periodo => periodo.id);
     const combinedIds = [...new Set([...listaIdsNumeros, ...idsPeriodosConHorariosFiltrados])];
     const idsPeriodosConHorariosFiltradosString = combinedIds.map(id => id.toString());
-
+    console.log(combinedIds)
+    console.log(idsPeriodosConHorariosFiltradosString)
       const ambientesSinElementosVacios = eliminarElementosVacios(inputAmbientes);
-console.log(values)
-      const periodosRevisados = idsPeriodosConHorariosFiltradosString.filter(periodo => values.has(periodo));
-      console.log(inputHFin) 
     if (inputMateria === "") {
       toast.error("El campo Materia es obligatorio");
       setIsButtonDisabled(false);
@@ -550,7 +548,7 @@ console.log(values)
             listGrupos,
             ambientesSinElementosVacios,
             listOficial,
-            periodosRevisados
+            idsPeriodosConHorariosFiltradosString
           );
         } else {
           await createSolicitud(
@@ -562,7 +560,7 @@ console.log(values)
             listGrupos,
             ambientesSinElementosVacios,
             listOficial.concat(listdocentes),
-            periodosRevisados
+            idsPeriodosConHorariosFiltradosString
           );
         }
         /*
@@ -582,10 +580,10 @@ console.log(values)
           console.error(
             `Error al enviar notificaciones ${id_solicitud}: ${error}`
           );
-        }
+        }*/
         setTimeout(() => {
           window.location.reload();
-        }, 2000);*/
+        }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
