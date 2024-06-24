@@ -19,6 +19,7 @@ export const FormOrdenado = () => {
     // getUsuario(user?.id);
     getMaterias();
     getExcepciones();
+    getAmbientes();
     if (listOficial.length === 0) {
       setListOficial([`${user?.id}`]);
     }
@@ -169,7 +170,8 @@ export const FormOrdenado = () => {
         return;
       }
       setInputNEst(inputValue.value);
-      getAmbientes(inputValue.value);
+      const selecAmbientes = ambientes.filter(ambiente => inputAmbientes.includes(`${ambiente.id}`));
+      verificarCapacidad(selecAmbientes, parseInt(inputValue.value));
     } else {
       toast.error("El numero de estudiantes no debe superar los 5 caracteres");
       console.log("El numero de estudiantes no debe superar los 5 caracteres");
@@ -252,20 +254,24 @@ export const FormOrdenado = () => {
 
   const [inputAmbiente, setInputAmbiente] = useState("");
   const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
+  const [inputAmbientes, setInputAmbientes] = React.useState<string[]>([]);
+  const [valuesAmbientes, setValuesAmbientes] = React.useState<Selection>(new Set([]));
+  
+  
 
-  const getAmbientes = async (num: string) => {
+  const getAmbientes = async () => {
     const respuesta = await axios.get(
       `http://127.0.0.1:8000/api/ambientesLibres`
     );
-    const filteredAmbientes = respuesta.data.filter(
-      (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
-    );
-    setAmbientes(filteredAmbientes);
+    //const filteredAmbientes = respuesta.data.filter(
+    //  (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
+    //);
+    setAmbientes(respuesta.data);
     console.log(respuesta.data);
-    console.log(filteredAmbientes);
+    //console.log(filteredAmbientes);
   };
 
-  const optionsAmbiente = ambientes.map((ambiente) => ({
+  const optionsAmbientes = ambientes.map((ambiente) => ({
     label: `${ambiente.nombre} (Cap: ${ambiente.capacidad} personas)`,
     value: ambiente.id,
   }));
@@ -273,10 +279,19 @@ export const FormOrdenado = () => {
   const onInputChangeAmbiente = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const { value } = e.target as HTMLSelectElement;
-    console.log(inputHIni);
-    console.log(value);
-    setInputAmbiente(value);
+    //const { value } = e.target as HTMLSelectElement;
+    //console.log(inputHIni);
+    //console.log(value);
+    console.log(e.target.value);
+    const valores = e.target.value;
+    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+    setInputAmbientes(arrayNumeros);
+    setValuesAmbientes(new Set(e.target.value.split(",")));
+    console.log(arrayNumeros);
+    console.log(inputAmbiente);
+    const selecAmbientes = ambientes.filter(ambiente => arrayNumeros.includes(`${ambiente.id}`));
+
+    verificarCapacidad(selecAmbientes,parseInt(inputNEst));
     if (inputHIni.length != 0 || inputFecha != "") {
       setInputHIni([]);
       console.log("pasa");
@@ -292,23 +307,33 @@ export const FormOrdenado = () => {
         return;
       } else {
         console.log("llego rangos de ambiente");
-        getRangos(value, inputFecha);
+        getRangos(arrayNumeros, inputFecha);
       }
     }
     //Deveriamos verificar si la fecha no esta vacia
     //getRangos(inputFecha);
-    console.log(inputAmbiente);
+    console.log(inputAmbientes);
   };
-  const verificarCapacidad = async () => {
-    if (inputNEst === "")
-      toast.error(
-        "Por favor, complete el campo Nro de personas para ver la lista de ambientes disponibles con la capacidad adecuada."
-      );
-    if (inputNEst != "" && ambientes.length === 0)
+  const verificarCapacidad = async (selectedAmbientes: ISimpleAmbiente[], cap: number) => {
+    
+      const capacidadTotal = selectedAmbientes.reduce((sum, ambiente) => sum + ambiente.capacidad, 0);
+      console.log(capacidadTotal);
+      console.log(inputNEst);
+      if (capacidadTotal < cap) {
+        setInputAmbiente("La capacidad total de los ambientes seleccionados no es suficiente para el número de personas requerido.");
+        toast.warning(
+          "La capacidad total de los ambientes seleccionados no es suficiente para el número de personas requerido."
+        );
+      }
+
+      if (inputNEst != "" && ambientes.length === 0)
       toast.error(
         "No existen ambientes DISPONIBLES con capacidad apta para el numero de personas requerido"
       );
     console.log(ambientes);
+  };
+  const verificarAmbiente = async () => {
+    if (ambientes.length === 0) toast.error("No existen ambientes disponibles para reservas");
   };
 
   //FECHA
@@ -346,12 +371,12 @@ export const FormOrdenado = () => {
         console.log("pasa exception");
         return;
       } else {
-        if (inputAmbiente === "") {
+        if (inputAmbientes[0] === "" || inputAmbientes.length === 0) {
           toast.error("Seleccione un ambiente");
           return;
         } else {
           console.log("llego rangos de fecha");
-          await getRangos(inputAmbiente, fecha);
+          await getRangos(inputAmbientes, fecha);
         }
       }
     } else {
@@ -370,6 +395,7 @@ export const FormOrdenado = () => {
   const [inputHIni, setInputHIni] = useState<ISimplePeriodo[]>([]);
   const [inputHFin, setInputHFin] = React.useState<string[]>([]);
   const [values, setValues] = React.useState<Selection>(new Set([]));
+  const [inputTodos, setInputTodos] = useState<ISimplePeriodo[]>([]);
 
   const options = inputHIni.map((inputHIn) => ({
     label: `${inputHIn.hora_inicio.slice(0, -3)} - ${inputHIn.hora_fin.slice(
@@ -388,29 +414,55 @@ export const FormOrdenado = () => {
     console.log(values);
   };
 
-  const getRangos = async (id: string, fecha: string) => {
+  const getRangos = async (id: string[], fecha: string) => {
     try {
       if (inputFecha != "" || fecha != "") {
+        const selecAmbientes = ambientes.filter(ambiente => id.includes(`${ambiente.id}`));
+        const options = selecAmbientes.map((inputHIn) => (inputHIn.nombre));
         const dataToSend = {
-          id_ambiente: id,
           fecha: fecha,
+          aulas: options,
         };
         console.log(dataToSend);
-        const respuesta = await axios.post<ISimplePeriodo[]>(
-          "http://127.0.0.1:8000/api/disposicion/",
+        const respuesta = await axios.post<{periodos_libres: ISimplePeriodo[]}>(
+          "http://127.0.0.1:8000/api/libresComunes/",
           dataToSend
         );
-        const responseData = respuesta.data;
+        const periodosLibres = respuesta.data.periodos_libres;
         const rangosHorario: string[] = [];
-        console.log(responseData);
-        responseData.forEach((objeto) => {
+        console.log(periodosLibres);
+        periodosLibres.forEach((objeto) => {
           const { hora_inicio, hora_fin } = objeto;
           const rangoHorario = `${hora_inicio} - ${hora_fin}`;
           rangosHorario.push(rangoHorario);
         });
 
-        setInputHIni(responseData);
-        console.log(responseData);
+        const agrupadosPorHorario = periodosLibres.reduce((acc, periodo) => {
+          if (!acc[periodo.id_horario]) {
+            acc[periodo.id_horario] = [];
+          }
+          acc[periodo.id_horario].push(periodo);
+          return acc;
+        }, {} as Record<number, ISimplePeriodo[]>);
+        
+        const horariosDuplicados = Object.keys(agrupadosPorHorario)
+          .filter(id_horario => agrupadosPorHorario[parseInt(id_horario)].length > 1)
+          .map(id_horario => parseInt(id_horario));
+        
+          const periodosUnicos = horariosDuplicados.map(id_horario => {
+            // Seleccionamos el primer período del grupo de períodos con el mismo id_horario
+            return agrupadosPorHorario[id_horario][0];
+          });
+        const periodosDuplicados = periodosLibres.filter(periodo =>
+          horariosDuplicados.includes(periodo.id_horario)
+        );
+        setInputTodos(periodosDuplicados);
+
+        console.log("Horarios Duplicados:", horariosDuplicados);
+        console.log("Períodos Duplicados:", periodosDuplicados);
+        console.log("Períodos Unicos:", periodosUnicos);
+        setInputHIni(periodosUnicos);
+        console.log(periodosLibres);
       } else {
         toast.error("Seleccione una fecha");
       }
@@ -423,7 +475,7 @@ export const FormOrdenado = () => {
   };
   const verificar = async () => {
     if (inputFecha === "") toast.error("Seleccione una fecha");
-    if (inputAmbiente === "") toast.error("Seleccione un ambiente");
+    if (inputAmbientes.length === 0) toast.error("Seleccione un ambiente");
   };
 
   //ENVIAR
@@ -438,6 +490,15 @@ export const FormOrdenado = () => {
     e.preventDefault();
     setIsButtonDisabled(true);
 
+    const listaIdsNumeros = inputHFin.map(id => parseInt(id));
+
+    const periodosFiltrados = inputTodos.filter(periodo => listaIdsNumeros.includes(periodo.id));
+    const horariosFiltrados = periodosFiltrados.map(periodo => periodo.id_horario);
+    const periodosConHorariosFiltrados = inputTodos.filter(periodo => horariosFiltrados.includes(periodo.id_horario));
+    const idsPeriodosConHorariosFiltrados = periodosConHorariosFiltrados.map(periodo => periodo.id);
+    const idsPeriodosConHorariosFiltradosString = idsPeriodosConHorariosFiltrados.map(id => id.toString());
+
+      console.log(idsPeriodosConHorariosFiltradosString);
     if (inputMateria === "") {
       toast.error("El campo Materia es obligatorio");
       setIsButtonDisabled(false);
@@ -453,7 +514,7 @@ export const FormOrdenado = () => {
     } else if (listGrupos.length === 0) {
       toast.error("El campo Grupo es obligatorio");
       setIsButtonDisabled(false);
-    } else if (inputAmbiente === "") {
+    } else if (inputAmbientes.length === 0) {
       toast.error("El campo Ambiente es obligatorio");
       setIsButtonDisabled(false);
     } else if (inputHFin.length === 0) {
@@ -476,9 +537,9 @@ export const FormOrdenado = () => {
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
-            parseInt(inputAmbiente),
+            inputAmbientes,
             listOficial,
-            inputHFin
+            idsPeriodosConHorariosFiltradosString
           );
         } else {
           await createSolicitud(
@@ -488,9 +549,9 @@ export const FormOrdenado = () => {
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
-            parseInt(inputAmbiente),
+            inputAmbientes,
             listOficial.concat(listdocentes),
-            inputHFin
+            idsPeriodosConHorariosFiltradosString
           );
         }
         /*
@@ -510,10 +571,10 @@ export const FormOrdenado = () => {
           console.error(
             `Error al enviar notificaciones ${id_solicitud}: ${error}`
           );
-        }*/
+        }
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 2000);*/
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -633,6 +694,29 @@ export const FormOrdenado = () => {
           </div>
 
           <div className="w-full md:w-1/2 ml-5">
+
+          {/*AMBIENTE */}
+
+          <label className="text-ms text-gray-900">Ambiente*:</label>
+            <br />
+            <Select
+              label=""
+              selectionMode="multiple"
+              placeholder="Seleccione ambiente..."
+              selectedKeys={valuesAmbientes}
+              className="mt-2 w-full"
+              onChange={onInputChangeAmbiente}
+              onClick={verificarAmbiente}
+            >
+              {optionsAmbientes.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </Select>
+            <br/>
+
+
             {/*NUMERO DE ESTUDIANTES */}
 
             <label className="text-ms text-gray-900">Nro de personas*:</label>
@@ -646,29 +730,6 @@ export const FormOrdenado = () => {
                 fontSize: "13px",
               }}
             />
-            <br />
-            {/*AMBIENTE */}
-
-            <label className="text-ms text-gray-900">Ambiente*:</label>
-            <br />
-            <Select
-              value={inputAmbiente}
-              onChange={onInputChangeAmbiente}
-              onClick={verificarCapacidad}
-              className="w-full"
-              aria-label="Selecciona una ambiente"
-              placeholder="Seleccione una opcion..."
-            >
-              {optionsAmbiente.map((ambiente) => (
-                <SelectItem
-                  className="text-smtext-xs"
-                  key={ambiente.value}
-                  value={ambiente.label}
-                >
-                  {ambiente.label}
-                </SelectItem>
-              ))}
-            </Select>
             <br />
 
             {/*FECHA */}
