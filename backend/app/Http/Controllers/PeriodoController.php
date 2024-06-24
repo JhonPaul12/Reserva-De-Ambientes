@@ -502,6 +502,135 @@ class PeriodoController extends Controller
         }
     }
 
+    public function listarPeriodosLibresParaReservaAmbientes(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_ambientes' => 'required|array',
+            'id_ambientes.*' => 'exists:ambientes,id',
+            'fecha' => 'required|date',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+    
+        $idAmbientes = $request->input('id_ambientes');
+        $fecha = $request->input('fecha');
+    
+        try {
+            // Buscar todos los períodos libres para la fecha específica
+            $periodosLibres = Periodo::with('horario')
+                ->where('fecha', $fecha)
+                ->where('estado', 'libre')
+                ->whereIn('id_ambiente', $idAmbientes)
+                ->get();
+    
+            if ($periodosLibres->isEmpty()) {
+                return response()->json(['error' => 'No se encontraron períodos libres para reserva'], 404);
+            }
+    
+            // Agrupar los periodos libres por horario
+            $periodosPorHorario = $periodosLibres->groupBy('id_horario');
+    
+            $response = [];
+            foreach ($periodosPorHorario as $idHorario => $periodos) {
+                // Verificar si el periodo está disponible en todos los ambientes
+                $ambientesDisponibles = $periodos->pluck('id_ambiente')->unique();
+                if ($ambientesDisponibles->count() == count($idAmbientes)) {
+                    // Tomar un ejemplo del periodo para el horario
+                    $ejemploPeriodo = $periodos->first();
+                    $response[] = [
+                        'id' => $ejemploPeriodo->id,
+                        'id_ambiente' => $ejemploPeriodo->id_ambiente,
+                        'estado' => $ejemploPeriodo->estado,
+                        'id_horario' => $idHorario,
+                        'hora_inicio' => $ejemploPeriodo->horario->hora_inicio,
+                        'hora_fin' => $ejemploPeriodo->horario->hora_fin,
+                        'fecha' => $fecha,
+                    ];
+                }
+            }
+    
+            if (empty($response)) {
+                return response()->json(['error' => 'No se encontraron períodos libres comunes para todos los ambientes'], 404);
+            }
+    
+            return response()->json($response, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al buscar períodos libres para reserva: ' . $e->getMessage()], 500);
+        }
+    }
+    
+    //Metodo para mostrar todos los periodos de los ambientes por fecha
+    public function mostrarPeriodosAmbientes(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_ambientes' => 'required|array|min:2', // Ahora permitimos un mínimo de 2 IDs de ambientes
+            'id_ambientes.*' => 'exists:ambientes,id',
+            'fecha' => 'required|date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        $idAmbientes = $request->input('id_ambientes');
+        $fecha = $request->input('fecha');
+
+        try {
+            // Buscar todos los períodos para la fecha específica y los ambientes específicos
+            $periodos = Periodo::with('horario')
+                ->where('fecha', $fecha)
+                ->whereIn('id_ambiente', $idAmbientes)
+                ->get();
+
+            if ($periodos->isEmpty()) {
+                return response()->json(['error' => 'No se encontraron períodos para la fecha y ambientes específicos'], 404);
+            }
+
+            // Filtrar los períodos para aquellos que tengan exactamente los ambientes y el mismo horario
+            $periodosFiltrados = $this->filtrarPeriodosPorAmbientesYHorario($periodos, $idAmbientes);
+
+            $response = [];
+            foreach ($periodosFiltrados as $idHorario => $periodos) {
+                // Verificar que existan todos los ambientes con el mismo horario
+                if ($periodos->count() == count($idAmbientes)) {
+                    // Obtener los IDs de los periodos
+                    $idPeriodos = $periodos->pluck('id')->toArray();
+                    sort($idPeriodos); // Ordenar para consistencia
+                    $response[] = [
+                        'id_ambientes' => $idAmbientes,
+                        'id_periodos' => $idPeriodos,
+                        'id_horario' => $idHorario,
+                        'hora_inicio' => $periodos->first()->horario->hora_inicio,
+                        'hora_fin' => $periodos->first()->horario->hora_fin,
+                        'fecha' => $fecha,
+                    ];
+                }
+            }
+
+            if (empty($response)) {
+                return response()->json(['error' => 'No se encontraron períodos con el mismo horario para todos los ambientes especificados'], 404);
+            }
+
+            return response()->json($response, 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al buscar períodos: ' . $e->getMessage()], 500);
+        }
+    }
+
+private function filtrarPeriodosPorAmbientesYHorario($periodos, $idAmbientes)
+{
+    // Filtrar los períodos para aquellos que tengan exactamente los ambientes y el mismo horario
+    return $periodos->filter(function ($periodo) use ($idAmbientes) {
+        return in_array($periodo->id_ambiente, $idAmbientes);
+    })->groupBy('id_horario');
+}
+
+
+
+
     // public function listarPeriodos($id)
     // {
     //     // Validar el ID del ambiente

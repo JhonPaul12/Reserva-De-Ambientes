@@ -61,6 +61,8 @@ Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorar
 Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
 Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
+Route::post('/obtenerPeriodos',[PeriodoController::class,'listarPeriodosLibresParaReservaAmbientes']);
+Route::post('/obtenerTodosPeriodos',[PeriodoController::class,'mostrarPeriodosAmbientes']);
 Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
 Route::delete('/eliminarPeriodo',[PeriodoController::class,'EliminarPorSemestre']);

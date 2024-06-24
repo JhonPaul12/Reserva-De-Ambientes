@@ -309,7 +309,7 @@ export const FormOrdenado = () => {
           return;
         } else {
           console.log("llego rangos de fecha");
-          await getRangos(inputAmbiente, fecha);
+          await getRangos(listAmbientes, fecha);
         }
       }
     } else {
@@ -366,7 +366,7 @@ export const FormOrdenado = () => {
         return;
       } else {
         console.log("llego rangos de ambiente");
-        getRangos(value, inputFecha);
+        getRangos(listAmbientes, inputFecha);
       }
     }
     //Deveriamos verificar si la fecha no esta vacia
@@ -386,8 +386,6 @@ export const FormOrdenado = () => {
     console.log(ambientes);
   };
 
-  //FECHA
-
   //PERIODO
 
   const options = inputHIni.map((inputHIn) => ({
@@ -398,36 +396,29 @@ export const FormOrdenado = () => {
     value: inputHIn.id,
   }));
 
+  //Peridos
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
     const valores = e.target.value;
     const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+    console.log(arrayNumeros);
     setInputHFin(arrayNumeros);
+
     setValues(new Set(e.target.value.split(",")));
     console.log(values);
   };
 
-  const getRangos = async (id: string, fecha: string) => {
+  const getRangos = async (id_ambientes: string[], fecha: string) => {
     try {
       if (inputFecha != "" || fecha != "") {
         const dataToSend = {
-          id_ambiente: id,
+          id_ambientes: id_ambientes,
           fecha: fecha,
         };
         console.log(dataToSend);
-        // const respuesta = await fetch(
-        //   // "http://127.0.0.1:8000/api/disposicion/",
-        //   import.meta.env.VITE_API_URL + "/api/disposicion/",
-        //   {
-        //     method: "POST",
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify(dataToSend),
-        //   }
-        // );
         const respuesta = await axios.post(
-          "http://127.0.0.1:8000/api/disposicion/",
+          "http://127.0.0.1:8000/api/obtenerPeriodos/",
+          // "http://127.0.0.1:8000/api/disposicion/",
           // import.meta.env.VITE_API_URL + "/api/disposicion",
           // "http://steelcode.tis.cs.umss.edu.bo/api/disposicion",
           dataToSend
@@ -540,6 +531,19 @@ export const FormOrdenado = () => {
   const onInputChangeCancelar = async () => {
     window.location.reload();
   };
+
+  const prueba = () => {
+    console.log(inputMotivo);
+
+    console.log("inputFecha:" + inputFecha);
+    console.log("inputNEst:" + inputNEst);
+    console.log("inputMateria:" + inputMateria);
+    console.log("listGrupos:" + listGrupos);
+    // console.log("inputAmbiente:" + inputAmbiente);
+    console.log("listOficial:" + listOficial.concat(listdocentes));
+    console.log("inputHFin:" + inputHFin);
+    console.log("listAmbientes:" + listAmbientes);
+  };
   return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900 ml-5">
@@ -641,8 +645,8 @@ export const FormOrdenado = () => {
               placeholder="Seleccione una opcion..."
               onChange={onInputChangeMotivo}
             >
-              {motivosReserva.map((motivo) => (
-                <SelectItem key={motivo} value={motivo}>
+              {motivosReserva.map((motivo, index) => (
+                <SelectItem key={index} value={motivo}>
                   {motivo}
                 </SelectItem>
               ))}
@@ -722,7 +726,8 @@ export const FormOrdenado = () => {
               label="Periodos de reserva"
               selectionMode="multiple"
               placeholder="Seleccione periodo..."
-              selectedKeys={values}
+              // selectedKeys={values}
+              value={inputHFin}
               className="mt-2 mb-5 w-full"
               onChange={handleSelectionChange}
               onClick={verificar}
@@ -759,12 +764,7 @@ export const FormOrdenado = () => {
                 {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
               </Button>
 
-              <Button
-                onClick={() => {
-                  console.log(inputAmbiente);
-                  console.log(listAmbientes);
-                }}
-              ></Button>
+              <Button onClick={prueba}></Button>
             </div>
           </div>
         </div>
