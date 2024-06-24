@@ -19,7 +19,7 @@ interface SolicitudState {
     numero_estudiantes: number,
     id_materia:number, 
     grupos:string[], 
-    ambiente_id:string[],
+    ambiente_ids:string[],
     docentes:string[],
     periodos:string[]
     ) => Promise<void>;
@@ -41,7 +41,7 @@ interface SolicitudState {
         console.log(error);
       }
     },
-    createSolicitud: async (motivo,fecha_solicitud, estado, numero_estudiantes,id_materia, grupos, ambiente_id, docentes, periodos) => {
+    createSolicitud: async (motivo,fecha_solicitud, estado, numero_estudiantes,id_materia, grupos, ambiente_ids, docentes, periodos) => {
       try {
         console.log(typeof motivo);
         console.log( motivo);
@@ -57,8 +57,8 @@ interface SolicitudState {
         console.log(id_materia);
         console.log(typeof grupos[0]);
         console.log(grupos);
-        console.log(typeof ambiente_id);
-        console.log(ambiente_id);
+        console.log(typeof ambiente_ids);
+        console.log(ambiente_ids);
         console.log(typeof docentes);
         console.log( docentes);
         console.log(typeof periodos);
@@ -69,7 +69,7 @@ interface SolicitudState {
           fecha_solicitud,
           estado,
           numero_estudiantes,
-          ambiente_id,
+          ambiente_ids,
           docentes,
           id_materia, 
           grupos, 
