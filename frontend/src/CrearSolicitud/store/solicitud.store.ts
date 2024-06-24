@@ -5,96 +5,111 @@ import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import { ISolicitudesResponse } from "../interfaces/solicitudes-response";
 
-
 interface SolicitudState {
-    solicitudes: ISimpleSolicitud[];
-  }
-  
-  interface Actions {
-    getSolicitudes: () => Promise<void>;
-    createSolicitud: (
+  solicitudes: ISimpleSolicitud[];
+}
+
+interface Actions {
+  getSolicitudes: () => Promise<void>;
+  createSolicitud: (
     motivo: string,
     fecha: string,
     estado: string,
     numero_estudiantes: number,
-    id_materia:number, 
-    grupos:string[], 
-    ambiente_ids:string[],
-    docentes:string[],
-    periodos:string[]
-    ) => Promise<void>;
-  }
-  
-  const storeApi: StateCreator<SolicitudState & Actions> = (set) => ({
-    solicitudes: [],
+    id_materia: number,
+    grupos: string[],
+    ambiente_ids: string[],
+    docentes: string[],
+    periodos: string[]
+  ) => Promise<void>;
+}
 
-  
-    getSolicitudes: async () => {
-      try {
-        const { data } = await reservasDB.get<ISolicitudesResponse>("/solicitud");
-        
-        
-        set(() => ({
-            solicitudes: data.solicitudes,
-        }));
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    createSolicitud: async (motivo,fecha_solicitud, estado, numero_estudiantes,id_materia, grupos, ambiente_ids, docentes, periodos) => {
-      try {
-        console.log(typeof motivo);
-        console.log( motivo);
-        console.log(typeof fecha_solicitud);
-        console.log(fecha_solicitud);
-        
-        console.log(typeof estado);
-        console.log(estado);
-        console.log(typeof numero_estudiantes);
-        console.log(numero_estudiantes);
-        
-        console.log(typeof id_materia);
-        console.log(id_materia);
-        console.log(typeof grupos[0]);
-        console.log(grupos);
-        console.log(typeof ambiente_ids);
-        console.log(ambiente_ids);
-        console.log(typeof docentes);
-        console.log( docentes);
-        console.log(typeof periodos);
-        console.log( periodos);
+const storeApi: StateCreator<SolicitudState & Actions> = (set) => ({
+  solicitudes: [],
 
-        const { data } = await reservasDB.post<{ message: string }>("/solicitud/guardar", {
+  getSolicitudes: async () => {
+    try {
+      const { data } = await reservasDB.get<ISolicitudesResponse>("/solicitud");
+
+      set(() => ({
+        solicitudes: data.solicitudes,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  createSolicitud: async (
+    motivo,
+    fecha_solicitud,
+    estado,
+    numero_estudiantes,
+    id_materia,
+    grupos,
+    ambiente_ids,
+    docentes,
+    periodos
+  ) => {
+    try {
+      console.log(typeof motivo);
+      console.log(motivo);
+      console.log(typeof fecha_solicitud);
+      console.log(fecha_solicitud);
+
+      console.log(typeof estado);
+      console.log(estado);
+      console.log(typeof numero_estudiantes);
+      console.log(numero_estudiantes);
+
+      console.log(typeof id_materia);
+      console.log(id_materia);
+      console.log(typeof grupos[0]);
+      console.log(grupos);
+      console.log(typeof ambiente_ids);
+      console.log(ambiente_ids);
+      console.log(typeof docentes);
+      console.log(docentes);
+      console.log(typeof periodos);
+      console.log(periodos);
+
+      const { data } = await reservasDB.post<{ message: string }>(
+        "/solicitud/guardar",
+        {
           motivo,
           fecha_solicitud,
           estado,
           numero_estudiantes,
           ambiente_ids,
           docentes,
-          id_materia, 
-          grupos, 
-          periodos
+          id_materia,
+          grupos,
+          periodos,
+        }
+      );
 
-        });
-        
-        for (const periodo of periodos) {
+      for (const periodo of periodos) {
         const dataToSend = {
           id: periodo,
-          estado: 'Reservado',
+          estado: "Reservado",
         };
-        const { data } = await reservasDB.put<{ message: string }>("/updateEstado", dataToSend);
+        const { data } = await reservasDB.put<{ message: string }>(
+          "/updateEstado",
+          dataToSend
+        );
         console.log(data);
       }
-  
-        toast.success("Su reserva fue creada exitosamente", { description: data.message });
-      } catch (error) {
-        if (isAxiosError(error)) {
-          toast.error("Ocurrio un error", {
-            description: error.response?.data.message,
-          });
-        }
+
+      toast.success("Su reserva fue creada exitosamente", {
+        description: data.message,
+      });
+    } catch (error) {
+      if (isAxiosError(error)) {
+        toast.error("Ocurrio un error", {
+          description: error.response?.data.message,
+        });
       }
-    },
-  });
-  
-  export const useSolicitudStore = create<SolicitudState & Actions>()(storeApi);
+      console.log(error);
+    }
+  },
+});
+
+export const useSolicitudStore = create<SolicitudState & Actions>()(storeApi);

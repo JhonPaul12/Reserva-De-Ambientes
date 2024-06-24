@@ -424,11 +424,13 @@ export const FormOrdenado = () => {
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
-    const valores = e.target.value;
-    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
-    setInputHFin(arrayNumeros);
-    setValues(new Set(e.target.value.split(",")));
-    console.log(values);
+    if (e.target.value !== "") {
+      const valores = e.target.value;
+      const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+      setInputHFin(arrayNumeros);
+      setValues(new Set(e.target.value.split(",")));
+      console.log(values);
+    }
   };
 
   const getRangos = async (id: string[], fecha: string) => {
@@ -518,6 +520,7 @@ export const FormOrdenado = () => {
     setIsButtonDisabled(true);
 
     const listaIdsNumeros = inputHFin.map((id) => parseInt(id));
+    console.log(listaIdsNumeros);
     const periodosFiltrados = inputTodos.filter((periodo) =>
       listaIdsNumeros.includes(periodo.id)
     );
@@ -537,13 +540,9 @@ export const FormOrdenado = () => {
     const idsPeriodosConHorariosFiltradosString = combinedIds.map((id) =>
       id.toString()
     );
-
+    console.log(combinedIds);
+    console.log(idsPeriodosConHorariosFiltradosString);
     const ambientesSinElementosVacios = eliminarElementosVacios(inputAmbientes);
-    console.log(values);
-    const periodosRevisados = idsPeriodosConHorariosFiltradosString.filter(
-      (periodo) => values.has(periodo)
-    );
-    console.log(inputHFin);
     if (inputMateria === "") {
       toast.error("El campo Materia es obligatorio");
       setIsButtonDisabled(false);
@@ -584,7 +583,7 @@ export const FormOrdenado = () => {
             listGrupos,
             ambientesSinElementosVacios,
             listOficial,
-            periodosRevisados
+            idsPeriodosConHorariosFiltradosString
           );
         } else {
           await createSolicitud(
@@ -596,7 +595,7 @@ export const FormOrdenado = () => {
             listGrupos,
             ambientesSinElementosVacios,
             listOficial.concat(listdocentes),
-            periodosRevisados
+            idsPeriodosConHorariosFiltradosString
           );
         }
         /*
@@ -616,10 +615,10 @@ export const FormOrdenado = () => {
           console.error(
             `Error al enviar notificaciones ${id_solicitud}: ${error}`
           );
-        }
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);*/
+        }*/
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -629,6 +628,10 @@ export const FormOrdenado = () => {
   };
   const onInputChangeCancelar = async () => {
     window.location.reload();
+  };
+
+  const prueba = () => {
+    console.log(inputHFin);
   };
   return (
     <div>
@@ -842,6 +845,8 @@ export const FormOrdenado = () => {
                 {" "}
                 {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
               </Button>
+
+              <Button onClick={prueba}></Button>
             </div>
           </div>
         </div>
