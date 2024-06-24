@@ -294,6 +294,7 @@ export const FormOrdenado = () => {
     verificarCapacidad(selecAmbientes,parseInt(inputNEst));
     if (inputHIni.length != 0 || inputFecha != "") {
       setInputHIni([]);
+      setValues(new Set([]));
       console.log("pasa");
       console.log(inputFecha);
       const fechaDuplicada = excepciones.find((obj) => {
@@ -359,6 +360,7 @@ export const FormOrdenado = () => {
     if (fechaSeleccionada > fechaActual) {
       setInputFecha(fecha);
       console.log(fecha);
+      setValues(new Set([]));
       console.log(inputFecha);
       const fechaDuplicada = excepciones.find((obj) => {
         const fechaObjetoFormato = obj.fecha_excepcion;
@@ -371,7 +373,7 @@ export const FormOrdenado = () => {
         console.log("pasa exception");
         return;
       } else {
-        if (inputAmbientes[0] === "" || inputAmbientes.length === 0) {
+        if (inputAmbientes.length === 0) {
           toast.error("Seleccione un ambiente");
           return;
         } else {
@@ -449,13 +451,13 @@ export const FormOrdenado = () => {
           .filter(id_horario => agrupadosPorHorario[parseInt(id_horario)].length > 1)
           .map(id_horario => parseInt(id_horario));
         
-          const periodosUnicos = horariosDuplicados.map(id_horario => {
-            // Seleccionamos el primer período del grupo de períodos con el mismo id_horario
-            return agrupadosPorHorario[id_horario][0];
-          });
+        const periodosUnicos = Object.values(agrupadosPorHorario).map(periodos => periodos[0]);
+        
         const periodosDuplicados = periodosLibres.filter(periodo =>
           horariosDuplicados.includes(periodo.id_horario)
         );
+
+
         setInputTodos(periodosDuplicados);
 
         console.log("Horarios Duplicados:", horariosDuplicados);
@@ -482,6 +484,11 @@ export const FormOrdenado = () => {
 
   const createSolicitud = useSolicitudStore((state) => state.createSolicitud);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  const eliminarElementosVacios = (array: string[]): string[] => {
+    return array.filter(item => item.trim() !== "");
+  };
+
   const onInputChangeSave = async (
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -491,14 +498,18 @@ export const FormOrdenado = () => {
     setIsButtonDisabled(true);
 
     const listaIdsNumeros = inputHFin.map(id => parseInt(id));
-
     const periodosFiltrados = inputTodos.filter(periodo => listaIdsNumeros.includes(periodo.id));
     const horariosFiltrados = periodosFiltrados.map(periodo => periodo.id_horario);
     const periodosConHorariosFiltrados = inputTodos.filter(periodo => horariosFiltrados.includes(periodo.id_horario));
-    const idsPeriodosConHorariosFiltrados = periodosConHorariosFiltrados.map(periodo => periodo.id);
-    const idsPeriodosConHorariosFiltradosString = idsPeriodosConHorariosFiltrados.map(id => id.toString());
 
-      console.log(idsPeriodosConHorariosFiltradosString);
+    const idsPeriodosConHorariosFiltrados = periodosConHorariosFiltrados.map(periodo => periodo.id);
+    const combinedIds = [...new Set([...listaIdsNumeros, ...idsPeriodosConHorariosFiltrados])];
+    const idsPeriodosConHorariosFiltradosString = combinedIds.map(id => id.toString());
+
+      const ambientesSinElementosVacios = eliminarElementosVacios(inputAmbientes);
+console.log(values)
+      const periodosRevisados = idsPeriodosConHorariosFiltradosString.filter(periodo => values.has(periodo));
+      console.log(inputHFin) 
     if (inputMateria === "") {
       toast.error("El campo Materia es obligatorio");
       setIsButtonDisabled(false);
@@ -537,9 +548,9 @@ export const FormOrdenado = () => {
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
-            inputAmbientes,
+            ambientesSinElementosVacios,
             listOficial,
-            idsPeriodosConHorariosFiltradosString
+            periodosRevisados
           );
         } else {
           await createSolicitud(
@@ -549,9 +560,9 @@ export const FormOrdenado = () => {
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
-            inputAmbientes,
+            ambientesSinElementosVacios,
             listOficial.concat(listdocentes),
-            idsPeriodosConHorariosFiltradosString
+            periodosRevisados
           );
         }
         /*
@@ -723,7 +734,7 @@ export const FormOrdenado = () => {
             <Input
               type="text"
               value={inputNEst}
-              placeholder="Ingrese un número..."
+              label="Ingrese un número..."
               onChange={onInputChangeNEst}
               onKeyPress={handleKeyPress}
               style={{
