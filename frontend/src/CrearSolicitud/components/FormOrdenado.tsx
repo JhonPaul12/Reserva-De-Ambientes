@@ -12,120 +12,51 @@ import { ISimplePeriodo } from "../interfaces/simple-periodo";
 import { ISimpleExcepcion } from "../interfaces/simple-exception";
 import { useAuthStore } from "../../Login/stores/auth.store";
 
-const motivosReserva = [
-  "Clase",
-  "Taller",
-  "Conferencia",
-  "Examen",
-  "Actividad extracurricular",
-  "Presentación",
-  "Seminario",
-  "Ensayo",
-  "Sesión de tutoría",
-  "Prueba práctica",
-  "Simposio",
-  "Debate",
-  "Jornada de capacitación",
-  "Reunión de equipo",
-  "Laboratorio práctico",
-  "Trabajo en grupo",
-  "Sesión de estudio",
-  "Sesión informativa",
-];
-
-type Selection = Set<string>;
-
 export const FormOrdenado = () => {
   const user = useAuthStore((state) => state.user);
 
-  //Docentes
-  const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
-  const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(
-    new Set<string>([])
-  );
-
-  //Lista oficial
-  const [listOficial, setListOficial] = useState<string[]>([]);
-  //Lista Docentes
-  const [listdocentes, setListDocentes] = React.useState<string[]>([]);
-
-  //Materias
-  const [inputMateria, setInputMateria] = useState("");
-  const [materias, setMaterias] = useState<ISimpleMateria[]>([]);
-
-  //Grupos
-  const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
-  const [listGrupos, setListGrupos] = useState<string[]>([]);
-  const [valuesGrupos, setValuesGrupos] = React.useState<Selection>(
-    new Set([])
-  );
-
-  //Motivo numero de estudiantes
-  const [inputMotivo, setInputMotivo] = useState("");
-  const [inputNEst, setInputNEst] = useState("");
-
-  //Ambiente ,ambientes
-  const [inputAmbiente, setInputAmbiente] = useState("");
-  const [listAmbientes, setListAmbientes] = useState<string[]>([]);
-  const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
-
-  // hora de inicio y fin
-  const [inputHIni, setInputHIni] = useState<ISimplePeriodo[]>([]);
-  const [inputHFin, setInputHFin] = React.useState<string[]>([]);
-  const [values, setValues] = React.useState<Selection>(new Set([]));
-
-  //Fecha y excepciones
-  const [inputFecha, setInputFecha] = useState("");
-  const [excepciones, setExcepciones] = useState<ISimpleExcepcion[]>([]);
-
   useEffect(() => {
-    //obtenemos materias del docente
+    // getUsuario(user?.id);
     getMaterias();
     getExcepciones();
+    getAmbientes();
     if (listOficial.length === 0) {
       setListOficial([`${user?.id}`]);
     }
   }, []);
 
-  //Materias  del docente
-  const getMaterias = async () => {
-    const respuesta = await axios.get(
-      // import.meta.env.VITE_API_URL + `/api/usuario/materias/${user?.id}/`
-      import.meta.env.VITE_API_URL + "/api/usuario/materias/" + user?.id
-    );
-    setMaterias(respuesta.data);
-  };
+  //DOCENTES
+  //const [usuario, setUsuario] = useState(instanciaInicial);
 
-  //obtenemos feriados
-  const getExcepciones = async () => {
-    // const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+  type Selection = Set<string>;
+  const [docentes, setDocentes] = useState<ISimpleDocente[]>([]);
+  const [valuesDocentes, setValuesDocentes] = React.useState<Selection>(
+    new Set<string>([])
+  );
+  const [listOficial, setListOficial] = useState<string[]>([]);
+  const [listdocentes, setListDocentes] = React.useState<string[]>([]);
+
+  /*const getUsuario = async (id: number) => {
     const respuesta = await axios.get(
-      import.meta.env.VITE_API_URL + "/api/excepcion"
+      `http://127.0.0.1:8000/api/usuario/${id}`
     );
-    setExcepciones(respuesta.data);
     console.log(respuesta.data);
-  };
+    setUsuario(respuesta.data);
+    console.log(user);
+  };*/
 
-  //Cuando se presionar una materia
-  const onInputChangeMateria = async (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const { value } = e.target as HTMLSelectElement;
-    console.log(value);
-    setInputMateria(value);
-    getDocentes(parseInt(value));
-    // getGrupos(parseInt(value), listdocentes);
-  };
+  const docentesOrdenAlfabetico = [...docentes].sort((a, b) => {
+    // Si a es null, lo ponemos al final
+    if (a === null) return 1;
+    // Si b es null, lo ponemos al final
+    if (b === null) return -1;
+    // Comparar por el campo 'name'
+    return a.name.localeCompare(b.name);
+  });
 
-  //Obtenemos los docentes asociados a la materia
   const getDocentes = async (id: number) => {
     const respuesta = await axios.get(
-      import.meta.env.VITE_API_URL +
-        // `/api/docentesMismaMateria/${user?.id}/${id}`
-        "/api/docentesMismaMateria/" +
-        user?.id +
-        "/" +
-        id
+      `http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`
     );
     const docentesArray = Object.values(respuesta.data).map(
       (item) => item as ISimpleDocente
@@ -134,18 +65,149 @@ export const FormOrdenado = () => {
     setDocentes(docentesArray);
   };
 
-  //Obtenemos grupos asociados a los docentes
+  const handleSelectionChangeDocentes = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const valores = e.target.value;
+    const arrayNumeros = valores
+      .split(",")
+      .map((numero) => numero.trim())
+      .filter((value) => value !== "");
+    console.log(arrayNumeros);
+    setListDocentes(arrayNumeros);
+    console.log(listOficial);
+    console.log(listdocentes);
+    setValuesDocentes(new Set(e.target.value.split(",")));
+    getGrupos(parseInt(inputMateria), arrayNumeros);
+  };
+
+  const optionsDocentes = docentesOrdenAlfabetico
+    .filter((docente) => docente !== null) // Filtrar los valores null
+    .map((docente) => ({
+      label: `${docente.name} ${docente.apellidos}`,
+      value: docente.id,
+    }));
+
+  //MATERIA
+
+  const [inputMateria, setInputMateria] = useState("");
+  const [materias, setMaterias] = useState<ISimpleMateria[]>([]);
+
+  const getMaterias = async () => {
+    const respuesta = await axios.get(
+      `http://127.0.0.1:8000/api/usuario/materias/${user?.id}/`
+    );
+    setMaterias(respuesta.data);
+  };
+
+  const onInputChangeMateria = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { value } = e.target as HTMLSelectElement;
+    console.log(value);
+    setInputMateria(value);
+    getDocentes(parseInt(value));
+    getGrupos(parseInt(value), listdocentes);
+  };
+  const verificarMateriaDoc = async () => {
+    if (inputMateria === "")
+      toast.error("Seleccione una materia para ver a los docentes asociados");
+  };
+
+  //MOTIVO
+
+  const motivosReserva = [
+    "Clase",
+    "Taller",
+    "Conferencia",
+    "Examen",
+    "Actividad extracurricular",
+    "Presentación",
+    "Seminario",
+    "Ensayo",
+    "Sesión de tutoría",
+    "Prueba práctica",
+    "Simposio",
+    "Debate",
+    "Jornada de capacitación",
+    "Reunión de equipo",
+    "Laboratorio práctico",
+    "Trabajo en grupo",
+    "Sesión de estudio",
+    "Sesión informativa",
+  ];
+
+  const [inputMotivo, setInputMotivo] = useState("");
+
+  const onInputChangeMotivo = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const inputValue = e.target as HTMLSelectElement;
+    console.log(inputValue.value);
+    if (inputValue.value.length < 30) {
+      setInputMotivo(inputValue.value);
+    } else {
+      toast.error("El motivo debe tener como maximo 150 caracteres");
+      console.log("El motivo debe tener como maximo 150 caracteres");
+    }
+  };
+
+  //NUMERO DE ESTUDIANTES
+
+  const [inputNEst, setInputNEst] = useState("");
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const charCode = event.charCode;
+    // Allow only numbers (charCode 48-57)
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  };
+
+  const onInputChangeNEst = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target as HTMLInputElement;
+
+    if (inputValue.value.length < 6) {
+      if (inputValue.value === "0") {
+        e.preventDefault();
+        return;
+      }
+      setInputNEst(inputValue.value);
+      const selecAmbientes = ambientes.filter((ambiente) =>
+        inputAmbientes.includes(`${ambiente.id}`)
+      );
+      verificarCapacidad(selecAmbientes, parseInt(inputValue.value));
+    } else {
+      toast.error("El numero de estudiantes no debe superar los 5 caracteres");
+      console.log("El numero de estudiantes no debe superar los 5 caracteres");
+    }
+  };
+
+  //GRUPO
+
+  const [grupos, setGrupos] = useState<ISimpleGrupo[]>([]);
+  const [listGrupos, setListGrupos] = useState<string[]>([]);
+  const [valuesGrupos, setValuesGrupos] = React.useState<Selection>(
+    new Set([])
+  );
+
+  /*const getGrupos = async (materia_id: number) => {
+    try {
+      // Obtener los grupos para el docente principal
+      const respuestaPrincipal = await axios.get(
+        `http://127.0.0.1:8000/api/gruposMateria/${materia_id}`
+      );
+      setGrupos(respuestaPrincipal.data);
+    } catch (error) {
+      console.error("Error al obtener los grupos:", error);
+    }
+  };*/
 
   const getGrupos = async (materia_id: number, docente_id: string[]) => {
     try {
       // Obtener los grupos para el docente principal
       const respuestaPrincipal = await axios.get(
-        // import.meta.env.VITE_API_URL + `/api/docentes/${user?.id}/${materia_id}`
-        import.meta.env.VITE_API_URL +
-          "/api/docentes/" +
-          user?.id +
-          "/" +
-          materia_id
+        `http://127.0.0.1:8000/api/docentes/${user?.id}/${materia_id}`
       );
       setGrupos(respuestaPrincipal.data);
       let gruposTem = respuestaPrincipal.data;
@@ -156,12 +218,7 @@ export const FormOrdenado = () => {
       if (docente_id.length !== 0) {
         const solicitudes = docente_id.map((docente) =>
           axios.get<ISimpleGrupo[]>(
-            import.meta.env.VITE_API_URL +
-              // `/api/docentes/${docente}/${materia_id}`
-              "/api/docentes/" +
-              docente +
-              "/" +
-              materia_id
+            `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
           )
         );
 
@@ -184,145 +241,6 @@ export const FormOrdenado = () => {
       console.error("Error al obtener los grupos:", error);
     }
   };
-
-  const docentesOrdenAlfabetico = [...docentes].sort((a, b) => {
-    // Si a es null, lo ponemos al final
-    if (a === null) return 1;
-    // Si b es null, lo ponemos al final
-    if (b === null) return -1;
-    // Comparar por el campo 'name'
-    return a.name.localeCompare(b.name);
-  });
-
-  const handleSelectionChangeDocentes = async (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const valores = e.target.value;
-    console.log("arrayNumeros", valores);
-    const arrayNumeros = valores
-      .split(",")
-      .map((numero) => numero.trim())
-      .filter((numero) => numero !== "");
-    setListDocentes(arrayNumeros);
-    setValuesDocentes(new Set(e.target.value.split(",")));
-    //verifico que arraynumeros no tenga valores vacios
-    await getGrupos(parseInt(inputMateria), arrayNumeros);
-  };
-
-  const optionsDocentes = docentesOrdenAlfabetico
-    .filter((docente) => docente !== null) // Filtrar los valores null
-    .map((docente) => ({
-      label: `${docente.name} ${docente.apellidos}`,
-      value: docente.id,
-    }));
-
-  const verificarMateriaDoc = async () => {
-    if (inputMateria === "")
-      toast.error("Seleccione una materia para ver a los docentes asociados");
-  };
-
-  //MOTIVO
-
-  const onInputChangeMotivo = async (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const inputValue = e.target as HTMLSelectElement;
-    console.log(inputValue.value);
-    if (inputValue.value.length < 30) {
-      setInputMotivo(inputValue.value);
-    } else {
-      toast.error("El motivo debe tener como maximo 150 caracteres");
-      console.log("El motivo debe tener como maximo 150 caracteres");
-    }
-  };
-
-  //NUMERO DE ESTUDIANTES
-
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const charCode = event.charCode;
-    // Allow only numbers (charCode 48-57)
-    if (charCode < 48 || charCode > 57) {
-      event.preventDefault();
-    }
-  };
-
-  //NUMERO DE ESTUDIANTES
-  const onInputChangeNEst = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target as HTMLInputElement;
-
-    if (inputValue.value.length < 6) {
-      if (inputValue.value === "0") {
-        e.preventDefault();
-        return;
-      }
-      setInputNEst(inputValue.value);
-      getAmbientes(inputValue.value);
-    } else {
-      toast.error("El numero de estudiantes no debe superar los 5 caracteres");
-      console.log("El numero de estudiantes no debe superar los 5 caracteres");
-    }
-  };
-
-  //Obtener ambientes
-
-  const getAmbientes = async (num: string) => {
-    const respuesta = await axios.get(
-      // import.meta.env.VITE_API_URL + `/api/ambientesLibres`
-      import.meta.env.VITE_API_URL + "/api/ambientesLibres"
-    );
-    const filteredAmbientes = respuesta.data.filter(
-      (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
-    );
-    setAmbientes(filteredAmbientes);
-    console.log(respuesta.data);
-    console.log(filteredAmbientes);
-  };
-
-  //Seleccionar una fecha
-  const handleDateChange = async (
-    date: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    console.log(date);
-
-    //const fecha = `${date.year.toString()}-${date.month.toString()}-${date.day.toString()}`;
-    const fecha = date.target.value;
-    const fechaActual = new Date();
-
-    const fechaSeleccionada = new Date(fecha);
-    if (fechaSeleccionada > fechaActual) {
-      setInputFecha(fecha);
-      console.log(fecha);
-      console.log(inputFecha);
-      const fechaDuplicada = excepciones.find((obj) => {
-        const fechaObjetoFormato = obj.fecha_excepcion;
-        return fechaObjetoFormato === fecha;
-      });
-      if (fechaDuplicada) {
-        toast.error(
-          `La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`
-        );
-        console.log("pasa exception");
-        return;
-      } else {
-        if (inputAmbiente === "") {
-          toast.error("Seleccione un ambiente");
-          return;
-        } else {
-          console.log("llego rangos de fecha");
-          await getRangos(listAmbientes, fecha);
-        }
-      }
-    } else {
-      toast.error(
-        "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
-      );
-      console.log(
-        "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
-      );
-      setInputFecha(fecha);
-    }
-  };
-
   const verificarMateria = async () => {
     if (inputMateria === "") toast.error("Seleccione una materia");
   };
@@ -337,22 +255,53 @@ export const FormOrdenado = () => {
     setValuesGrupos(new Set(e.target.value.split(",")));
   };
 
-  const optionsAmbiente = ambientes.map((ambiente) => ({
+  //AMBIENTE
+
+  const [inputAmbiente, setInputAmbiente] = useState("");
+  const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
+  const [inputAmbientes, setInputAmbientes] = React.useState<string[]>([]);
+  const [valuesAmbientes, setValuesAmbientes] = React.useState<Selection>(
+    new Set([])
+  );
+
+  const getAmbientes = async () => {
+    const respuesta = await axios.get(
+      `http://127.0.0.1:8000/api/ambientesLibres`
+    );
+    //const filteredAmbientes = respuesta.data.filter(
+    //  (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
+    //);
+    setAmbientes(respuesta.data);
+    console.log(respuesta.data);
+    //console.log(filteredAmbientes);
+  };
+
+  const optionsAmbientes = ambientes.map((ambiente) => ({
     label: `${ambiente.nombre} (Cap: ${ambiente.capacidad} personas)`,
     value: ambiente.id,
-    nombre: ambiente.nombre,
   }));
 
   const onInputChangeAmbiente = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const { value } = e.target as HTMLSelectElement;
-    console.log(inputHIni);
-    setInputAmbiente(value);
-    const arrayNumeros = value.split(",").map((numero) => numero.trim());
-    setListAmbientes(arrayNumeros);
+    //const { value } = e.target as HTMLSelectElement;
+    //console.log(inputHIni);
+    //console.log(value);
+    console.log(e.target.value);
+    const valores = e.target.value;
+    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+    setInputAmbientes(arrayNumeros);
+    setValuesAmbientes(new Set(e.target.value.split(",")));
+    console.log(arrayNumeros);
+    console.log(inputAmbiente);
+    const selecAmbientes = ambientes.filter((ambiente) =>
+      arrayNumeros.includes(`${ambiente.id}`)
+    );
+
+    verificarCapacidad(selecAmbientes, parseInt(inputNEst));
     if (inputHIni.length != 0 || inputFecha != "") {
       setInputHIni([]);
+      setValues(new Set([]));
       console.log("pasa");
       console.log(inputFecha);
       const fechaDuplicada = excepciones.find((obj) => {
@@ -366,27 +315,104 @@ export const FormOrdenado = () => {
         return;
       } else {
         console.log("llego rangos de ambiente");
-        getRangos(listAmbientes, inputFecha);
+        getRangos(arrayNumeros, inputFecha);
       }
     }
     //Deveriamos verificar si la fecha no esta vacia
     //getRangos(inputFecha);
-    console.log(inputAmbiente);
+    console.log(inputAmbientes);
   };
-
-  const verificarCapacidad = async () => {
-    if (inputNEst === "")
-      toast.error(
-        "Por favor, complete el campo Nro de personas para ver la lista de ambientes disponibles con la capacidad adecuada."
+  const verificarCapacidad = async (
+    selectedAmbientes: ISimpleAmbiente[],
+    cap: number
+  ) => {
+    const capacidadTotal = selectedAmbientes.reduce(
+      (sum, ambiente) => sum + ambiente.capacidad,
+      0
+    );
+    console.log(capacidadTotal);
+    console.log(inputNEst);
+    if (capacidadTotal < cap) {
+      setInputAmbiente(
+        "La capacidad total de los ambientes seleccionados no es suficiente para el número de personas requerido."
       );
+      toast.warning(
+        "La capacidad total de los ambientes seleccionados no es suficiente para el número de personas requerido."
+      );
+    }
+
     if (inputNEst != "" && ambientes.length === 0)
       toast.error(
         "No existen ambientes DISPONIBLES con capacidad apta para el numero de personas requerido"
       );
     console.log(ambientes);
   };
+  const verificarAmbiente = async () => {
+    if (ambientes.length === 0)
+      toast.error("No existen ambientes disponibles para reservas");
+  };
+
+  //FECHA
+
+  const [inputFecha, setInputFecha] = useState("");
+  const [excepciones, setExcepciones] = useState<ISimpleExcepcion[]>([]);
+
+  const getExcepciones = async () => {
+    const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+    setExcepciones(respuesta.data);
+    console.log(respuesta.data);
+  };
+  const handleDateChange = async (
+    date: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    console.log(date);
+
+    //const fecha = `${date.year.toString()}-${date.month.toString()}-${date.day.toString()}`;
+    const fecha = date.target.value;
+    const fechaActual = new Date();
+
+    const fechaSeleccionada = new Date(fecha);
+    if (fechaSeleccionada > fechaActual) {
+      setInputFecha(fecha);
+      console.log(fecha);
+      setValues(new Set([]));
+      console.log(inputFecha);
+      const fechaDuplicada = excepciones.find((obj) => {
+        const fechaObjetoFormato = obj.fecha_excepcion;
+        return fechaObjetoFormato === fecha;
+      });
+      if (fechaDuplicada) {
+        toast.error(
+          `La fecha selecionada es ${fechaDuplicada.motivo} no esta disponible para reservas`
+        );
+        console.log("pasa exception");
+        return;
+      } else {
+        if (inputAmbientes.length === 0) {
+          toast.error("Seleccione un ambiente");
+          return;
+        } else {
+          console.log("llego rangos de fecha");
+          await getRangos(inputAmbientes, fecha);
+        }
+      }
+    } else {
+      toast.error(
+        "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
+      );
+      console.log(
+        "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
+      );
+      setInputFecha(fecha);
+    }
+  };
 
   //PERIODO
+
+  const [inputHIni, setInputHIni] = useState<ISimplePeriodo[]>([]);
+  const [inputHFin, setInputHFin] = React.useState<string[]>([]);
+  const [values, setValues] = React.useState<Selection>(new Set([]));
+  const [inputTodos, setInputTodos] = useState<ISimplePeriodo[]>([]);
 
   const options = inputHIni.map((inputHIn) => ({
     label: `${inputHIn.hora_inicio.slice(0, -3)} - ${inputHIn.hora_fin.slice(
@@ -396,46 +422,68 @@ export const FormOrdenado = () => {
     value: inputHIn.id,
   }));
 
-  //Peridos
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
     const valores = e.target.value;
     const arrayNumeros = valores.split(",").map((numero) => numero.trim());
-    console.log(arrayNumeros);
     setInputHFin(arrayNumeros);
-
     setValues(new Set(e.target.value.split(",")));
     console.log(values);
   };
 
-  const getRangos = async (id_ambientes: string[], fecha: string) => {
+  const getRangos = async (id: string[], fecha: string) => {
     try {
       if (inputFecha != "" || fecha != "") {
+        const selecAmbientes = ambientes.filter((ambiente) =>
+          id.includes(`${ambiente.id}`)
+        );
+        const options = selecAmbientes.map((inputHIn) => inputHIn.nombre);
         const dataToSend = {
-          id_ambientes: id_ambientes,
           fecha: fecha,
+          aulas: options,
         };
         console.log(dataToSend);
-        const respuesta = await axios.post(
-          "http://127.0.0.1:8000/api/obtenerPeriodos/",
-          // "http://127.0.0.1:8000/api/disposicion/",
-          // import.meta.env.VITE_API_URL + "/api/disposicion",
-          // "http://steelcode.tis.cs.umss.edu.bo/api/disposicion",
-          dataToSend
-        );
-        const responseData = await respuesta.data;
+        const respuesta = await axios.post<{
+          periodos_libres: ISimplePeriodo[];
+        }>("http://127.0.0.1:8000/api/libresComunes/", dataToSend);
+        const periodosLibres = respuesta.data.periodos_libres;
         const rangosHorario: string[] = [];
-        console.log(responseData);
-        responseData.forEach(
-          (objeto: { hora_inicio: string; hora_fin: string }) => {
-            const { hora_inicio, hora_fin } = objeto;
-            const rangoHorario = `${hora_inicio} - ${hora_fin}`;
-            rangosHorario.push(rangoHorario);
+        console.log(periodosLibres);
+        periodosLibres.forEach((objeto) => {
+          const { hora_inicio, hora_fin } = objeto;
+          const rangoHorario = `${hora_inicio} - ${hora_fin}`;
+          rangosHorario.push(rangoHorario);
+        });
+
+        const agrupadosPorHorario = periodosLibres.reduce((acc, periodo) => {
+          if (!acc[periodo.id_horario]) {
+            acc[periodo.id_horario] = [];
           }
+          acc[periodo.id_horario].push(periodo);
+          return acc;
+        }, {} as Record<number, ISimplePeriodo[]>);
+
+        const horariosDuplicados = Object.keys(agrupadosPorHorario)
+          .filter(
+            (id_horario) => agrupadosPorHorario[parseInt(id_horario)].length > 1
+          )
+          .map((id_horario) => parseInt(id_horario));
+
+        const periodosUnicos = Object.values(agrupadosPorHorario).map(
+          (periodos) => periodos[0]
         );
 
-        setInputHIni(responseData);
-        console.log(responseData);
+        const periodosDuplicados = periodosLibres.filter((periodo) =>
+          horariosDuplicados.includes(periodo.id_horario)
+        );
+
+        setInputTodos(periodosDuplicados);
+
+        console.log("Horarios Duplicados:", horariosDuplicados);
+        console.log("Períodos Duplicados:", periodosDuplicados);
+        console.log("Períodos Unicos:", periodosUnicos);
+        setInputHIni(periodosUnicos);
+        console.log(periodosLibres);
       } else {
         toast.error("Seleccione una fecha");
       }
@@ -448,13 +496,18 @@ export const FormOrdenado = () => {
   };
   const verificar = async () => {
     if (inputFecha === "") toast.error("Seleccione una fecha");
-    if (inputAmbiente === "") toast.error("Seleccione un ambiente");
+    if (inputAmbientes.length === 0) toast.error("Seleccione un ambiente");
   };
 
   //ENVIAR
 
   const createSolicitud = useSolicitudStore((state) => state.createSolicitud);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  const eliminarElementosVacios = (array: string[]): string[] => {
+    return array.filter((item) => item.trim() !== "");
+  };
+
   const onInputChangeSave = async (
     e:
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -463,6 +516,33 @@ export const FormOrdenado = () => {
     e.preventDefault();
     setIsButtonDisabled(true);
 
+    const listaIdsNumeros = inputHFin.map((id) => parseInt(id));
+    const periodosFiltrados = inputTodos.filter((periodo) =>
+      listaIdsNumeros.includes(periodo.id)
+    );
+    const horariosFiltrados = periodosFiltrados.map(
+      (periodo) => periodo.id_horario
+    );
+    const periodosConHorariosFiltrados = inputTodos.filter((periodo) =>
+      horariosFiltrados.includes(periodo.id_horario)
+    );
+
+    const idsPeriodosConHorariosFiltrados = periodosConHorariosFiltrados.map(
+      (periodo) => periodo.id
+    );
+    const combinedIds = [
+      ...new Set([...listaIdsNumeros, ...idsPeriodosConHorariosFiltrados]),
+    ];
+    const idsPeriodosConHorariosFiltradosString = combinedIds.map((id) =>
+      id.toString()
+    );
+
+    const ambientesSinElementosVacios = eliminarElementosVacios(inputAmbientes);
+    console.log(values);
+    const periodosRevisados = idsPeriodosConHorariosFiltradosString.filter(
+      (periodo) => values.has(periodo)
+    );
+    console.log(inputHFin);
     if (inputMateria === "") {
       toast.error("El campo Materia es obligatorio");
       setIsButtonDisabled(false);
@@ -478,7 +558,7 @@ export const FormOrdenado = () => {
     } else if (listGrupos.length === 0) {
       toast.error("El campo Grupo es obligatorio");
       setIsButtonDisabled(false);
-    } else if (inputAmbiente === "") {
+    } else if (inputAmbientes.length === 0) {
       toast.error("El campo Ambiente es obligatorio");
       setIsButtonDisabled(false);
     } else if (inputHFin.length === 0) {
@@ -501,9 +581,9 @@ export const FormOrdenado = () => {
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
-            parseInt(inputAmbiente),
+            ambientesSinElementosVacios,
             listOficial,
-            inputHFin
+            periodosRevisados
           );
         } else {
           await createSolicitud(
@@ -513,14 +593,32 @@ export const FormOrdenado = () => {
             parseInt(inputNEst),
             parseInt(inputMateria),
             listGrupos,
-            parseInt(inputAmbiente),
+            ambientesSinElementosVacios,
             listOficial.concat(listdocentes),
-            inputHFin
+            periodosRevisados
+          );
+        }
+        /*
+
+        try {
+          await axios.post(
+            `http://127.0.0.1:8000/api/notificacion`,
+            {
+              id_usuario: user?.id,
+              id_solicitud: id_solicitud,
+              titulo: tituloNotificacion,
+              contenido: descripcionNotificacion,
+              visto: 1,
+            }
+          );
+        } catch (error) {
+          console.error(
+            `Error al enviar notificaciones ${id_solicitud}: ${error}`
           );
         }
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 2000);*/
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -530,19 +628,6 @@ export const FormOrdenado = () => {
   };
   const onInputChangeCancelar = async () => {
     window.location.reload();
-  };
-
-  const prueba = () => {
-    console.log(inputMotivo);
-
-    console.log("inputFecha:" + inputFecha);
-    console.log("inputNEst:" + inputNEst);
-    console.log("inputMateria:" + inputMateria);
-    console.log("listGrupos:" + listGrupos);
-    // console.log("inputAmbiente:" + inputAmbiente);
-    console.log("listOficial:" + listOficial.concat(listdocentes));
-    console.log("inputHFin:" + inputHFin);
-    console.log("listAmbientes:" + listAmbientes);
   };
   return (
     <div>
@@ -593,7 +678,6 @@ export const FormOrdenado = () => {
 
             <Select
               label=""
-              aria-label="Selecciona los docentes asociados a la materia"
               selectionMode="multiple"
               placeholder="Seleccione docente..."
               selectedKeys={valuesDocentes}
@@ -614,7 +698,6 @@ export const FormOrdenado = () => {
             <label className="text-ms text-gray-900">Grupo*:</label>
             <Select
               label="Seleccione los grupos asociados a la materia "
-              aria-label="Selecciona los grupos asociados a la materia"
               selectionMode="multiple"
               placeholder="Seleccione grupo"
               selectedKeys={valuesGrupos}
@@ -645,8 +728,8 @@ export const FormOrdenado = () => {
               placeholder="Seleccione una opcion..."
               onChange={onInputChangeMotivo}
             >
-              {motivosReserva.map((motivo, index) => (
-                <SelectItem key={index} value={motivo}>
+              {motivosReserva.map((motivo) => (
+                <SelectItem key={motivo} value={motivo}>
                   {motivo}
                 </SelectItem>
               ))}
@@ -655,13 +738,34 @@ export const FormOrdenado = () => {
           </div>
 
           <div className="w-full md:w-1/2 ml-5">
+            {/*AMBIENTE */}
+
+            <label className="text-ms text-gray-900">Ambiente*:</label>
+            <br />
+            <Select
+              label=""
+              selectionMode="multiple"
+              placeholder="Seleccione ambiente..."
+              selectedKeys={valuesAmbientes}
+              className="mt-2 w-full"
+              onChange={onInputChangeAmbiente}
+              onClick={verificarAmbiente}
+            >
+              {optionsAmbientes.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </Select>
+            <br />
+
             {/*NUMERO DE ESTUDIANTES */}
 
             <label className="text-ms text-gray-900">Nro de personas*:</label>
             <Input
               type="text"
               value={inputNEst}
-              placeholder="Ingrese un número..."
+              label="Ingrese un número..."
               onChange={onInputChangeNEst}
               onKeyPress={handleKeyPress}
               style={{
@@ -669,43 +773,18 @@ export const FormOrdenado = () => {
               }}
             />
             <br />
-            {/*AMBIENTE */}
-
-            <label className="text-ms text-gray-900">Ambientes*:</label>
-            <br />
-            <Select
-              value={inputAmbiente}
-              onChange={onInputChangeAmbiente}
-              onClick={verificarCapacidad}
-              className="w-full"
-              aria-label="Selecciona una ambiente"
-              placeholder="Seleccione una opcion..."
-              selectionMode="multiple"
-            >
-              {optionsAmbiente.map((ambiente) => (
-                <SelectItem
-                  className="text-smtext-xs"
-                  key={ambiente.value}
-                  value={ambiente.label}
-                  textValue={ambiente.nombre}
-                >
-                  {ambiente.label}
-                </SelectItem>
-              ))}
-            </Select>
-            <br />
 
             {/*FECHA */}
 
             <label className="text-ms text-gray-900">Fecha de reserva*:</label>
             <br />
             {/*FECHA 
-            <DatePicker
-              className="p-2 border w-full border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              aria-label="Selecciona una fecha"
-              onChange={handleDateChange}
-            />
-            <br />*/}
+          <DatePicker
+            className="p-2 border w-full border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            aria-label="Selecciona una fecha"
+            onChange={handleDateChange}
+          />
+          <br />*/}
             <Input
               name="fecha feriado"
               type="date"
@@ -726,8 +805,7 @@ export const FormOrdenado = () => {
               label="Periodos de reserva"
               selectionMode="multiple"
               placeholder="Seleccione periodo..."
-              // selectedKeys={values}
-              value={inputHFin}
+              selectedKeys={values}
               className="mt-2 mb-5 w-full"
               onChange={handleSelectionChange}
               onClick={verificar}
@@ -763,8 +841,6 @@ export const FormOrdenado = () => {
                 {" "}
                 {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
               </Button>
-
-              <Button onClick={prueba}></Button>
             </div>
           </div>
         </div>
