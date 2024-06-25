@@ -112,7 +112,6 @@ export const NotificarCan = () => {
             );
           })
         );
-
         toast.success("Notificaciones Enviadas");
       } catch (error) {
         toast.error("Error al cambiar estado de las aulas seleccionadas");

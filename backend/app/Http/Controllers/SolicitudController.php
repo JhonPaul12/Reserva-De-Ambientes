@@ -119,7 +119,7 @@ class SolicitudController extends Controller
             'estado' => $request->estado,
             'numero_estudiantes' => $request->numero_estudiantes,
             'id_materia' => $request->id_materia, // Utiliza directamente $request->materia_id en lugar de $request->input('materia_id')
-             // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
+            // Utiliza directamente $request->ambiente_id en lugar de $request->input('ambiente_id')
 
         ]);
 
@@ -549,41 +549,43 @@ class SolicitudController extends Controller
 
     public function informeAmbientes2_v2()
     {
-        $solicitudes = Solicitud::with('ambiente')->get();
+        $solicitudes = Solicitud::with('ambientes')->get();
 
         $resultado = [];
 
         $mesesEnEspañol = [
             "January" => "Enero", "February" => "Febrero", "March" => "Marzo",
             "April" => "Abril", "May" => "Mayo", "June" => "Junio",
-            "July" => "Julio"/*, "August" => "Agosto", "September" => "Septiembre",
-        "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"*/
+            "July" => "Julio", "August" => "Agosto", "September" => "Septiembre",
+            "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"
         ];
 
         foreach ($solicitudes as $solicitud) {
-            $aulaNombre = $solicitud->ambiente->nombre;
+            foreach ($solicitud->ambientes as $ambiente) {
+                $aulaNombre = $ambiente->nombre;
 
-            if (!isset($resultado[$aulaNombre])) {
-                $resultado[$aulaNombre] = [
-                    'Aula' => $aulaNombre,
-                    'Data' => array_fill_keys(array_values($mesesEnEspañol), 0)
-                ];
+                if (!isset($resultado[$aulaNombre])) {
+                    $resultado[$aulaNombre] = [
+                        'Aula' => $aulaNombre,
+                        'Data' => array_fill_keys(array_values($mesesEnEspañol), 0)
+                    ];
+                }
+
+                $fechaSolicitud = new DateTime($solicitud->fecha_solicitud);
+                $mes = $fechaSolicitud->format('F');
+                $mesEnEspañol = $mesesEnEspañol[$mes];
+
+                $resultado[$aulaNombre]['Data'][$mesEnEspañol]++;
             }
-
-            $fechaSolicitud = new DateTime($solicitud->fecha_solicitud);
-            $mes = $fechaSolicitud->format('F');
-            $mesEnEspañol = $mesesEnEspañol[$mes];
-
-            $resultado[$aulaNombre]['Data'][$mesEnEspañol]++;
         }
 
         $formatoResultado = [];
         foreach ($resultado as $aula) {
             $data = [];
-            foreach ($aula['Data'] as $mes => $valor) {
+            foreach ($aula['Data'] as $mes => $cantidad) {
                 $data[] = [
                     'mes' => $mes,
-                    'cantidad' => $valor
+                    'cantidad' => $cantidad
                 ];
             }
             $formatoResultado[] = [
@@ -594,20 +596,23 @@ class SolicitudController extends Controller
 
         return response()->json($formatoResultado, 200);
     }
+
 
     public function informeAmbientes_v2()
     {
-        $solicitudes = Solicitud::with('ambiente')->get();
+        $solicitudes = Solicitud::with('ambientes')->get();
 
         $resultado = [];
 
         foreach ($solicitudes as $solicitud) {
-            $aulaNombre = $solicitud->ambiente->nombre;
+            foreach ($solicitud->ambientes as $ambiente) {
+                $aulaNombre = $ambiente->nombre;
 
-            if (!isset($resultado[$aulaNombre])) {
-                $resultado[$aulaNombre] = 1;
-            } else {
-                $resultado[$aulaNombre]++;
+                if (!isset($resultado[$aulaNombre])) {
+                    $resultado[$aulaNombre] = 1;
+                } else {
+                    $resultado[$aulaNombre]++;
+                }
             }
         }
 
@@ -621,50 +626,53 @@ class SolicitudController extends Controller
 
         return response()->json($formatoResultado, 200);
     }
+
     public function informeAmbientesTable()
     {
-        $solicitudes = Solicitud::with('ambiente', 'users', 'periodos.horario')->get();
+        $solicitudes = Solicitud::with(['ambientes', 'users', 'periodos.horario'])->get();
 
         $resultado = [];
 
         foreach ($solicitudes as $solicitud) {
-            $aulaNombre = $solicitud->ambiente->nombre;
-            $fechaSolicitud = $solicitud->fecha_solicitud;
+            foreach ($solicitud->ambientes as $ambiente) {
+                $aulaNombre = $ambiente->nombre;
+                $fechaSolicitud = $solicitud->fecha_solicitud;
 
-            $nombresUsuarios = $solicitud->users->map(function ($user) {
-                return $user->name . ' ' . $user->apellidos;
-            })->toArray();
+                $nombresUsuarios = $solicitud->users->map(function ($user) {
+                    return $user->name . ' ' . $user->apellidos;
+                })->toArray();
 
-            $horariosInicio = $solicitud->periodos->map(function ($periodo) {
-                return $periodo->horario->hora_inicio;
-            });
-            $horariosFin = $solicitud->periodos->map(function ($periodo) {
-                return $periodo->horario->hora_fin;
-            });
+                $horariosInicio = $solicitud->periodos->map(function ($periodo) {
+                    return $periodo->horario->hora_inicio;
+                });
+                $horariosFin = $solicitud->periodos->map(function ($periodo) {
+                    return $periodo->horario->hora_fin;
+                });
 
-            $horaInicio = $horariosInicio->min();
-            $horaFin = $horariosFin->max();
+                $horaInicio = $horariosInicio->min();
+                $horaFin = $horariosFin->max();
 
-            if (!isset($resultado[$aulaNombre])) {
-                $resultado[$aulaNombre] = [
-                    'Cantidad_de_Reservas' => 1,
-                    'Fechas' => [
-                        [
-                            'Fecha_de_Solicitud' => $fechaSolicitud,
-                            'Hora_de_Inicio' => $horaInicio,
-                            'Hora_de_Fin' => $horaFin,
-                            'Docentes' => $nombresUsuarios
+                if (!isset($resultado[$aulaNombre])) {
+                    $resultado[$aulaNombre] = [
+                        'Cantidad_de_Reservas' => 1,
+                        'Fechas' => [
+                            [
+                                'Fecha_de_Solicitud' => $fechaSolicitud,
+                                'Hora_de_Inicio' => $horaInicio,
+                                'Hora_de_Fin' => $horaFin,
+                                'Docentes' => $nombresUsuarios
+                            ]
                         ]
-                    ]
-                ];
-            } else {
-                $resultado[$aulaNombre]['Cantidad_de_Reservas']++;
-                $resultado[$aulaNombre]['Fechas'][] = [
-                    'Fecha_de_Solicitud' => $fechaSolicitud,
-                    'Hora_de_Inicio' => $horaInicio,
-                    'Hora_de_Fin' => $horaFin,
-                    'Docentes' => $nombresUsuarios
-                ];
+                    ];
+                } else {
+                    $resultado[$aulaNombre]['Cantidad_de_Reservas']++;
+                    $resultado[$aulaNombre]['Fechas'][] = [
+                        'Fecha_de_Solicitud' => $fechaSolicitud,
+                        'Hora_de_Inicio' => $horaInicio,
+                        'Hora_de_Fin' => $horaFin,
+                        'Docentes' => $nombresUsuarios
+                    ];
+                }
             }
         }
 
@@ -679,9 +687,10 @@ class SolicitudController extends Controller
 
         return response()->json($formatoResultado, 200);
     }
+
     public function informeAmbientesTableID($userId)
     {
-        $solicitudes = Solicitud::with(['ambiente', 'users', 'periodos.horario'])
+        $solicitudes = Solicitud::with(['ambientes', 'users', 'periodos.horario'])
             ->whereHas('users', function ($query) use ($userId) {
                 $query->where('users.id', $userId);
             })
@@ -690,43 +699,45 @@ class SolicitudController extends Controller
         $resultado = [];
 
         foreach ($solicitudes as $solicitud) {
-            $aulaNombre = $solicitud->ambiente->nombre;
-            $fechaSolicitud = $solicitud->fecha_solicitud;
+            foreach ($solicitud->ambientes as $ambiente) {
+                $aulaNombre = $ambiente->nombre;
+                $fechaSolicitud = $solicitud->fecha_solicitud;
 
-            $nombresUsuarios = $solicitud->users->map(function ($user) {
-                return $user->name . ' ' . $user->apellidos;
-            })->toArray();
+                $nombresUsuarios = $solicitud->users->map(function ($user) {
+                    return $user->name . ' ' . $user->apellidos;
+                })->toArray();
 
-            $horariosInicio = $solicitud->periodos->map(function ($periodo) {
-                return $periodo->horario->hora_inicio;
-            });
-            $horariosFin = $solicitud->periodos->map(function ($periodo) {
-                return $periodo->horario->hora_fin;
-            });
+                $horariosInicio = $solicitud->periodos->map(function ($periodo) {
+                    return $periodo->horario->hora_inicio;
+                });
+                $horariosFin = $solicitud->periodos->map(function ($periodo) {
+                    return $periodo->horario->hora_fin;
+                });
 
-            $horaInicio = $horariosInicio->min();
-            $horaFin = $horariosFin->max();
+                $horaInicio = $horariosInicio->min();
+                $horaFin = $horariosFin->max();
 
-            if (!isset($resultado[$aulaNombre])) {
-                $resultado[$aulaNombre] = [
-                    'Cantidad_de_Reservas' => 1,
-                    'Fechas' => [
-                        [
-                            'Fecha_de_Solicitud' => $fechaSolicitud,
-                            'Hora_de_Inicio' => $horaInicio,
-                            'Hora_de_Fin' => $horaFin,
-                            'Docentes' => $nombresUsuarios
+                if (!isset($resultado[$aulaNombre])) {
+                    $resultado[$aulaNombre] = [
+                        'Cantidad_de_Reservas' => 1,
+                        'Fechas' => [
+                            [
+                                'Fecha_de_Solicitud' => $fechaSolicitud,
+                                'Hora_de_Inicio' => $horaInicio,
+                                'Hora_de_Fin' => $horaFin,
+                                'Docentes' => $nombresUsuarios
+                            ]
                         ]
-                    ]
-                ];
-            } else {
-                $resultado[$aulaNombre]['Cantidad_de_Reservas']++;
-                $resultado[$aulaNombre]['Fechas'][] = [
-                    'Fecha_de_Solicitud' => $fechaSolicitud,
-                    'Hora_de_Inicio' => $horaInicio,
-                    'Hora_de_Fin' => $horaFin,
-                    'Docentes' => $nombresUsuarios
-                ];
+                    ];
+                } else {
+                    $resultado[$aulaNombre]['Cantidad_de_Reservas']++;
+                    $resultado[$aulaNombre]['Fechas'][] = [
+                        'Fecha_de_Solicitud' => $fechaSolicitud,
+                        'Hora_de_Inicio' => $horaInicio,
+                        'Hora_de_Fin' => $horaFin,
+                        'Docentes' => $nombresUsuarios
+                    ];
+                }
             }
         }
 
@@ -741,9 +752,10 @@ class SolicitudController extends Controller
 
         return response()->json($formatoResultado, 200);
     }
+
     public function informeAmbientes_v2ID($userId)
     {
-        $solicitudes = Solicitud::with(['ambiente', 'users'])
+        $solicitudes = Solicitud::with(['ambientes', 'users'])
             ->whereHas('users', function ($query) use ($userId) {
                 $query->where('users.id', $userId);
             })
@@ -752,12 +764,14 @@ class SolicitudController extends Controller
         $resultado = [];
 
         foreach ($solicitudes as $solicitud) {
-            $aulaNombre = $solicitud->ambiente->nombre;
+            foreach ($solicitud->ambientes as $ambiente) {
+                $aulaNombre = $ambiente->nombre;
 
-            if (!isset($resultado[$aulaNombre])) {
-                $resultado[$aulaNombre] = 1;
-            } else {
-                $resultado[$aulaNombre]++;
+                if (!isset($resultado[$aulaNombre])) {
+                    $resultado[$aulaNombre] = 1;
+                } else {
+                    $resultado[$aulaNombre]++;
+                }
             }
         }
 
@@ -771,9 +785,10 @@ class SolicitudController extends Controller
 
         return response()->json($formatoResultado, 200);
     }
+
     public function informeAmbientes2_v2ID($userId)
     {
-        $solicitudes = Solicitud::with(['ambiente', 'users'])
+        $solicitudes = Solicitud::with(['ambientes', 'users'])
             ->whereHas('users', function ($query) use ($userId) {
                 $query->where('users.id', $userId);
             })
@@ -784,25 +799,27 @@ class SolicitudController extends Controller
         $mesesEnEspañol = [
             "January" => "Enero", "February" => "Febrero", "March" => "Marzo",
             "April" => "Abril", "May" => "Mayo", "June" => "Junio",
-            "July" => "Julio"/*, "August" => "Agosto", "September" => "Septiembre",
-        "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"*/
+            "July" => "Julio", "August" => "Agosto", "September" => "Septiembre",
+            "October" => "Octubre", "November" => "Noviembre", "December" => "Diciembre"
         ];
 
         foreach ($solicitudes as $solicitud) {
-            $aulaNombre = $solicitud->ambiente->nombre;
+            foreach ($solicitud->ambientes as $ambiente) {
+                $aulaNombre = $ambiente->nombre;
 
-            if (!isset($resultado[$aulaNombre])) {
-                $resultado[$aulaNombre] = [
-                    'Aula' => $aulaNombre,
-                    'Data' => array_fill_keys(array_values($mesesEnEspañol), 0)
-                ];
+                if (!isset($resultado[$aulaNombre])) {
+                    $resultado[$aulaNombre] = [
+                        'Aula' => $aulaNombre,
+                        'Data' => array_fill_keys(array_values($mesesEnEspañol), 0)
+                    ];
+                }
+
+                $fechaSolicitud = new DateTime($solicitud->fecha_solicitud);
+                $mes = $fechaSolicitud->format('F');
+                $mesEnEspañol = $mesesEnEspañol[$mes];
+
+                $resultado[$aulaNombre]['Data'][$mesEnEspañol]++;
             }
-
-            $fechaSolicitud = new DateTime($solicitud->fecha_solicitud);
-            $mes = $fechaSolicitud->format('F');
-            $mesEnEspañol = $mesesEnEspañol[$mes];
-
-            $resultado[$aulaNombre]['Data'][$mesEnEspañol]++;
         }
 
         $formatoResultado = [];
@@ -822,6 +839,7 @@ class SolicitudController extends Controller
 
         return response()->json($formatoResultado, 200);
     }
+
     public function datosDocente()
     {
         $solicitudes = Solicitud::with('users')->get();
@@ -882,66 +900,65 @@ class SolicitudController extends Controller
 
 
     public function LibresComunes(Request $request)
-{
+    {
 
-    $validador = Validator::make($request->all(), [
-        'fecha' => 'required|date',
-        'aulas' => 'required|array|min:1',
-        'aulas.*' => 'required|string'
-    ]);
+        $validador = Validator::make($request->all(), [
+            'fecha' => 'required|date',
+            'aulas' => 'required|array|min:1',
+            'aulas.*' => 'required|string'
+        ]);
 
-    if ($validador->fails()) {
-        return response()->json(['errors' => $validador->errors()], 422);
+        if ($validador->fails()) {
+            return response()->json(['errors' => $validador->errors()], 422);
+        }
+
+
+        $fecha = $request->input('fecha');
+        $nombresAulas = $request->input('aulas');
+
+
+        $idsAmbientes = DB::table('ambientes')
+            ->whereIn('nombre', $nombresAulas)
+            ->pluck('id');
+
+        if ($idsAmbientes->isEmpty()) {
+            return response()->json(['message' => 'Aulas no encontradas'], 404);
+        }
+
+        // Obtener los IDs de horarios libres para cada aula en la fecha dada
+        $horariosLibresPorAula = [];
+
+        foreach ($idsAmbientes as $idAmbiente) {
+            $libresID = DB::table('periodos')
+                ->where('fecha', $fecha)
+                ->where('id_ambiente', $idAmbiente)
+                ->where('estado', 'libre')
+                ->pluck('id_horario');
+
+            $horariosLibresPorAula[] = $libresID->toArray();
+        }
+
+        // Encontrar los periodos libres comunes entre todas las aulas
+        if (count($horariosLibresPorAula) > 1) {
+            $horariosLibresComunes = call_user_func_array('array_intersect', $horariosLibresPorAula);
+        } else {
+            $horariosLibresComunes = $horariosLibresPorAula[0];
+        }
+
+        if (empty($horariosLibresComunes)) {
+            return response()->json(['message' => 'No hay horarios libres comunes'], 404);
+        }
+
+
+        $periodosLibres = DB::table('periodos')
+            ->join('horarios', 'periodos.id_horario', '=', 'horarios.id')
+            ->join('ambientes', 'periodos.id_ambiente', '=', 'ambientes.id')
+            ->whereIn('periodos.id_horario', $horariosLibresComunes)
+            ->where('periodos.fecha', $fecha)
+            ->whereIn('periodos.id_ambiente', $idsAmbientes)
+            ->select('periodos.*', 'horarios.hora_inicio', 'horarios.hora_fin', 'ambientes.nombre as nombre_ambiente')
+            ->get();
+
+        return response()->json(['periodos_libres' => $periodosLibres]);
     }
-
-
-    $fecha = $request->input('fecha');
-    $nombresAulas = $request->input('aulas');
-
-
-    $idsAmbientes = DB::table('ambientes')
-        ->whereIn('nombre', $nombresAulas)
-        ->pluck('id');
-
-    if ($idsAmbientes->isEmpty()) {
-        return response()->json(['message' => 'Aulas no encontradas'], 404);
-    }
-
-    // Obtener los IDs de horarios libres para cada aula en la fecha dada
-    $horariosLibresPorAula = [];
-
-    foreach ($idsAmbientes as $idAmbiente) {
-        $libresID = DB::table('periodos')
-            ->where('fecha', $fecha)
-            ->where('id_ambiente', $idAmbiente)
-            ->where('estado', 'libre')
-            ->pluck('id_horario');
-
-        $horariosLibresPorAula[] = $libresID->toArray();
-    }
-
-    // Encontrar los periodos libres comunes entre todas las aulas
-    if (count($horariosLibresPorAula) > 1) {
-        $horariosLibresComunes = call_user_func_array('array_intersect', $horariosLibresPorAula);
-    } else {
-        $horariosLibresComunes = $horariosLibresPorAula[0];
-    }
-
-    if (empty($horariosLibresComunes)) {
-        return response()->json(['message' => 'No hay horarios libres comunes'], 404);
-    }
-
-
-    $periodosLibres = DB::table('periodos')
-        ->join('horarios', 'periodos.id_horario', '=', 'horarios.id')
-        ->join('ambientes', 'periodos.id_ambiente', '=', 'ambientes.id')
-        ->whereIn('periodos.id_horario', $horariosLibresComunes)
-        ->where('periodos.fecha', $fecha)
-        ->whereIn('periodos.id_ambiente', $idsAmbientes)
-        ->select('periodos.*', 'horarios.hora_inicio', 'horarios.hora_fin', 'ambientes.nombre as nombre_ambiente')
-        ->get();
-
-    return response()->json(['periodos_libres' => $periodosLibres]);
-}
-
 }

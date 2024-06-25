@@ -36,10 +36,10 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
         <FiMenu color="white" />
       </div>
       <div className={`bg-azul ${menuOpen ? "block" : "menu-hidden"} sm:block`}>
-        <div className={`p-5 relative w-[290px] min-h-[85vh] `}>
+        <div className={`p-5 relative sm:w-[290px] min-h-[85vh] `}>
           <div>
             {/* Opciones */}
-            <ul className="space-y-4">
+            <ul className="sm:space-y-4">
               {sideMenuOptions.map((option, index) => (
                 <li key={option.path}>
                   {option.submenu ? (
@@ -65,7 +65,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({ sideMenuOptions }) => {
                     </Link>
                   )}
                   {option.submenu && submenuStates[index] && (
-                    <ul className="px-6">
+                    <ul className="sm:px-6">
                       {option.subMenuOptions?.map((subOption) => (
                         <li key={subOption.path}>
                           <Link className="sidemenu__link" to={subOption.path}>

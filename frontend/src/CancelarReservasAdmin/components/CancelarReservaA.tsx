@@ -165,7 +165,11 @@ export const CancelarReservaA = () => {
                 {paginatedSolicitudes.map((solicitud) => (
                   <TableRow key={solicitud.solicitud_id}>
                     <TableCell className="text-xs sm:text-sm text-black">
-                      {solicitud.solicitud.ambiente.nombre}
+                      {solicitud.solicitud.ambientes.map((ambiente,index)=>(
+                        <div key={index}>
+                          *{ambiente.nombre}
+                        </div>
+                      ))}
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm text-black">
                       {solicitud.solicitud.users.map((user, index) => (

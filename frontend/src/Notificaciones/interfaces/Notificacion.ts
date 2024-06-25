@@ -53,6 +53,6 @@ interface Solicitud {
     created_at: string;
     updated_at: string;
     materia: Materia;
-    ambiente: Ambiente;
+    ambientes: Ambiente[];
 }
 

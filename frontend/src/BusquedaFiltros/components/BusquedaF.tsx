@@ -98,7 +98,7 @@ export const BusquedaF = () => {
 
   return (
     <div className="contenedor-table">
-      <label className="ml-10 text-3xl font-bold text-center text-gray-900 mb-5">
+      <label className="ml-10 text-xl sm:text-3xl font-bold text-center text-gray-900 mb-5">
         BUSQUEDA POR FILTROS
       </label>
       <div className="flex flex-row justify-center items-center my-4">
@@ -233,16 +233,14 @@ export const BusquedaF = () => {
           onClose={() => setModalOpen(false)}
           className="custom-modal"
         >
-          <ModalHeader>Horario de Aula</ModalHeader>
+          
           <ModalContent>
-            <h2 className="p-2 text-center">
-              Horarios para {aulaSeleccionada[0]?.ambiente.nombre}
-            </h2>
-            <div className="p-5 w-full">
+          <ModalHeader>Horario de Aula  {aulaSeleccionada[0]?.ambiente.nombre}</ModalHeader>
+            <div className="sm:p-5 w-full">
               <Input
                 type="text"
                 placeholder="Filtrar por hora"
-                className="mt-3 block"
+                className="sm:mt-3 block"
                 style={{
                   fontSize: "15px",
                   padding: "10px",

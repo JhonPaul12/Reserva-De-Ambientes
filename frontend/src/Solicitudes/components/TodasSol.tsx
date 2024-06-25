@@ -105,7 +105,7 @@ export const TodasSol = () => {
             >
               <TableHeader>
                 <TableColumn className="text-xs text-center bg-slate-300">
-                  AMBIENTE
+                  AMBIENTES
                 </TableColumn>
                 <TableColumn className="text-xs text-center bg-slate-300">
                   DOCENTE
@@ -136,7 +136,12 @@ export const TodasSol = () => {
                 {paginatedSolicitudes.map((solicitud) => (
                   <TableRow key={solicitud.solicitud.id}>
                     <TableCell className="text-xs sm:text-sm text-black">
-                      {solicitud.solicitud.ambiente.nombre}
+                      {solicitud.solicitud.ambientes.map((ambiente,index)=>(
+                          <div key={index}>
+                            *{ambiente.nombre}
+                          </div>
+                      ))}
+                        
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm text-black">
                       {solicitud.solicitud.users.map((user, index) => (

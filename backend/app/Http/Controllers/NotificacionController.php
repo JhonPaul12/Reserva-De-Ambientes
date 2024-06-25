@@ -70,7 +70,7 @@ class NotificacionController extends Controller
 
     public function nombre_usuario_Notificacion($idUsuario = null)
     {
-        $query = Notificacion::with('user', 'solicitud.materia', 'solicitud.ambiente');
+        $query = Notificacion::with('user', 'solicitud.materia', 'solicitud.ambientes');
 
         if ($idUsuario) {
             $query->whereHas('user', function ($query) use ($idUsuario) {

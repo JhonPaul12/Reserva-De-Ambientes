@@ -73,23 +73,23 @@ export const NotificacionU = () => {
               <div className="pl-12">
                 <p className="mt-2 font-bold text-l">Detalles de la reserva:</p>
                 <p>
-                  <strong>Docente:</strong>
+                  <strong>Docente: </strong>
                   {notificacion.user.name} {notificacion.user.apellidos}
                 </p>
                 <p>
-                  <strong>Fecha de la reserva:</strong>
+                  <strong>Fecha de la reserva: </strong>
                   {notificacion.solicitud.fecha_solicitud}
                 </p>
                 <p>
-                  <strong>Aula:</strong>
-                  {notificacion.solicitud.ambiente.nombre}
+                  <strong>Aula: </strong>
+                  {notificacion.solicitud.ambientes.map((ambiente,index)=>(
+                    <div key={index}>
+                      {`*${ambiente.nombre} => ${ambiente.ubicacion}`}
+                    </div>
+                  ))}
                 </p>
                 <p>
-                  <strong>Ubicación:</strong>
-                  {notificacion.solicitud.ambiente.ubicacion}
-                </p>
-                <p>
-                  <strong>Materia:</strong>
+                  <strong>Materia: </strong>
                   {notificacion.solicitud.materia.nombre_materia}
                 </p>
               </div>

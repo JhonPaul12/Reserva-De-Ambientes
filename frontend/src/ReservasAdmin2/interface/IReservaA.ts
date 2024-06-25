@@ -16,7 +16,7 @@ interface Solicitud {
   updated_at: string;
   materia: Materia;
   users: User[];
-  ambiente: Ambiente;
+  ambientes: Ambiente[];
 }
 
 interface Materia {
