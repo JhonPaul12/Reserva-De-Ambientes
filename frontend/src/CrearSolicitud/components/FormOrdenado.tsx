@@ -56,7 +56,12 @@ export const FormOrdenado = () => {
 
   const getDocentes = async (id: number) => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`
+      import.meta.env.VITE_API_URL +
+        "/api/docentesMismaMateria/" +
+        user?.id +
+        "/" +
+        id
+      // `http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`
     );
     const docentesArray = Object.values(respuesta.data).map(
       (item) => item as ISimpleDocente
@@ -95,7 +100,8 @@ export const FormOrdenado = () => {
 
   const getMaterias = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/materias/${user?.id}/`
+      // `http://127.0.0.1:8000/api/usuario/materias/${user?.id}/`
+      import.meta.env.VITE_API_URL + "/api/usuario/materias/" + user?.id
     );
     setMaterias(respuesta.data);
   };
@@ -207,7 +213,12 @@ export const FormOrdenado = () => {
     try {
       // Obtener los grupos para el docente principal
       const respuestaPrincipal = await axios.get(
-        `http://127.0.0.1:8000/api/docentes/${user?.id}/${materia_id}`
+        // `http://127.0.0.1:8000/api/docentes/${user?.id}/${materia_id}`
+        import.meta.env.VITE_API_URL +
+          "/api/docentes/" +
+          user?.id +
+          "/" +
+          materia_id
       );
       setGrupos(respuestaPrincipal.data);
       let gruposTem = respuestaPrincipal.data;
@@ -218,7 +229,12 @@ export const FormOrdenado = () => {
       if (docente_id.length !== 0) {
         const solicitudes = docente_id.map((docente) =>
           axios.get<ISimpleGrupo[]>(
-            `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
+            // `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
+            import.meta.env.VITE_API_URL +
+              "/api/docentes/" +
+              docente +
+              "/" +
+              materia_id
           )
         );
 
@@ -248,11 +264,13 @@ export const FormOrdenado = () => {
   const handleSelectionChangeGrupos = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const valores = e.target.value;
-    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
-    console.log(arrayNumeros);
-    setListGrupos(arrayNumeros);
-    setValuesGrupos(new Set(e.target.value.split(",")));
+    if (e.target.value !== "") {
+      const valores = e.target.value;
+      const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+      console.log(arrayNumeros);
+      setListGrupos(arrayNumeros);
+      setValuesGrupos(new Set(e.target.value.split(",")));
+    }
   };
 
   //AMBIENTE
@@ -266,7 +284,8 @@ export const FormOrdenado = () => {
 
   const getAmbientes = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/ambientesLibres`
+      // `http://127.0.0.1:8000/api/ambientesLibres`
+      import.meta.env.VITE_API_URL + "/api/ambientesLibres"
     );
     //const filteredAmbientes = respuesta.data.filter(
     //  (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
@@ -358,7 +377,10 @@ export const FormOrdenado = () => {
   const [excepciones, setExcepciones] = useState<ISimpleExcepcion[]>([]);
 
   const getExcepciones = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+    // const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+    const respuesta = await axios.get(
+      import.meta.env.VITE_API_URL + "/api/excepcion"
+    );
     setExcepciones(respuesta.data);
     console.log(respuesta.data);
   };
@@ -445,10 +467,12 @@ export const FormOrdenado = () => {
           aulas: options,
         };
         console.log(dataToSend);
-        const respuesta = await axios.post<{
-          periodos_libres: ISimplePeriodo[];
-        }>("http://127.0.0.1:8000/api/libresComunes/", dataToSend);
-        const periodosLibres = respuesta.data.periodos_libres;
+        const respuesta = await axios.post(
+          // import.meta.env.VITE_API_URL + "/api/libresComunes/",
+          "http://steelcode.tis.cs.umss.edu.bo/api/libresComunes",
+          dataToSend
+        );
+        const periodosLibres: ISimplePeriodo[] = respuesta.data.periodos_libres;
         console.log(periodosLibres);
         const rangosHorario: string[] = [];
         console.log(periodosLibres);
@@ -616,9 +640,9 @@ export const FormOrdenado = () => {
             `Error al enviar notificaciones ${id_solicitud}: ${error}`
           );
         }*/
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 2000);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       } else {
         toast.error(
           "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
@@ -630,9 +654,10 @@ export const FormOrdenado = () => {
     window.location.reload();
   };
 
-  const prueba = () => {
-    console.log(inputHFin);
-  };
+  // const prueba = () => {
+  //   console.log(inputHFin);
+  //   console.log(listGrupos);
+  // };
   return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900 ml-5">
@@ -682,6 +707,7 @@ export const FormOrdenado = () => {
 
             <Select
               label=""
+              aria-label="Selecciona un docente"
               selectionMode="multiple"
               placeholder="Seleccione docente..."
               selectedKeys={valuesDocentes}
@@ -702,6 +728,7 @@ export const FormOrdenado = () => {
             <label className="text-ms text-gray-900">Grupo*:</label>
             <Select
               label="Seleccione los grupos asociados a la materia "
+              aria-label="Selecciona un grupo"
               selectionMode="multiple"
               placeholder="Seleccione grupo"
               selectedKeys={valuesGrupos}
@@ -748,6 +775,7 @@ export const FormOrdenado = () => {
             <br />
             <Select
               label=""
+              aria-label="Selecciona un ambiente"
               selectionMode="multiple"
               placeholder="Seleccione ambiente..."
               selectedKeys={valuesAmbientes}
@@ -846,7 +874,7 @@ export const FormOrdenado = () => {
                 {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
               </Button>
 
-              <Button onClick={prueba}></Button>
+              {/* <Button onClick={prueba}></Button> */}
             </div>
           </div>
         </div>

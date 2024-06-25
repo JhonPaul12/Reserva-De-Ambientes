@@ -63,6 +63,7 @@ Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
 Route::post('/obtenerPeriodos',[PeriodoController::class,'listarPeriodosLibresParaReservaAmbientes']);
 Route::post('/obtenerTodosPeriodos',[PeriodoController::class,'mostrarPeriodosAmbientes']);
+Route::post('/obtenerContiguos',[PeriodoController::class,'listarPeriodosAmbientesContiguos']);
 Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
 Route::delete('/eliminarPeriodo',[PeriodoController::class,'EliminarPorSemestre']);

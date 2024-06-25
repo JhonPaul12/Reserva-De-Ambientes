@@ -620,6 +620,68 @@ class PeriodoController extends Controller
         }
     }
 
+    public function listarPeriodosAmbientesContiguos(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'fecha' => 'required|date',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 400);
+    }
+
+    $fecha = $request->input('fecha');
+
+    try {
+        // Buscar todos los ambientes con su ubicación
+        $ambientes = Ambiente::all()->groupBy('ubicacion');
+
+        $response = [];
+        
+        foreach ($ambientes as $ubicacion => $ambientesContiguos) {
+            $idAmbientesContiguos = $ambientesContiguos->pluck('id');
+
+            // Buscar todos los períodos libres para la fecha específica y ambientes contiguos
+            $periodosLibres = Periodo::with('horario')
+                ->where('fecha', $fecha)
+                ->where('estado', 'libre')
+                ->whereIn('id_ambiente', $idAmbientesContiguos)
+                ->get();
+
+            if ($periodosLibres->isEmpty()) {
+                continue;
+            }
+
+            $response[] = [
+                'ubicacion' => $ubicacion,
+                'ambientes' => $ambientesContiguos,
+                'periodos_libres' => $periodosLibres->groupBy('id_horario')->map(function ($periodos) {
+                    return $periodos->map(function ($periodo) {
+                        return [
+                            'id' => $periodo->id,
+                            'id_ambiente' => $periodo->id_ambiente,
+                            'estado' => $periodo->estado,
+                            'id_horario' => $periodo->id_horario,
+                            'hora_inicio' => $periodo->horario->hora_inicio,
+                            'hora_fin' => $periodo->horario->hora_fin,
+                            'fecha' => $periodo->fecha,
+                        ];
+                    });
+                })
+            ];
+        }
+
+        if (empty($response)) {
+            return response()->json(['error' => 'No se encontraron ambientes contiguos con períodos libres'], 404);
+        }
+
+        return response()->json($response, 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al buscar períodos libres para reserva: ' . $e->getMessage()], 500);
+    }
+}
+
+
 private function filtrarPeriodosPorAmbientesYHorario($periodos, $idAmbientes)
 {
     // Filtrar los períodos para aquellos que tengan exactamente los ambientes y el mismo horario

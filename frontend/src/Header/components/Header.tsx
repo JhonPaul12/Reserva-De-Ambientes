@@ -79,6 +79,9 @@ export const HeaderU = () => {
     setShowNotifications(!showNotifications);
   };
 
+  const navigate = useNavigate();
+  const admin = user?.roles.includes("Admin");
+
   const handleClickOutside = (event: MouseEvent) => {
     if (
       notificationsRef.current &&
@@ -172,6 +175,17 @@ export const HeaderU = () => {
               <p className="font-semibold">{user?.name}</p>
               <p className="font-semibold">{user?.email}</p>
             </DropdownItem>
+            {admin ? (
+              <DropdownItem
+                key="admin"
+                onClick={() => navigate("/admin/inicio")}
+              >
+                Panel de administración
+              </DropdownItem>
+            ) : (
+              <DropdownItem className="hidden"> </DropdownItem>
+            )}
+
             <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
             </DropdownItem>
