@@ -144,8 +144,11 @@ export const FormCrearDocente = () => {
 
   const getMaterias = async () => {
     try {
+      // const respuesta = await axios.get(
+      //   `http://127.0.0.1:8000/api/MateriasLibres`
+      // );
       const respuesta = await axios.get(
-        `http://127.0.0.1:8000/api/MateriasLibres`
+        import.meta.env.VITE_API_URL + "/api/MateriasLibres"
       );
       console.log(respuesta.data);
       setMaterias(respuesta.data);

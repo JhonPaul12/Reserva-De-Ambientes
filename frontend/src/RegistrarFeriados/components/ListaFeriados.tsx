@@ -23,7 +23,9 @@ export const ListaFeriados = ({ refresh }: { refresh: boolean }) => {
   useEffect(() => {
     const fetchGestiones = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/excepcion/");
+        const response = await fetch(
+          import.meta.env.VITE_API_URL + "/api/excepcion/"
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -40,6 +42,15 @@ export const ListaFeriados = ({ refresh }: { refresh: boolean }) => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentFeriados = feriados.slice(indexOfFirstItem, indexOfLastItem);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
 
   return (
     <div className="sm:mx-6 my-4 mt-10 sm:mx-auto w-full max-w-screen-md">
@@ -65,7 +76,9 @@ export const ListaFeriados = ({ refresh }: { refresh: boolean }) => {
                 {feriado.motivo}
               </TableCell>
               <TableCell className="text-gray-900 text-md text-center">
-                {feriado.fecha_excepcion}
+                {/* que me muestre en formato dia/mes/anio */}
+                {/* {feriado.fecha_excepcion} */}
+                {formatDate(feriado.fecha_excepcion)}
               </TableCell>
             </TableRow>
           ))}

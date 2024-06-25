@@ -7,14 +7,14 @@ import {
   Button,
   useDisclosure,
 } from "@nextui-org/react";
-//import { FcCalendar } from "react-icons/fc";
-import ModalMenuCheckBox from "./ModalMenuCheckBox";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarIcon } from "@mui/x-date-pickers";
-import { Dayjs } from "dayjs";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
 import { toast } from "sonner";
+import ModalMenuCheckBox from "./ModalMenuCheckBox";
+import { GestionesAmbientes } from "./GestionesAmbientes";
+
 interface Ambiente {
   id: string;
   nombre: string;
@@ -43,38 +43,75 @@ interface Item {
 export const EditPeriodosModal = ({ ambiente }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [periodos, setPeriodos] = useState<Periodo[]>([]);
-  //const [checkedPeriodos, setCheckedPeriodos] = useState({});
-  const [cretedItems, setCreatedItems] = useState({});
+  const [createdItems, setCreatedItems] = useState<Record<number, Item>>({});
   const [deleteItems, setDeleteItems] = useState<number[]>([]);
+  const [regla, setRegla] = useState<string>("");
+  const [fechaInicio, setFechaInicio] = useState<string>("");
+  const [fechaFinal, setFechaFinal] = useState<string>("");
 
-  const [regla, setRegla] = useState();
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFinal, setFechaFinal] = useState("");
+  const [limpiar, setLimpiar] = useState(false);
 
-  // const getAmbiente = async () => {
-  //   fetch(`http://127.0.0.1:8000/api/periodosAsignados/${ambiente.id}`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setPeriodos(data);
-  //     });
-  // };
+  //Cargando en el boton
+  const [loading, setLoading] = useState(false);
 
-  //Obtenemos los periodos de el ambiente
-  const getAmbiente = useCallback(async () => {
-    fetch(`http://127.0.0.1:8000/api/periodosAsignados/${ambiente.id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setPeriodos(data);
-      });
-  }, [ambiente.id]);
+  const onSelectChange = async (selectedValue: string) => {
+    if (selectedValue === "") {
+      console.log("No hay regla seleccionada");
+      setPeriodos([]);
+      setLimpiar(!limpiar);
+      setRegla("");
+      setFechaInicio("");
+      setFechaFinal("");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/regla/${selectedValue}`
+      );
+      const data = await response.json();
+      setRegla(data.id);
+      setFechaInicio(data.fecha_inicial);
+      setFechaFinal(data.fecha_final);
+      await getPeriodos(data.id);
+    } catch (error) {
+      console.error("Error fetching regla:", error);
+    }
+  };
 
   useEffect(() => {
-    if (isOpen) getAmbiente(), obtenerRegla();
-  }, [isOpen, getAmbiente]);
+    setPeriodos([]);
+    setLimpiar(!limpiar);
+    setRegla("");
+    setFechaInicio("");
+    setFechaFinal("");
+  }, [onOpenChange]);
 
-  const checkboxCreated = (newCreatedItems: {
-    [key: number]: { id: number; dia: string };
-  }) => {
+  const getPeriodos = async (reglaId: string) => {
+    try {
+      // const response = await fetch(
+      //   `http://127.0.0.1:8000/api/periodosAsignados/${ambiente.id}/${reglaId}`
+      // );
+
+      const response = await fetch(
+        import.meta.env.VITE_API_URL +
+          "/api/periodosAsignados/" +
+          ambiente.id +
+          "/" +
+          reglaId
+      );
+      const data = await response.json();
+      if (response.status === 200) {
+        setPeriodos(data);
+      } else {
+        setPeriodos([]);
+        setLimpiar(!limpiar);
+      }
+    } catch (error) {
+      console.error("Error fetching periodos:", error);
+    }
+  };
+
+  const checkboxCreated = (newCreatedItems: Record<number, Item>) => {
     setCreatedItems(newCreatedItems);
   };
 
@@ -83,88 +120,87 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
   };
 
   const guardar = async () => {
-    // console.log(cretedItems);
-    //console.log(deleteItems);
-    //Verficamos si tiene regla
-
-    // console.log(regla.id_regla);
-    // console.log(ambiente.id);
-    // console.log(fechaInicio);
-    // console.log(fechaFinal);
-    // const startDate = dayjs(fechaInicio);
-    // const endDate = dayjs(fechaFinal);
-    // console.log(obtenerFecha("martes", startDate, endDate));
     if (
       fechaInicio &&
       fechaFinal &&
       regla &&
       ambiente.id &&
-      cretedItems &&
-      Object.keys(cretedItems).length !== 0
+      Object.keys(createdItems).length !== 0
     ) {
-      //Verficamos si tiene regla
+      setLoading(true);
       await reglaAmbiente();
 
       const startDate = dayjs(fechaInicio);
       const endDate = dayjs(fechaFinal);
       const datos = {
-        periodos: Object.values(cretedItems as Record<number, Item>)
-          .map((item: Item) => ({
+        periodos: Object.values(createdItems)
+          .map((item) => ({
             id_ambReg: regla,
             id_ambiente: ambiente.id,
-            id_horario: item.id, // Assuming each item has an id
+            id_horario: item.id,
             estado: "libre",
             fecha: obtenerFecha(item.dia, startDate, endDate),
           }))
-          .filter((periodo) => periodo.fecha !== null), // Filter out periods with null dates
+          .filter((periodo) => periodo.fecha !== null),
       };
       console.log(datos);
       try {
-        const response = await axios.post("http://127.0.0.1:8000/api/periodo", {
-          periodos: datos.periodos,
-        });
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/periodo`,
+          {
+            periodos: datos.periodos,
+          }
+        );
         if (response.data.errores !== undefined) {
           if (response.data.success !== undefined) {
-            //salir
-            toast.success("Guardado con exito");
+            toast.success("Guardado con éxito");
+            setPeriodos([]);
+            setLimpiar(!limpiar);
+            setRegla("");
+            setFechaInicio("");
+            setFechaFinal("");
           } else {
             console.log(response.data);
-            toast.error("Los peridos seleccionados ya estan asignados");
+            toast.error("Los períodos seleccionados ya están asignados");
           }
         } else {
-          //resetValues();
-          toast.success("Guardado con exito");
+          toast.success("Guardado con éxito");
         }
       } catch (error) {
         console.error("Error al guardar:", error);
       }
     } else {
       if (!regla) {
-        toast.error("No hay una gestion activa");
+        toast.error("Por favor, seleccione una gestion");
+        return;
       } else if (!ambiente.id) {
-        toast.error("No hay un ambiente ");
-      } else if (Object.keys(cretedItems).length === 0) {
-        //toast.info("Debe seleccionar al menos un horario");
+        toast.error("No hay un ambiente");
+      } else if (Object.keys(createdItems).length === 0) {
+        toast.info("Debe seleccionar al menos un horario");
       }
     }
     if (regla && ambiente.id && deleteItems.length !== 0) {
       const datos1 = {
-        periodos: deleteItems.flat().map((item) => ({
-          id_regla: String(regla),
-          id_horario: String(item), // Adjust item access if necessary
-          id_ambiente: String(ambiente.id),
+        periodos: deleteItems.map((item) => ({
+          id_regla: regla,
+          id_horario: item.toString(),
+          id_ambiente: ambiente.id,
         })),
       };
       try {
         const response = await axios.delete(
-          "http://127.0.0.1:8000/api/eliminarPeriodo",
+          `${import.meta.env.VITE_API_URL}/api/eliminarPeriodo`,
           {
             data: datos1,
           }
         );
         if (response.status === 200) {
-          toast.success("Eliminado con exito");
-          getAmbiente();
+          toast.success("Eliminado con éxito");
+          setPeriodos([]);
+          setLimpiar(!limpiar);
+          setRegla("");
+          setFechaInicio("");
+          setFechaFinal("");
         }
       } catch (error) {
         console.error("Error al eliminar:", error);
@@ -179,16 +215,23 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
         }
       }
     } else {
-      //toast.error("No hay periodos para eliminar");
+      if (!regla) {
+        toast.error("Por favor, seleccione una gestion");
+      }
+      // toast.error("No hay períodos para eliminar");
     }
-
+    setCreatedItems({});
+    setDeleteItems([]);
+    setLimpiar(!limpiar);
+    setLoading(false);
     onOpenChange();
   };
 
   const reglaAmbiente = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/ambiente-regla",
+        // `${import.meta.env.VITE_API_URL}/api/ambiente-regla`,
+        import.meta.env.VITE_API_URL + "/api/ambiente-regla",
         {
           id_ambiente: ambiente.id,
           id_regla: regla,
@@ -223,32 +266,12 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
     return null;
   };
 
-  const obtenerRegla = async () => {
-    // fetch(`http://127.0.0.1:8000/api/regla-ambientes/${ambiente.id}`)
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     setRegla(data);
-    //     setFechaInicio(data.fecha_inicio);
-    //     setFechaFinal(data.fecha_fin);
-    //   });
-    fetch("http://127.0.0.1:8000/api/reglaActiva/")
-      .then((response) => response.json())
-      .then((data) => {
-        setRegla(data.id);
-        setFechaInicio(data.fecha_inicial);
-        setFechaFinal(data.fecha_final);
-      })
-      .catch((error) => {
-        console.error("Error al obtener la lista de elementos:", error);
-      });
-  };
   return (
     <>
       <div className="flex justify-center items-center">
         <Button color="success" endContent={<CalendarIcon />} onClick={onOpen}>
           Horarios
         </Button>
-        {/*<FcCalendar size={60} onClick={onOpen} />*/}
       </div>
 
       <Modal
@@ -263,19 +286,21 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
               <ModalHeader className="flex flex-col gap-1 text-center text-3xl">
                 Ambiente {ambiente.nombre}
               </ModalHeader>
+              <GestionesAmbientes onSelectChange={onSelectChange} />
               <ModalBody>
                 <ModalMenuCheckBox
                   Periodos={periodos}
                   checkboxCreated={checkboxCreated}
                   checkboxDeleted={checkboxDeleted}
+                  limpiar={limpiar}
                 />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Cancelar
                 </Button>
-                <Button color="primary" onPress={guardar}>
-                  Guardar
+                <Button color="primary" onPress={guardar} isLoading={loading}>
+                  {loading ? "Guardando..." : "Guardar"}
                 </Button>
               </ModalFooter>
             </>

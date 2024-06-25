@@ -31,8 +31,11 @@ export const TablaSolicitudes = () => {
   }, []);
 
   const getSolicitudes = async () => {
+    // const respuesta = await axios.get(
+    //   `http://127.0.0.1:8000/api/usuario/docentes`
+    // );
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/docentes`
+      import.meta.env.VITE_API_URL + "/api/usuario/docentes"
     );
     console.log(respuesta.data);
     setSolicitudes(respuesta.data);
@@ -46,10 +49,15 @@ export const TablaSolicitudes = () => {
   const cancelarSolicitud = async () => {
     if (solicitudId) {
       try {
+        // await axios.get(
+        //   `http://127.0.0.1:8000/api/deshabilitarDocente/${solicitudId}`
+        // );
         await axios.get(
-          `http://127.0.0.1:8000/api/deshabilitarDocente/${solicitudId}`
+          import.meta.env.VITE_API_URL +
+            "/api/deshabilitarDocente/" +
+            solicitudId
         );
-        toast.success("Docente deshabilitado")
+        toast.success("Docente deshabilitado");
         setModalOpen(false);
         // Actualizar la lista de solicitudes después de deshabilitar
         getSolicitudes();

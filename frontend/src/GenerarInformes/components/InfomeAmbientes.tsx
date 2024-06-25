@@ -25,8 +25,11 @@ export const InformeAmbientes = () => {
 
   const getAmbientesLineas = async () => {
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/informeAmbientes2_v2`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/informeAmbientes2_v2`
+        import.meta.env.VITE_API_URL + "/api/informeAmbientes2_v2"
       );
       setDatosL(response.data);
     } catch (error) {
@@ -36,8 +39,11 @@ export const InformeAmbientes = () => {
 
   const getAmbientes = async () => {
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/informeAmbientes_v2`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/informeAmbientes_v2`
+        import.meta.env.VITE_API_URL + "/api/informeAmbientes_v2"
       );
       setDatos(response.data);
       console.log(response.data);
@@ -47,8 +53,11 @@ export const InformeAmbientes = () => {
   };
   const getTable = async () => {
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/informeAmbientesTable`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/informeAmbientesTable`
+        import.meta.env.VITE_API_URL + "/api/informeAmbientesTable"
       );
       setDatosT(response.data);
       console.log(response.data);

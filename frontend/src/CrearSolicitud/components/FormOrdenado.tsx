@@ -56,7 +56,12 @@ export const FormOrdenado = () => {
 
   const getDocentes = async (id: number) => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`
+      import.meta.env.VITE_API_URL +
+        "/api/docentesMismaMateria/" +
+        user?.id +
+        "/" +
+        id
+      // `http://127.0.0.1:8000/api/docentesMismaMateria/${user?.id}/${id}`
     );
     const docentesArray = Object.values(respuesta.data).map(
       (item) => item as ISimpleDocente
@@ -69,7 +74,10 @@ export const FormOrdenado = () => {
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const valores = e.target.value;
-    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+    const arrayNumeros = valores
+      .split(",")
+      .map((numero) => numero.trim())
+      .filter((value) => value !== "");
     console.log(arrayNumeros);
     setListDocentes(arrayNumeros);
     console.log(listOficial);
@@ -92,7 +100,8 @@ export const FormOrdenado = () => {
 
   const getMaterias = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/materias/${user?.id}/`
+      // `http://127.0.0.1:8000/api/usuario/materias/${user?.id}/`
+      import.meta.env.VITE_API_URL + "/api/usuario/materias/" + user?.id
     );
     setMaterias(respuesta.data);
   };
@@ -170,7 +179,9 @@ export const FormOrdenado = () => {
         return;
       }
       setInputNEst(inputValue.value);
-      const selecAmbientes = ambientes.filter(ambiente => inputAmbientes.includes(`${ambiente.id}`));
+      const selecAmbientes = ambientes.filter((ambiente) =>
+        inputAmbientes.includes(`${ambiente.id}`)
+      );
       verificarCapacidad(selecAmbientes, parseInt(inputValue.value));
     } else {
       toast.error("El numero de estudiantes no debe superar los 5 caracteres");
@@ -202,7 +213,12 @@ export const FormOrdenado = () => {
     try {
       // Obtener los grupos para el docente principal
       const respuestaPrincipal = await axios.get(
-        `http://127.0.0.1:8000/api/docentes/${user?.id}/${materia_id}`
+        // `http://127.0.0.1:8000/api/docentes/${user?.id}/${materia_id}`
+        import.meta.env.VITE_API_URL +
+          "/api/docentes/" +
+          user?.id +
+          "/" +
+          materia_id
       );
       setGrupos(respuestaPrincipal.data);
       let gruposTem = respuestaPrincipal.data;
@@ -213,7 +229,12 @@ export const FormOrdenado = () => {
       if (docente_id.length !== 0) {
         const solicitudes = docente_id.map((docente) =>
           axios.get<ISimpleGrupo[]>(
-            `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
+            // `http://127.0.0.1:8000/api/docentes/${docente}/${materia_id}`
+            import.meta.env.VITE_API_URL +
+              "/api/docentes/" +
+              docente +
+              "/" +
+              materia_id
           )
         );
 
@@ -243,11 +264,13 @@ export const FormOrdenado = () => {
   const handleSelectionChangeGrupos = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const valores = e.target.value;
-    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
-    console.log(arrayNumeros);
-    setListGrupos(arrayNumeros);
-    setValuesGrupos(new Set(e.target.value.split(",")));
+    if (e.target.value !== "") {
+      const valores = e.target.value;
+      const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+      console.log(arrayNumeros);
+      setListGrupos(arrayNumeros);
+      setValuesGrupos(new Set(e.target.value.split(",")));
+    }
   };
 
   //AMBIENTE
@@ -255,13 +278,14 @@ export const FormOrdenado = () => {
   const [inputAmbiente, setInputAmbiente] = useState("");
   const [ambientes, setAmbientes] = useState<ISimpleAmbiente[]>([]);
   const [inputAmbientes, setInputAmbientes] = React.useState<string[]>([]);
-  const [valuesAmbientes, setValuesAmbientes] = React.useState<Selection>(new Set([]));
-  
-  
+  const [valuesAmbientes, setValuesAmbientes] = React.useState<Selection>(
+    new Set([])
+  );
 
   const getAmbientes = async () => {
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/ambientesLibres`
+      // `http://127.0.0.1:8000/api/ambientesLibres`
+      import.meta.env.VITE_API_URL + "/api/ambientesLibres"
     );
     //const filteredAmbientes = respuesta.data.filter(
     //  (ambiente: ISimpleAmbiente) => ambiente.capacidad >= parseInt(num)
@@ -289,9 +313,11 @@ export const FormOrdenado = () => {
     setValuesAmbientes(new Set(e.target.value.split(",")));
     console.log(arrayNumeros);
     console.log(inputAmbiente);
-    const selecAmbientes = ambientes.filter(ambiente => arrayNumeros.includes(`${ambiente.id}`));
+    const selecAmbientes = ambientes.filter((ambiente) =>
+      arrayNumeros.includes(`${ambiente.id}`)
+    );
 
-    verificarCapacidad(selecAmbientes,parseInt(inputNEst));
+    verificarCapacidad(selecAmbientes, parseInt(inputNEst));
     if (inputHIni.length != 0 || inputFecha != "") {
       setInputHIni([]);
       setValues(new Set([]));
@@ -315,26 +341,34 @@ export const FormOrdenado = () => {
     //getRangos(inputFecha);
     console.log(inputAmbientes);
   };
-  const verificarCapacidad = async (selectedAmbientes: ISimpleAmbiente[], cap: number) => {
-    
-      const capacidadTotal = selectedAmbientes.reduce((sum, ambiente) => sum + ambiente.capacidad, 0);
-      console.log(capacidadTotal);
-      console.log(inputNEst);
-      if (capacidadTotal < cap) {
-        setInputAmbiente("La capacidad total de los ambientes seleccionados no es suficiente para el número de personas requerido.");
-        toast.warning(
-          "La capacidad total de los ambientes seleccionados no es suficiente para el número de personas requerido."
-        );
-      }
+  const verificarCapacidad = async (
+    selectedAmbientes: ISimpleAmbiente[],
+    cap: number
+  ) => {
+    const capacidadTotal = selectedAmbientes.reduce(
+      (sum, ambiente) => sum + ambiente.capacidad,
+      0
+    );
+    console.log(capacidadTotal);
+    console.log(inputNEst);
+    if (capacidadTotal < cap) {
+      setInputAmbiente(
+        "La capacidad total de los ambientes seleccionados no es suficiente para el número de personas requerido."
+      );
+      toast.warning(
+        "La capacidad total de los ambientes seleccionados no es suficiente para el número de personas requerido."
+      );
+    }
 
-      if (inputNEst != "" && ambientes.length === 0)
+    if (inputNEst != "" && ambientes.length === 0)
       toast.error(
         "No existen ambientes DISPONIBLES con capacidad apta para el numero de personas requerido"
       );
     console.log(ambientes);
   };
   const verificarAmbiente = async () => {
-    if (ambientes.length === 0) toast.error("No existen ambientes disponibles para reservas");
+    if (ambientes.length === 0)
+      toast.error("No existen ambientes disponibles para reservas");
   };
 
   //FECHA
@@ -343,7 +377,10 @@ export const FormOrdenado = () => {
   const [excepciones, setExcepciones] = useState<ISimpleExcepcion[]>([]);
 
   const getExcepciones = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+    // const respuesta = await axios.get(`http://127.0.0.1:8000/api/excepcion`);
+    const respuesta = await axios.get(
+      import.meta.env.VITE_API_URL + "/api/excepcion"
+    );
     setExcepciones(respuesta.data);
     console.log(respuesta.data);
   };
@@ -409,28 +446,34 @@ export const FormOrdenado = () => {
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
-    const valores = e.target.value;
-    const arrayNumeros = valores.split(",").map((numero) => numero.trim());
-    setInputHFin(arrayNumeros);
-    setValues(new Set(e.target.value.split(",")));
-    console.log(values);
+    if (e.target.value !== "") {
+      const valores = e.target.value;
+      const arrayNumeros = valores.split(",").map((numero) => numero.trim());
+      setInputHFin(arrayNumeros);
+      setValues(new Set(e.target.value.split(",")));
+      console.log(values);
+    }
   };
 
   const getRangos = async (id: string[], fecha: string) => {
     try {
       if (inputFecha != "" || fecha != "") {
-        const selecAmbientes = ambientes.filter(ambiente => id.includes(`${ambiente.id}`));
-        const options = selecAmbientes.map((inputHIn) => (inputHIn.nombre));
+        const selecAmbientes = ambientes.filter((ambiente) =>
+          id.includes(`${ambiente.id}`)
+        );
+        const options = selecAmbientes.map((inputHIn) => inputHIn.nombre);
         const dataToSend = {
           fecha: fecha,
           aulas: options,
         };
         console.log(dataToSend);
-        const respuesta = await axios.post<{periodos_libres: ISimplePeriodo[]}>(
-          "http://127.0.0.1:8000/api/libresComunes/",
+        const respuesta = await axios.post(
+          // import.meta.env.VITE_API_URL + "/api/libresComunes/",
+          "http://steelcode.tis.cs.umss.edu.bo/api/libresComunes",
           dataToSend
         );
-        const periodosLibres = respuesta.data.periodos_libres;
+        const periodosLibres: ISimplePeriodo[] = respuesta.data.periodos_libres;
+        console.log(periodosLibres);
         const rangosHorario: string[] = [];
         console.log(periodosLibres);
         periodosLibres.forEach((objeto) => {
@@ -446,17 +489,20 @@ export const FormOrdenado = () => {
           acc[periodo.id_horario].push(periodo);
           return acc;
         }, {} as Record<number, ISimplePeriodo[]>);
-        
+
         const horariosDuplicados = Object.keys(agrupadosPorHorario)
-          .filter(id_horario => agrupadosPorHorario[parseInt(id_horario)].length > 1)
-          .map(id_horario => parseInt(id_horario));
-        
-        const periodosUnicos = Object.values(agrupadosPorHorario).map(periodos => periodos[0]);
-        
-        const periodosDuplicados = periodosLibres.filter(periodo =>
-          horariosDuplicados.includes(periodo.id_horario)
+          .filter(
+            (id_horario) => agrupadosPorHorario[parseInt(id_horario)].length > 1
+          )
+          .map((id_horario) => parseInt(id_horario));
+
+        const periodosUnicos = Object.values(agrupadosPorHorario).map(
+          (periodos) => periodos[0]
         );
 
+        const periodosDuplicados = periodosLibres.filter((periodo) =>
+          horariosDuplicados.includes(periodo.id_horario)
+        );
 
         setInputTodos(periodosDuplicados);
 
@@ -486,7 +532,7 @@ export const FormOrdenado = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const eliminarElementosVacios = (array: string[]): string[] => {
-    return array.filter(item => item.trim() !== "");
+    return array.filter((item) => item.trim() !== "");
   };
 
   const onInputChangeSave = async (
@@ -497,17 +543,30 @@ export const FormOrdenado = () => {
     e.preventDefault();
     setIsButtonDisabled(true);
 
-    const listaIdsNumeros = inputHFin.map(id => parseInt(id));
-    const periodosFiltrados = inputTodos.filter(periodo => listaIdsNumeros.includes(periodo.id));
-    const horariosFiltrados = periodosFiltrados.map(periodo => periodo.id_horario);
-    const periodosConHorariosFiltrados = inputTodos.filter(periodo => horariosFiltrados.includes(periodo.id_horario));
+    const listaIdsNumeros = inputHFin.map((id) => parseInt(id));
+    console.log(listaIdsNumeros);
+    const periodosFiltrados = inputTodos.filter((periodo) =>
+      listaIdsNumeros.includes(periodo.id)
+    );
+    const horariosFiltrados = periodosFiltrados.map(
+      (periodo) => periodo.id_horario
+    );
+    const periodosConHorariosFiltrados = inputTodos.filter((periodo) =>
+      horariosFiltrados.includes(periodo.id_horario)
+    );
 
-    const idsPeriodosConHorariosFiltrados = periodosConHorariosFiltrados.map(periodo => periodo.id);
-    const combinedIds = [...new Set([...listaIdsNumeros, ...idsPeriodosConHorariosFiltrados])];
-    const idsPeriodosConHorariosFiltradosString = combinedIds.map(id => id.toString());
-    console.log(combinedIds)
-    console.log(idsPeriodosConHorariosFiltradosString)
-      const ambientesSinElementosVacios = eliminarElementosVacios(inputAmbientes);
+    const idsPeriodosConHorariosFiltrados = periodosConHorariosFiltrados.map(
+      (periodo) => periodo.id
+    );
+    const combinedIds = [
+      ...new Set([...listaIdsNumeros, ...idsPeriodosConHorariosFiltrados]),
+    ];
+    const idsPeriodosConHorariosFiltradosString = combinedIds.map((id) =>
+      id.toString()
+    );
+    console.log(combinedIds);
+    console.log(idsPeriodosConHorariosFiltradosString);
+    const ambientesSinElementosVacios = eliminarElementosVacios(inputAmbientes);
     if (inputMateria === "") {
       toast.error("El campo Materia es obligatorio");
       setIsButtonDisabled(false);
@@ -594,6 +653,11 @@ export const FormOrdenado = () => {
   const onInputChangeCancelar = async () => {
     window.location.reload();
   };
+
+  // const prueba = () => {
+  //   console.log(inputHFin);
+  //   console.log(listGrupos);
+  // };
   return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900 ml-5">
@@ -643,6 +707,7 @@ export const FormOrdenado = () => {
 
             <Select
               label=""
+              aria-label="Selecciona un docente"
               selectionMode="multiple"
               placeholder="Seleccione docente..."
               selectedKeys={valuesDocentes}
@@ -663,6 +728,7 @@ export const FormOrdenado = () => {
             <label className="text-ms text-gray-900">Grupo*:</label>
             <Select
               label="Seleccione los grupos asociados a la materia "
+              aria-label="Selecciona un grupo"
               selectionMode="multiple"
               placeholder="Seleccione grupo"
               selectedKeys={valuesGrupos}
@@ -703,13 +769,13 @@ export const FormOrdenado = () => {
           </div>
 
           <div className="w-full md:w-1/2 ml-5">
+            {/*AMBIENTE */}
 
-          {/*AMBIENTE */}
-
-          <label className="text-ms text-gray-900">Ambiente*:</label>
+            <label className="text-ms text-gray-900">Ambiente*:</label>
             <br />
             <Select
               label=""
+              aria-label="Selecciona un ambiente"
               selectionMode="multiple"
               placeholder="Seleccione ambiente..."
               selectedKeys={valuesAmbientes}
@@ -723,8 +789,7 @@ export const FormOrdenado = () => {
                 </SelectItem>
               ))}
             </Select>
-            <br/>
-
+            <br />
 
             {/*NUMERO DE ESTUDIANTES */}
 
@@ -808,6 +873,8 @@ export const FormOrdenado = () => {
                 {" "}
                 {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
               </Button>
+
+              {/* <Button onClick={prueba}></Button> */}
             </div>
           </div>
         </div>

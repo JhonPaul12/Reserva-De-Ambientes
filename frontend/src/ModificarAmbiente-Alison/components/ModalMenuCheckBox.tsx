@@ -23,6 +23,7 @@ interface ModalMenuCheckBoxProps {
   Periodos: Periodo[];
   checkboxCreated: (newCreatedItems: CheckedItems) => void;
   checkboxDeleted: (newDeleteItems: number[]) => void;
+  limpiar: boolean;
 }
 
 type CreatedItems = {
@@ -32,6 +33,7 @@ export const ModalMenuCheckBox = ({
   Periodos,
   checkboxCreated,
   checkboxDeleted,
+  limpiar,
 }: ModalMenuCheckBoxProps) => {
   const [periodos, setPeriodos] = useState<Periodo[]>([]);
   const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
@@ -43,6 +45,13 @@ export const ModalMenuCheckBox = ({
   useEffect(() => {
     getPeriodos();
   }, []);
+
+  useEffect(() => {
+    setCreatedItems({});
+    setDeleteItems([]);
+    setCheckedItems({});
+  }, [limpiar]);
+
   useEffect(() => {
     checkboxCreated(createdItems);
     checkboxDeleted(deleteItems);
@@ -85,7 +94,8 @@ export const ModalMenuCheckBox = ({
   }, [checkedItems, deleteItems, Periodos, guardar]);
 
   const getPeriodos = async () => {
-    fetch(`http://127.0.0.1:8000/api/horario`)
+    // fetch(`http://127.0.0.1:8000/api/horario`)
+    fetch(import.meta.env.VITE_API_URL + "/api/horario")
       .then((response) => response.json())
       .then((data) => {
         setPeriodos(data);

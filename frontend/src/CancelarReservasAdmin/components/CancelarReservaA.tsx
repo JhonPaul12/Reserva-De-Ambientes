@@ -32,7 +32,7 @@ export const CancelarReservaA = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
-  const [cancelando, setCancelando] = useState(false); 
+  const [cancelando, setCancelando] = useState(false);
 
   useEffect(() => {
     getSolicitudes();
@@ -44,8 +44,11 @@ export const CancelarReservaA = () => {
   const getSolicitudes = async () => {
     setLoading(true);
     try {
+      // const respuesta = await axios.get<CReservaA[]>(
+      //   `http://127.0.0.1:8000/api/periodoSolicitud2`
+      // );
       const respuesta = await axios.get<CReservaA[]>(
-        `http://127.0.0.1:8000/api/periodoSolicitud2`
+        import.meta.env.VITE_API_URL + "/api/periodoSolicitud2"
       );
       const solicitudesPendientes = respuesta.data.filter(
         (solicitud) => solicitud.solicitud.estado === "Aceptada"
@@ -76,14 +79,16 @@ export const CancelarReservaA = () => {
   const cancelarSolicitud = async () => {
     if (solicitudId && usuarioId && usuarioEmail) {
       try {
-        setCancelando(true); 
+        setCancelando(true);
 
         await axios.post(
-          `http://127.0.0.1:8000/api/cambiarEstadoAdmin/${solicitudId}`,
+          import.meta.env.VITE_API_URL +
+            "/api/cambiarEstadoAdmin/" +
+            solicitudId,
           { reason: cancelReason }
         );
 
-        await axios.post(`http://127.0.0.1:8000/api/notificacion`, {
+        await axios.post(import.meta.env.VITE_API_URL + "/api/notificacion", {
           id_usuario: usuarioId,
           id_solicitud: solicitudId,
           titulo: tituloNotificacion,
@@ -91,7 +96,8 @@ export const CancelarReservaA = () => {
           visto: 1,
         });
 
-        await axios.post(`http://127.0.0.1:8000/api/enviarEmail`, {
+        // await axios.post(`http://127.0.0.1:8000/api/enviarEmail`, {
+        await axios.post(import.meta.env.VITE_API_URL + "/api/enviarEmail", {
           email: usuarioEmail,
           title: tituloNotificacion,
           description: cancelReason,

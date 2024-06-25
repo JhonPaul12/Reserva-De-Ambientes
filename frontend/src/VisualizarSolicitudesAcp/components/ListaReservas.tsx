@@ -20,8 +20,12 @@ export const ListaReservas = () => {
   }, [solicitudes]);
 
   const getSolicitudes = async () => {
+    // const respuesta = await axios.get(
+    //   `http://127.0.0.1:8000/api/usuario/docentes`
+    // );
+
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/docentes`
+      import.meta.env.VITE_API_URL + "/api/usuario/docentes"
     );
     console.log(respuesta.data);
     setSolicitudes(respuesta.data);

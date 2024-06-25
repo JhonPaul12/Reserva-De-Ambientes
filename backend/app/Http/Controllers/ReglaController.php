@@ -14,48 +14,110 @@ class ReglaController extends Controller
         return response()->json($regla, 200);
     }
     public function store(Request $request)
-    {
-        try {
-            // Validar si el nombre ya está registrado
-            $nombreExistente = Regla::where('nombre', $request->nombre)->exists();
+{
+    try {
+        // Validar si el nombre ya está registrado
+        $nombreExistente = Regla::where('nombre', $request->nombre)->exists();
 
-            if ($nombreExistente) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'El nombre ya está registrado.'
-                ], 400);
-            }
-
-            // Verificar si ya existe una regla activa
-            $activaExistente = Regla::where('activa', true)->first();
-
-            // Si ya existe una regla activa y la nueva regla debe ser activa, establecer 'activa' en false para la nueva regla
-            if ($activaExistente && $request->input('activa') == true) {
-                $request->merge(['activa' => false]);
-            }
-
-            // Si pasan todas las validaciones, crear la nueva regla
-            $datos = $request->validate([
-                'nombre' => 'required|string|max:255',
-                'fecha_inicial' => 'required|date',
-                'fecha_final' => 'required|date|after_or_equal:fecha_inicial',
-                'activa' => 'required|boolean',
-            ]);
-
-            $regla = Regla::create($datos);
-
-            return response()->json([
-                'success' => true,
-                'data' => $regla,
-                'message' => 'Regla creada con éxito'
-            ], 201);
-        } catch (\Exception $e) {
+        if ($nombreExistente) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear la regla: ' . $e->getMessage()
-            ], 500);
+                'message' => 'El nombre ya está registrado.'
+            ], 400);
         }
+
+        // Verificar si ya existe una regla activa
+        $activaExistente = Regla::where('activa', true)->first();
+
+        // Si ya existe una regla activa y la nueva regla debe ser activa, establecer 'activa' en false para la nueva regla
+        if ($activaExistente && $request->input('activa') == true) {
+            $request->merge(['activa' => false]);
+        }
+
+        // Validar los datos de entrada
+        $datos = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'fecha_inicial' => 'required|date',
+            'fecha_final' => 'required|date|after_or_equal:fecha_inicial',
+            'activa' => 'required|boolean',
+        ]);
+
+        // Verificar si las fechas no se sobreponen con otras reglas existentes
+        $fechasSolapadas = Regla::where(function($query) use ($datos) {
+            $query->whereBetween('fecha_inicial', [$datos['fecha_inicial'], $datos['fecha_final']])
+                  ->orWhereBetween('fecha_final', [$datos['fecha_inicial'], $datos['fecha_final']])
+                  ->orWhere(function($query) use ($datos) {
+                      $query->where('fecha_inicial', '<=', $datos['fecha_inicial'])
+                            ->where('fecha_final', '>=', $datos['fecha_final']);
+                  });
+        })->exists();
+
+        if ($fechasSolapadas) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ya existe una gestion con las mismas fechas'
+            ], 400);
+        }
+
+        // Si pasan todas las validaciones, crear la nueva regla
+        $regla = Regla::create($datos);
+
+        return response()->json([
+            'success' => true,
+            'data' => $regla,
+            'message' => 'Regla creada con éxito'
+        ], 201);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al crear la regla: ' . $e->getMessage()
+        ], 500);
     }
+}
+
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         // Validar si el nombre ya está registrado
+    //         $nombreExistente = Regla::where('nombre', $request->nombre)->exists();
+
+    //         if ($nombreExistente) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'El nombre ya está registrado.'
+    //             ], 400);
+    //         }
+
+    //         // Verificar si ya existe una regla activa
+    //         $activaExistente = Regla::where('activa', true)->first();
+
+    //         // Si ya existe una regla activa y la nueva regla debe ser activa, establecer 'activa' en false para la nueva regla
+    //         if ($activaExistente && $request->input('activa') == true) {
+    //             $request->merge(['activa' => false]);
+    //         }
+
+    //         // Si pasan todas las validaciones, crear la nueva regla
+    //         $datos = $request->validate([
+    //             'nombre' => 'required|string|max:255',
+    //             'fecha_inicial' => 'required|date',
+    //             'fecha_final' => 'required|date|after_or_equal:fecha_inicial',
+    //             'activa' => 'required|boolean',
+    //         ]);
+
+    //         $regla = Regla::create($datos);
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $regla,
+    //             'message' => 'Regla creada con éxito'
+    //         ], 201);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Error al crear la regla: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function show($id)
     {

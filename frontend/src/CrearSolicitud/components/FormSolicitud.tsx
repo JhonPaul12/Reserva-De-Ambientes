@@ -197,29 +197,48 @@ export const FormSolicitud = () => {
   }, []);
 
   const getDocentes = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
+    // const respuesta = await axios.get(`http://127.0.0.1:8000/api/usuario/`);
+    const respuesta = await axios.get(
+      import.meta.env.VITE_API_URL + "/api/usuario/"
+    );
     setDocentes(respuesta.data);
   };
   const getMaterias = async (id: number) => {
+    // const respuesta = await axios.get(
+    //   `http://127.0.0.1:8000/api/usuario/materias/${id}/`
+    // );
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/materias/${id}/`
+      import.meta.env.VITE_API_URL + "/api/usuario/materias/" + id
     );
     setMaterias(respuesta.data);
   };
   const getGrupos = async (materia_id: number, docente_id: number) => {
+    // const respuesta = await axios.get(
+    //   `http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`
+    // );
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/docentes/${docente_id}/${materia_id}`
+      import.meta.env.VITE_API_URL +
+        "/api/docentes/" +
+        docente_id +
+        "/" +
+        materia_id
     );
     setGrupos(respuesta.data);
   };
   const getAmbientes = async () => {
-    const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
+    // const respuesta = await axios.get(`http://127.0.0.1:8000/api/ambiente/`);
+    const respuesta = await axios.get(
+      import.meta.env.VITE_API_URL + "/api/ambiente/"
+    );
     setAmbientes(respuesta.data);
     console.log(inputFecha);
   };
   const getUsuario = async (id: number) => {
+    // const respuesta = await axios.get(
+    //   `http://127.0.0.1:8000/api/usuario/${id}`
+    // );
     const respuesta = await axios.get(
-      `http://127.0.0.1:8000/api/usuario/${id}`
+      import.meta.env.VITE_API_URL + "/api/usuario/" + id
     );
     console.log(respuesta.data);
     setUsuario(respuesta.data);
@@ -231,8 +250,12 @@ export const FormSolicitud = () => {
       fecha: fecha,
     };
     console.log(dataToSend);
+    // const respuesta = await axios.post<ISimplePeriodo[]>(
+    //   "http://127.0.0.1:8000/api/disposicion/",
+    //   dataToSend
+    // );
     const respuesta = await axios.post<ISimplePeriodo[]>(
-      "http://127.0.0.1:8000/api/disposicion/",
+      import.meta.env.VITE_API_URL + "/api/disposicion/",
       dataToSend
     );
     const responseData = respuesta.data;
@@ -345,7 +368,7 @@ export const FormSolicitud = () => {
           parseInt(inputNEst),
           parseInt(inputMateria),
           [String(inputGrupo)],
-          parseInt(inputAmbiente),
+          [inputAmbiente],
           listdocentes,
           inputHFin
         );
@@ -487,7 +510,9 @@ export const FormSolicitud = () => {
             ))}
           </Select>
           <br />
-          <label className="text-ms text-gray-900">Fecha de reservaaaaaaaaaa:</label>
+          <label className="text-ms text-gray-900">
+            Fecha de reservaaaaaaaaaa:
+          </label>
           <br />
           <DatePicker
             className="p-2 border w-full border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

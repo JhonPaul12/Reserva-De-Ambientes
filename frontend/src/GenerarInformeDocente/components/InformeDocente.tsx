@@ -25,8 +25,11 @@ export const InformeDocente = () => {
 
   const getDocentes = async () => {
     try {
+      // const response = await axios.get<Docente[]>(
+      //   "http://127.0.0.1:8000/api/datosDocente"
+      // );
       const response = await axios.get<Docente[]>(
-        "http://127.0.0.1:8000/api/datosDocente"
+        import.meta.env.VITE_API_URL + "/api/datosDocente"
       );
       setDocentes(response.data);
     } catch (error) {
@@ -43,8 +46,11 @@ export const InformeDocente = () => {
 
   const getTable = async (userId: number) => {
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/informeAmbientesTableID/${userId}`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/informeAmbientesTableID/${userId}`
+        import.meta.env.VITE_API_URL + "/api/informeAmbientesTableID/" + userId
       );
       setDatosT(response.data);
     } catch (error) {
@@ -54,8 +60,11 @@ export const InformeDocente = () => {
 
   const getAmbientes = async (userId: number) => {
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/informeAmbientes_v2ID/${userId}`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/informeAmbientes_v2ID/${userId}`
+        import.meta.env.VITE_API_URL + "/api/informeAmbientes_v2ID/" + userId
       );
       setDatos(response.data);
     } catch (error) {
@@ -65,8 +74,11 @@ export const InformeDocente = () => {
 
   const getAmbientesLineas = async (userId: number) => {
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/informeAmbientes2_v2ID/${userId}`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/informeAmbientes2_v2ID/${userId}`
+        import.meta.env.VITE_API_URL + "/api/informeAmbientes2_v2ID/" + userId
       );
       setDatosL(response.data);
     } catch (error) {

@@ -29,7 +29,7 @@ export const CancelarS = () => {
   } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getSolicitudes();
@@ -41,10 +41,13 @@ export const CancelarS = () => {
   const user = useAuthStore((state) => state.user?.id);
 
   const getSolicitudes = async () => {
-    setLoading(true); 
+    setLoading(true);
     try {
+      // const respuesta = await axios.get<CReservaD[]>(
+      //   `http://127.0.0.1:8000/api/nombre_usuario/${user}`
+      // );
       const respuesta = await axios.get<CReservaD[]>(
-        `http://127.0.0.1:8000/api/nombre_usuario/${user}`
+        import.meta.env.VITE_API_URL + "/api/nombre_usuario/" + user
       );
       const solicitudesPendientes = respuesta.data.filter(
         (solicitud) => solicitud.solicitud.estado === "Aceptada"
@@ -53,7 +56,7 @@ export const CancelarS = () => {
     } catch (error) {
       console.error("Error al obtener las solicitudes:", error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -78,7 +81,7 @@ export const CancelarS = () => {
     if (solicitudId) {
       try {
         await axios.post(
-          `http://127.0.0.1:8000/api/cambiarEstadoUser/${solicitudId}`
+          import.meta.env.VITE_API_URL + "/api/cambiarEstadoUser/" + solicitudId
         );
         getSolicitudes();
         setModalOpen(false);
@@ -101,7 +104,7 @@ export const CancelarS = () => {
         </label>
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <Spinner size="lg" /> 
+            <Spinner size="lg" />
           </div>
         ) : (
           <Table

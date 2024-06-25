@@ -15,7 +15,7 @@ import {
   ChipProps,
   Link,
   Pagination,
-  Spinner,  // Importa el componente Spinner
+  Spinner, // Importa el componente Spinner
 } from "@nextui-org/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ export const TodasSol = () => {
   const [modalText, setModalText] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   const user = useAuthStore((state) => state.user?.id);
 
@@ -40,17 +40,18 @@ export const TodasSol = () => {
   }, []);
 
   const getSolicitudes = async () => {
-    setLoading(true); 
+    setLoading(true);
     try {
       const respuesta = await axios.get(
-        `http://127.0.0.1:8000/api/nombre_usuario/${user}`
+        // `http://127.0.0.1:8000/api/nombre_usuario/${user}`
+        import.meta.env.VITE_API_URL + "/api/nombre_usuario/" + user
       );
       setSolicitudes(respuesta.data);
       console.log(respuesta.data);
     } catch (error) {
       console.error("Error al obtener las solicitudes:", error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -65,8 +66,11 @@ export const TodasSol = () => {
   const handleRechazadoClick = async (solicitudId: string) => {
     setModalSolicitudId(solicitudId);
     try {
+      // const response = await axios.get(
+      //   `http://localhost:8000/api/solicitudID/${solicitudId}`
+      // );
       const response = await axios.get(
-        `http://localhost:8000/api/solicitudID/${solicitudId}`
+        import.meta.env.VITE_API_URL + "/api/solicitudID/" + solicitudId
       );
       setModalText(response.data);
     } catch (error) {

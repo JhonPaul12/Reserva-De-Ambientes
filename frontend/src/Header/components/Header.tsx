@@ -34,8 +34,13 @@ const NotificationList: React.FC<{
   const navigate = useNavigate();
 
   const handleAction = async (notificacionID: number) => {
+    // await axios.put(
+    //   `http://127.0.0.1:8000/api/cambiarEstadoNotificacion/${notificacionID}`
+    // );
     await axios.put(
-      `http://127.0.0.1:8000/api/cambiarEstadoNotificacion/${notificacionID}`
+      import.meta.env.VITE_API_URL +
+        "/api/cambiarEstadoNotificacion/" +
+        notificacionID
     );
     refreshNotifications();
     navigate("/user/notificaciones");
@@ -71,7 +76,7 @@ export const HeaderU = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const notificationsRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -79,6 +84,9 @@ export const HeaderU = () => {
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
   };
+
+  const navigate = useNavigate();
+  const admin = user?.roles.includes("Admin");
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -102,8 +110,11 @@ export const HeaderU = () => {
 
   const getNotificaciones = async () => {
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/notificacionSinVista/${user?.id}`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/notificacionSinVista/${user?.id}`
+        import.meta.env.VITE_API_URL + "/api/notificacionSinVista/" + user?.id
       );
       setNotificaciones(response.data);
       if (response.data.length > 0) {
@@ -267,8 +278,17 @@ export const HeaderU = () => {
               <p className="font-semibold">{user?.name}</p>
               <p className="font-semibold">{user?.email}</p>
             </DropdownItem>
-            {/*<DropdownItem key="settings">Editar perfil</DropdownItem>
-            <DropdownItem key="configurations">Configuraciones</DropdownItem>*/}
+            {admin ? (
+              <DropdownItem
+                key="admin"
+                onClick={() => navigate("/admin/inicio")}
+              >
+                Panel de administración
+              </DropdownItem>
+            ) : (
+              <DropdownItem className="hidden"> </DropdownItem>
+            )}
+
             <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
             </DropdownItem>

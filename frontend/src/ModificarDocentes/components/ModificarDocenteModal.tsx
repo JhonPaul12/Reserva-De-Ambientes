@@ -112,7 +112,8 @@ export const ModificarDocenteModal = ({
     } else {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/usuario/${docente.id}`,
+          // `http://127.0.0.1:8000/api/usuario/${docente.id}`,
+          import.meta.env.VITE_API_URL + "/api/usuario/" + docente.id,
           {
             method: "PUT",
             headers: {

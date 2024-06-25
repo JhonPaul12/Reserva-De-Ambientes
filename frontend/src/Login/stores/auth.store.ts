@@ -40,13 +40,16 @@ const storeApi: StateCreator<authState & Actions> = (set, get) => ({
 
   login: async (email, password) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        import.meta.env.VITE_API_URL + "/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
       const data: IloginResponse = await response.json();
       set(() => ({
         user: data.user,
@@ -77,7 +80,7 @@ const storeApi: StateCreator<authState & Actions> = (set, get) => ({
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/auth/checkToken",
+        import.meta.env.VITE_API_URL + "/api/auth/checkToken",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -104,13 +107,16 @@ const storeApi: StateCreator<authState & Actions> = (set, get) => ({
     const token = get().token;
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        import.meta.env.VITE_API_URL + `/api/auth/logout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const data = await response.json();
       set(() => ({
         user: undefined,

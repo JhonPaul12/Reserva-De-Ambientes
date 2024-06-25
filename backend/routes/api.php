@@ -27,7 +27,7 @@ Route::resource('/excepcion',ExcepcionController::class);
 Route::resource('/reglaExc',RegexcCotroller::class);
 Route::resource('/periodo',PeriodoController::class);*/
 //regla
-Route::get('/regla',[ReglaController::class,'index']);
+Route::get('/regla ',[ReglaController::class,'index']);
 Route::get('/regla/{id}',[ReglaController::class,'show']);
 Route::get('/reglaActiva',[ReglaController::class,'getReglasActivas']);
 Route::post('/regla',[ReglaController::class,'store']);
@@ -61,6 +61,9 @@ Route::delete('/todoPeriodo',[PeriodoController::class,'eliminarPeriodosPorHorar
 Route::get('/verEstado/{id}',[PeriodoController::class,'showEstado']);
 Route::post('/verDispo',[PeriodoController::class,'showHora']);
 Route::post('/disposicion',[PeriodoController::class,'listarPeriodosLibresParaReserva']);
+Route::post('/obtenerPeriodos',[PeriodoController::class,'listarPeriodosLibresParaReservaAmbientes']);
+Route::post('/obtenerTodosPeriodos',[PeriodoController::class,'mostrarPeriodosAmbientes']);
+Route::post('/obtenerContiguos',[PeriodoController::class,'listarPeriodosAmbientesContiguos']);
 Route::put('/updateEstado',[PeriodoController::class,'updateEstado']);
 Route::get('/obtener-regAmb/{idamb}/{idreg}', [PeriodoController::class, 'ObtenerReglaAmbiente']);
 Route::delete('/eliminarPeriodo',[PeriodoController::class,'EliminarPorSemestre']);
@@ -106,6 +109,7 @@ Route::delete('/solicitud/{id}',[SolicitudController::class,'destroy']);
 Route::get('/solicitud/docente/{id}', [SolicitudController::class, 'showDocentes']);
 Route::get('/solicitud/guardar',[SolicitudController::class,'mostrarGuardado']);
 Route::post('/solicitud/guardar',[SolicitudController::class,'guardar']);
+Route::post('/solicitud/guardarnuevo',[SolicitudController::class,'guardarNuevo']);
 Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
 Route::get('/verAulasDisponibles',[SolicitudController::class, 'LibresUnAula']);
 Route::post('/libresComunes',[SolicitudController::class,'LibresComunes']);
@@ -193,7 +197,7 @@ Route::middleware(['auth:sanctum','rol.admin'])->group(function(){
 
 
 
-Route::get('/periodosAsignados/{id}',[PeriodoController::class,'listarPeriodos']);
+Route::get('/periodosAsignados/{id}/{id2}',[PeriodoController::class,'listarPeriodos']);
 
 Route::post('/cambiarEstadoUser/{id}',[SolicitudController::class,'cambiarEstadoUser']);
 Route::post('/cambiarEstadoAdmin/{id}',[SolicitudController::class,'cambiarEstadoAdmin']);

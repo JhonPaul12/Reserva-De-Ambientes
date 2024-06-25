@@ -29,8 +29,11 @@ export const ListaDocentes = () => {
 
   const fetchDocentes = async () => {
     try {
+      // const response = await fetch(
+      //   "http://127.0.0.1:8000/api/usuario/docentes"
+      // );
       const response = await fetch(
-        "http://127.0.0.1:8000/api/usuario/docentes"
+        import.meta.env.VITE_API_URL + "/api/usuario/docentes"
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

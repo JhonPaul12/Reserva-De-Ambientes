@@ -1,4 +1,4 @@
-import { BusquedaF } from "../components/BusquedaF"
+import { BusquedaF } from "../components/BusquedaF";
 
 export const BusquedaFil = () => {
   return (

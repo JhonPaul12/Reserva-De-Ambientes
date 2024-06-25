@@ -6,7 +6,7 @@ import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { toast } from "sonner";
 
-const data = [
+const values = [
   {
     value: "1",
     label: "Primer semestre",
@@ -30,6 +30,9 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
   const [fechaInicio, setFechaInicio] = useState<Dayjs | null>(null);
   const [fechaFinal, setFechaFinal] = useState<Dayjs | null>(null);
   const [selectKey, setSelectKey] = useState(0);
+
+  //Para cargar el boton de registrar
+  const [loading, setLoading] = useState(false);
 
   const guardarFechaInicio = (value: Dayjs | null) => {
     setFechaInicio(value);
@@ -76,6 +79,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
       );
       return;
     }
+    setLoading(true);
 
     // Verificamos que la fecha final sea posterior a la fecha inicial
     if (fechaFinal.isBefore(fechaInicio)) {
@@ -100,21 +104,26 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
       }
     }
 
-    const reglaData = {
-      nombre: data[Number(selectedRegla) - 1].label,
+    const data = {
+      nombre: values[Number(selectedRegla) - 1].label,
       fecha_inicial: fechaInicio.format("YYYY-MM-DD"),
       fecha_final: fechaFinal.format("YYYY-MM-DD"),
       activa: 1,
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/regla/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reglaData),
-      });
+      // const response = await fetch("http://127.0.0.1:8000/api/regla/", {
+      const response = await fetch(
+        // "http://steelcode.tis.cs.umss.edu.bo/api/regla",
+        import.meta.env.VITE_API_URL + "/api/regla",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!response.ok) {
         const result = await response.json();
@@ -128,6 +137,8 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
     } catch (error) {
       console.error("Error:", error);
     }
+
+    setLoading(false);
   };
 
   const cancelar = () => {
@@ -146,7 +157,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
         <form className="sm:flex flex-col w-full items-center space-y-2">
           <Select
             key={selectKey}
-            items={data}
+            items={values}
             label="Seleccione un periodo académico"
             placeholder=""
             className="w-full"
@@ -165,10 +176,19 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
             onDateChange={guardarFechaFinal}
           />
           <div className="flex justify-end py-2 space-x-4">
-            <Button onClick={guardarRegla} className="bg-primary text-white">
-              Registrar
+            <Button
+              onClick={guardarRegla}
+              className="bg-primary text-white"
+              isLoading={loading}
+            >
+              {loading ? "Guardando..." : "Guardar"}
             </Button>
-            <Button onClick={cancelar} className="bg-danger text-white">
+            <Button
+              onClick={cancelar}
+              className=" text-red-500"
+              color="danger"
+              variant="light"
+            >
               Cancelar
             </Button>
           </div>

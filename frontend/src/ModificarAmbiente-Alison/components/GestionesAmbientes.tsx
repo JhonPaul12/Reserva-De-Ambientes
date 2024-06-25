@@ -6,14 +6,12 @@ interface Option {
   nombre: string;
 }
 
-interface ListaReglasProps {
+interface GestionesAmbientesProps {
   onSelectChange: (selectedValue: string) => void;
-  reset: boolean;
 }
 
-export const ListaReglas: React.FC<ListaReglasProps> = ({
+export const GestionesAmbientes: React.FC<GestionesAmbientesProps> = ({
   onSelectChange,
-  reset,
 }) => {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
@@ -33,22 +31,14 @@ export const ListaReglas: React.FC<ListaReglasProps> = ({
     console.log(import.meta.env.VITE_API_URL + "/regla/");
   }, []);
 
-  useEffect(() => {
-    resetSelection();
-  }, [reset]);
-
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = event.target.value;
     setSelectedOption(selectedValue);
     onSelectChange(selectedValue);
   };
 
-  const resetSelection = () => {
-    setSelectedOption("");
-  };
-
   return (
-    <div className="text-xs sm:text-lg mx-6 mr-12">
+    <div className="mt-8 mx-auto">
       <select
         value={selectedOption}
         onChange={handleChange}

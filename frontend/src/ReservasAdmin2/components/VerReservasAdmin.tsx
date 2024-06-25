@@ -40,17 +40,18 @@ export const VerReservaAdmin = () => {
   }, []);
 
   const getSolicitudes = async () => {
-    setLoading(true); 
+    setLoading(true);
     try {
       const respuesta = await axios.get(
-        `http://127.0.0.1:8000/api/periodoSolicitud2`
+        // `http://127.0.0.1:8000/api/periodoSolicitud2`
+        import.meta.env.VITE_API_URL + "/api/periodoSolicitud2"
       );
       setSolicitudes(respuesta.data);
       console.log(respuesta.data);
     } catch (error) {
       console.error("Error al obtener las solicitudes:", error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -71,7 +72,8 @@ export const VerReservaAdmin = () => {
     setModalSolicitudId(solicitudId);
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/solicitudID/${solicitudId}`
+        // `http://localhost:8000/api/solicitudID/${solicitudId}`
+        import.meta.env.VITE_API_URL + "/api/solicitudID/" + solicitudId
       );
       setModalText(response.data);
     } catch (error) {
@@ -141,7 +143,10 @@ export const VerReservaAdmin = () => {
             <Spinner size="lg" /> {/* Muestra el Spinner mientras carga */}
           </div>
         ) : (
-          <Table className="custom-table text-center" aria-label="Tabla de datos">
+          <Table
+            className="custom-table text-center"
+            aria-label="Tabla de datos"
+          >
             <TableHeader>
               <TableColumn className="text-center text-xs sm:text-sm bg-slate-300">
                 AMBIENTE
@@ -260,32 +265,31 @@ export const VerReservaAdmin = () => {
       <div className="flex justify-center my-4">
         <Pagination
           showControls
-            total={Math.ceil(solicitudesFiltradas.length / itemsPerPage)}
-            initialPage={currentPage}
-            onChange={(page) => setCurrentPage(page)}
-          />
-        </div>
-        <Modal
-          isOpen={!!modalSolicitudId}
-          onClose={() => setModalSolicitudId(null)}
-        >
-          <ModalContent>
-            <ModalHeader>Motivo del Rechazo</ModalHeader>
-            <ModalBody>
-              <p>{modalText}</p>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                color="primary"
-                variant="shadow"
-                onClick={() => setModalSolicitudId(null)}
-              >
-                Aceptar
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+          total={Math.ceil(solicitudesFiltradas.length / itemsPerPage)}
+          initialPage={currentPage}
+          onChange={(page) => setCurrentPage(page)}
+        />
       </div>
-    );
-  };
-  
+      <Modal
+        isOpen={!!modalSolicitudId}
+        onClose={() => setModalSolicitudId(null)}
+      >
+        <ModalContent>
+          <ModalHeader>Motivo del Rechazo</ModalHeader>
+          <ModalBody>
+            <p>{modalText}</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="primary"
+              variant="shadow"
+              onClick={() => setModalSolicitudId(null)}
+            >
+              Aceptar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </div>
+  );
+};

@@ -23,6 +23,9 @@ export const Reglas = () => {
   const [resetRegla, setResetRegla] = useState(false);
   const [resetCheckboxes, setResetCheckboxes] = useState(false);
 
+  //Cargando del boton
+  const [loading, setLoading] = useState(false);
+
   //Para resetear los valores
   const resetValues = () => {
     setCheckedItems({});
@@ -44,28 +47,43 @@ export const Reglas = () => {
 
   //Lista de Ambientes
   const handleSelectChange = (selectedValue: string) => {
-    setSelectedAmbiente(selectedValue);
-    if (selectedValue === "") {
-      setCheckedItems({});
-      setResetCheckboxes((prev) => !prev);
+    //Verificar antes la gestion
+    if (selectedRegla !== "") {
+      setSelectedAmbiente(selectedValue);
+      if (selectedValue === "") {
+        setCheckedItems({});
+        setResetCheckboxes((prev) => !prev);
+      }
+    } else {
+      toast.error("Primero debes seleccionar una gestion");
+      //Resetear campo ambiente
+      setSelectedAmbiente("");
+      setResetAmbiente((prev) => !prev);
     }
   };
 
   //Lista de Reglas
   const handleReglaChange = (selectedValue: string) => {
     setSelectedRegla(selectedValue);
+    setSelectedAmbiente("");
+    setResetAmbiente((prev) => !prev);
+    setResetCheckboxes((prev) => !prev);
+    setCheckedItems({});
   };
 
   //Obtengo reglas
   const obtenerRegla = useCallback(async () => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/regla/${selectedRegla}`
+        import.meta.env.VITE_API_URL + "/api/regla/" + selectedRegla
+        // `http://127.0.0.1:8000/api/regla/${selectedRegla}`
       );
+      console.log(selectedRegla);
       if (!response.ok) {
         throw new Error("No se pudo obtener la fecha inicial");
       }
       const data = await response.json();
+      console.log(data);
       setFechainicial(data.fecha_inicial);
       setFechafinal(data.fecha_final);
     } catch (error) {
@@ -88,6 +106,12 @@ export const Reglas = () => {
       selectedAmbiente &&
       Object.keys(checkedItems).length !== 0
     ) {
+      setLoading(true);
+      console.log("fecha inicial:", fechaInicial);
+      console.log("fecha final:", fechafinal);
+      console.log("selectedRegla:", selectedRegla);
+      console.log("selectedAmbiente:", selectedAmbiente);
+      console.log("checkedItems:", checkedItems);
       //Creamos la regla asociada al ambiente
       await crearReglaAmbiente();
       const startDate = dayjs(fechaInicial);
@@ -105,9 +129,13 @@ export const Reglas = () => {
       };
 
       try {
-        const response = await axios.post("http://127.0.0.1:8000/api/periodo", {
-          periodos: datos.periodos,
-        });
+        const response = await axios.post(
+          // "http://127.0.0.1:8000/api/periodo",
+          import.meta.env.VITE_API_URL + "/api/periodo",
+          {
+            periodos: datos.periodos,
+          }
+        );
         if (response.data.errores !== undefined) {
           if (response.data.success !== undefined) {
             resetValues();
@@ -133,6 +161,8 @@ export const Reglas = () => {
         toast.error("Debe seleccionar al menos un horario");
       }
     }
+
+    setLoading(false);
   };
 
   //Funcion para obtener la fecha
@@ -162,7 +192,8 @@ export const Reglas = () => {
     //Verficamos si tiene regla
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/ambiente-regla",
+        // "http://127.0.0.1:8000/api/ambiente-regla",
+        import.meta.env.VITE_API_URL + "/api/ambiente-regla",
         {
           id_ambiente: selectedAmbiente,
           id_regla: selectedRegla,
@@ -186,17 +217,22 @@ export const Reglas = () => {
       />
 
       <div className="mt-3 mx-3 sm:mt-10 sm:mx-10 text-negro flex flex-col ">
-        <h1 className="text-2xl sm:text-3xl font-bold"> Asignar Horarios</h1>
-        <div className="sm:flex flex-row m-3 sm:m-5">
+        <h1 className="text-2xl sm:text-3xl font-bold text-center">
+          {" "}
+          Asignar Horarios
+        </h1>
+        <div className="sm:flex flex-row m-3 sm:m-5 justify-between">
           <div className="flex flex-row items-center">
-            <p className="text-sm sm:text-2xl font-bold ">Gestion Actual</p>
+            <p className="text-sm sm:text-2xl font-bold mr-5 ">Gestiones</p>
             <ListaReglas
               onSelectChange={handleReglaChange}
               reset={resetRegla}
             />
           </div>
-          <div className="flex flex-row items-center">
-            <p className="text-sm sm:text-2xl font-bold">Seleccionar Ambiente</p>
+          <div className="flex flex-row items-center ">
+            <p className="text-sm sm:text-2xl font-bold mr-5">
+              Seleccionar Ambiente
+            </p>
             <ListaAmbientes
               onSelectChange={handleSelectChange}
               reset={resetAmbiente}
@@ -207,13 +243,21 @@ export const Reglas = () => {
           prueba={handleCheckboxChange}
           reset={resetCheckboxes}
           selectedAmbiente={selectedAmbiente}
+          selectedRegla={selectedRegla}
         />
-        <div className="flex justify-end">
+        <div className="flex justify-end ">
           <Button
-            className="bg-primary mt-2 mb-10 text-white ml-auto"
-            onClick={guardar}
+            className="bg-danger  mt-2 mb-10 text-white mr-5"
+            onClick={resetValues}
           >
-            Guardar
+            limpiar
+          </Button>
+          <Button
+            className="bg-primary mt-2 mb-10 text-white"
+            onClick={guardar}
+            isLoading={loading}
+          >
+            {loading ? "Guardando..." : "Guardar"}
           </Button>
         </div>
       </div>

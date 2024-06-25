@@ -16,7 +16,8 @@ export const ListaAmbientes: React.FC<ListaAmbientesProps> = ({
   const [selectedOption, setSelectedOption] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/ambiente")
+    // fetch("http://127.0.0.1:8000/api/ambiente")
+    fetch(import.meta.env.VITE_API_URL + "/api/ambiente")
       .then((response) => response.json())
       .then((data) => {
         setOptions(data);

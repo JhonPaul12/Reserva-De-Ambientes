@@ -15,8 +15,6 @@ import { toast } from "sonner";
 import { useAmbienteStore } from "../../RegistrarAmbientes/store/ambientes.store";
 import { ISimpleAmbiente } from "../interfaces/simple-ambientes";
 
-
-
 interface Props {
   ambiente: ISimpleAmbiente;
 }

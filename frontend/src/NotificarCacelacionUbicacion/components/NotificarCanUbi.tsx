@@ -46,8 +46,17 @@ export const NotificarCanUbi = () => {
     const fechaStr = fecha ? fecha.toString() : "";
 
     try {
+      // const response = await axios.get(
+      //   `http://127.0.0.1:8000/api/obtenerUbicacionDeSolicitudesAceptadas/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+      // );
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/obtenerUbicacionDeSolicitudesAceptadas/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+        import.meta.env.VITE_API_URL +
+          "/api/obtenerUbicacionDeSolicitudesAceptadas/" +
+          fechaStr +
+          "/" +
+          horaInicioStr +
+          "/" +
+          horaFinStr
       );
       setUbicaciones(response.data);
     } catch (error) {
@@ -73,8 +82,19 @@ export const NotificarCanUbi = () => {
       await Promise.all(
         aulasArray.map(async (aula: any) => {
           try {
+            // const response = await axios.post(
+            //   `http://127.0.0.1:8000/api/cambiarEstadoPorUbicacionAmbienteYHorario/${aula}/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+            // );
             const response = await axios.post(
-              `http://127.0.0.1:8000/api/cambiarEstadoPorUbicacionAmbienteYHorario/${aula}/${fechaStr}/${horaInicioStr}/${horaFinStr}`
+              import.meta.env.VITE_API_URL +
+                "/api/cambiarEstadoPorUbicacionAmbienteYHorario/" +
+                aula +
+                "/" +
+                fechaStr +
+                "/" +
+                horaInicioStr +
+                "/" +
+                horaFinStr
             );
             console.log(ids);
             const idsActualizados = response.data;
@@ -86,7 +106,8 @@ export const NotificarCanUbi = () => {
                   id.usuarios.map(async (usuario: any) => {
                     try {
                       await axios.post(
-                        `http://127.0.0.1:8000/api/notificacion`,
+                        // `http://127.0.0.1:8000/api/notificacion`,
+                        import.meta.env.VITE_API_URL + "/api/notificacion",
                         {
                           id_usuario: usuario.id_usuario,
                           id_solicitud: id.id_solicitud,
@@ -96,7 +117,8 @@ export const NotificarCanUbi = () => {
                         }
                       );
                       await axios.post(
-                        `http://127.0.0.1:8000/api/enviarEmail`,
+                        // `http://127.0.0.1:8000/api/enviarEmail`,
+                        import.meta.env.VITE_API_URL + "/api/enviarEmail",
                         {
                           email: usuario.email,
                           title: tituloNotificacion,
@@ -177,9 +199,9 @@ export const NotificarCanUbi = () => {
             label="Hora Inicio"
             value={horaInicio}
             onChange={setHoraInicio}
-            endContent={(
+            endContent={
               <AiFillClockCircle className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
-            )}
+            }
           />
           <TimeInput
             className={`sm:p-3 ${
@@ -191,9 +213,9 @@ export const NotificarCanUbi = () => {
             label="Hora Fin"
             value={horaFin}
             onChange={setHoraFin}
-            endContent={(
+            endContent={
               <AiFillClockCircle className="text-xl text-default-400 pointer-events-none flex-shrink-0" />
-            )}
+            }
           />
           <I18nProvider locale="en-GB">
             <DatePicker
