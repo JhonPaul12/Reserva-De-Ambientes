@@ -37,13 +37,9 @@ export const ListaGestiones = ({ refresh }: { refresh: boolean }) => {
     fetchGestiones();
   }, [refresh]);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+  const reformatDate = (dateString: string) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}/${month}/${year}`;
   };
   return (
     <div className="sm:mx-6 sm:my-4 mt-10 mx-auto w-full max-w-screen-md">
@@ -64,9 +60,9 @@ export const ListaGestiones = ({ refresh }: { refresh: boolean }) => {
           <TableColumn className="text-center text-sm bg-slate-300">
             FECHA FINAL
           </TableColumn>
-          <TableColumn className="text-center text-sm bg-slate-300">
+          {/* <TableColumn className="text-center text-sm bg-slate-300">
             ACTIVA
-          </TableColumn>
+          </TableColumn> */}
         </TableHeader>
         <TableBody>
           {gestion.map((gestion) => (
@@ -75,16 +71,16 @@ export const ListaGestiones = ({ refresh }: { refresh: boolean }) => {
                 {gestion.nombre}
               </TableCell>
               <TableCell className="text-gray-900 text-md text-center">
-                {formatDate(gestion.fecha_inicial)}
+                {reformatDate(gestion.fecha_inicial)}
                 {/* {gestion.fecha_inicial} */}
               </TableCell>
               <TableCell className="text-gray-900 text-md text-center">
-                {formatDate(gestion.fecha_final)}
+                {reformatDate(gestion.fecha_final)}
                 {/* {gestion.fecha_final} */}
               </TableCell>
-              <TableCell className="text-gray-900 text-md text-center">
+              {/* <TableCell className="text-gray-900 text-md text-center">
                 {gestion.activa}
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </TableBody>

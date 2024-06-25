@@ -92,6 +92,9 @@ export const Inicio = () => {
             </h1>
           </div>
           <div className="w-full md:w-1/2 mt-10">
+            <h1 className="text-2xl text-azul  text-center">
+              Ambientes Disponibles
+            </h1>
             <Table
               hideHeader
               className="sm:mx-auto sm:w-full sm:max-w-sm mt-10 w-full"

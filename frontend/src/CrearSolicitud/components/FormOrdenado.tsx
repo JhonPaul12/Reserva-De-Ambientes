@@ -11,6 +11,7 @@ import React from "react";
 import { ISimplePeriodo } from "../interfaces/simple-periodo";
 import { ISimpleExcepcion } from "../interfaces/simple-exception";
 import { useAuthStore } from "../../Login/stores/auth.store";
+import { ModalAmbientes } from "./ModalAmbientes";
 
 export const FormOrdenado = () => {
   const user = useAuthStore((state) => state.user);
@@ -394,6 +395,7 @@ export const FormOrdenado = () => {
     const fechaActual = new Date();
 
     const fechaSeleccionada = new Date(fecha);
+    console.log(fechaSeleccionada);
     if (fechaSeleccionada > fechaActual) {
       setInputFecha(fecha);
       console.log(fecha);
@@ -419,12 +421,15 @@ export const FormOrdenado = () => {
         }
       }
     } else {
-      toast.error(
-        "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
-      );
-      console.log(
-        "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
-      );
+      //Verificar fecha que sea del 2000
+      if (fecha > "2000-01-01") {
+        toast.error(
+          "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
+        );
+        console.log(
+          "La fecha seleccionada no es valida seleccione una fecha posterior a la de hoy."
+        );
+      }
       setInputFecha(fecha);
     }
   };
@@ -469,7 +474,8 @@ export const FormOrdenado = () => {
         console.log(dataToSend);
         const respuesta = await axios.post(
           // import.meta.env.VITE_API_URL + "/api/libresComunes/",
-          "http://steelcode.tis.cs.umss.edu.bo/api/libresComunes",
+          // "http://steelcode.tis.cs.umss.edu.bo/api/libresComunes",
+          import.meta.env.VITE_API_URL + "/api/libresComunes",
           dataToSend
         );
         const periodosLibres: ISimplePeriodo[] = respuesta.data.periodos_libres;
@@ -817,16 +823,20 @@ export const FormOrdenado = () => {
             onChange={handleDateChange}
           />
           <br />*/}
-            <Input
-              name="fecha feriado"
-              type="date"
-              fullWidth
-              size="lg"
-              className="mb-3"
-              label=""
-              value={inputFecha}
-              onChange={handleDateChange}
-            ></Input>
+            <div className="flex">
+              <Input
+                name="fecha feriado"
+                type="date"
+                fullWidth
+                size="lg"
+                className="mb-3"
+                label=""
+                value={inputFecha}
+                onChange={handleDateChange}
+              ></Input>
+              <ModalAmbientes fecha={inputFecha}></ModalAmbientes>
+            </div>
+            {/* Agrego icono a su izquierda */}
 
             {/*PERIODO */}
 
