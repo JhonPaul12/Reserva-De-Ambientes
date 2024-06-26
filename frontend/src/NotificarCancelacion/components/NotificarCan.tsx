@@ -131,13 +131,12 @@ export const NotificarCan = () => {
             );
           })
         );
-        toast.success("Notificaciones Enviadas");
       } catch (error) {
-        toast.error("Error al cambiar estado de las aulas seleccionadas");
         console.error("Error al cambiar estado:", error);
       } finally {
         setCancelando(false);
       }
+      toast.success("Notificaciones Enviadas");
     }
 
     limpiarCampos();
