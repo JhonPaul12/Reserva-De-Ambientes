@@ -227,7 +227,7 @@ export const ModalMenuCheckBox = ({
             {dias.map((dia) => (
               <td className="td" key={`new-${dia}`}>
                 <RiCheckboxMultipleFill
-                  className="mx-12"
+                  className="mx-14 w-6 h-6"
                   onClick={() => handleSelectAllChange(dia)}
                 />
               </td>

@@ -8,7 +8,7 @@ import {
   useDisclosure,
   Input,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface Docente {
@@ -34,47 +34,57 @@ export const ModificarDocenteModal = ({
   const [inputEmail, setInputEmail] = useState(`${docente.email}`);
   const [inputCod, setInputCod] = useState(`${docente.codigo_sis}`);
 
+  useEffect(() => {
+    if (isOpen) {
+      setInputName(docente.name);
+      setInputApellidos(docente.apellidos);
+      setInputTel(docente.telefono);
+      setInputEmail(docente.email);
+      setInputCod(docente.codigo_sis);
+    }
+  }, [isOpen, docente]);
+
   const onImputNombre = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
-    if (inputValue.value.length === 0) {
-      setInputName(docente.name);
-      console.log(inputValue.value);
-    } else {
-      setInputName(inputValue.value);
-    }
+    // if (inputValue.value.length === 0) {
+    //   setInputName(docente.name);
+    //   console.log(inputValue.value);
+    // } else {
+    setInputName(inputValue.value);
+    // }
   };
   const onImputApellidos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
-    if (inputValue.value.length === 0) {
-      setInputApellidos(docente.apellidos);
-    } else {
-      setInputApellidos(inputValue.value);
-    }
+    // if (inputValue.value.length === 0) {
+    //   setInputApellidos(docente.apellidos);
+    // } else {
+    setInputApellidos(inputValue.value);
+    // }
   };
   const onImputTel = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
-    if (inputValue.value.length === 0) {
-      setInputTel(docente.telefono);
-    } else {
-      setInputTel(inputValue.value);
-    }
+    // if (inputValue.value.length === 0) {
+    //   setInputTel(docente.telefono);
+    // } else {
+    setInputTel(inputValue.value);
+    // }
   };
 
   const onImputEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
-    if (inputValue.value.length === 0) {
-      setInputEmail(docente.email);
-    } else {
-      setInputEmail(inputValue.value);
-    }
+    // if (inputValue.value.length === 0) {
+    //   setInputEmail(docente.email);
+    // } else {
+    setInputEmail(inputValue.value);
+    // }
   };
   const onImputCod = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;
-    if (inputValue.value.length === 0) {
-      setInputCod(docente.codigo_sis);
-    } else {
-      setInputCod(inputValue.value);
-    }
+    // if (inputValue.value.length === 0) {
+    //   setInputCod(docente.codigo_sis);
+    // } else {
+    setInputCod(inputValue.value);
+    // }
   };
 
   const validarTelefono = (telefono: string) => {
@@ -86,6 +96,15 @@ export const ModificarDocenteModal = ({
   };
 
   const guardar = async () => {
+    // Validar nombre
+    if (inputName === "") {
+      toast.error("El nombre es obligatorio.");
+      return;
+    }
+    if (inputApellidos === "") {
+      toast.error("El apellido es obligatorio.");
+      return;
+    }
     if (!validarTelefono(inputTel)) {
       toast.error("El número de telefono debe ser de 8 dígitos.");
       return;
@@ -123,15 +142,17 @@ export const ModificarDocenteModal = ({
               name: inputName,
               apellidos: inputApellidos,
               telefono: inputTel,
-              email: inputEmail,
               codigo_sis: inputCod,
+              email: inputEmail,
             }),
           }
         );
-        toast.success("Se han guardado los cambios.");
+
         onDocenteUpdate();
         if (!response.ok) {
           throw new Error("Error al guardar los cambios.");
+        } else {
+          toast.success("Se han guardado los cambios.");
         }
         onClose();
       } catch (error) {
