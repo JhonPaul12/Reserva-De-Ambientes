@@ -474,8 +474,8 @@ export const FormOrdenado = () => {
         console.log(dataToSend);
         const respuesta = await axios.post(
           // import.meta.env.VITE_API_URL + "/api/libresComunes/",
-          // "http://steelcode.tis.cs.umss.edu.bo/api/libresComunes",
-          import.meta.env.VITE_API_URL + "/api/libresComunes",
+          "http://steelcode.tis.cs.umss.edu.bo/api/libresComunes",
+          // import.meta.env.VITE_API_URL + "/api/libresComunes",
           dataToSend
         );
         const periodosLibres: ISimplePeriodo[] = respuesta.data.periodos_libres;
