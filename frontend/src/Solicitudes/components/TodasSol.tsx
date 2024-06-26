@@ -140,12 +140,9 @@ export const TodasSol = () => {
                 {paginatedSolicitudes.map((solicitud) => (
                   <TableRow key={solicitud.solicitud.id}>
                     <TableCell className="text-xs sm:text-sm text-black">
-                      {solicitud.solicitud.ambientes.map((ambiente,index)=>(
-                          <div key={index}>
-                            *{ambiente.nombre}
-                          </div>
+                      {solicitud.solicitud.ambientes.map((ambiente, index) => (
+                        <div key={index}>*{ambiente.nombre}</div>
                       ))}
-                        
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm text-black">
                       {solicitud.solicitud.users.map((user, index) => (
@@ -172,7 +169,13 @@ export const TodasSol = () => {
                       ].periodo.horario.hora_fin.slice(0, -3)}
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm text-black">
-                      {solicitud.solicitud.fecha_solicitud}
+                      {new Date(
+                        solicitud.solicitud.fecha_solicitud + "T00:00:00"
+                      ).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                      })}
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm text-black">
                       {solicitud.solicitud.numero_estudiantes}

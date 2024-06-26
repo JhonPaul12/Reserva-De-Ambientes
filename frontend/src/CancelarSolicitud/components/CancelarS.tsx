@@ -178,7 +178,13 @@ export const CancelarS = () => {
                     ].periodo.horario.hora_fin.slice(0, -3)}
                   </TableCell>
                   <TableCell className="text-xs text-black">
-                    {solicitud.solicitud.fecha_solicitud}
+                    {new Date(
+                        solicitud.solicitud.fecha_solicitud + "T00:00:00"
+                      ).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                      })}
                   </TableCell>
                   <TableCell className="text-xs text-black">
                     {solicitud.solicitud.numero_estudiantes}

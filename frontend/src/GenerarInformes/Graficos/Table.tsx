@@ -52,7 +52,13 @@ export const Table = ({ data }: { data: AulaReservada[] }) => {
                 <td>{aula.Cantidad_de_Reservas}</td>
                 <td>
                   {aula.Fechas_de_Solicitudes.map((fecha, fechaIndex) => (
-                    <div key={fechaIndex}>{fecha.Fecha_de_Solicitud}</div>
+                    <div key={fechaIndex}>{new Date(
+                      fecha.Fecha_de_Solicitud + "T00:00:00"
+                    ).toLocaleDateString("es-ES", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "2-digit",
+                    })}</div>
                   ))}
                 </td>
                 <td>
@@ -75,10 +81,11 @@ export const Table = ({ data }: { data: AulaReservada[] }) => {
           </tbody>
         </table>
       </div>
-      <div className="print-button-container">
+      <div className="hidden sm:block print-button-container">
         <ReactToPrint
           trigger={() => (
             <Button
+              className="text-white"
               color="success"
               variant="shadow"
               endContent={<IoIosPrint />}

@@ -91,10 +91,7 @@ const Bars = ({ data }: { data: AmbientesCont[] }) => {
           `Aula con menos reservas: ${aulaMinReservas} (${minReservas})`,
         ],
         font: {
-          size: 16,
-        },
-        padding: {
-          bottom: 20,
+          size: 13,
         },
       },
       tooltip: {
@@ -136,7 +133,7 @@ const Bars = ({ data }: { data: AmbientesCont[] }) => {
           <Bar data={chartData} options={misOptions} />
         </div>
       </div>
-      <div className="print-button-container">
+      <div className="hidden sm:block  print-button-container">
         <ReactToPrint
           trigger={() => (
             <Button

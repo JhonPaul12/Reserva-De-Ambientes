@@ -107,10 +107,11 @@ export default function Pies({ datos }: { datos: AmbientesCont[] }) {
           <Pie data={data} options={options} />
         </div>
       </div>
-      <div className="print-button-container">
+      <div className="hidden sm:block print-button-container">
         <ReactToPrint
           trigger={() => (
             <Button
+              className="text-white"
               color="success"
               variant="shadow"
               endContent={<IoIosPrint />}
