@@ -271,6 +271,10 @@ export const FormOrdenado = () => {
       console.log(arrayNumeros);
       setListGrupos(arrayNumeros);
       setValuesGrupos(new Set(e.target.value.split(",")));
+    } else {
+      // Maneja el caso cuando se deselecciona el último elemento
+      setListGrupos([]);
+      setValuesGrupos(new Set());
     }
   };
 
@@ -457,6 +461,9 @@ export const FormOrdenado = () => {
       setInputHFin(arrayNumeros);
       setValues(new Set(e.target.value.split(",")));
       console.log(values);
+    } else {
+      setInputHFin([]);
+      setValues(new Set());
     }
   };
 
@@ -474,8 +481,8 @@ export const FormOrdenado = () => {
         console.log(dataToSend);
         const respuesta = await axios.post(
           // import.meta.env.VITE_API_URL + "/api/libresComunes/",
-          "http://steelcode.tis.cs.umss.edu.bo/api/libresComunes",
-          // import.meta.env.VITE_API_URL + "/api/libresComunes",
+          // "http://steelcode.tis.cs.umss.edu.bo/api/libresComunes",
+          import.meta.env.VITE_API_URL + "/api/libresComunes",
           dataToSend
         );
         const periodosLibres: ISimplePeriodo[] = respuesta.data.periodos_libres;
