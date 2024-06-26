@@ -12,19 +12,30 @@ import {
   ModalBody,
   ModalFooter,
   Pagination,
+  Input,
 } from "@nextui-org/react";
 import "./estilosBusq.css";
 import { ISimpleDocente } from "../interfaces/simple-deocente";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { FaSearch } from "react-icons/fa";
 
 export const TablaSolicitudes = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [solicitudId, setSolicitudId] = useState<number | null>(null);
   const [solicitudes, setSolicitudes] = useState<ISimpleDocente[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7; // Define aquí la cantidad de elementos por página
+  const itemsPerPage = 6; // Define aquí la cantidad de elementos por página
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Handle search term change
+  const handleSearchTermChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1);
+  };
 
   useEffect(() => {
     getSolicitudes();
@@ -71,14 +82,17 @@ export const TablaSolicitudes = () => {
     a.name.localeCompare(b.name)
   );
 
-  // Calcular el número total de páginas
-  const totalPages = Math.ceil(
-    solicitudesOrdenAlfabetico.length / itemsPerPage
+  // Filtrar las solicitudes por el término de búsqueda
+  const filteredSolicitudes = solicitudesOrdenAlfabetico.filter((solicitud) =>
+    solicitud.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Calcular el número total de páginas
+  const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
 
   // Obtener los elementos de la página actual
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentSolicitudes = solicitudesOrdenAlfabetico.slice(
+  const currentSolicitudes = filteredSolicitudes.slice(
     startIndex,
     startIndex + itemsPerPage
   );
@@ -92,6 +106,15 @@ export const TablaSolicitudes = () => {
       <label className="ml-10  text-3xl font-bold text-center text-gray-900">
         LISTA DE DOCENTES{" "}
       </label>
+      <div className="mt-4 mb-4 w-1/2 mx-auto flex items-center text-negro">
+        <FaSearch />
+        <Input
+          placeholder="Buscar por nombre"
+          value={searchTerm}
+          onChange={handleSearchTermChange}
+          className="ml-2"
+        />
+      </div>
       <Table
         className="custom-table"
         aria-label="Example table with dynamic content"

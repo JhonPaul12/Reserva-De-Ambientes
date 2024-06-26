@@ -10,7 +10,7 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAmbienteStore } from "../../RegistrarAmbientes/store/ambientes.store";
 import { ISimpleAmbiente } from "../interfaces/simple-ambientes";
@@ -59,6 +59,15 @@ export const EditAmbienteModal = ({ ambiente }: Props) => {
   const placeholderCap = `${ambiente.capacidad}`;
   const placeholderUbi = `${ambiente.ubicacion}`;
   const placeholderType = `${ambiente.tipo}`;
+
+  useEffect(() => {
+    if (isOpen) {
+      setInputName(ambiente.nombre);
+      setInputCap(ambiente.capacidad.toString());
+      setInputUbi(ambiente.ubicacion);
+      setInputType(ambiente.tipo);
+    }
+  }, [isOpen, ambiente]);
 
   const onInputChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target as HTMLInputElement;

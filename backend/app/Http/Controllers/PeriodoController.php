@@ -637,7 +637,7 @@ class PeriodoController extends Controller
         $ambientes = Ambiente::all()->groupBy('ubicacion');
 
         $response = [];
-        
+
         foreach ($ambientes as $ubicacion => $ambientesContiguos) {
             $idAmbientesContiguos = $ambientesContiguos->pluck('id');
 
@@ -652,22 +652,33 @@ class PeriodoController extends Controller
                 continue;
             }
 
+            // Filtrar periodos que son compartidos por más de un ambiente
+            $periodosCompartidos = $periodosLibres->groupBy('id_horario')->filter(function ($periodos) {
+                return $periodos->count() > 1;
+            });
+
+            if ($periodosCompartidos->isEmpty()) {
+                continue;
+            }
+
+            // Obtener los IDs de los ambientes que tienen periodos compartidos
+            $idAmbientesConPeriodosCompartidos = $periodosCompartidos->flatMap(function ($periodos) {
+                return $periodos->pluck('id_ambiente');
+            })->unique();
+
+            $ambientesFiltrados = $ambientesContiguos->whereIn('id', $idAmbientesConPeriodosCompartidos);
+
             $response[] = [
                 'ubicacion' => $ubicacion,
-                'ambientes' => $ambientesContiguos,
-                'periodos_libres' => $periodosLibres->groupBy('id_horario')->map(function ($periodos) {
-                    return $periodos->map(function ($periodo) {
-                        return [
-                            'id' => $periodo->id,
-                            'id_ambiente' => $periodo->id_ambiente,
-                            'estado' => $periodo->estado,
-                            'id_horario' => $periodo->id_horario,
-                            'hora_inicio' => $periodo->horario->hora_inicio,
-                            'hora_fin' => $periodo->horario->hora_fin,
-                            'fecha' => $periodo->fecha,
-                        ];
-                    });
-                })
+                'ambientes' => $ambientesFiltrados,
+                'horarios_disponibles' => $periodosCompartidos->map(function ($periodos) {
+                    return [
+                        'id_horario' => $periodos->first()->id_horario,
+                        'hora_inicio' => $periodos->first()->horario->hora_inicio,
+                        'hora_fin' => $periodos->first()->horario->hora_fin,
+                        'ambientes' => $periodos->pluck('id_ambiente')->unique()
+                    ];
+                })->values()
             ];
         }
 
@@ -680,6 +691,8 @@ class PeriodoController extends Controller
         return response()->json(['error' => 'Error al buscar períodos libres para reserva: ' . $e->getMessage()], 500);
     }
 }
+
+    
 
 
 private function filtrarPeriodosPorAmbientesYHorario($periodos, $idAmbientes)
