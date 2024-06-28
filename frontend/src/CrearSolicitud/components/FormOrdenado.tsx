@@ -469,7 +469,7 @@ export const FormOrdenado = () => {
         console.log(dataToSend);
         const respuesta = await axios.post(
           // import.meta.env.VITE_API_URL + "/api/libresComunes/",
-          "http://steelcode.tis.cs.umss.edu.bo/api/libresComunes",
+          "http://localhost:8000/api/libresComunes",
           dataToSend
         );
         const periodosLibres: ISimplePeriodo[] = respuesta.data.periodos_libres;
@@ -768,44 +768,8 @@ export const FormOrdenado = () => {
             <br />
           </div>
 
-          <div className="w-full md:w-1/2 ml-5">
-            {/*AMBIENTE */}
-
-            <label className="text-ms text-gray-900">Ambiente*:</label>
-            <br />
-            <Select
-              label=""
-              aria-label="Selecciona un ambiente"
-              selectionMode="multiple"
-              placeholder="Seleccione ambiente..."
-              selectedKeys={valuesAmbientes}
-              className="mt-2 w-full"
-              onChange={onInputChangeAmbiente}
-              onClick={verificarAmbiente}
-            >
-              {optionsAmbientes.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </Select>
-            <br />
-
-            {/*NUMERO DE ESTUDIANTES */}
-
-            <label className="text-ms text-gray-900">Nro de personas*:</label>
-            <Input
-              type="text"
-              value={inputNEst}
-              label="Ingrese un número..."
-              onChange={onInputChangeNEst}
-              onKeyPress={handleKeyPress}
-              style={{
-                fontSize: "13px",
-              }}
-            />
-            <br />
-
+          <div className="w-full md:w-1/2 ml-5">          
+            
             {/*FECHA */}
 
             <label className="text-ms text-gray-900">Fecha de reserva*:</label>
@@ -849,6 +813,43 @@ export const FormOrdenado = () => {
               ))}
             </Select>
             <br />
+
+            {/*AMBIENTE */}
+
+            <label className="text-ms text-gray-900">Ambiente*:</label>
+            <br />
+            <Select
+              label=""
+              aria-label="Selecciona un ambiente"
+              selectionMode="multiple"
+              placeholder="Seleccione ambiente..."
+              selectedKeys={valuesAmbientes}
+              className="mt-2 w-full"
+              onChange={onInputChangeAmbiente}
+              onClick={verificarAmbiente}
+            >
+              {optionsAmbientes.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </Select>
+            <br />
+            {/*NUMERO DE ESTUDIANTES */}
+
+            <label className="text-ms text-gray-900">Nro de personas*:</label>
+            <Input
+              type="text"
+              value={inputNEst}
+              label="Ingrese un número..."
+              onChange={onInputChangeNEst}
+              onKeyPress={handleKeyPress}
+              style={{
+                fontSize: "13px",
+              }}
+            />
+            <br />
+
 
             {/*BOTONES */}
 
