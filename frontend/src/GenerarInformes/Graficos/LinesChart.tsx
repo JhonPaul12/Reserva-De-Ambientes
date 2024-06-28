@@ -114,7 +114,7 @@ const LineChart = ({ datos }: { datos: AmbienteLineas[] }) => {
           `Mes con menos reservas: ${mesMinReservas} (${minReservas})`,
         ],
         font: {
-          size: 16,
+          size: 13,
         },
         padding: {
           bottom: 20,
@@ -159,10 +159,11 @@ const LineChart = ({ datos }: { datos: AmbienteLineas[] }) => {
           <Line data={data} options={misOptions} />
         </div>
       </div>
-      <div className="print-button-container">
+      <div className="hidden sm:block print-button-container">
         <ReactToPrint
           trigger={() => (
             <Button
+              className="text-white"
               color="success"
               variant="shadow"
               endContent={<IoIosPrint />}

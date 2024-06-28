@@ -98,8 +98,8 @@ export const InformeAmbientes = () => {
   };
 
   return (
-    <div className="p-9 w-full h-screen flex flex-col">
-      <div className="flex-grow flex items-center justify-center text-black">
+    <div className="p-2 w-full h-screen flex flex-col">
+      <div className=" text-black">
         {renderChart()}
       </div>
       <div className="flex justify-center">

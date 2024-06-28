@@ -169,15 +169,6 @@ export const EditPeriodosModal = ({ ambiente }: Props) => {
       } catch (error) {
         console.error("Error al guardar:", error);
       }
-    } else {
-      if (!regla) {
-        toast.error("Por favor, seleccione una gestion");
-        return;
-      } else if (!ambiente.id) {
-        toast.error("No hay un ambiente");
-      } else if (Object.keys(createdItems).length === 0) {
-        toast.info("Debe seleccionar al menos un horario");
-      }
     }
     if (regla && ambiente.id && deleteItems.length !== 0) {
       const datos1 = {

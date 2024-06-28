@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Toaster, toast } from "sonner";
 import { useAuthStore } from "./stores/auth.store";
 import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import { HeaderIni } from "../layouts/ini/components/HeaderIni";
 import "./style.css";
 
@@ -12,6 +13,8 @@ export const Login = () => {
   const authStatus = useAuthStore((state) => state.authStatus);
   const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
   const user = useAuthStore((state) => state.user);
+
+  const navigate = useNavigate();
 
   const login = useAuthStore((state) => state.login);
   if (authStatus === "pending") {
@@ -45,6 +48,10 @@ export const Login = () => {
       console.log("Probando nueva rutas de env");
       await login(email, password);
     }
+  };
+
+  const handleBackToHome = () => {
+    navigate("/");
   };
 
   return (
@@ -84,6 +91,13 @@ export const Login = () => {
               Iniciar Sesion
             </Button>
           </form>
+          <Button
+            type="button"
+            className="w-full bg-secondary text-white py-2 px-4 rounded mt-4"
+            onClick={handleBackToHome}
+          >
+            Volver a Inicio
+          </Button>
         </div>
       </section>
     </div>

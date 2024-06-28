@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { IoLogoPolymer } from "react-icons/io";
 import { MdNotificationsActive } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { CiSearch } from "react-icons/ci";
+// import { CiSearch } from "react-icons/ci";
 import {
   Button,
   Badge,
@@ -13,7 +13,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Dropdown,
-  Input,
+  // Input,
 } from "@nextui-org/react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -77,9 +77,9 @@ export const HeaderU = () => {
   const logout = useAuthStore((state) => state.logout);
   const notificationsRef = useRef<HTMLDivElement>(null);
   //const navigate = useNavigate();
-  const [searchValue, setSearchValue] = useState("");
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  // const [searchValue, setSearchValue] = useState("");
+  // const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
+  // const [showSuggestions, setShowSuggestions] = useState(false);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
@@ -125,62 +125,61 @@ export const HeaderU = () => {
     }
   };
 
-  const handleSearchChange = async (value: string) => {
-    setSearchValue(value);
+  // const handleSearchChange = async (value: string) => {
+  //   setSearchValue(value);
 
-    let suggestions: string[] = [];
+  //   let suggestions: string[] = [];
 
-    if (user?.roles && user.roles.some((role) => role === "Admin")) {
-      suggestions = [
-        "inicio",
-        "asignar-reglas",
-        "registrar-ambiente",
-        "ambientes-registrados",
-        "editar-ambientes",
-        "lista-docentes",
-        "reservas",
-        "cancelar-reservas",
-        "gestion-ambientes",
-        "crear-feriados",
-        "modificar-docentes",
-        "crear-docente",
-        "dar-baja-docente",
-        "cancelacion-ambiente",
-        "cancelacion-ubicacion",
-        "informe-ambiente",
-        "informe-docente",
-      ];
-    } else {
-      suggestions = [
-        "inicio",
-        "solicitar-reserva",
-        "visualizar-ambientes",
-        "calendario",
-        "lista-solicitudes",
-        "cancelar-reserva",
-        "reservas",
-        "notificaciones",
-      ];
-    }
+  //   if (user?.roles && user.roles.some((role) => role === "Admin")) {
+  //     suggestions = [
+  //       "inicio",
+  //       "asignar-reglas",
+  //       "registrar-ambiente",
+  //       "ambientes-registrados",
+  //       "editar-ambientes",
+  //       "lista-docentes",
+  //       "reservas",
+  //       "cancelar-reservas",
+  //       "gestion-ambientes",
+  //       "crear-feriados",
+  //       "modificar-docentes",
+  //       "crear-docente",
+  //       "dar-baja-docente",
+  //       "cancelacion-ambiente",
+  //       "cancelacion-ubicacion",
+  //       "informe-ambiente",
+  //       "informe-docente",
+  //     ];
+  //   } else {
+  //     suggestions = [
+  //       "inicio",
+  //       "solicitar-reserva",
+  //       "visualizar-ambientes",
+  //       "calendario",
+  //       "cancelar-reserva",
+  //       "reservas",
+  //       "notificaciones",
+  //     ];
+  //   }
 
-    suggestions = suggestions.filter((route) =>
-      route.toLowerCase().includes(value.toLowerCase())
-    );
+  //   suggestions = suggestions.filter((route) =>
+  //     route.toLowerCase().includes(value.toLowerCase())
+  //   );
 
-    setShowSuggestions(value.length >= 3);
+  //   setShowSuggestions(value.length >= 3);
 
-    setSearchSuggestions(suggestions);
-  };
+  //   setSearchSuggestions(suggestions);
+  // };
 
-  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      if (user?.roles && user.roles.some((role) => role === "Admin")) {
-        navigate(`/admin/${searchValue}`);
-      } else {
-        navigate(`/user/${searchValue}`);
-      }
-    }
-  };
+  // const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (event.key === "Enter") {
+  //     if (user?.roles && user.roles.some((role) => role === "Admin")) {
+  //       navigate(`/admin/${searchValue}`);
+  //     } else {
+  //       navigate(`/user/${searchValue}`);
+  //     }
+  //   }
+  // };
 
   return (
     <div
@@ -191,13 +190,13 @@ export const HeaderU = () => {
         <div>
           <IoLogoPolymer className="text-5xl md:text-7xl" />
         </div>
-        <div className="ml-3 hidden sm:block">
+        <div className="ml-3 ">
           <h1 className="font-bold text-md sm:text-3xl">Steel Code</h1>
           <p className="text-xs md:text-sm">Gestión de Ambientes</p>
         </div>
       </div>
 
-      <div className="flex-grow px-1 sm:px-12 pt-3 ">
+      {/* <div className="flex-grow px-1 sm:px-12 pt-3 ">
         <Input
           classNames={{
             inputWrapper:
@@ -235,7 +234,7 @@ export const HeaderU = () => {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
 
       <div className="ml-auto sm:flex items-center sm:space-x-4 relative space-y-1 sm:space-y-0">
         <div>
