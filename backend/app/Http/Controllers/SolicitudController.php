@@ -1027,4 +1027,5 @@ class SolicitudController extends Controller
 
         return response()->json(['periodos_libres' => $periodosLibres]);
     }
+
 }
