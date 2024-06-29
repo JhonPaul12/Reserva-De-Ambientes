@@ -113,6 +113,11 @@ Route::post('/solicitud/guardarnuevo',[SolicitudController::class,'guardarNuevo'
 Route::get('/verificar-fecha/{fecha}', [SolicitudController::class, 'verificarFecha']);
 Route::get('/verAulasDisponibles',[SolicitudController::class, 'LibresUnAula']);
 Route::post('/libresComunes',[SolicitudController::class,'LibresComunes']);
+Route::post('/libresPorHorarios',[SolicitudController::class,'buscarPeriodosLibres1']); //Este
+Route::post('/libresComunes3',[SolicitudController::class,'LibresComunesPorHorarios']);
+
+
+
 
 //NOTIFICACIONES(NUEVO)
 Route::get('/notificacion',[NotificacionController::class,'index']);
