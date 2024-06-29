@@ -216,7 +216,7 @@ class SolicitudController extends Controller
     return response()->json($data, 201);
 }
 
-    
+
 
 
 
@@ -1027,4 +1027,139 @@ class SolicitudController extends Controller
 
         return response()->json(['periodos_libres' => $periodosLibres]);
     }
+
+
+    public function prueba2(Request $request){
+        $validador = Validator::make($request->all(),[
+            'fecha' => 'required|date'
+        ]);
+
+        $fecha = $request->input('fecha');
+        $periodosLibres = DB::table('periodos')
+        ->join('horarios', 'periodos.id_horario', '=', 'horarios.id')
+        ->join('ambientes', 'periodos.id_ambiente', '=', 'ambientes.id')
+        ->where('periodos.fecha', $fecha)
+        ->where('periodos.estado', 'libre') // Asegúrate de que solo se obtengan los periodos libres
+        ->select('periodos.*', 'horarios.hora_inicio', 'horarios.hora_fin', 'ambientes.nombre as nombre_ambiente')
+        ->get();
+
+    // Devolver los periodos libres obtenidos en la respuesta
+    return response()->json(['periodos_libres' => $periodosLibres]);
+    }
+
+    public function LibresComunesPorHorarios(Request $request)
+{
+    // Validar los datos de entrada
+    $validador = Validator::make($request->all(), [
+        'fecha' => 'required|date',
+        'horarios' => 'required|array|min:1',
+        'horarios.*' => 'required|date_format:H:i:s'
+    ]);
+
+    if ($validador->fails()) {
+        return response()->json(['errors' => $validador->errors()], 422);
+    }
+
+    // Obtener los datos validados
+    $fecha = $request->input('fecha');
+    $horarios = $request->input('horarios');
+
+    // Obtener los IDs de los horarios según las horas de inicio
+    $horariosIds = DB::table('horarios')
+        ->whereIn('hora_inicio', $horarios)
+        ->pluck('id');
+
+    if ($horariosIds->isEmpty()) {
+        return response()->json(['message' => 'Horarios no encontrados'], 404);
+    }
+
+    // Obtener los IDs de los ambientes que tienen periodos libres en los horarios y fecha dada
+    $ambientesLibresPorHorario = [];
+
+    foreach ($horariosIds as $horarioId) {
+        $ambientesLibres = DB::table('periodos')
+            ->where('fecha', $fecha)
+            ->where('id_horario', $horarioId)
+            ->where('estado', 'libre')
+            ->pluck('id_ambiente');
+
+        $ambientesLibresPorHorario[] = $ambientesLibres->toArray();
+    }
+
+    // Encontrar los ambientes comunes entre todos los horarios
+    if (count($ambientesLibresPorHorario) > 1) {
+        $ambientesLibresComunes = call_user_func_array('array_intersect', $ambientesLibresPorHorario);
+    } else {
+        $ambientesLibresComunes = $ambientesLibresPorHorario[0];
+    }
+
+    if (empty($ambientesLibresComunes)) {
+        return response()->json(['message' => 'No hay ambientes libres comunes'], 404);
+    }
+
+    // Obtener la información completa de los periodos libres comunes junto con los horarios y el nombre del ambiente
+    $periodosLibres = DB::table('periodos')
+        ->join('horarios', 'periodos.id_horario', '=', 'horarios.id')
+        ->join('ambientes', 'periodos.id_ambiente', '=', 'ambientes.id')
+        ->whereIn('periodos.id_ambiente', $ambientesLibresComunes)
+        ->where('periodos.fecha', $fecha)
+        ->select('periodos.*', 'horarios.hora_inicio', 'horarios.hora_fin', 'ambientes.nombre as nombre_ambiente')
+        ->get();
+
+    return response()->json(['periodos_libres' => $periodosLibres]);
+    }
+
+    public function buscarPeriodosLibres1(Request $request)
+{
+
+    $validador = Validator::make($request->all(), [
+        'fecha' => 'required|date',
+        'horarios' => 'required|array|min:1',
+        'horarios.*' => 'required|date_format:H:i:s'
+    ]);
+
+    if ($validador->fails()) {
+        return response()->json(['errors' => $validador->errors()], 422);
+    }
+
+    $fecha = $request->input('fecha');
+    $horariosDeseados = $request->input('horarios');
+
+
+    $periodosLibres = DB::table('periodos')
+        ->join('horarios', 'periodos.id_horario', '=', 'horarios.id')
+        ->join('ambientes', 'periodos.id_ambiente', '=', 'ambientes.id')
+        ->where('periodos.fecha', $fecha)
+        ->where('periodos.estado', 'libre')
+        ->select(
+            'periodos.id',
+            'periodos.id_ambiente',
+            'periodos.id_horario',
+            'periodos.estado',
+            'periodos.fecha',
+            'periodos.created_at',
+            'periodos.updated_at',
+            'ambientes.nombre',
+            'ambientes.capacidad',
+            'horarios.hora_inicio',
+            'horarios.hora_fin'
+        )
+        ->get();
+
+    if ($periodosLibres->isEmpty()) {
+        return response()->json(['message' => 'No hay periodos libres en la fecha especificada'], 404);
+    }
+
+
+    $periodosCoincidentes = $periodosLibres->filter(function($periodo) use ($horariosDeseados) {
+        return in_array($periodo->hora_inicio, $horariosDeseados);
+    });
+
+    if ($periodosCoincidentes->isEmpty()) {
+        return response()->json(['message' => 'No hay periodos libres que coincidan con los horarios especificados'], 404);
+    }
+
+    return response()->json(['periodos_libres' => $periodosCoincidentes]);
+}
+
 }
