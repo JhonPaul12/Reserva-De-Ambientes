@@ -38,14 +38,17 @@ export const GestionesAmbientes: React.FC<GestionesAmbientesProps> = ({
   };
 
   return (
-    <div className="mt-8 mx-auto">
+    <div className="mt-8 mx-auto flex flex-row">
+      <label className="text-xl mx-4 text-gray-900 font-bold mt-1 ">
+        Gestion:
+      </label>
       <select
         value={selectedOption}
         onChange={handleChange}
         className="block h-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
       >
         <option value="" className="text-gray-500">
-          Selecciona una opción
+          Selecciona una gestion
         </option>
         {options.map((option) => (
           <option key={option.id} value={option.id}>

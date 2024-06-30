@@ -110,15 +110,39 @@ export const FormOrdenado = () => {
     setMaterias(respuesta.data);
   };
 
+  // const onInputChangeMateria = async (
+  //   e: React.ChangeEvent<HTMLSelectElement>
+  // ) => {
+  //   const { value } = e.target as HTMLSelectElement;
+  //   console.log(value);
+  //   setInputMateria(value);
+  //   getDocentes(parseInt(value));
+  //   setValuesGrupos(new Set([]));
+  //   getGrupos(parseInt(value), listdocentes);
+  // };
   const onInputChangeMateria = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const { value } = e.target as HTMLSelectElement;
     console.log(value);
     setInputMateria(value);
-    getDocentes(parseInt(value));
+
+    // Limpiar los estados relacionados con docentes y grupos
+    setDocentes([]);
+    setValuesDocentes(new Set([]));
+    setListDocentes([]);
+
+    // Limpiar los grupos
+    setGrupos([]);
     setValuesGrupos(new Set([]));
-    getGrupos(parseInt(value), listdocentes);
+    setListGrupos([]);
+
+    // Obtener nuevos docentes para la materia seleccionada
+    await getDocentes(parseInt(value));
+
+    // Obtener grupos para la materia seleccionada
+    // Pasamos un array vacío como segundo argumento para obtener todos los grupos de la materia
+    await getGrupos(parseInt(value), []);
   };
   const verificarMateriaDoc = async () => {
     if (inputMateria === "")
@@ -422,6 +446,7 @@ export const FormOrdenado = () => {
           const respuesta = await axios.post(
             // import.meta.env.VITE_API_URL + "/api/libresComunes/",
             "http://127.0.0.1:8000/api/libresPorHorarios",
+            // "http://steelcode.tis.cs.umss.edu.bo/api/libresPorHorarios",
             dataToSend
           );
           const ambienteLibresObj = respuesta.data.periodos_libres;
@@ -519,7 +544,7 @@ export const FormOrdenado = () => {
     const periodosAm = ambienteLibres.filter((periodo) =>
       selectedAmbientes.includes(periodo.id.toString())
     );
-  
+
     // Agrupar periodos por id_ambiente
     const periodosPorAmbiente = periodosAm.reduce((acc, periodo) => {
       if (!acc[periodo.id_ambiente]) {
@@ -529,10 +554,10 @@ export const FormOrdenado = () => {
       console.log(acc);
       return acc;
     }, {} as Record<number, ISimplePeriodo[]>);
-  
+
     // Calcular capacidad total teniendo en cuenta los periodos consecutivos
     let capacidadTotal = 0;
-  
+
     for (const id_ambiente in periodosPorAmbiente) {
       const periodos = periodosPorAmbiente[id_ambiente];
       periodos.sort((a, b) => (a.hora_inicio > b.hora_inicio ? 1 : -1)); // Ordenar por hora_inicio
@@ -541,10 +566,8 @@ export const FormOrdenado = () => {
       for (let i = 0; i < periodos.length; i++) {
         console.log(i);
         console.log(capacidadSumada);
-        if (
-          i > 0 && periodos[i].hora_inicio === periodos[i - 1].hora_fin 
-        ) {
-          console.log('pasa cap');
+        if (i > 0 && periodos[i].hora_inicio === periodos[i - 1].hora_fin) {
+          console.log("pasa cap");
           continue;
         }
         capacidadSumada = true;
@@ -552,7 +575,7 @@ export const FormOrdenado = () => {
         console.log(capacidadTotal);
       }
     }
-  
+
     console.log(capacidadTotal);
     console.log(inputNEst);
     if (capacidadTotal < cap) {
@@ -577,27 +600,28 @@ export const FormOrdenado = () => {
   const showToast = () => {
     if (!isToastShown) {
       toast.info(
-        '<div>' +
-        '<p>Al seleccionar un mismo ambiente en <strong>horarios consecutivos</strong>, la capacidad se calcula como si un mismo grupo usara el ambiente en todo el tiempo consecutivo reservado.</p>' +
-        '<p>Por ejemplo:</p>' +
-        '<ul>' +
-        '<li>Si seleccionas el ambiente <strong>690A</strong> de <strong>8:15 a 9:00</strong> y de <strong>9:00 a 09:45</strong>, la capacidad total del ambiente será <strong>calculada una sola vez</strong>, ya que se asume que el mismo grupo está usando el ambiente durante todo el período de <strong>8:15 a 09:45</strong>.</li>' +
-        '<li>Esto significa que, aunque hayas reservado múltiples periodos consecutivos, la capacidad del ambiente no se suma para cada periodo, sino que se considera la capacidad del ambiente durante todo el tiempo reservado.</li>' +
-        '</ul>' +
-        '</div>',{
+        "<div>" +
+          "<p>Al seleccionar un mismo ambiente en <strong>horarios consecutivos</strong>, la capacidad se calcula como si un mismo grupo usara el ambiente en todo el tiempo consecutivo reservado.</p>" +
+          "<p>Por ejemplo:</p>" +
+          "<ul>" +
+          "<li>Si seleccionas el ambiente <strong>690A</strong> de <strong>8:15 a 9:00</strong> y de <strong>9:00 a 09:45</strong>, la capacidad total del ambiente será <strong>calculada una sola vez</strong>, ya que se asume que el mismo grupo está usando el ambiente durante todo el período de <strong>8:15 a 09:45</strong>.</li>" +
+          "<li>Esto significa que, aunque hayas reservado múltiples periodos consecutivos, la capacidad del ambiente no se suma para cada periodo, sino que se considera la capacidad del ambiente durante todo el tiempo reservado.</li>" +
+          "</ul>" +
+          "</div>",
+        {
           position: "top-center",
           style: {
-            fontSize: '10px', // Tamaño de letra
-            backgroundColor: '#FFE5CC', // Color de fondo
-            color: '#333333' // Color del texto
-              }
-            });
-          setIsToastShown(true);
+            fontSize: "10px", // Tamaño de letra
+            backgroundColor: "#FFE5CC", // Color de fondo
+            color: "#333333", // Color del texto
+          },
         }
-      };
+      );
+      setIsToastShown(true);
+    }
+  };
 
   const verificarAmbiente = async () => {
-    
     if (inputHFin.length === 0) {
       setlistAmb([]);
       toast.error("Seleccione periodos para consultar la disponibilidad");
@@ -611,7 +635,7 @@ export const FormOrdenado = () => {
 
   //const [modalOpen, setModalOpen] = useState(false);
   //const openModal = () => {
-    //setModalOpen(true);
+  //setModalOpen(true);
   //};
 
   //ENVIAR
@@ -737,13 +761,18 @@ export const FormOrdenado = () => {
     window.location.reload();
   };
 
-  /*const prueba = () => {
-    console.log(inputHFin);
-    console.log(listGrupos);
-    console.log(listAmb);
-    console.log(listOficial);
-    console.log(inputAmbientes);
-  };*/
+  // const prueba = () => {
+  //   console.log(inputMotivo);
+  //   console.log(inputFecha);
+  //   console.log(inputNEst);
+  //   console.log(inputMateria);
+  //   console.log(inputAmbiente);
+  //   console.log(inputHIni);
+  //   console.log(inputHFin);
+  //   console.log(listGrupos);
+  //   console.log(listOficial);
+  //   console.log(listdocentes);
+  // };
   return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900 ml-5">
@@ -769,7 +798,9 @@ export const FormOrdenado = () => {
 
             {/*MATERIA */}
 
-            <label className="text-ms font-bold text-gray-900 mt-5">Materia*:</label>
+            <label className="text-ms font-bold text-gray-900 mt-5">
+              Materia*:
+            </label>
             <br />
             <Select
               value={inputMateria}
@@ -857,7 +888,9 @@ export const FormOrdenado = () => {
           <div className="w-full md:w-1/2 ml-3">
             {/*NUMERO DE ESTUDIANTES */}
 
-            <label className="text-ms font-bold text-gray-900">Nro de personas*:</label>
+            <label className="text-ms font-bold text-gray-900">
+              Nro de personas*:
+            </label>
             <Input
               type="text"
               value={inputNEst}
@@ -872,7 +905,9 @@ export const FormOrdenado = () => {
 
             {/*FECHA */}
 
-            <label className="text-ms  font-bold text-gray-900">Fecha de reserva*:</label>
+            <label className="text-ms  font-bold text-gray-900">
+              Fecha de reserva*:
+            </label>
             <br />
             {/*FECHA 
           <DatePicker
@@ -881,19 +916,18 @@ export const FormOrdenado = () => {
             onChange={handleDateChange}
           />
           <br />*/}
-              <Input
-                name="fecha feriado"
-                type="date"
-                fullWidth
-                size="lg"
-                className=""
-                label=""
-                value={inputFecha}
-                onChange={handleDateChange}
-              ></Input>
-              
-            
-              <ModalAmbientes fecha={inputFecha}></ModalAmbientes>
+            <Input
+              name="fecha feriado"
+              type="date"
+              fullWidth
+              size="lg"
+              className=""
+              label=""
+              value={inputFecha}
+              onChange={handleDateChange}
+            ></Input>
+
+            <ModalAmbientes fecha={inputFecha}></ModalAmbientes>
             {/* Agrego icono a su izquierda */}
 
             {/*PERIODO 
@@ -923,7 +957,9 @@ export const FormOrdenado = () => {
 
             {/*AMBIENTE */}
 
-            <label className="text-ms  font-bold text-gray-900">Ambiente y periodo a reservar*:</label>
+            <label className="text-ms  font-bold text-gray-900">
+              Ambiente y periodo a reservar*:
+            </label>
             <br />
             <Select
               label=""
@@ -968,11 +1004,12 @@ export const FormOrdenado = () => {
                 {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
               </Button>
 
-              {/*<Button onClick={prueba}></Button>*/}
+              {/* <Button onClick={prueba}></Button> */}
             </div>
           </div>
         </div>
-      </form>{/*
+      </form>
+      {/*
       <Modal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}

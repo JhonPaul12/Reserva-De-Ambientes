@@ -84,6 +84,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
     // Verificamos que la fecha final sea posterior a la fecha inicial
     if (fechaFinal.isBefore(fechaInicio)) {
       toast.error("La fecha final debe ser posterior a la fecha inicial");
+      setLoading(false);
       return;
     }
     // Validar duración de la regla según el tipo seleccionado
@@ -93,6 +94,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
       diffMonths = fechaFinal.diff(fechaInicio, "month");
       if (diffMonths > 5) {
         toast.error("La diferencia es mayor a 6 meses");
+        setLoading(false);
         return;
       }
     } else if (selectedRegla === "3" || selectedRegla === "4") {
@@ -100,6 +102,7 @@ export const FormReglas = ({ actualizar }: { actualizar: () => void }) => {
       diffMonths = fechaFinal.diff(fechaInicio, "month");
       if (diffMonths !== 0) {
         toast.error("La duración debe ser de maximo de un mes");
+        setLoading(false);
         return;
       }
     }

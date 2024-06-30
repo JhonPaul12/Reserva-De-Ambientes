@@ -87,6 +87,7 @@ export const HeaderU = () => {
 
   const navigate = useNavigate();
   const admin = user?.roles.includes("Admin");
+  const authUser = user?.roles.includes("User");
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -283,6 +284,16 @@ export const HeaderU = () => {
                 onClick={() => navigate("/admin/inicio")}
               >
                 Panel de administración
+              </DropdownItem>
+            ) : (
+              <DropdownItem className="hidden"> </DropdownItem>
+            )}
+            {authUser ? (
+              <DropdownItem
+                key="admin"
+                onClick={() => navigate("/user/inicio")}
+              >
+                Panel de Docente
               </DropdownItem>
             ) : (
               <DropdownItem className="hidden"> </DropdownItem>
