@@ -15,7 +15,6 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaCalendarAlt } from "react-icons/fa";
 
 interface Ambiente {
   id: number;
@@ -64,11 +63,11 @@ export const ModalAmbientes = function ({ fecha }: { fecha: string }) {
 
   return (
     <>
-      <FaCalendarAlt
-        className=" text-gray-500  ml-3 mt-3"
-        size={24}
+      <Button
+        className=" mt-2 w-full "
         onClick={handleIconClick}
-      />
+        color="primary" variant="faded" size="sm"
+      >Ver ambientes contiguos libres</Button>
       <Modal
         isOpen={isOpen}
         scrollBehavior="inside"

@@ -446,9 +446,10 @@ export const FormOrdenado = () => {
     } catch (error) {
       console.error("Ocurrió un error al obtener los ambientes:", error);
       setInputHIni([]);
+      setValuesAmbientes(new Set());
       if (inputHFin.length !== 0) {
         toast.error(
-          "No se tienen ambientes disponibles para esta fecha y periodo"
+          "No se tienen ambientes disponibles para este periodo, consulte otro rango"
         );
       }
     }
@@ -518,19 +519,48 @@ export const FormOrdenado = () => {
     const periodosAm = ambienteLibres.filter((periodo) =>
       selectedAmbientes.includes(periodo.id.toString())
     );
-    const capacidadTotal = periodosAm.reduce(
-      (sum, ambiente) => sum + ambiente.capacidad,
-      0
-    );
+  
+    // Agrupar periodos por id_ambiente
+    const periodosPorAmbiente = periodosAm.reduce((acc, periodo) => {
+      if (!acc[periodo.id_ambiente]) {
+        acc[periodo.id_ambiente] = [];
+      }
+      acc[periodo.id_ambiente].push(periodo);
+      console.log(acc);
+      return acc;
+    }, {} as Record<number, ISimplePeriodo[]>);
+  
+    // Calcular capacidad total teniendo en cuenta los periodos consecutivos
+    let capacidadTotal = 0;
+  
+    for (const id_ambiente in periodosPorAmbiente) {
+      const periodos = periodosPorAmbiente[id_ambiente];
+      periodos.sort((a, b) => (a.hora_inicio > b.hora_inicio ? 1 : -1)); // Ordenar por hora_inicio
+      console.log(periodos);
+      let capacidadSumada = false;
+      for (let i = 0; i < periodos.length; i++) {
+        console.log(i);
+        console.log(capacidadSumada);
+        if (
+          i > 0 && periodos[i].hora_inicio === periodos[i - 1].hora_fin 
+        ) {
+          console.log('pasa cap');
+          continue;
+        }
+        capacidadSumada = true;
+        capacidadTotal += periodos[i].capacidad;
+        console.log(capacidadTotal);
+      }
+    }
+  
     console.log(capacidadTotal);
     console.log(inputNEst);
     if (capacidadTotal < cap) {
       setInputAmbiente(
         "Advertencia: La capacidad total de los ambientes seleccionados no es suficiente."
       );
-      /*toast.warning(
-        "La capacidad total de los ambientes seleccionados no es suficiente para el número de personas requerido."
-      );*/
+      showToast();
+      //openModal();
     } else {
       setInputAmbiente("");
     }
@@ -541,16 +571,48 @@ export const FormOrdenado = () => {
       );
     console.log(ambientes);
   };
+
+  const [isToastShown, setIsToastShown] = useState(false);
+
+  const showToast = () => {
+    if (!isToastShown) {
+      toast.info(
+        '<div>' +
+        '<p>Al seleccionar un mismo ambiente en <strong>horarios consecutivos</strong>, la capacidad se calcula como si un mismo grupo usara el ambiente en todo el tiempo consecutivo reservado.</p>' +
+        '<p>Por ejemplo:</p>' +
+        '<ul>' +
+        '<li>Si seleccionas el ambiente <strong>690A</strong> de <strong>8:15 a 9:00</strong> y de <strong>9:00 a 09:45</strong>, la capacidad total del ambiente será <strong>calculada una sola vez</strong>, ya que se asume que el mismo grupo está usando el ambiente durante todo el período de <strong>8:15 a 09:45</strong>.</li>' +
+        '<li>Esto significa que, aunque hayas reservado múltiples periodos consecutivos, la capacidad del ambiente no se suma para cada periodo, sino que se considera la capacidad del ambiente durante todo el tiempo reservado.</li>' +
+        '</ul>' +
+        '</div>',{
+          position: "top-center",
+          style: {
+            fontSize: '10px', // Tamaño de letra
+            backgroundColor: '#FFE5CC', // Color de fondo
+            color: '#333333' // Color del texto
+              }
+            });
+          setIsToastShown(true);
+        }
+      };
+
   const verificarAmbiente = async () => {
+    
+    if (inputHFin.length === 0) {
+      setlistAmb([]);
+      toast.error("Seleccione periodos para consultar la disponibilidad");
+    }
     getRangos(inputHFin, inputFecha);
     console.log(valuesAmbientes);
     console.log(listAmb);
     if (ambientes.length === 0)
       toast.error("No existen ambientes disponibles para reservas");
-    if (inputHFin.length === 0) {
-      setlistAmb([]);
-    }
   };
+
+  //const [modalOpen, setModalOpen] = useState(false);
+  //const openModal = () => {
+    //setModalOpen(true);
+  //};
 
   //ENVIAR
 
@@ -675,13 +737,13 @@ export const FormOrdenado = () => {
     window.location.reload();
   };
 
-  const prueba = () => {
+  /*const prueba = () => {
     console.log(inputHFin);
     console.log(listGrupos);
     console.log(listAmb);
     console.log(listOficial);
     console.log(inputAmbientes);
-  };
+  };*/
   return (
     <div>
       <label className="text-3xl font-bold text-center text-gray-900 ml-5">
@@ -695,7 +757,7 @@ export const FormOrdenado = () => {
           <div className="w-full md:w-1/2 mb-6 md:mb-0 mr-5 ml-5">
             {/*DOCENTES */}
 
-            <label className="text-ms text-gray-900">Docente:</label>
+            <label className="text-ms font-bold text-gray-900">Docente:</label>
             <br />
             <span
               style={{ marginRight: "50px" }}
@@ -707,7 +769,7 @@ export const FormOrdenado = () => {
 
             {/*MATERIA */}
 
-            <label className="text-ms text-gray-900 mt-5">Materia*:</label>
+            <label className="text-ms font-bold text-gray-900 mt-5">Materia*:</label>
             <br />
             <Select
               value={inputMateria}
@@ -724,7 +786,7 @@ export const FormOrdenado = () => {
             </Select>
             <br />
 
-            <label className="text-ms text-gray-900">
+            <label className="text-ms font-bold text-gray-900">
               Docentes asociados*:
             </label>
             <br />
@@ -749,7 +811,7 @@ export const FormOrdenado = () => {
 
             {/*GRUPO */}
 
-            <label className="text-ms text-gray-900">Grupo*:</label>
+            <label className="text-ms font-bold text-gray-900">Grupo*:</label>
             <Select
               label="Seleccione los grupos asociados a la materia "
               aria-label="Selecciona un grupo"
@@ -774,7 +836,7 @@ export const FormOrdenado = () => {
 
             {/*MOTIVO */}
 
-            <label className="text-ms text-gray-900">Motivo*:</label>
+            <label className="text-ms  font-bold text-gray-900">Motivo*:</label>
             <br />
             <Select
               value={inputMotivo}
@@ -795,7 +857,7 @@ export const FormOrdenado = () => {
           <div className="w-full md:w-1/2 ml-3">
             {/*NUMERO DE ESTUDIANTES */}
 
-            <label className="text-ms text-gray-900">Nro de personas*:</label>
+            <label className="text-ms font-bold text-gray-900">Nro de personas*:</label>
             <Input
               type="text"
               value={inputNEst}
@@ -810,7 +872,7 @@ export const FormOrdenado = () => {
 
             {/*FECHA */}
 
-            <label className="text-ms text-gray-900">Fecha de reserva*:</label>
+            <label className="text-ms  font-bold text-gray-900">Fecha de reserva*:</label>
             <br />
             {/*FECHA 
           <DatePicker
@@ -819,34 +881,37 @@ export const FormOrdenado = () => {
             onChange={handleDateChange}
           />
           <br />*/}
-            <div className="flex">
               <Input
                 name="fecha feriado"
                 type="date"
                 fullWidth
                 size="lg"
-                className="mb-2"
+                className=""
                 label=""
                 value={inputFecha}
                 onChange={handleDateChange}
               ></Input>
+              
+            
               <ModalAmbientes fecha={inputFecha}></ModalAmbientes>
-            </div>
             {/* Agrego icono a su izquierda */}
 
-            {/*PERIODO */}
+            {/*PERIODO 
 
             <label className="text-ms text-gray-900">Periodo/s*:</label>
-            <br />
+            <br />*/}
 
             <Select
               label="Periodos a consultar..."
               selectionMode="multiple"
-              placeholder="Seleccione periodo..."
+              placeholder="Seleccione periodos..."
               selectedKeys={values}
-              className="mt-2 mb-5 w-full"
+              className="mt-2 mb-5 w-full "
               onChange={handleSelectionChange}
               onClick={verificar}
+              style={{
+                fontSize: "20px",
+              }}
             >
               {options.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
@@ -858,7 +923,7 @@ export const FormOrdenado = () => {
 
             {/*AMBIENTE */}
 
-            <label className="text-ms text-gray-900">Ambiente*:</label>
+            <label className="text-ms  font-bold text-gray-900">Ambiente y periodo a reservar*:</label>
             <br />
             <Select
               label=""
@@ -903,11 +968,32 @@ export const FormOrdenado = () => {
                 {isButtonDisabled ? "Procesando..." : "Enviar"}{" "}
               </Button>
 
-              <Button onClick={prueba}></Button>
+              {/*<Button onClick={prueba}></Button>*/}
             </div>
           </div>
         </div>
-      </form>
+      </form>{/*
+      <Modal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          size="3xl"
+        >
+          <ModalContent className="modal-content-large">
+            <ModalHeader>
+              Advertencia
+            </ModalHeader>
+            <ModalBody>
+              <div>
+                Considerar que al seleccionar un mismo ambiente en horarios consecutivos, la capacidad se calcula como si un mismo grupo usara el ambiente en todo el tiempo consecutivo reservado.
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="shadow" onClick={() => setModalOpen(false)}>
+                Cerrar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>*/}
     </div>
   );
 };
