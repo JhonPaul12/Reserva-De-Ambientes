@@ -51,11 +51,11 @@ export const Calendario = () => {
   };
 
   const transformEvents = (solicitudes: Reserva[]): CalendarEvent[] => {
-    return solicitudes.flatMap((solicitud) => ({
+    return solicitudes.map((solicitud) => ({
       start: dayjs(
-        solicitud.fecha + "T" + solicitud.horario.hora_inicio
+        `${solicitud.fecha}T${solicitud.horario.hora_inicio}`
       ).toDate(),
-      end: dayjs(solicitud.fecha + "T" + solicitud.horario.hora_fin).toDate(),
+      end: dayjs(`${solicitud.fecha}T${solicitud.horario.hora_fin}`).toDate(),
       title: solicitud.ambiente.nombre,
     }));
   };
@@ -67,11 +67,22 @@ export const Calendario = () => {
   const maxTime = new Date();
   maxTime.setHours(21, 45, 0);
 
+  const formats = {
+    eventTimeRangeFormat: () => '', 
+    eventTimeRangeStartFormat: () => '', 
+    eventTimeRangeEndFormat: () => '', 
+  };
+
+  const EventComponent = ({ event }: { event: CalendarEvent }) => {
+    return <span>{event.title}</span>;
+  };
+
   return (
     <div className="calendario-container pt-10 text-black">
       <Calendar
         localizer={localizer}
         events={events}
+        views={["month","week","day"]}
         startAccessor="start"
         endAccessor="end"
         min={minTime}
@@ -79,6 +90,7 @@ export const Calendario = () => {
         step={45}
         timeslots={2}
         messages={messages}
+        formats={formats} 
         style={{
           border: "1px solid #ddd",
           borderRadius: "8px",
@@ -87,6 +99,9 @@ export const Calendario = () => {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         }}
         className="striped hoverable"
+        components={{
+          event: EventComponent,
+        }}
       />
     </div>
   );
